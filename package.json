@@ -1,13 +1,15 @@
 {
   "name": "cpp-llvm-coverage",
-  "displayName": "cpp-llvm-coverage",
-  "description": "Visual code coverage indicators for c++ files",
-  "version": "0.0.1",
+  "displayName": "C++ file code coverage with Llvm",
+  "description": "Visual code coverage indicators for C++ files using Llvm and cmake capabilities.",
+  "version": "0.1.0",
   "engines": {
     "vscode": "^1.52.0"
   },
   "categories": [
-    "Other"
+    "Programming Languages",
+    "Linters",
+    "Testing"
   ],
   "activationEvents": [
     "onCommand:cpp-llvm-coverage.helloWorld"
