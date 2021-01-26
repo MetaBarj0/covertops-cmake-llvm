@@ -12,6 +12,9 @@
     "Testing"
   ],
   "publisher": "SbastienLevy",
+  "repository": {
+    "url": "https://github.com/MetaBarj0/cpp-llvm-coverage"
+  },
   "activationEvents": [
     "onCommand:cpp-llvm-coverage.helloWorld"
   ],
