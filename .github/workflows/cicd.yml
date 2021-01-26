@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - master
+      - feat/*
 
   release:
     types:
@@ -17,6 +18,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Install Node.js
         uses: actions/setup-node@v1
