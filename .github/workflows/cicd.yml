@@ -34,12 +34,11 @@ jobs:
       - run: npm test
         if: runner.os != 'Linux'
 
-      - name: logging stuff...
-        run: echo ${{ secrets.VSCE_PAT }}
-      - run: echo ${{ github.ref }}
-
       - name: Publish
-        if: success() && startsWith( ${{ github.ref }}, 'refs/tags/releases/')
+        if: >
+          success() && startsWith( github.ref, 'refs/tags/releases/')
+          && ${{ matrix.os }} == 'ubuntu-latest'
+          && ${{ matrix.node-versions }} == '15.x'
         run: npm run deploy
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
