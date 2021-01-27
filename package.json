@@ -14,6 +14,17 @@
   "repository": {
     "url": "https://github.com/MetaBarj0/cpp-llvm-coverage"
   },
+  "keywords": [
+    "c++",
+    "tdd",
+    "unit",
+    "test",
+    "coverage",
+    "cmake",
+    "llvm",
+    "cpp",
+    "lint"
+  ],
   "activationEvents": [
     "onCommand:cpp-llvm-coverage.helloWorld"
   ],
