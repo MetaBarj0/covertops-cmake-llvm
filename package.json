@@ -2,7 +2,7 @@
   "name": "cpp-llvm-coverage",
   "displayName": "C++ file code coverage with Llvm",
   "description": "Visual code coverage indicators for C++ files using Llvm and cmake capabilities.",
-  "version": "0.0.5",
+  "version": "0.0.1",
   "engines": {
     "vscode": "^1.52.0"
   },
@@ -11,8 +11,12 @@
     "Linters"
   ],
   "publisher": "SbastienLevy",
+  "homepage": "https://github.com/MetaBarj0/cpp-llvm-coverage",
   "repository": {
     "url": "https://github.com/MetaBarj0/cpp-llvm-coverage"
+  },
+  "bugs": {
+    "url": "https://github.com/MetaBarj0/cpp-llvm-coverage/issues"
   },
   "keywords": [
     "c++",
