@@ -1,0 +1,56 @@
+{
+    "data": [
+        {
+            "files": [
+                {
+                    "expansions": [],
+                    "filename": "C:\\Users\\john.doe\\work\\Watch\\AdventOfCode\\src\\Day1.cpp",
+                    "segments": [],
+                    "summary": {
+                        "functions": {},
+                        "instantiations": {},
+                        "lines": {},
+                        "regions": {
+                            "count": 29,
+                            "covered": 27,
+                            "notcovered": 2,
+                            "percent": 93.103448275862064
+                        }
+                    }
+                }
+            ],
+            "functions": [
+                {
+                    "count": 1,
+                    "filenames": [],
+                    "name": "",
+                    "regions": [
+                        [
+                            26,
+                            5,
+                            26,
+                            33,
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        [
+                            40,
+                            3,
+                            40,
+                            27,
+                            0,
+                            0,
+                            0,
+                            0
+                        ]
+                    ]
+                }
+            ],
+            "totals": {}
+        }
+    ],
+    "type": "llvm.coverage.json.export",
+    "version": "2.0.1"
+}
