@@ -55,10 +55,10 @@ absolute path on the file system or just `cmake` if this latter is in your
 `$PATH` environment variable.
 - `cpp-llvm-coverage.buildTreeDirectory`: The build tree root directory of
 your cmake project, relative to your workspace directory.
-- `cpp-llvm-coverage.cmakeTargets`: A set of all targets that generate
-coverage information in the json format. Those files may be generated in the
-build directory specified in the `cpp-llvm-coverage.buildTreeDirectory`
-settings. Each of specified targets must exist.
+- `cpp-llvm-coverage.cmakeTarget`: The target that generates coverage
+information in json format files. Those files may be generated in the build
+directory specified in the `cpp-llvm-coverage.buildTreeDirectory` settings.
+The specified target must exist.
 - `cpp-llvm-coverage.coverageInfoFileNamePatterns`: Patterns to use in order
 to find coverage information files from the build tree root directory. At
 least one file name is expected to be resolved using specified patterns.
