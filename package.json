@@ -34,10 +34,33 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
-    "commands": [
+    "configuration": [
       {
-        "command": "cpp-llvm-coverage.helloWorld",
-        "title": "Hello World"
+        "title": "cpp-llvm-coverage",
+        "properties": {
+          "cpp-llvm-coverage.cmakeCommand": {
+            "type": "string",
+            "default": "cmake",
+            "description": "The command to invoke cmake. May be an absolute path on the file system or just `cmake` if this latter is in your `$PATH` environment variable."
+          },
+          "cpp-llvm-coverage.buildTreeDirectory": {
+            "type": "string",
+            "default": "build",
+            "description": "The build tree root directory of your cmake project, relative to your workspace directory."
+          },
+          "cpp-llvm-coverage.cmakeTarget": {
+            "type": "string",
+            "default": "reportCoverageDetails",
+            "description": "The target that generates coverage information in json format files. Those files may be generated in the build directory specified in the `Build Tree Directory` setting. The specified target must exist."
+          },
+          "cpp-llvm-coverage.coverageInfoFileNamePatterns": {
+            "type": "array",
+            "default": [
+              "default\\.covdata\\.json"
+            ],
+            "description": "Regular expression patterns to use in order to find coverage information files from the build tree root directory. At least one file name is expected to be resolved using specified patterns."
+          }
+        }
       }
     ]
   },
