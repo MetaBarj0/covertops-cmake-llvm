@@ -30,7 +30,7 @@
     "lint"
   ],
   "activationEvents": [
-    "onCommand:cpp-llvm-coverage.helloWorld"
+    "onCommand:cpp-llvm-coverage.displayMissingCoverage"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -61,6 +61,28 @@
             "description": "Regular expression patterns to use in order to find coverage information files from the build tree root directory. At least one file name is expected to be resolved using specified patterns."
           }
         }
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "when": "resourceLangId == cpp",
+          "group": "navigation",
+          "command": "cpp-llvm-coverage.displayMissingCoverage"
+        }
+      ],
+      "commandPalette": [
+        {
+          "when": "resourceLangId == cpp",
+          "command": "cpp-llvm-coverage.displayMissingCoverage"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "cpp-llvm-coverage.displayMissingCoverage",
+        "title": "Display uncovered code regions",
+        "enablement": "resourceLangId == cpp"
       }
     ]
   },
