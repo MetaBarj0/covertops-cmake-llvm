@@ -21,7 +21,7 @@ import {
 import {
   buildAnyCmakeProcess,
   buildSucceedingCmakeProcess,
-  buildFailingCmakeProcess,
+  buildFailingCmakeProcessForCmakeCommandCheck,
   buildFailingCmakeProcessForTargetBuilding
 } from './cmakeProcess.builder';
 
@@ -31,10 +31,13 @@ import {
   buildFailingBuildTreeDirectoryResolver
 } from './buildTreeDirectoryResolver.builder';
 
-describe('Extension behavior regarding extension settings and command executor', () => {
+describe('Extension behavior regarding extension settings', () => {
   it('should be correctly instantiated with injected dependencies.', () => {
     should.not.throw(() => {
-      new CppLlvmCoverage(buildAnySettings(), buildAnyCmakeProcess(), buildAnyBuildTreeDirectoryResolver());
+      new CppLlvmCoverage(
+        buildAnySettings(),
+        buildAnyCmakeProcess(),
+        buildAnyBuildTreeDirectoryResolver());
     });
   });
 
@@ -42,7 +45,7 @@ describe('Extension behavior regarding extension settings and command executor',
     'when the cmake command does not execute cmake properly.',
     async () => {
       const settings = buildInvalidCmakeCommandSetting();
-      const cmakeProcess = buildFailingCmakeProcess();
+      const cmakeProcess = buildFailingCmakeProcessForCmakeCommandCheck();
       const buildTreeDirectoryResolver = buildSucceedingBuildTreeDirectoryResolver();
 
       const clc = new CppLlvmCoverage(settings, cmakeProcess, buildTreeDirectoryResolver);

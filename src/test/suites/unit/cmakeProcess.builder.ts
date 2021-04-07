@@ -12,7 +12,7 @@ class SucceedingCmakeProcess implements CmakeProcess {
     }
 };
 
-class FailingCmakeProcess implements CmakeProcess {
+class FailingCmakeProcessForCmakeCommandCheck implements CmakeProcess {
     cmakeCommand: string = '';
 
     checkCmakeVersion() {
@@ -20,7 +20,7 @@ class FailingCmakeProcess implements CmakeProcess {
     }
 
     buildCmakeTarget() {
-        return Promise.reject(new Error());
+        return Promise.resolve();
     }
 };
 
@@ -40,8 +40,8 @@ export function buildAnyCmakeProcess() {
     return new SucceedingCmakeProcess();
 }
 
-export function buildFailingCmakeProcess() {
-    return new FailingCmakeProcess();
+export function buildFailingCmakeProcessForCmakeCommandCheck() {
+    return new FailingCmakeProcessForCmakeCommandCheck();
 }
 
 export function buildSucceedingCmakeProcess() {
