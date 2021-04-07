@@ -1,22 +1,18 @@
 import { BuildTreeDirectoryResolver } from '../../../cppLlvmCoverage';
 
 class SucceedingBuildTreeDirectoryResolver implements BuildTreeDirectoryResolver {
-  readonly path?: string;
-
   resolve() {
     return Promise.resolve();
   }
 }
 
 class FailingBuildTreeDirectoryResolver implements BuildTreeDirectoryResolver {
-  readonly path?: string;
-
   resolve() {
     return Promise.reject(new Error());
   }
 }
 
-export function buildAnyBuildTreeDirectoryResolver() {
+export function buildFakeBuildTreeDirectoryResolver() {
   return new SucceedingBuildTreeDirectoryResolver();
 }
 

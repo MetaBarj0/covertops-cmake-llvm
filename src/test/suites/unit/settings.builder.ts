@@ -1,6 +1,6 @@
 import { Settings } from "../../../cppLlvmCoverage";
 
-export function buildInvalidAllSettings() {
+export function buildFakeSettings() {
   return <Settings>{
     cmakeCommand: 'foo',
     buildTreeDirectory: 'bar',
@@ -11,17 +11,17 @@ export function buildInvalidAllSettings() {
 }
 
 export function buildInvalidCmakeCommandSetting() {
-  return buildInvalidAllSettings();
+  return buildFakeSettings();
 }
 
 export function buildInvalidBuildTreeDirectorySetting() {
-  return buildInvalidAllSettings();
-}
-
-export function buildAnySettings() {
-  return buildInvalidAllSettings();
+  return buildFakeSettings();
 }
 
 export function buildInvalidCmakeTargetSetting() {
-  return buildInvalidAllSettings();
+  return buildFakeSettings();
+}
+
+export function buildInvalidCoverageInfoFileNamePatternsSettings() {
+  return buildFakeSettings();
 }
