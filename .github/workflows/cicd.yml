@@ -28,7 +28,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - run: npm install
+      - run: npm ci
 
       - run: xvfb-run -a npm test
         if: runner.os == 'Linux'
@@ -49,7 +49,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - run: npm install
+      - run: npm ci
 
       - name: Publishing to VSCode market place
         run: npm run deploy -p ${{ secrets.VSCE_PAT }}
