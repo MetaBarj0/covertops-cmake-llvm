@@ -1,4 +1,4 @@
-import { CmakeProcess } from '../../../cppLlvmCoverage';
+import { CmakeProcess } from '../../../../service';
 
 class SucceedingCmakeProcess implements CmakeProcess {
     checkCmakeVersion() {

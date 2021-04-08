@@ -8,7 +8,7 @@ chai.should();
 const describe = mocha.describe;
 const it = mocha.it;
 
-import { CppLlvmCoverage } from '../../../cppLlvmCoverage';
+import { DecorationLocationProvider } from '../../../service';
 
 import {
   buildInvalidCmakeCommandSetting,
@@ -23,24 +23,24 @@ import {
   buildSucceedingCmakeProcess,
   buildFailingCmakeProcessForCmakeCommandCheck,
   buildFailingCmakeProcessForTargetBuilding
-} from './cmakeProcess.builder';
+} from './builders/cmakeProcess.builder';
 
 import {
   buildFakeBuildTreeDirectoryResolver,
   buildSucceedingBuildTreeDirectoryResolver,
   buildFailingBuildTreeDirectoryResolver
-} from './buildTreeDirectoryResolver.builder';
+} from './builders/buildTreeDirectoryResolver.builder';
 
 import {
   buildFakeCoverageInfoFileResolver,
   buildFailingCoverageInfoFileResolver,
   buildSucceedingCoverageInfoFileResolver
-} from './coverageInfoFileResolver.builder';
+} from './builders/coverageInfoFileResolver.builder';
 
 describe('Extension behavior regarding extension settings', () => {
   it('should be correctly instantiated with injected dependencies.', () => {
     (() => {
-      new CppLlvmCoverage(
+      new DecorationLocationProvider(
         buildFakeSettings(),
         buildFakeCmakeProcess(),
         buildFakeBuildTreeDirectoryResolver(),
@@ -56,7 +56,7 @@ describe('Extension behavior regarding extension settings', () => {
       const buildTreeDirectoryResolver = buildSucceedingBuildTreeDirectoryResolver();
       const coverageInfoFileResolver = buildSucceedingCoverageInfoFileResolver();
 
-      const clc = new CppLlvmCoverage(settings, cmakeProcess, buildTreeDirectoryResolver, coverageInfoFileResolver);
+      const clc = new DecorationLocationProvider(settings, cmakeProcess, buildTreeDirectoryResolver, coverageInfoFileResolver);
 
       return clc.obtainDecorationForUncoveredCodeRegions().should.eventually.be.rejectedWith(
         'Error: cmake command is not invocable. ' +
@@ -72,7 +72,7 @@ describe('Extension behavior regarding extension settings', () => {
       const buildTreeDirectoryResolver = buildFailingBuildTreeDirectoryResolver();
       const coverageInfoFileResolver = buildSucceedingCoverageInfoFileResolver();
 
-      const clc = new CppLlvmCoverage(settings, cmakeProcess, buildTreeDirectoryResolver, coverageInfoFileResolver);
+      const clc = new DecorationLocationProvider(settings, cmakeProcess, buildTreeDirectoryResolver, coverageInfoFileResolver);
 
       return clc.obtainDecorationForUncoveredCodeRegions().should.eventually.be.rejectedWith(
         'Error: Build tree directory cannot be found. ' +
@@ -87,7 +87,7 @@ describe('Extension behavior regarding extension settings', () => {
       const buildDirectoryResolver = buildSucceedingBuildTreeDirectoryResolver();
       const coverageInfoFileResolver = buildSucceedingCoverageInfoFileResolver();
 
-      const clc = new CppLlvmCoverage(settings, cmakeProcess, buildDirectoryResolver, coverageInfoFileResolver);
+      const clc = new DecorationLocationProvider(settings, cmakeProcess, buildDirectoryResolver, coverageInfoFileResolver);
 
       return clc.obtainDecorationForUncoveredCodeRegions().should.eventually.be.rejectedWith(
         `Error: Could not execute the specified cmake target '${settings.cmakeTarget}'. ` +
@@ -103,7 +103,7 @@ describe('Extension behavior regarding extension settings', () => {
       const buildDirectoryResolver = buildSucceedingBuildTreeDirectoryResolver();
       const failingCoverageInfoFileResolver = buildFailingCoverageInfoFileResolver();
 
-      const clc = new CppLlvmCoverage(settings, cmakeProcess, buildDirectoryResolver, failingCoverageInfoFileResolver);
+      const clc = new DecorationLocationProvider(settings, cmakeProcess, buildDirectoryResolver, failingCoverageInfoFileResolver);
 
       return clc.obtainDecorationForUncoveredCodeRegions().should.eventually.be.rejectedWith(
         'Error: Could not find any file containing coverage information using ' +
@@ -119,7 +119,7 @@ describe('Extension behavior regarding extension settings', () => {
       const buildDirectoryResolver = buildSucceedingBuildTreeDirectoryResolver();
       const failingCoverageInfoFileResolver = buildSucceedingCoverageInfoFileResolver();
 
-      const clc = new CppLlvmCoverage(settings, cmakeProcess, buildDirectoryResolver, failingCoverageInfoFileResolver);
+      const clc = new DecorationLocationProvider(settings, cmakeProcess, buildDirectoryResolver, failingCoverageInfoFileResolver);
 
       return clc.obtainDecorationForUncoveredCodeRegions().should.eventually.be.fulfilled;
     });

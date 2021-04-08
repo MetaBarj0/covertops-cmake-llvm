@@ -23,7 +23,7 @@ export type CoverageInfoFileResolver = {
 export class CoverageDecorations {
 };
 
-export class CppLlvmCoverage {
+export class DecorationLocationProvider {
   constructor(
     settings: Settings,
     cmakeProcess: CmakeProcess,

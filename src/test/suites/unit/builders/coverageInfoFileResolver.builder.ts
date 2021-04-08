@@ -1,4 +1,4 @@
-import { CoverageInfoFileResolver } from '../../../cppLlvmCoverage';
+import { CoverageInfoFileResolver } from '../../../../service';
 
 class FailingCoverageInfoFileResolver implements CoverageInfoFileResolver {
   gatherCoverageInfo() {

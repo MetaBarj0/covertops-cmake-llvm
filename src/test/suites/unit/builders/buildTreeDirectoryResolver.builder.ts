@@ -1,4 +1,4 @@
-import { BuildTreeDirectoryResolver } from '../../../cppLlvmCoverage';
+import { BuildTreeDirectoryResolver } from '../../../../service';
 
 class SucceedingBuildTreeDirectoryResolver implements BuildTreeDirectoryResolver {
   resolve() {

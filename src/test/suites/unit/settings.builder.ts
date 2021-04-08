@@ -1,4 +1,4 @@
-import { Settings } from "../../../cppLlvmCoverage";
+import { Settings } from "../../../service";
 
 export function buildFakeSettings() {
   return <Settings>{
