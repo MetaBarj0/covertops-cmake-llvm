@@ -37,8 +37,8 @@ import {
   buildSucceedingCoverageInfoFileResolver
 } from './fakes/coverageInfoFileResolver.fake';
 
-describe('Extension behavior regarding extension settings', () => {
-  it('should be correctly instantiated with injected dependencies.', () => {
+describe('DecorationLocationProvider service behavior.', () => {
+  it('should be correctly instantiated with faked services and records.', () => {
     (() => {
       new DecorationLocationProvider(
         buildFakeSettings(),
