@@ -1,4 +1,4 @@
-import { Settings } from "../../../service";
+import { Settings } from '../../../../src/records/settings';
 
 export function buildFakeSettings() {
   return <Settings>{

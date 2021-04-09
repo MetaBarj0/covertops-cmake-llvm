@@ -1,13 +1,13 @@
-import { CoverageInfoFileResolver } from '../../../../service';
+import { CoverageInfoFilesResolver } from '../../../../src/services/coverageInfoFilesResolver';
 
-class FailingCoverageInfoFileResolver implements CoverageInfoFileResolver {
-  gatherCoverageInfo() {
+class FailingCoverageInfoFileResolver implements CoverageInfoFilesResolver {
+  findAllFiles() {
     return Promise.reject();
   }
 };
 
-class SucceedingCoverageInfoFileResolver implements CoverageInfoFileResolver {
-  gatherCoverageInfo() {
+class SucceedingCoverageInfoFileResolver implements CoverageInfoFilesResolver {
+  findAllFiles() {
     return Promise.resolve();
   }
 };

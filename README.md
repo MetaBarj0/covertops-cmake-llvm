@@ -41,8 +41,7 @@ Following are extensions that are complementary to this one. You may use them
 immoderatly to get proficient with C++ and Visual Studio Code.
 
 - C/C++ (ms-vscode.cpptools)
-- Clang-Format (xaver.clang-format)
-- Clang-Tidy (notskm.clang-tidy)
+- Clangd (llvm-vs-code-extensions.vscode-clangd)
 - CMake (twxs.cmake)
 - CMake Tools (ms-vscode.cmake-tools)
 

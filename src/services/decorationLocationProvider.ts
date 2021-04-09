@@ -1,34 +1,15 @@
-export type Settings = {
-  cmakeCommand: string;
-  buildTreeDirectory: string;
-  cmakeTarget: string;
-  coverageInfoFileNamePatterns: string[],
-  cwd: string
-};
-
-export type CmakeProcess = {
-  checkCmakeVersion(): Promise<string>;
-
-  buildCmakeTarget(): Promise<void>;
-};
-
-export type BuildTreeDirectoryResolver = {
-  resolve(): Promise<void>;
-};
-
-export type CoverageInfoFileResolver = {
-  gatherCoverageInfo(): Promise<void>;
-};
-
-export class CoverageDecorations {
-};
+import { Settings } from '../records/settings';
+import { CmakeProcess } from './cmakeProcess';
+import { BuildTreeDirectoryResolver } from './buildTreeDirectoryResolver';
+import { CoverageInfoFilesResolver } from './coverageInfoFilesResolver';
+import { CoverageDecorations } from '../entities/coverageDecorations';
 
 export class DecorationLocationProvider {
   constructor(
     settings: Settings,
     cmakeProcess: CmakeProcess,
     buildTreeDirectoryResolver: BuildTreeDirectoryResolver,
-    coverageInfoFileResolver: CoverageInfoFileResolver) {
+    coverageInfoFileResolver: CoverageInfoFilesResolver) {
     this.settings = settings;
     this.cmakeProcess = cmakeProcess;
     this.buildTreeDirectoryResolver = buildTreeDirectoryResolver;
@@ -42,12 +23,12 @@ export class DecorationLocationProvider {
       this.buildCmakeTarget(),
       this.gatherCoverageInfo()]);
 
-    return new CoverageDecorations();
+    return <CoverageDecorations>{};
   }
 
   private async gatherCoverageInfo() {
     try {
-      await this.coverageInfoFileResolver.gatherCoverageInfo();
+      await this.coverageInfoFileResolver.findAllFiles();
     } catch (e) {
       throw new Error('Error: Could not find any file containing coverage information using ' +
         'regular expression patterns provided in settings. ' +
@@ -66,7 +47,7 @@ export class DecorationLocationProvider {
 
   private async resolveBuildTreeDirectory() {
     try {
-      await this.buildTreeDirectoryResolver.resolve();
+      await this.buildTreeDirectoryResolver.findDirectory();
     } catch (e) {
       throw new Error('Error: Build tree directory cannot be found. ' +
         'Ensure \'cpp-llvm-coverage Build Tree Directory\' setting is properly set.');
@@ -85,5 +66,5 @@ export class DecorationLocationProvider {
   private readonly cmakeProcess: CmakeProcess;
   private readonly settings: Settings;
   private readonly buildTreeDirectoryResolver: BuildTreeDirectoryResolver;
-  private readonly coverageInfoFileResolver: CoverageInfoFileResolver;
+  private readonly coverageInfoFileResolver: CoverageInfoFilesResolver;
 }

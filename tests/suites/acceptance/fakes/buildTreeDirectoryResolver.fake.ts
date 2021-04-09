@@ -1,13 +1,13 @@
-import { BuildTreeDirectoryResolver } from '../../../../service';
+import { BuildTreeDirectoryResolver } from '../../../../src/services/buildTreeDirectoryResolver';
 
 class SucceedingBuildTreeDirectoryResolver implements BuildTreeDirectoryResolver {
-  resolve() {
+  findDirectory() {
     return Promise.resolve();
   }
 }
 
 class FailingBuildTreeDirectoryResolver implements BuildTreeDirectoryResolver {
-  resolve() {
+  findDirectory() {
     return Promise.reject(new Error());
   }
 }
