@@ -8,6 +8,8 @@ chai.should();
 const describe = mocha.describe;
 const it = mocha.it;
 
+const expect = chai.expect;
+
 import { DecorationLocationProvider } from '../../../src/services/decorationLocationProvider';
 
 import { ExtensionSettings } from '../../../src/environment/extensionSettings';
@@ -27,5 +29,11 @@ describe('DecorationLocationProvider service behavior in a real system environme
         buildTreeDirectoryResolver, coverageInfoFilesResolver);
     }).should.not.throw();
 
+  });
+
+  it('should fail to provide any decoration location if the cmake process is not valid.', () => {
+    const settings = new ExtensionSettings();
+
+    settings.cmakeCommand.should.be.equal('cmake');
   });
 });
