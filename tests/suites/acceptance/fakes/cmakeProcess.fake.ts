@@ -1,4 +1,4 @@
-import { CmakeProcess } from '../../../../src/services/cmakeProcess';
+import { CmakeProcess } from '../../../../src/adapters/cmakeProcess';
 
 class SucceedingCmakeProcess implements CmakeProcess {
   checkCmakeVersion() {

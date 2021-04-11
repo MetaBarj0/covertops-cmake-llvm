@@ -8,32 +8,8 @@ chai.should();
 const describe = mocha.describe;
 const it = mocha.it;
 
-const expect = chai.expect;
-
-import { DecorationLocationProvider } from '../../../src/services/decorationLocationProvider';
-
-import { ExtensionSettings } from '../../../src/environment/extensionSettings';
-import { RealCmakeProcess } from '../../../src/environment/realCmakeProcess';
-import { FileSystemBuildTreeDirectoryResolver } from '../../../src/environment/fileSystemBuildTreeDirectoryResolver';
-import { FileSystemCoverageInfoFilesResolver } from '../../../src/environment/fileSystemCoverageInfoFilesResolver';
-
-describe('DecorationLocationProvider service behavior in a real system environment.', () => {
-  it('should behave correctly at instantiation level when passing default vscode settings and faked services.', () => {
-    const settings = new ExtensionSettings();
-    const cmakeProcess = new RealCmakeProcess();
-    const buildTreeDirectoryResolver = new FileSystemBuildTreeDirectoryResolver();
-    const coverageInfoFilesResolver = new FileSystemCoverageInfoFilesResolver();
-
-    (() => {
-      new DecorationLocationProvider(settings, cmakeProcess,
-        buildTreeDirectoryResolver, coverageInfoFilesResolver);
-    }).should.not.throw();
-
+describe('the behavior of the cmake process adapter in a rela environment.', () => {
+  it('should not be able to instantiate a real cmake process if cmakeCommand setting is incorrectly set.', () => {
   });
 
-  it('should fail to provide any decoration location if the cmake process is not valid.', () => {
-    const settings = new ExtensionSettings();
-
-    settings.cmakeCommand.should.be.equal('cmake');
-  });
 });

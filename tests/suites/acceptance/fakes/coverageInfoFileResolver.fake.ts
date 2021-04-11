@@ -1,4 +1,4 @@
-import { CoverageInfoFilesResolver } from '../../../../src/services/coverageInfoFilesResolver';
+import { CoverageInfoFilesResolver } from '../../../../src/adapters/coverageInfoFilesResolver';
 
 class FailingCoverageInfoFileResolver implements CoverageInfoFilesResolver {
   findAllFiles() {

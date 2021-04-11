@@ -1,4 +1,4 @@
-import { BuildTreeDirectoryResolver } from '../../../../src/services/buildTreeDirectoryResolver';
+import { BuildTreeDirectoryResolver } from '../../../../src/adapters/buildTreeDirectoryResolver';
 
 class SucceedingBuildTreeDirectoryResolver implements BuildTreeDirectoryResolver {
   findDirectory() {

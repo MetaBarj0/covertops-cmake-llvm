@@ -1,8 +1,8 @@
 import { Settings } from '../records/settings';
-import { CmakeProcess } from './cmakeProcess';
-import { BuildTreeDirectoryResolver } from './buildTreeDirectoryResolver';
-import { CoverageInfoFilesResolver } from './coverageInfoFilesResolver';
-import { CoverageDecorations } from '../entities/coverageDecorations';
+import { CoverageDecorations } from '../records/coverageDecorations';
+import { CmakeProcess } from '../adapters/cmakeProcess';
+import { BuildTreeDirectoryResolver } from '../adapters/buildTreeDirectoryResolver';
+import { CoverageInfoFilesResolver } from '../adapters/coverageInfoFilesResolver';
 
 export class DecorationLocationProvider {
   constructor(

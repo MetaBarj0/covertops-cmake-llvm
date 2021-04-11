@@ -1,4 +1,4 @@
-import { CmakeProcess } from "../services/cmakeProcess";
+import { CmakeProcess } from "../adapters/cmakeProcess";
 
 export class RealCmakeProcess implements CmakeProcess {
   buildCmakeTarget() { return Promise.reject(); }
