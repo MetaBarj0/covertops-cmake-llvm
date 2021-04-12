@@ -1,5 +1,5 @@
-import { homedir } from 'node:os';
 import * as path from 'path';
+import * as fs from 'fs/promises';
 
 import { runTests } from 'vscode-test';
 
@@ -15,15 +15,21 @@ async function runIntegrationTestsWithoutWorkspace(extensionDevelopmentPath: str
   await runTests({ extensionDevelopmentPath, extensionTestsPath });
 }
 
+async function createEmptyWorkspaceDirectory(workspaceDirectory: string) {
+  await fs.stat(workspaceDirectory)
+    .then(async _ => { await fs.rm(workspaceDirectory, { recursive: true }); })
+    .catch(_ => { });
+
+  await fs.mkdir(workspaceDirectory);
+}
+
 async function runIntegrationTestsWithWorkspace(extensionDevelopmentPath: string) {
   const extensionTestsPath = path.resolve(__dirname, './suites/integration/index.workspace');
+  const workspaceDirectory = path.resolve(__dirname, '../workspace');
 
-  if (process.env['CI_WORKSPACE_DIR'] === undefined) {
-    console.error('Cannot execute tests. The CI_TMP_HOME environment variable must be defined and target an existing directory.');
-    return;
-  }
+  await createEmptyWorkspaceDirectory(workspaceDirectory);
 
-  const launchArgs = [process.env['CI_WORKSPACE_DIR'].toString()];
+  const launchArgs = [workspaceDirectory];
 
   await runTests({ extensionDevelopmentPath, extensionTestsPath, launchArgs });
 }
