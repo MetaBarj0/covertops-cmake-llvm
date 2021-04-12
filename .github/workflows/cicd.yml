@@ -16,8 +16,16 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
+
     runs-on: ${{ matrix.os }}
+
+    env:
+      CI_WORKSPACE_DIR: ${{ runner.temp }}/workspace
+
     steps:
+      - name: Creating a workspace directory for vscode
+        run: mkdir -p ${{ env.CI_WORKSPACE_DIR }}
+
       - name: Install llvm
         uses: KyleMayes/install-llvm-action@v1
         with:

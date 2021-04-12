@@ -1,34 +1,40 @@
+import { homedir } from 'node:os';
 import * as path from 'path';
 
 import { runTests } from 'vscode-test';
 
 async function runAcceptanceTests(extensionDevelopmentPath: string) {
-  // The path to test runner for acceptance tests
-  // Passed to --extensionTestsPath
   const extensionTestsPath = path.resolve(__dirname, './suites/acceptance/index');
 
-  // Download VS Code, unzip it and run all tests
   await runTests({ extensionDevelopmentPath, extensionTestsPath });
 }
 
 async function runIntegrationTestsWithoutWorkspace(extensionDevelopmentPath: string) {
-  // The path to test runner for acceptance tests
-  // Passed to --extensionTestsPath
-  const extensionTestsPath = path.resolve(__dirname, './suites/integration/index');
-  const launchArgs = [''];
+  const extensionTestsPath = path.resolve(__dirname, './suites/integration/index.noworkspace');
 
-  // Download VS Code, unzip it and run all tests
+  await runTests({ extensionDevelopmentPath, extensionTestsPath });
+}
+
+async function runIntegrationTestsWithWorkspace(extensionDevelopmentPath: string) {
+  const extensionTestsPath = path.resolve(__dirname, './suites/integration/index.workspace');
+
+  if (process.env['CI_WORKSPACE_DIR'] === undefined) {
+    console.error('Cannot execute tests. The CI_TMP_HOME environment variable must be defined and target an existing directory.');
+    return;
+  }
+
+  const launchArgs = [process.env['CI_WORKSPACE_DIR'].toString()];
+
   await runTests({ extensionDevelopmentPath, extensionTestsPath, launchArgs });
 }
 
 async function main() {
   try {
-    // The folder containing the Extension Manifest package.json
-    // Passed to `--extensionDevelopmentPath`
     const extensionDevelopmentPath = path.resolve(__dirname, '../src/');
 
     await runAcceptanceTests(extensionDevelopmentPath);
     await runIntegrationTestsWithoutWorkspace(extensionDevelopmentPath);
+    await runIntegrationTestsWithWorkspace(extensionDevelopmentPath);
   } catch (_) {
     console.error('Failed to run tests');
     process.exit(1);
