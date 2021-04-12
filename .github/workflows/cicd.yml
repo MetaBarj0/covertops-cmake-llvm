@@ -24,7 +24,8 @@ jobs:
           version: 10
           directory: ${{ runner.temp }}/llvm
 
-      - run: llvm-cov --version
+      - name: Install CMake
+        uses: lukka/get-cmake@latest
 
       - name: Checkout
         uses: actions/checkout@v2
