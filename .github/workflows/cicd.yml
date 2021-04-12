@@ -18,6 +18,14 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Install llvm
+        uses: KyleMayes/install-llvm-action@v1
+        with:
+          version: 10
+          directory: ${{ runner.temp }}/llvm
+
+      - run: llvm-cov --version
+
       - name: Checkout
         uses: actions/checkout@v2
         with:
