@@ -1,19 +1,22 @@
 import * as vscode from 'vscode';
 import { Settings } from '../records/settings';
 
-const extensionConfiguration = vscode.workspace.getConfiguration('cpp-llvm-coverage');
-
 export class ExtensionSettings implements Settings {
-    cmakeCommand = <string>extensionConfiguration.get('cmakeCommand');
-    buildTreeDirectory = <string>extensionConfiguration.get('buildTreeDirectory');
-    cmakeTarget = <string>extensionConfiguration.get('cmakeTarget');
-    coverageInfoFileNamePatterns = <Array<string>>extensionConfiguration.get('coverageInfoFileNamePatterns');
-    cwd = this.setupCwd(vscode.workspace.workspaceFolders);
+  constructor() {
+    this.checkWorkspace();
 
-    private setupCwd(workspaceFolders: readonly vscode.WorkspaceFolder[] | undefined) {
-        if (workspaceFolders === undefined)
-            return '';
+    const extensionConfiguration = vscode.workspace.getConfiguration('cpp-llvm-coverage');
+  }
 
-        return workspaceFolders[0].uri.fsPath.toString();
+  cmakeCommand = '';
+  buildTreeDirectory = '';
+  cmakeTarget = '';
+  coverageInfoFileNamePatterns = [];
+  rootDirectory = '';
+
+  private checkWorkspace() {
+    if (vscode.workspace.workspaceFolders === undefined) {
+      throw new Error('A workspace must be loaded to get coverage information.');
     }
+  }
 };

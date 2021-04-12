@@ -3,5 +3,5 @@ export type Settings = {
   buildTreeDirectory: string;
   cmakeTarget: string;
   coverageInfoFileNamePatterns: string[],
-  cwd: string
+  rootDirectory: string
 };

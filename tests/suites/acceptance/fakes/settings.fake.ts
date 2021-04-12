@@ -6,7 +6,7 @@ export function buildFakeSettings() {
     buildTreeDirectory: 'bar',
     cmakeTarget: 'baz',
     coverageInfoFileNamePatterns: ['fiz'],
-    cwd: 'buz'
+    rootDirectory: 'buz'
   };
 }
 
