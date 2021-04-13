@@ -1,10 +1,10 @@
 # cmake-llvm-coverage
 
-Visual code coverage indicators for C++ files using Llvm and cmake
-capabilities.
+Visual code coverage indicators for source code files of a Cmake project
+using Llvm capabilities.
 
 This extension will show all regions of code that are not covered for the
-currently edited C++ file.
+currently edited source code file.
 
 `Insert gif here`
 
@@ -16,7 +16,7 @@ click!
 `insert image here`
 
 Shows both summary information with coverage percentage and precise uncovered
-region of code for the current c++ file
+region of code for the current source code file.
 
 `insert image here`
 
@@ -67,7 +67,8 @@ specified patterns.
 
 Following is a small guide on how to design code coverage target for cmake
 that are useable with this extension. This guide is extracted from the
-<https://gitlab.com/troctsch.cpp/adventofcode> repository.
+<https://gitlab.com/troctsch.cpp/adventofcode> repository. This is a C++
+project.
 
 ### Conditional coverage
 
