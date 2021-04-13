@@ -19,9 +19,10 @@ export class DecorationLocationProvider {
   async obtainDecorationForUncoveredCodeRegions() {
     await Promise.all([
       this.checkCmakeCommand(),
-      this.resolveBuildTreeDirectory(),
       this.buildCmakeTarget(),
       this.gatherCoverageInfo()]);
+
+    await this.buildTreeDirectoryResolver.getFullPath();
 
     return <CoverageDecorations>{};
   }
@@ -42,15 +43,6 @@ export class DecorationLocationProvider {
     } catch (e) {
       throw new Error(`Error: Could not execute the specified cmake target \'${this.settings.cmakeTarget}\'. ` +
         'Ensure \'cmake-llvm-coverage Cmake Target\' setting is properly set.');
-    }
-  }
-
-  private async resolveBuildTreeDirectory() {
-    try {
-      await this.buildTreeDirectoryResolver.findDirectory();
-    } catch (e) {
-      throw new Error('Error: Build tree directory cannot be found. ' +
-        'Ensure \'cmake-llvm-coverage Build Tree Directory\' setting is properly set.');
     }
   }
 

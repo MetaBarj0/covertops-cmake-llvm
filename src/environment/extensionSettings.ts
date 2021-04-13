@@ -1,5 +1,7 @@
-import * as vscode from 'vscode';
 import { Settings } from '../records/settings';
+
+import * as vscode from 'vscode';
+import * as path from 'path';
 
 export class ExtensionSettings implements Settings {
   constructor() {
@@ -7,13 +9,13 @@ export class ExtensionSettings implements Settings {
 
     const vscodeSettings = vscode.workspace.getConfiguration('cmake-llvm-coverage');
 
-    this.buildTreeDirectory = vscodeSettings.get('buildTreeDirectory') as string;
+    this.buildTreeDirectory = path.normalize(vscodeSettings.get('buildTreeDirectory') as string);
     this.cmakeCommand = vscodeSettings.get('cmakeCommand') as string;
     this.cmakeTarget = vscodeSettings.get('cmakeTarget') as string;
     this.coverageInfoFileNamePatterns = vscodeSettings.get('coverageInfoFileNamePatterns') as Array<string>;
 
     const workspaceFolders = vscode.workspace.workspaceFolders as Array<vscode.WorkspaceFolder>;
-    this.rootDirectory = workspaceFolders[0].uri.path;
+    this.rootDirectory = workspaceFolders[0].uri.fsPath;
   }
 
   buildTreeDirectory: string;

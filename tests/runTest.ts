@@ -15,19 +15,20 @@ async function runIntegrationTestsWithoutWorkspace(extensionDevelopmentPath: str
   await runTests({ extensionDevelopmentPath, extensionTestsPath });
 }
 
-async function createEmptyWorkspaceDirectory(workspaceDirectory: string) {
+async function createWorkspaceAndBuildDirectories(workspaceDirectory: string) {
   await fs.stat(workspaceDirectory)
     .then(async _ => { await fs.rm(workspaceDirectory, { recursive: true }); })
     .catch(_ => { });
 
-  return fs.mkdir(workspaceDirectory);
+  return fs.mkdir(workspaceDirectory, { recursive: true });
 }
 
 async function runIntegrationTestsWithWorkspace(extensionDevelopmentPath: string) {
   const extensionTestsPath = path.resolve(__dirname, './suites/integration/index.workspace');
   const workspaceDirectory = path.resolve(__dirname, '../workspace');
+  const buildDirectory = path.resolve(__dirname, '../workspace/build');
 
-  await createEmptyWorkspaceDirectory(workspaceDirectory);
+  await createWorkspaceAndBuildDirectories(buildDirectory);
 
   const launchArgs = [workspaceDirectory];
 

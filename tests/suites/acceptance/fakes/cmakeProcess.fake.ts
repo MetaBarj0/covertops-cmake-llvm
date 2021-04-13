@@ -2,7 +2,7 @@ import { CmakeProcess } from '../../../../src/adapters/cmakeProcess';
 
 class SucceedingCmakeProcess implements CmakeProcess {
   checkCmakeVersion() {
-    return Promise.resolve("");
+    return Promise.resolve('');
   }
 
   buildCmakeTarget() {
