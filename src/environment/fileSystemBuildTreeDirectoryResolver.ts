@@ -18,7 +18,7 @@ export class FileSystemBuildTreeDirectoryResolver implements BuildTreeDirectoryR
           resolve(directoryPath);
         })
         .catch(_ => {
-          reject(`Cannot find the ${directoryPath} build tree directory. Ensure the 'cmake-llvm-coverage Build Tree Directory' ` +
+          reject(`Cannot find the build tree directory. Ensure the 'cmake-llvm-coverage Build Tree Directory' ` +
             'setting is correctly set and target to an existing cmake build tree directory.');
         });
     });

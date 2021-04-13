@@ -21,8 +21,8 @@ import {
 import {
   buildFakeCmakeProcess,
   buildSucceedingCmakeProcess,
-  buildFailingCmakeProcessForCmakeCommandCheck,
-  buildFailingCmakeProcessForTargetBuilding
+  buildFailingCmakeProcessForUnreachableCmake,
+  buildFailingCmakeProcessForBadTarget,
 } from './fakes/cmakeProcess.fake';
 
 import {
@@ -49,18 +49,18 @@ describe('DecorationLocationProvider service behavior.', () => {
   });
 
   it('should not be able to provide any decoration for uncovered code regions ' +
-    'when the cmake command does not execute cmake properly.',
+    'when the cmake command cannot be reached.',
     () => {
       const settings = buildInvalidCmakeCommandSetting();
-      const cmakeProcess = buildFailingCmakeProcessForCmakeCommandCheck();
+      const cmakeProcess = buildFailingCmakeProcessForUnreachableCmake();
       const buildTreeDirectoryResolver = buildSucceedingBuildTreeDirectoryResolver();
       const coverageInfoFileResolver = buildSucceedingCoverageInfoFileResolver();
 
       const provider = new DecorationLocationProvider(settings, cmakeProcess, buildTreeDirectoryResolver, coverageInfoFileResolver);
 
       return provider.obtainDecorationForUncoveredCodeRegions().should.eventually.be.rejectedWith(
-        'Error: cmake command is not invocable. ' +
-        'Ensure \'cmake-llvm-coverage Cmake Command\' setting is properly set.');
+        "Cannot find the cmake command. Ensure the 'cmake-llvm-coverage Cmake Command' " +
+        'setting is correctly set. Have you verified your PATH environment variable?');
     });
 
   it('should not be able to provide any decoration for uncovered code regions ' +
@@ -83,15 +83,15 @@ describe('DecorationLocationProvider service behavior.', () => {
     'when the cmake target cannot be run by cmake.',
     () => {
       const settings = buildInvalidCmakeTargetSetting();
-      const cmakeProcess = buildFailingCmakeProcessForTargetBuilding();
+      const cmakeProcess = buildFailingCmakeProcessForBadTarget();
       const buildDirectoryResolver = buildSucceedingBuildTreeDirectoryResolver();
       const coverageInfoFileResolver = buildSucceedingCoverageInfoFileResolver();
 
       const provider = new DecorationLocationProvider(settings, cmakeProcess, buildDirectoryResolver, coverageInfoFileResolver);
 
       return provider.obtainDecorationForUncoveredCodeRegions().should.eventually.be.rejectedWith(
-        `Error: Could not execute the specified cmake target '${settings.cmakeTarget}'. ` +
-        'Ensure \'cmake-llvm-coverage Cmake Target\' setting is properly set.');
+        'Error: Could not build the specified cmake target. ' +
+        "Ensure 'cmake-llvm-coverage Cmake Target' setting is properly set.");
     });
 
   it('should not be able to provide any decoration for uncovered code regions ' +

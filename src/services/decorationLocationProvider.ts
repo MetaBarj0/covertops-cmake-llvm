@@ -18,11 +18,9 @@ export class DecorationLocationProvider {
 
   async obtainDecorationForUncoveredCodeRegions() {
     await Promise.all([
-      this.checkCmakeCommand(),
-      this.buildCmakeTarget(),
+      this.buildTreeDirectoryResolver.getFullPath(),
+      this.cmakeProcess.buildCmakeTarget(),
       this.gatherCoverageInfo()]);
-
-    await this.buildTreeDirectoryResolver.getFullPath();
 
     return <CoverageDecorations>{};
   }
@@ -35,24 +33,6 @@ export class DecorationLocationProvider {
         'regular expression patterns provided in settings. ' +
         'Ensure \'cmake-llvm-coverage Cmake Target\' setting is properly set.');
     }
-  }
-
-  private async buildCmakeTarget() {
-    try {
-      await this.cmakeProcess.buildCmakeTarget();
-    } catch (e) {
-      throw new Error(`Error: Could not execute the specified cmake target \'${this.settings.cmakeTarget}\'. ` +
-        'Ensure \'cmake-llvm-coverage Cmake Target\' setting is properly set.');
-    }
-  }
-
-  private async checkCmakeCommand() {
-    try {
-      await this.cmakeProcess.checkCmakeVersion();
-    } catch (e) {
-      throw new Error('Error: cmake command is not invocable. ' +
-        'Ensure \'cmake-llvm-coverage Cmake Command\' setting is properly set.');
-    };
   }
 
   private readonly cmakeProcess: CmakeProcess;

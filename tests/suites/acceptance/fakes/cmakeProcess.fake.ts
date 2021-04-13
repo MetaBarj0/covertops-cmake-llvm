@@ -1,47 +1,39 @@
 import { CmakeProcess } from '../../../../src/adapters/cmakeProcess';
 
 class SucceedingCmakeProcess implements CmakeProcess {
-  checkCmakeVersion() {
-    return Promise.resolve('');
-  }
-
   buildCmakeTarget() {
     return Promise.resolve();
   }
 };
 
-class FailingCmakeProcessForCmakeCommandCheck implements CmakeProcess {
-  checkCmakeVersion() {
-    return Promise.reject(new Error());
-  }
-
+class FailingCmakeProcessForUnreachableCmake implements CmakeProcess {
   buildCmakeTarget() {
-    return Promise.resolve();
+    return Promise.reject(
+      "Cannot find the cmake command. Ensure the 'cmake-llvm-coverage Cmake Command' " +
+      'setting is correctly set. Have you verified your PATH environment variable?');
   }
 };
 
-class FailingCmakeProcessForTargetBuilding implements CmakeProcess {
-  checkCmakeVersion() {
-    return Promise.resolve("");
-  }
-
+class FailingCmakeProcessForBadTarget implements CmakeProcess {
   buildCmakeTarget() {
-    return Promise.reject(new Error());
+    return Promise.reject(
+      'Error: Could not build the specified cmake target. ' +
+      "Ensure 'cmake-llvm-coverage Cmake Target' setting is properly set.");
   }
-}
+};
 
 export function buildFakeCmakeProcess() {
   return new SucceedingCmakeProcess();
 }
 
-export function buildFailingCmakeProcessForCmakeCommandCheck() {
-  return new FailingCmakeProcessForCmakeCommandCheck();
+export function buildFailingCmakeProcessForUnreachableCmake() {
+  return new FailingCmakeProcessForUnreachableCmake();
+}
+
+export function buildFailingCmakeProcessForBadTarget() {
+  return new FailingCmakeProcessForBadTarget();
 }
 
 export function buildSucceedingCmakeProcess() {
   return new SucceedingCmakeProcess();
-}
-
-export function buildFailingCmakeProcessForTargetBuilding() {
-  return new FailingCmakeProcessForTargetBuilding();
 }
