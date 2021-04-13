@@ -22,7 +22,10 @@ describe('The way adapters can be instantiated when vscode has an active workspa
     settings.buildTreeDirectory.should.be.equal('build');
     settings.cmakeCommand.should.be.equal('cmake');
     settings.cmakeTarget.should.be.equal('reportCoverageDetails');
-    settings.coverageInfoFileNamePatterns.should.be.equal('default.covdata.json');
+
+    settings.coverageInfoFileNamePatterns.length.should.be.equal(1);
+    settings.coverageInfoFileNamePatterns[0].should.be.equal('default\\.covdata\\.json');
+
     settings.rootDirectory.should.be.equal(rootFolder);
   });
 });
