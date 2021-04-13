@@ -1,7 +1,7 @@
 {
-  "name": "cpp-llvm-coverage",
-  "displayName": "C++ file code coverage with Llvm",
-  "description": "Visual code coverage indicators for C++ files using Llvm and cmake capabilities.",
+  "name": "cmake-llvm-coverage",
+  "displayName": "Source code coverage using cmake and Llvm compiler infrastructure.",
+  "description": "Visual code coverage indicators for source code files using Llvm and cmake capabilities.",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.55.0"
@@ -11,55 +11,55 @@
     "Linters"
   ],
   "publisher": "SbastienLevy",
-  "homepage": "https://github.com/MetaBarj0/cpp-llvm-coverage",
+  "homepage": "https://github.com/MetaBarj0/cmake-llvm-coverage",
   "repository": {
-    "url": "https://github.com/MetaBarj0/cpp-llvm-coverage"
+    "url": "https://github.com/MetaBarj0/cmake-llvm-coverage"
   },
   "bugs": {
-    "url": "https://github.com/MetaBarj0/cpp-llvm-coverage/issues"
+    "url": "https://github.com/MetaBarj0/cmake-llvm-coverage/issues"
   },
   "keywords": [
-    "c++",
+    "cmake",
     "tdd",
     "unit",
     "test",
     "coverage",
-    "cmake",
     "llvm",
     "cpp",
+    "c++",
     "lint"
   ],
   "activationEvents": [
-    "onCommand:cpp-llvm-coverage.displayMissingCoverage"
+    "onCommand:cmake-llvm-coverage.displayMissingCoverage"
   ],
   "main": "./dist/extension.js",
   "contributes": {
     "configuration": [
       {
-        "title": "cpp-llvm-coverage",
+        "title": "cmake-llvm-coverage",
         "properties": {
-          "cpp-llvm-coverage.cmakeCommand": {
+          "cmake-llvm-coverage.cmakeCommand": {
             "type": "string",
             "default": "cmake",
             "minLength": 1,
             "scope": "window",
             "description": "The command to invoke cmake. May be an absolute path on the file system or just `cmake` if this latter is in your `$PATH` environment variable."
           },
-          "cpp-llvm-coverage.buildTreeDirectory": {
+          "cmake-llvm-coverage.buildTreeDirectory": {
             "type": "string",
             "default": "build",
             "minLength": 1,
             "scope": "window",
             "description": "The build tree root directory of your cmake project, relative to your workspace directory."
           },
-          "cpp-llvm-coverage.cmakeTarget": {
+          "cmake-llvm-coverage.cmakeTarget": {
             "type": "string",
             "default": "reportCoverageDetails",
             "minLength": 1,
             "scope": "window",
             "description": "The target that generates coverage information in json format files. Those files may be generated in the build directory specified in the `Build Tree Directory` setting. The specified target must exist."
           },
-          "cpp-llvm-coverage.coverageInfoFileNamePatterns": {
+          "cmake-llvm-coverage.coverageInfoFileNamePatterns": {
             "type": "array",
             "minItems": 1,
             "items": {
@@ -80,19 +80,19 @@
         {
           "when": "resourceLangId == cpp",
           "group": "navigation",
-          "command": "cpp-llvm-coverage.displayMissingCoverage"
+          "command": "cmake-llvm-coverage.displayMissingCoverage"
         }
       ],
       "commandPalette": [
         {
           "when": "resourceLangId == cpp",
-          "command": "cpp-llvm-coverage.displayMissingCoverage"
+          "command": "cmake-llvm-coverage.displayMissingCoverage"
         }
       ]
     },
     "commands": [
       {
-        "command": "cpp-llvm-coverage.displayMissingCoverage",
+        "command": "cmake-llvm-coverage.displayMissingCoverage",
         "title": "Display uncovered code regions",
         "enablement": "resourceLangId == cpp"
       }

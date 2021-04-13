@@ -32,7 +32,7 @@ export class DecorationLocationProvider {
     } catch (e) {
       throw new Error('Error: Could not find any file containing coverage information using ' +
         'regular expression patterns provided in settings. ' +
-        'Ensure \'cpp-llvm-coverage Cmake Target\' setting is properly set.');
+        'Ensure \'cmake-llvm-coverage Cmake Target\' setting is properly set.');
     }
   }
 
@@ -41,7 +41,7 @@ export class DecorationLocationProvider {
       await this.cmakeProcess.buildCmakeTarget();
     } catch (e) {
       throw new Error(`Error: Could not execute the specified cmake target \'${this.settings.cmakeTarget}\'. ` +
-        'Ensure \'cpp-llvm-coverage Cmake Target\' setting is properly set.');
+        'Ensure \'cmake-llvm-coverage Cmake Target\' setting is properly set.');
     }
   }
 
@@ -50,7 +50,7 @@ export class DecorationLocationProvider {
       await this.buildTreeDirectoryResolver.findDirectory();
     } catch (e) {
       throw new Error('Error: Build tree directory cannot be found. ' +
-        'Ensure \'cpp-llvm-coverage Build Tree Directory\' setting is properly set.');
+        'Ensure \'cmake-llvm-coverage Build Tree Directory\' setting is properly set.');
     }
   }
 
@@ -59,7 +59,7 @@ export class DecorationLocationProvider {
       await this.cmakeProcess.checkCmakeVersion();
     } catch (e) {
       throw new Error('Error: cmake command is not invocable. ' +
-        'Ensure \'cpp-llvm-coverage Cmake Command\' setting is properly set.');
+        'Ensure \'cmake-llvm-coverage Cmake Command\' setting is properly set.');
     };
   }
 

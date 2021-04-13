@@ -5,7 +5,7 @@ export class ExtensionSettings implements Settings {
   constructor() {
     this.checkWorkspace();
 
-    const extensionConfiguration = vscode.workspace.getConfiguration('cpp-llvm-coverage');
+    const extensionConfiguration = vscode.workspace.getConfiguration('cmake-llvm-coverage');
   }
 
   cmakeCommand = '';

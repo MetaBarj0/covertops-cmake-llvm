@@ -1,4 +1,4 @@
-# cpp-llvm-coverage
+# cmake-llvm-coverage
 
 Visual code coverage indicators for C++ files using Llvm and cmake
 capabilities.
@@ -49,16 +49,16 @@ immoderatly to get proficient with C++ and Visual Studio Code.
 
 The behavior of this extension can be set thanks to the following configuration switches:
 
-- `cpp-llvm-coverage.cmakeCommand`: The command to invoke cmake. May be an
+- `cmake-llvm-coverage.cmakeCommand`: The command to invoke cmake. May be an
 absolute path on the file system or just `cmake` if this latter is in your
 `$PATH` environment variable.
-- `cpp-llvm-coverage.buildTreeDirectory`: The build tree root directory of
+- `cmake-llvm-coverage.buildTreeDirectory`: The build tree root directory of
 your cmake project, relative to your workspace directory.
-- `cpp-llvm-coverage.cmakeTarget`: The target that generates coverage
+- `cmake-llvm-coverage.cmakeTarget`: The target that generates coverage
 information in json format files. Those files may be generated in the build
-directory specified in the `cpp-llvm-coverage.buildTreeDirectory` setting.
+directory specified in the `cmake-llvm-coverage.buildTreeDirectory` setting.
 The specified target must exist.
-- `cpp-llvm-coverage.coverageInfoFileNamePatterns`: Regular expression
+- `cmake-llvm-coverage.coverageInfoFileNamePatterns`: Regular expression
 patterns to use in order to find coverage information files from the build
 tree root directory. At least one file name is expected to be resolved using
 specified patterns.

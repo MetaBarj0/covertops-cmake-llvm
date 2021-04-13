@@ -60,7 +60,7 @@ describe('DecorationLocationProvider service behavior.', () => {
 
       return provider.obtainDecorationForUncoveredCodeRegions().should.eventually.be.rejectedWith(
         'Error: cmake command is not invocable. ' +
-        'Ensure \'cpp-llvm-coverage Cmake Command\' setting is properly set.');
+        'Ensure \'cmake-llvm-coverage Cmake Command\' setting is properly set.');
     });
 
   it('should not be able to provide any decoration for uncovered code regions ' +
@@ -76,7 +76,7 @@ describe('DecorationLocationProvider service behavior.', () => {
 
       return provider.obtainDecorationForUncoveredCodeRegions().should.eventually.be.rejectedWith(
         'Error: Build tree directory cannot be found. ' +
-        'Ensure \'cpp-llvm-coverage Build Tree Directory\' setting is properly set.');
+        'Ensure \'cmake-llvm-coverage Build Tree Directory\' setting is properly set.');
     });
 
   it('should not be able to provide any decoration for uncovered code regions ' +
@@ -91,7 +91,7 @@ describe('DecorationLocationProvider service behavior.', () => {
 
       return provider.obtainDecorationForUncoveredCodeRegions().should.eventually.be.rejectedWith(
         `Error: Could not execute the specified cmake target '${settings.cmakeTarget}'. ` +
-        'Ensure \'cpp-llvm-coverage Cmake Target\' setting is properly set.');
+        'Ensure \'cmake-llvm-coverage Cmake Target\' setting is properly set.');
     });
 
   it('should not be able to provide any decoration for uncovered code regions ' +
@@ -108,7 +108,7 @@ describe('DecorationLocationProvider service behavior.', () => {
       return provider.obtainDecorationForUncoveredCodeRegions().should.eventually.be.rejectedWith(
         'Error: Could not find any file containing coverage information using ' +
         'regular expression patterns provided in settings. ' +
-        'Ensure \'cpp-llvm-coverage Cmake Target\' setting is properly set.');
+        'Ensure \'cmake-llvm-coverage Cmake Target\' setting is properly set.');
     });
 
   it('should be able to provide decoration for uncovered code regions ' +
