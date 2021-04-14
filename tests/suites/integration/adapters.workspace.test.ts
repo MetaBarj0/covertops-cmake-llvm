@@ -76,4 +76,15 @@ describe('The way adapters can be instantiated when vscode has an active workspa
         "Cannot find the cmake command. Ensure the 'cmake-llvm-coverage Cmake Command' " +
         'setting is correctly set. Have you verified your PATH environment variable?');
     });
+
+  it('should throw when attempting to build an invalid specified cmake target in settings ' +
+    'with a reachable cmake command', () => {
+      const settings = new ExtensionSettings();
+      settings.cmakeCommand = 'cmake';
+      const process = new RealCmakeProcess(settings);
+
+      return process.buildCmakeTarget().should.eventually.be.rejectedWith(
+        'Error: Could not build the specified cmake target. ' +
+        "Ensure 'cmake-llvm-coverage Cmake Target' setting is properly set.");
+    });
 });
