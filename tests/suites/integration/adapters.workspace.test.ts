@@ -8,9 +8,9 @@ chai.should();
 const describe = mocha.describe;
 const it = mocha.it;
 
-import { ExtensionSettings } from '../../../src/environment/extensionSettings';
-import { FileSystemBuildTreeDirectoryResolver } from '../../../src/environment/fileSystemBuildTreeDirectoryResolver';
-import { RealCmakeProcess } from '../../../src/environment/realCmakeProcess';
+import { ExtensionSettings } from '../../../src/adapters/extensionSettings';
+import { FileSystemBuildTreeDirectoryResolver } from '../../../src/adapters/fileSystemBuildTreeDirectoryResolver';
+import { RealCmakeProcess } from '../../../src/adapters/realCmakeProcess';
 
 import * as vscode from 'vscode';
 

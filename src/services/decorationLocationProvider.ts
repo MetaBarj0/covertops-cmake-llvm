@@ -1,7 +1,7 @@
 import { CoverageDecorations } from '../records/coverageDecorations';
-import { CmakeProcess } from '../adapters/cmakeProcess';
-import { BuildTreeDirectoryResolver } from '../adapters/buildTreeDirectoryResolver';
-import { CoverageInfoFilesResolver } from '../adapters/coverageInfoFilesResolver';
+import { CmakeProcess } from '../ports/cmakeProcess';
+import { BuildTreeDirectoryResolver } from '../ports/buildTreeDirectoryResolver';
+import { CoverageInfoFilesResolver } from '../ports/coverageInfoFilesResolver';
 
 export class DecorationLocationProvider {
   constructor(

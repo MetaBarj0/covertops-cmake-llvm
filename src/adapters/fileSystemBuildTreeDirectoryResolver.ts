@@ -1,4 +1,4 @@
-import { BuildTreeDirectoryResolver } from "../adapters/buildTreeDirectoryResolver";
+import { BuildTreeDirectoryResolver } from "../ports/buildTreeDirectoryResolver";
 import { Settings } from "../records/settings";
 
 import { promises as fs } from 'fs';

@@ -1,4 +1,4 @@
-import { CoverageInfoFilesResolver } from '../../../../src/adapters/coverageInfoFilesResolver';
+import { CoverageInfoFilesResolver } from '../../../../src/ports/coverageInfoFilesResolver';
 
 class FailingCoverageInfoFileResolver implements CoverageInfoFilesResolver {
   findAllFiles() {
@@ -22,5 +22,4 @@ export function buildSucceedingCoverageInfoFileResolver() {
 
 export function buildFakeCoverageInfoFileResolver() {
   return buildFailingCoverageInfoFileResolver();
-
 }

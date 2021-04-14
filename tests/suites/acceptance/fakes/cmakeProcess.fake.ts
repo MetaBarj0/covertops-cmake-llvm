@@ -1,4 +1,4 @@
-import { CmakeProcess } from '../../../../src/adapters/cmakeProcess';
+import { CmakeProcess } from '../../../../src/ports/cmakeProcess';
 
 class SucceedingCmakeProcess implements CmakeProcess {
   buildCmakeTarget() {
