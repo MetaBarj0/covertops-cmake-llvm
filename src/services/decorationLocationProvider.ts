@@ -1,4 +1,3 @@
-import { Settings } from '../records/settings';
 import { CoverageDecorations } from '../records/coverageDecorations';
 import { CmakeProcess } from '../adapters/cmakeProcess';
 import { BuildTreeDirectoryResolver } from '../adapters/buildTreeDirectoryResolver';
@@ -6,11 +5,9 @@ import { CoverageInfoFilesResolver } from '../adapters/coverageInfoFilesResolver
 
 export class DecorationLocationProvider {
   constructor(
-    settings: Settings,
     cmakeProcess: CmakeProcess,
     buildTreeDirectoryResolver: BuildTreeDirectoryResolver,
     coverageInfoFileResolver: CoverageInfoFilesResolver) {
-    this.settings = settings;
     this.cmakeProcess = cmakeProcess;
     this.buildTreeDirectoryResolver = buildTreeDirectoryResolver;
     this.coverageInfoFileResolver = coverageInfoFileResolver;
@@ -36,7 +33,6 @@ export class DecorationLocationProvider {
   }
 
   private readonly cmakeProcess: CmakeProcess;
-  private readonly settings: Settings;
   private readonly buildTreeDirectoryResolver: BuildTreeDirectoryResolver;
   private readonly coverageInfoFileResolver: CoverageInfoFilesResolver;
 }

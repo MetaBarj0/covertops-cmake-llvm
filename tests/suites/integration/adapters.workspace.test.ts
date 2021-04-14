@@ -14,9 +14,7 @@ import { RealCmakeProcess } from '../../../src/environment/realCmakeProcess';
 
 import * as vscode from 'vscode';
 
-const workspaceFolders = vscode.workspace.workspaceFolders as Array<vscode.WorkspaceFolder>;
-const rootFolder = workspaceFolders[0].uri.fsPath;
-
+const rootFolder = (vscode.workspace.workspaceFolders as Array<vscode.WorkspaceFolder>)[0].uri.fsPath;
 
 describe('The way adapters can be instantiated when vscode has an active workspace', () => {
   it('should not throw any exception when instantiating extension settings and settings should be set with default values', () => {
@@ -44,9 +42,7 @@ describe('The way adapters can be instantiated when vscode has an active workspa
     'build tree directory resolver instance set up with an incorrect build tree directory in settings.',
     async () => {
       const settings = new ExtensionSettings();
-
       settings.buildTreeDirectory = 'buildz';
-
       const resolver = new FileSystemBuildTreeDirectoryResolver(settings);
 
       return resolver.getFullPath().should.eventually.be.rejectedWith(
@@ -58,7 +54,6 @@ describe('The way adapters can be instantiated when vscode has an active workspa
     'build tree directory resolver instance.',
     async () => {
       const settings = new ExtensionSettings();
-
       const resolver = new FileSystemBuildTreeDirectoryResolver(settings);
 
       return resolver.getFullPath().should.eventually.be.fulfilled;
@@ -66,7 +61,6 @@ describe('The way adapters can be instantiated when vscode has an active workspa
 
   it('should not throw when instantiating a cmake process adapter with an incorrect setting.', () => {
     const settings = new ExtensionSettings();
-
     settings.cmakeCommand = 'cmakez';
 
     (() => { new RealCmakeProcess(settings); }).should.not.throw();
@@ -75,9 +69,7 @@ describe('The way adapters can be instantiated when vscode has an active workspa
   it('should throw when attempting to build an assumed valid specified cmake target in settings ' +
     'with an unreachable cmake command', () => {
       const settings = new ExtensionSettings();
-
       settings.cmakeCommand = 'cmakez';
-
       const process = new RealCmakeProcess(settings);
 
       return process.buildCmakeTarget().should.eventually.be.rejectedWith(

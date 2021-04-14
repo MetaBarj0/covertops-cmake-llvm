@@ -30,9 +30,7 @@ async function runIntegrationTestsWithWorkspace(extensionDevelopmentPath: string
 
   await createWorkspaceAndBuildDirectories(buildDirectory);
 
-  const launchArgs = [workspaceDirectory];
-
-  await runTests({ extensionDevelopmentPath, extensionTestsPath, launchArgs });
+  return runTests({ extensionDevelopmentPath, extensionTestsPath, launchArgs: [workspaceDirectory] });
 }
 
 async function main() {

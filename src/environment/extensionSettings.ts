@@ -9,7 +9,7 @@ export class ExtensionSettings implements Settings {
 
     const vscodeSettings = vscode.workspace.getConfiguration('cmake-llvm-coverage');
 
-    this.buildTreeDirectory = path.normalize(vscodeSettings.get('buildTreeDirectory') as string);
+    this.buildTreeDirectory = vscodeSettings.get('buildTreeDirectory') as string;
     this.cmakeCommand = vscodeSettings.get('cmakeCommand') as string;
     this.cmakeTarget = vscodeSettings.get('cmakeTarget') as string;
     this.coverageInfoFileNamePatterns = vscodeSettings.get('coverageInfoFileNamePatterns') as Array<string>;
