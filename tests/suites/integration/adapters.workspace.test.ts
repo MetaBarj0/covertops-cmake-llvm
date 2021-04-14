@@ -80,11 +80,15 @@ describe('The way adapters can be instantiated when vscode has an active workspa
   it('should throw when attempting to build an invalid specified cmake target in settings ' +
     'with a reachable cmake command', () => {
       const settings = new ExtensionSettings();
-      settings.cmakeCommand = 'cmake';
+      settings.cmakeTarget = 'Oh my god! This is clearly an invalid cmake target';
       const process = new RealCmakeProcess(settings);
 
       return process.buildCmakeTarget().should.eventually.be.rejectedWith(
         'Error: Could not build the specified cmake target. ' +
         "Ensure 'cmake-llvm-coverage Cmake Target' setting is properly set.");
     });
+
+  it('should not throw when attempting to build a valid cmake target specified in settings', () => {
+    throw new Error('This test need a real cmake project, buildable in the workspace folder');
+  });
 });

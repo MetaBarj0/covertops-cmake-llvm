@@ -1,5 +1,5 @@
 import * as path from 'path';
-import * as fs from 'fs/promises';
+import * as fs from 'fs-extra';
 
 import { runTests } from 'vscode-test';
 
@@ -15,20 +15,17 @@ async function runIntegrationTestsWithoutWorkspace(extensionDevelopmentPath: str
   await runTests({ extensionDevelopmentPath, extensionTestsPath });
 }
 
-async function createWorkspaceAndBuildDirectories(workspaceDirectory: string) {
-  await fs.stat(workspaceDirectory)
-    .then(async _ => { await fs.rm(workspaceDirectory, { recursive: true }); })
-    .catch(_ => { });
-
-  return fs.mkdir(workspaceDirectory, { recursive: true });
+async function createCmakeProject() {
+  const src = path.resolve(__dirname, '../../tests/suites/integration/data/workspace');
+  const dst = path.resolve(__dirname, '../workspace');
+  return fs.copy(src, dst, { recursive: true, overwrite: true });
 }
 
 async function runIntegrationTestsWithWorkspace(extensionDevelopmentPath: string) {
   const extensionTestsPath = path.resolve(__dirname, './suites/integration/index.workspace');
   const workspaceDirectory = path.resolve(__dirname, '../workspace');
-  const buildDirectory = path.resolve(__dirname, '../workspace/build');
 
-  await createWorkspaceAndBuildDirectories(buildDirectory);
+  await createCmakeProject();
 
   return runTests({ extensionDevelopmentPath, extensionTestsPath, launchArgs: [workspaceDirectory] });
 }
@@ -40,8 +37,8 @@ async function main() {
     await runAcceptanceTests(extensionDevelopmentPath);
     await runIntegrationTestsWithoutWorkspace(extensionDevelopmentPath);
     await runIntegrationTestsWithWorkspace(extensionDevelopmentPath);
-  } catch (_) {
-    console.error('Failed to run tests');
+  } catch (error) {
+    console.error('Failed to run tests\n' + error);
     process.exit(1);
   }
 }
