@@ -30,7 +30,7 @@ import {
 } from './fakes/coverageInfoFileResolver.fake';
 
 describe('DecorationLocationProvider service behavior.', () => {
-  it('should be correctly instantiated with faked services and records.', () => {
+  it('should be correctly instantiated with faked adapters.', () => {
     (() => {
       new DecorationLocationProvider(
         buildFakeCmakeProcess(),
@@ -69,7 +69,8 @@ describe('DecorationLocationProvider service behavior.', () => {
     });
 
   it('should not be able to provide any decoration for uncovered code regions ' +
-    'when the cmake target cannot be run by cmake.',
+    'when the cmake target cannot be run by cmake though the cmake command is invocable and ' +
+    'the build tree directory exists.',
     () => {
       const cmakeProcess = buildFailingCmakeProcessForBadTarget();
       const buildDirectoryResolver = buildSucceedingBuildTreeDirectoryResolver();
@@ -99,7 +100,7 @@ describe('DecorationLocationProvider service behavior.', () => {
     });
 
   it('should be able to provide decoration for uncovered code regions ' +
-    'when all settings are properly set and are meaningful.',
+    'when all adapters work as expected.',
     () => {
       const cmakeProcess = buildSucceedingCmakeProcess();
       const buildDirectoryResolver = buildSucceedingBuildTreeDirectoryResolver();
