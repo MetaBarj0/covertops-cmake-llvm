@@ -1,5 +1,5 @@
-import { runFor } from '../runFor';
+import { configureAndRun } from '../configureAndRun';
 
 export function run() {
-  return runFor('./integration/**/**.workspace.test.js');
+  return configureAndRun('./integration/**/**.workspace.test.js', { timeout: '60s' });
 }

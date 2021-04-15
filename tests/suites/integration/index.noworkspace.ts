@@ -1,5 +1,5 @@
-import { runFor } from '../runFor';
+import { configureAndRun } from '../configureAndRun';
 
 export function run() {
-  return runFor('./integration/**/**.noworkspace.test.js');
+  return configureAndRun('./integration/**/**.noworkspace.test.js');
 }

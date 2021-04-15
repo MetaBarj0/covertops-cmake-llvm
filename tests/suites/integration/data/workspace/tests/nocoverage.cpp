@@ -2,4 +2,10 @@
 
 #include <catch2/catch.hpp>
 
-TEST_CASE("A test that test nothing") {}
+#include "lib.hpp"
+
+TEST_CASE("A test that tests almost nothing") {
+  const lib::my_fancy_lib lib;
+  const auto *const p_lib = &lib;
+  REQUIRE(&lib == p_lib);
+}

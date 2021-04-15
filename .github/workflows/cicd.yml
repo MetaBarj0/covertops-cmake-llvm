@@ -2,6 +2,7 @@ name: ci/cd
 
 env:
   NODE_VERSION: 15.x
+  ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
 on:
   push:
@@ -15,7 +16,8 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        # os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [macos-latest]
 
     runs-on: ${{ matrix.os }}
 
@@ -28,6 +30,14 @@ jobs:
 
       - name: Install CMake
         uses: lukka/get-cmake@latest
+
+      - name: Setup vswhere
+        if: runner.os == 'Windows'
+        uses: warrenbuckley/Setup-VSWhere@v1
+
+      - name: Setup c++ development environment
+        if: runner.os == 'Windows'
+        run: vswhere -latest -find '**/vcvarsall.bat'
 
       - name: Checkout
         uses: actions/checkout@v2

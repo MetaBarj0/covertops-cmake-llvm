@@ -1,5 +1,5 @@
-import { runFor } from '../runFor';
+import { configureAndRun } from '../configureAndRun';
 
 export function run() {
-  return runFor('./acceptance/**/**.test.js');
+  return configureAndRun('./acceptance/**/**.test.js');
 }

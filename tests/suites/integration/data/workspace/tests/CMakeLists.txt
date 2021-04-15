@@ -28,7 +28,7 @@ catch_discover_tests(Tests)
 if(${ENABLE_COVERAGE_WITH_LLVM})
   # specific flags to build the covered project. Enable source based Coverage
   # see:
-  # https://releases.llvm.org/11.0.0/tools/clang/docs/SourceBasedCodeCoverage.html
+  # https://releases.llvm.org/10.0.0/tools/clang/docs/SourceBasedCodeCoverage.html
   target_compile_options(Lib PRIVATE
                          -fprofile-instr-generate -fcoverage-mapping)
 
@@ -38,13 +38,6 @@ if(${ENABLE_COVERAGE_WITH_LLVM})
   set(llvmProfData ${llvmBinPath}/llvm-profdata)
   set(llvmCov ${llvmBinPath}/llvm-cov)
   get_target_property(testsBinaryDir Tests BINARY_DIR)
-
-  # A target to generate a coverage summary. It will be output to the standard
-  # output
-  add_custom_target(reportCoverageSummary
-                    DEPENDS default.profdata
-                    COMMAND ${llvmCov} report $<TARGET_FILE:Tests>
-                      -instr-profile=${testsBinaryDir}/default.profdata)
 
   # An internal custom command used as dependency of exposed targets to
   # generate coverage data
@@ -80,13 +73,4 @@ if(${ENABLE_COVERAGE_WITH_LLVM})
                        --instr-profile=${testsBinaryDir}/default.profdata
                        > ${testsBinaryDir}/default.covdata.json
                        VERBATIM)
-
-  # A post build internal command executed each time the reportCoverageDetails
-  # target is executed and reporting where is located the file containing
-  # detailled coverage information.
-  add_custom_command(TARGET reportCoverageDetails
-                     POST_BUILD
-                     COMMAND ${CMAKE_COMMAND}
-                       -E echo "Coverage data generated"
-                               "in ${testsBinaryDir}/default.covdata.json")
 endif()

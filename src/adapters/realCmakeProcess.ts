@@ -9,30 +9,35 @@ export class RealCmakeProcess implements CmakeProcess {
   }
 
   async buildCmakeTarget(): Promise<void> {
-    await this.ensureCmakeCommandIsReachable();
+    await this.runCmakeWith(
+      ['--version'],
+      "Cannot find the cmake command. Ensure the 'cmake-llvm-coverage Cmake Command' " +
+      'setting is correctly set. Have you verified your PATH environment variable?');
 
-    return Promise.reject(
-      'Error: Could not build the specified cmake target. ' +
+    await this.runCmakeWith(['-DCMAKE_CXX_COMPILER=clang++',
+      '-G', 'Ninja', '-S', '.', '-B', 'build']);
+
+    await this.runCmakeWith(
+      ['--build', 'build', '--target', this.settings.cmakeTarget],
+      `Error: Could not build the specified cmake target ${this.settings.cmakeTarget}. ` +
       "Ensure 'cmake-llvm-coverage Cmake Target' setting is properly set.");
   }
 
-  private readonly settings: Settings;
-
-  private ensureCmakeCommandIsReachable(): Promise<void> {
+  private runCmakeWith(args: Array<string>, rejectMessage?: string): Promise<void> {
     return new Promise((resolve, reject) => {
       cp.execFile(
         this.settings.cmakeCommand,
-        ['--version'],
+        args,
         { cwd: this.settings.rootDirectory, },
-        error => {
+        (error, stdout, stderr) => {
           if (error) {
-            reject(
-              "Cannot find the cmake command. Ensure the 'cmake-llvm-coverage Cmake Command' " +
-              'setting is correctly set. Have you verified your PATH environment variable?\n' +
-              error.message);
-          } else
+            reject(`${rejectMessage}\n${error.message}\n${stdout}\n${stderr}`);
+          }
+          else
             resolve();
         });
     });
   }
+
+  private readonly settings: Settings;
 };

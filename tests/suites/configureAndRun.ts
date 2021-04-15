@@ -2,12 +2,13 @@ import * as path from 'path';
 import * as Mocha from 'mocha';
 import * as glob from 'glob';
 
-export function runFor(testsGlob: string): Promise<void> {
+export function configureAndRun(testsGlob: string, options: Mocha.MochaOptions = {}): Promise<void> {
   return new Promise((resolve, reject) => {
     // Create the mocha test
     const mocha = new Mocha({
       ui: 'tdd',
-      color: true
+      color: true,
+      ...options
     });
 
     const testsRoot = path.resolve(__dirname, '.');
