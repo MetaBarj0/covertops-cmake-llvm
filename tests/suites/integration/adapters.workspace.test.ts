@@ -1,6 +1,7 @@
 import * as chai from 'chai';
 import * as mocha from 'mocha';
 import * as chaiAsPromised from 'chai-as-promised';
+import * as cp from 'child_process';
 
 chai.use(chaiAsPromised);
 chai.should();
@@ -92,6 +93,19 @@ describe('The way adapters can be instantiated when vscode has an active workspa
     const settings = new ExtensionSettings();
     const process = new RealCmakeProcess(settings);
 
-    return process.buildCmakeTarget().should.eventually.be.fulfilled;
+    return process.buildCmakeTarget()
+      .catch(reason => {
+        return new Promise<void>((_, reject) => {
+          cp.execFile(
+            'which',
+            [
+              'clang++'
+            ],
+            { cwd: settings.rootDirectory }, (_, stdout, __) => {
+              reject(`>>>${reason}\n>>>${stdout}`);
+            });
+        });
+      })
+      .should.eventually.be.fulfilled;
   });
 });

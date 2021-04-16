@@ -33,8 +33,10 @@ if(${ENABLE_COVERAGE_WITH_LLVM})
                          -fprofile-instr-generate -fcoverage-mapping)
   target_link_options(Lib PRIVATE
                       -fprofile-instr-generate -fcoverage-mapping)
+
+  # on macOS and linux, looks necessary, at least, maybe because "lib" is a static library
   target_compile_options(Tests PRIVATE
-                         -fprofile-instr-generate -fcoverage-mapping)
+                        -fprofile-instr-generate -fcoverage-mapping)
   target_link_options(Tests PRIVATE
                       -fprofile-instr-generate -fcoverage-mapping)
 
