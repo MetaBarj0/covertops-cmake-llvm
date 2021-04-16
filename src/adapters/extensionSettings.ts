@@ -1,7 +1,6 @@
 import { Settings } from '../records/settings';
 
 import * as vscode from 'vscode';
-import * as path from 'path';
 
 export class ExtensionSettings implements Settings {
   constructor() {
@@ -16,6 +15,8 @@ export class ExtensionSettings implements Settings {
 
     const workspaceFolders = vscode.workspace.workspaceFolders as Array<vscode.WorkspaceFolder>;
     this.rootDirectory = workspaceFolders[0].uri.fsPath;
+    // Todo : create setting here
+    this.additionalCmakeOptions = [];
   }
 
   buildTreeDirectory: string;
@@ -23,6 +24,7 @@ export class ExtensionSettings implements Settings {
   cmakeTarget: string;
   coverageInfoFileNamePatterns: Array<string>;
   rootDirectory: string;
+  additionalCmakeOptions: Array<string>;
 
   private ensureWorkspaceExistence() {
     if (vscode.workspace.workspaceFolders === undefined) {

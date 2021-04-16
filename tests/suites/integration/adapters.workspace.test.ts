@@ -1,7 +1,8 @@
 import * as chai from 'chai';
 import * as mocha from 'mocha';
 import * as chaiAsPromised from 'chai-as-promised';
-import * as cp from 'child_process';
+import { env } from 'process';
+import * as path from 'path';
 
 chai.use(chaiAsPromised);
 chai.should();
@@ -82,6 +83,11 @@ describe('The way adapters can be instantiated when vscode has an active workspa
     'with a reachable cmake command', () => {
       const settings = new ExtensionSettings();
       settings.cmakeTarget = 'Oh my god! This is clearly an invalid cmake target';
+      if (env['LLVM_DIR'])
+        settings.additionalCmakeOptions.push(`-DCMAKE_CXX_COMPILER=${env['LLVM_DIR']}/bin/clang++`);
+      else
+        settings.additionalCmakeOptions.push(`-DCMAKE_CXX_COMPILER=clang++`);
+
       const process = new RealCmakeProcess(settings);
 
       return process.buildCmakeTarget().should.eventually.be.rejectedWith(
@@ -91,21 +97,26 @@ describe('The way adapters can be instantiated when vscode has an active workspa
 
   it('should not throw when attempting to build a valid cmake target specified in settings', () => {
     const settings = new ExtensionSettings();
+    if (env['LLVM_DIR'])
+      settings.additionalCmakeOptions.push(`-DCMAKE_CXX_COMPILER=${path.normalize(`${env['LLVM_DIR']}${path.sep}bin${path.sep}clang++`)}`);
+    else
+      settings.additionalCmakeOptions.push(`-DCMAKE_CXX_COMPILER=clang++`);
+
     const process = new RealCmakeProcess(settings);
 
     return process.buildCmakeTarget()
-      .catch(reason => {
-        return new Promise<void>((_, reject) => {
-          cp.execFile(
-            'which',
-            [
-              'clang++'
-            ],
-            { cwd: settings.rootDirectory }, (_, stdout, __) => {
-              reject(`>>>${reason}\n>>>${stdout}`);
-            });
-        });
-      })
+      // .catch(reason => {
+      //   return new Promise<void>((_, reject) => {
+      //     cp.execFile(
+      //       'which',
+      //       [
+      //         'llvm-profdata'
+      //       ],
+      //       { cwd: settings.rootDirectory }, (_, stdout, __) => {
+      //         reject(`>>>${reason}\n>>>${stdout}`);
+      //       });
+      //   });
+      // })
       .should.eventually.be.fulfilled;
   });
 });

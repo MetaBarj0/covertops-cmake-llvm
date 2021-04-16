@@ -31,14 +31,8 @@ if(${ENABLE_COVERAGE_WITH_LLVM})
   # https://releases.llvm.org/10.0.0/tools/clang/docs/SourceBasedCodeCoverage.html
   target_compile_options(Lib PRIVATE
                          -fprofile-instr-generate -fcoverage-mapping)
-  target_link_options(Lib PRIVATE
-                      -fprofile-instr-generate -fcoverage-mapping)
-
-  # on macOS and linux, looks necessary, at least, maybe because "lib" is a static library
-  target_compile_options(Tests PRIVATE
-                        -fprofile-instr-generate -fcoverage-mapping)
   target_link_options(Tests PRIVATE
-                      -fprofile-instr-generate -fcoverage-mapping)
+                       -fprofile-instr-generate -fcoverage-mapping)
 
   # Useful variables used later, specific to llvm tools path and output
   # directory
