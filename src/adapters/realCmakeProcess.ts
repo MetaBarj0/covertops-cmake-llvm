@@ -14,7 +14,7 @@ export class RealCmakeProcess implements CmakeProcess {
       "Cannot find the cmake command. Ensure the 'cmake-llvm-coverage Cmake Command' " +
       'setting is correctly set. Have you verified your PATH environment variable?');
 
-    await this.runCmakeWith(['-DCMAKE_CXX_COMPILER=clang++',
+    await this.runCmakeWith(['-DCMAKE_CXX_COMPILER=clang++', '-DENABLE_COVERAGE_WITH_LLVM=on',
       '-G', 'Ninja', '-S', '.', '-B', 'build']);
 
     await this.runCmakeWith(
