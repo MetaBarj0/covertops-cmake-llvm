@@ -16,8 +16,8 @@ jobs:
   build:
     strategy:
       matrix:
-        # os: [macos-latest, ubuntu-latest, windows-latest]
-        os: [macos-latest]
+        # os: [ubuntu-latest, windows-latest]
+        os: [windows-latest]
 
     runs-on: ${{ matrix.os }}
 
@@ -35,7 +35,7 @@ jobs:
         if: runner.os == 'Windows'
         uses: warrenbuckley/Setup-VSWhere@v1
 
-      - name: Setup c++ development environment
+      - name: Setup c++ development environment on Windows platform
         if: runner.os == 'Windows'
         run: vswhere -latest -find '**/vcvarsall.bat'
 
@@ -51,18 +51,17 @@ jobs:
 
       - run: npm ci
 
-      - run: xvfb-run -a npm test
-        env: 
-          LLVM_DIR: ${{ runner.temp }}/llvm
+      - name: testing on Linux platform
         if: runner.os == 'Linux'
-
-      - run: npm test (macOS)
+        run: xvfb-run -a npm test
         env: 
           LLVM_DIR: ${{ runner.temp }}/llvm
-        if: runner.os == 'macOS'
 
-      - run: npm test (Windows)
+      - name: testing on Windows platform
         if: runner.os == 'Windows'
+        run: npm test
+        env: 
+          LLVM_DIR: ${{ runner.temp }}/llvm
 
   publish:
     if: startsWith(github.ref, 'refs/tags/releases')

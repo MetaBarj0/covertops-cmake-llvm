@@ -83,8 +83,12 @@ describe('The way adapters can be instantiated when vscode has an active workspa
     'with a reachable cmake command', () => {
       const settings = new ExtensionSettings();
       settings.cmakeTarget = 'Oh my god! This is clearly an invalid cmake target';
-      if (env['LLVM_DIR'])
-        settings.additionalCmakeOptions.push(`-DCMAKE_CXX_COMPILER=${env['LLVM_DIR']}/bin/clang++`);
+      if (env['LLVM_DIR']) {
+        const llvmDir = path.normalize(env['LLVM_DIR']);
+        const cxxCompiler = path.join(llvmDir, 'bin', 'clang++');
+        const fixedCxxCompiler = cxxCompiler.replace(/\\/g, '/');
+        settings.additionalCmakeOptions.push(`-DCMAKE_CXX_COMPILER="${fixedCxxCompiler}"`);
+      }
       else
         settings.additionalCmakeOptions.push(`-DCMAKE_CXX_COMPILER=clang++`);
 
@@ -97,26 +101,17 @@ describe('The way adapters can be instantiated when vscode has an active workspa
 
   it('should not throw when attempting to build a valid cmake target specified in settings', () => {
     const settings = new ExtensionSettings();
-    if (env['LLVM_DIR'])
-      settings.additionalCmakeOptions.push(`-DCMAKE_CXX_COMPILER=${path.normalize(`${env['LLVM_DIR']}${path.sep}bin${path.sep}clang++`)}`);
+    if (env['LLVM_DIR']) {
+      const llvmDir = path.normalize(env['LLVM_DIR']);
+      const cxxCompiler = path.join(llvmDir, 'bin', 'clang++');
+      const fixedCxxCompiler = cxxCompiler.replace(/\\/g, '/');
+      settings.additionalCmakeOptions.push(`-DCMAKE_CXX_COMPILER="${fixedCxxCompiler}"`);
+    }
     else
       settings.additionalCmakeOptions.push(`-DCMAKE_CXX_COMPILER=clang++`);
 
     const process = new RealCmakeProcess(settings);
 
-    return process.buildCmakeTarget()
-      // .catch(reason => {
-      //   return new Promise<void>((_, reject) => {
-      //     cp.execFile(
-      //       'which',
-      //       [
-      //         'llvm-profdata'
-      //       ],
-      //       { cwd: settings.rootDirectory }, (_, stdout, __) => {
-      //         reject(`>>>${reason}\n>>>${stdout}`);
-      //       });
-      //   });
-      // })
-      .should.eventually.be.fulfilled;
+    return process.buildCmakeTarget().should.eventually.be.fulfilled;
   });
 });
