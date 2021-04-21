@@ -3,19 +3,19 @@ import * as fs from 'fs-extra';
 
 import { runTests } from 'vscode-test';
 
-async function runAcceptanceTests(extensionDevelopmentPath: string) {
+function runAcceptanceTests(extensionDevelopmentPath: string) {
   const extensionTestsPath = path.resolve(__dirname, './suites/acceptance/index');
 
-  await runTests({ extensionDevelopmentPath, extensionTestsPath });
+  return runTests({ extensionDevelopmentPath, extensionTestsPath });
 }
 
-async function runIntegrationTestsWithoutWorkspace(extensionDevelopmentPath: string) {
+function runIntegrationTestsWithoutWorkspace(extensionDevelopmentPath: string) {
   const extensionTestsPath = path.resolve(__dirname, './suites/integration/index.noworkspace');
 
-  await runTests({ extensionDevelopmentPath, extensionTestsPath });
+  return runTests({ extensionDevelopmentPath, extensionTestsPath });
 }
 
-async function createCmakeProject() {
+function createCmakeProject() {
   const src = path.resolve(__dirname, '../../tests/suites/integration/data/workspace');
   const dst = path.resolve(__dirname, '../workspace');
   return fs.copy(src, dst, { recursive: true, overwrite: true });

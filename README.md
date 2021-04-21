@@ -62,6 +62,9 @@ The specified target must exist.
 patterns to use in order to find coverage information files from the build
 tree root directory. At least one file name is expected to be resolved using
 specified patterns.
+- `cmake-llvm-coverage.additionalCmakeOptions`: Additional options to pass to
+`cmake`, for instance, variable definitions indicating which compiler to use,
+preprocessor defines, etc.
 
 ## Designing simple code coverage targets with cmake
 

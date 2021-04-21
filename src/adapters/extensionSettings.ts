@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 
 export class ExtensionSettings implements Settings {
   constructor() {
-    this.ensureWorkspaceExistence();
+    this.ensureWorkspaceExists();
 
     const vscodeSettings = vscode.workspace.getConfiguration('cmake-llvm-coverage');
 
@@ -15,8 +15,8 @@ export class ExtensionSettings implements Settings {
 
     const workspaceFolders = vscode.workspace.workspaceFolders as Array<vscode.WorkspaceFolder>;
     this.rootDirectory = workspaceFolders[0].uri.fsPath;
-    // Todo : create setting here
-    this.additionalCmakeOptions = [];
+
+    this.additionalCmakeOptions = vscodeSettings.get('additionalCmakeOptions') as Array<string>;
   }
 
   buildTreeDirectory: string;
@@ -26,7 +26,7 @@ export class ExtensionSettings implements Settings {
   rootDirectory: string;
   additionalCmakeOptions: Array<string>;
 
-  private ensureWorkspaceExistence() {
+  private ensureWorkspaceExists() {
     if (vscode.workspace.workspaceFolders === undefined) {
       throw new Error('A workspace must be loaded to get coverage information.');
     }

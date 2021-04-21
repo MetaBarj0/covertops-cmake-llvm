@@ -16,8 +16,6 @@ import { RealCmakeProcess } from '../../../src/adapters/realCmakeProcess';
 
 import * as vscode from 'vscode';
 
-const rootFolder = (vscode.workspace.workspaceFolders as Array<vscode.WorkspaceFolder>)[0].uri.fsPath;
-
 describe('The way adapters can be instantiated when vscode has an active workspace', () => {
   it('should not throw any exception when instantiating extension settings and settings should be set with default values', () => {
     const settings = new ExtensionSettings();
@@ -28,7 +26,9 @@ describe('The way adapters can be instantiated when vscode has an active workspa
 
     settings.coverageInfoFileNamePatterns.length.should.be.equal(1);
     settings.coverageInfoFileNamePatterns[0].should.be.equal('default\\.covdata\\.json');
+    settings.additionalCmakeOptions.should.be.empty;
 
+    const rootFolder = (vscode.workspace.workspaceFolders as Array<vscode.WorkspaceFolder>)[0].uri.fsPath;
     settings.rootDirectory.should.be.equal(rootFolder);
   });
 
@@ -42,7 +42,7 @@ describe('The way adapters can be instantiated when vscode has an active workspa
 
   it('should not be possible to access the full path of the build tree directory using a ' +
     'build tree directory resolver instance set up with an incorrect build tree directory in settings.',
-    async () => {
+    () => {
       const settings = new ExtensionSettings();
       settings.buildTreeDirectory = 'buildz';
       const resolver = new FileSystemBuildTreeDirectoryResolver(settings);
@@ -54,7 +54,7 @@ describe('The way adapters can be instantiated when vscode has an active workspa
 
   it('should be possible to access the full path of the build tree directory using a ' +
     'build tree directory resolver instance.',
-    async () => {
+    () => {
       const settings = new ExtensionSettings();
       const resolver = new FileSystemBuildTreeDirectoryResolver(settings);
 
@@ -81,16 +81,11 @@ describe('The way adapters can be instantiated when vscode has an active workspa
 
   it('should throw when attempting to build an invalid specified cmake target in settings ' +
     'with a reachable cmake command', () => {
-      if (env['LLVM_DIR']) {
-        const binDir = path.join(env['LLVM_DIR'], 'bin');
-        const currentPath = <string>env['PATH'];
-        const newPath = `${binDir}${path.delimiter}${currentPath}`;
-        env['PATH'] = newPath;
-      }
+      prependLlvmBinDirToPathEnvironmentVariable();
 
       const settings = new ExtensionSettings();
       settings.cmakeTarget = 'Oh my god! This is clearly an invalid cmake target';
-      settings.additionalCmakeOptions.push(`-DCMAKE_CXX_COMPILER=clang++`);
+      settings.additionalCmakeOptions.push('-DCMAKE_CXX_COMPILER=clang++', '-G', 'Ninja');
 
       const process = new RealCmakeProcess(settings, env);
 
@@ -100,17 +95,22 @@ describe('The way adapters can be instantiated when vscode has an active workspa
     });
 
   it('should not throw when attempting to build a valid cmake target specified in settings', () => {
-    if (env['LLVM_DIR']) {
-      const binDir = path.join(env['LLVM_DIR'], 'bin');
-      const currentPath = <string>env['PATH'];
-      const newPath = `${binDir}${path.delimiter}${currentPath}`;
-      env['PATH'] = newPath;
-    }
+    prependLlvmBinDirToPathEnvironmentVariable();
+
     const settings = new ExtensionSettings();
-    settings.additionalCmakeOptions.push(`-DCMAKE_CXX_COMPILER=clang++`);
+    settings.additionalCmakeOptions.push('-DCMAKE_CXX_COMPILER=clang++', '-G', 'Ninja');
 
     const process = new RealCmakeProcess(settings, env);
 
     return process.buildCmakeTarget().should.eventually.be.fulfilled;
   });
 });
+
+function prependLlvmBinDirToPathEnvironmentVariable() {
+  if (env['LLVM_DIR']) {
+    const binDir = path.join(env['LLVM_DIR'], 'bin');
+    const currentPath = <string>env['PATH'];
+    const newPath = `${binDir}${path.delimiter}${currentPath}`;
+    env['PATH'] = newPath;
+  }
+}

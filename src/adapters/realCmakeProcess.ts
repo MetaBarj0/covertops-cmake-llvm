@@ -16,7 +16,7 @@ export class RealCmakeProcess implements CmakeProcess {
       'setting is correctly set. Have you verified your PATH environment variable?');
 
     await this.runCmakeWith([...this.settings.additionalCmakeOptions,
-      '-G', 'Ninja', '-S', '.', '-B', 'build']);
+      '-S', '.', '-B', 'build']);
 
     await this.runCmakeWith(
       ['--build', 'build', '--target', this.settings.cmakeTarget],
