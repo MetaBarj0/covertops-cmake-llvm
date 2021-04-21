@@ -16,8 +16,7 @@ jobs:
   build:
     strategy:
       matrix:
-        # os: [ubuntu-latest, windows-latest]
-        os: [windows-latest]
+        os: [macos-latest, ubuntu-latest, windows-latest]
 
     runs-on: ${{ matrix.os }}
 
@@ -57,8 +56,8 @@ jobs:
         env: 
           LLVM_DIR: ${{ runner.temp }}/llvm
 
-      - name: testing on Windows platform
-        if: runner.os == 'Windows'
+      - name: testing on Windows and macOS platforms
+        if: runner.os != 'Linux'
         run: npm test
         env: 
           LLVM_DIR: ${{ runner.temp }}/llvm

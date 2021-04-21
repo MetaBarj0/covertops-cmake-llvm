@@ -4,8 +4,9 @@ import { CmakeProcess } from "../ports/cmakeProcess";
 import * as cp from 'child_process';
 
 export class RealCmakeProcess implements CmakeProcess {
-  constructor(settings: Settings) {
+  constructor(settings: Settings, env?: NodeJS.ProcessEnv) {
     this.settings = settings;
+    this.env = env;
   }
 
   async buildCmakeTarget(): Promise<void> {
@@ -28,7 +29,7 @@ export class RealCmakeProcess implements CmakeProcess {
       cp.execFile(
         this.settings.cmakeCommand,
         args,
-        { cwd: this.settings.rootDirectory, },
+        { cwd: this.settings.rootDirectory, env: this.env },
         (error, stdout, stderr) => {
           if (error) {
             reject(`${rejectMessage}\n${error.message}\n${stdout}\n${stderr}`);
@@ -40,4 +41,5 @@ export class RealCmakeProcess implements CmakeProcess {
   }
 
   private readonly settings: Settings;
+  private readonly env?: NodeJS.ProcessEnv;
 };

@@ -81,18 +81,18 @@ describe('The way adapters can be instantiated when vscode has an active workspa
 
   it('should throw when attempting to build an invalid specified cmake target in settings ' +
     'with a reachable cmake command', () => {
+      if (env['LLVM_DIR']) {
+        const binDir = path.join(env['LLVM_DIR'], 'bin');
+        const currentPath = <string>env['PATH'];
+        const newPath = `${binDir}${path.delimiter}${currentPath}`;
+        env['PATH'] = newPath;
+      }
+
       const settings = new ExtensionSettings();
       settings.cmakeTarget = 'Oh my god! This is clearly an invalid cmake target';
-      if (env['LLVM_DIR']) {
-        const llvmDir = path.normalize(env['LLVM_DIR']);
-        const cxxCompiler = path.join(llvmDir, 'bin', 'clang++');
-        const fixedCxxCompiler = cxxCompiler.replace(/\\/g, '/');
-        settings.additionalCmakeOptions.push(`-DCMAKE_CXX_COMPILER="${fixedCxxCompiler}"`);
-      }
-      else
-        settings.additionalCmakeOptions.push(`-DCMAKE_CXX_COMPILER=clang++`);
+      settings.additionalCmakeOptions.push(`-DCMAKE_CXX_COMPILER=clang++`);
 
-      const process = new RealCmakeProcess(settings);
+      const process = new RealCmakeProcess(settings, env);
 
       return process.buildCmakeTarget().should.eventually.be.rejectedWith(
         `Error: Could not build the specified cmake target ${settings.cmakeTarget}. ` +
@@ -100,17 +100,16 @@ describe('The way adapters can be instantiated when vscode has an active workspa
     });
 
   it('should not throw when attempting to build a valid cmake target specified in settings', () => {
-    const settings = new ExtensionSettings();
     if (env['LLVM_DIR']) {
-      const llvmDir = path.normalize(env['LLVM_DIR']);
-      const cxxCompiler = path.join(llvmDir, 'bin', 'clang++');
-      const fixedCxxCompiler = cxxCompiler.replace(/\\/g, '/');
-      settings.additionalCmakeOptions.push(`-DCMAKE_CXX_COMPILER="${fixedCxxCompiler}"`);
+      const binDir = path.join(env['LLVM_DIR'], 'bin');
+      const currentPath = <string>env['PATH'];
+      const newPath = `${binDir}${path.delimiter}${currentPath}`;
+      env['PATH'] = newPath;
     }
-    else
-      settings.additionalCmakeOptions.push(`-DCMAKE_CXX_COMPILER=clang++`);
+    const settings = new ExtensionSettings();
+    settings.additionalCmakeOptions.push(`-DCMAKE_CXX_COMPILER=clang++`);
 
-    const process = new RealCmakeProcess(settings);
+    const process = new RealCmakeProcess(settings, env);
 
     return process.buildCmakeTarget().should.eventually.be.fulfilled;
   });
