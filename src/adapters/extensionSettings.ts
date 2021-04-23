@@ -11,7 +11,7 @@ export class ExtensionSettings implements Settings {
     this.buildTreeDirectory = vscodeSettings.get('buildTreeDirectory') as string;
     this.cmakeCommand = vscodeSettings.get('cmakeCommand') as string;
     this.cmakeTarget = vscodeSettings.get('cmakeTarget') as string;
-    this.coverageInfoFileNamePatterns = vscodeSettings.get('coverageInfoFileNamePatterns') as Array<string>;
+    this.coverageInfoFileName = vscodeSettings.get('coverageInfoFileName') as string;
 
     const workspaceFolders = vscode.workspace.workspaceFolders as Array<vscode.WorkspaceFolder>;
     this.rootDirectory = workspaceFolders[0].uri.fsPath;
@@ -22,7 +22,7 @@ export class ExtensionSettings implements Settings {
   buildTreeDirectory: string;
   cmakeCommand: string;
   cmakeTarget: string;
-  coverageInfoFileNamePatterns: Array<string>;
+  coverageInfoFileName: string;
   rootDirectory: string;
   additionalCmakeOptions: Array<string>;
 

@@ -8,7 +8,7 @@ chai.should();
 const describe = mocha.describe;
 const it = mocha.it;
 
-import { DecorationLocationProvider } from '../../../src/services/decorationLocationProvider';
+import { DecorationLocationsProvider } from '../../../src/services/decorationLocationsProvider';
 
 import {
   buildFakeCmakeProcess,
@@ -24,18 +24,18 @@ import {
 } from './fakes/buildTreeDirectoryResolver.fake';
 
 import {
-  buildFakeCoverageInfoFileResolver,
-  buildFailingCoverageInfoFileResolver,
-  buildSucceedingCoverageInfoFileResolver
+  buildFakeUncoveredCodeRegionsCollector,
+  buildFailingUncoveredCodeRegionsCollector,
+  buildSucceedingUncoveredCodeRegionsCollector
 } from './fakes/coverageInfoFileResolver.fake';
 
 describe('DecorationLocationProvider service behavior.', () => {
   it('should be correctly instantiated with faked adapters.', () => {
     (() => {
-      new DecorationLocationProvider(
+      new DecorationLocationsProvider(
         buildFakeCmakeProcess(),
         buildFakeBuildTreeDirectoryResolver(),
-        buildFakeCoverageInfoFileResolver());
+        buildFakeUncoveredCodeRegionsCollector());
     }).should.not.throw();
   });
 
@@ -44,11 +44,11 @@ describe('DecorationLocationProvider service behavior.', () => {
     () => {
       const cmakeProcess = buildFailingCmakeProcessForUnreachableCmake();
       const buildTreeDirectoryResolver = buildSucceedingBuildTreeDirectoryResolver();
-      const coverageInfoFileResolver = buildSucceedingCoverageInfoFileResolver();
+      const coverageInfoFileResolver = buildSucceedingUncoveredCodeRegionsCollector();
 
-      const provider = new DecorationLocationProvider(cmakeProcess, buildTreeDirectoryResolver, coverageInfoFileResolver);
+      const provider = new DecorationLocationsProvider(cmakeProcess, buildTreeDirectoryResolver, coverageInfoFileResolver);
 
-      return provider.obtainDecorationForUncoveredCodeRegions().should.eventually.be.rejectedWith(
+      return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
         "Cannot find the cmake command. Ensure the 'cmake-llvm-coverage Cmake Command' " +
         'setting is correctly set. Have you verified your PATH environment variable?');
     });
@@ -59,11 +59,11 @@ describe('DecorationLocationProvider service behavior.', () => {
     () => {
       const cmakeProcess = buildSucceedingCmakeProcess();
       const buildTreeDirectoryResolver = buildFailingBuildTreeDirectoryResolver();
-      const coverageInfoFileResolver = buildSucceedingCoverageInfoFileResolver();
+      const coverageInfoFileResolver = buildSucceedingUncoveredCodeRegionsCollector();
 
-      const provider = new DecorationLocationProvider(cmakeProcess, buildTreeDirectoryResolver, coverageInfoFileResolver);
+      const provider = new DecorationLocationsProvider(cmakeProcess, buildTreeDirectoryResolver, coverageInfoFileResolver);
 
-      return provider.obtainDecorationForUncoveredCodeRegions().should.eventually.be.rejectedWith(
+      return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
         'Error: Build tree directory cannot be found. ' +
         'Ensure \'cmake-llvm-coverage Build Tree Directory\' setting is properly set.');
     });
@@ -74,29 +74,28 @@ describe('DecorationLocationProvider service behavior.', () => {
     () => {
       const cmakeProcess = buildFailingCmakeProcessForBadTarget();
       const buildDirectoryResolver = buildSucceedingBuildTreeDirectoryResolver();
-      const coverageInfoFileResolver = buildSucceedingCoverageInfoFileResolver();
+      const coverageInfoFileResolver = buildSucceedingUncoveredCodeRegionsCollector();
 
-      const provider = new DecorationLocationProvider(cmakeProcess, buildDirectoryResolver, coverageInfoFileResolver);
+      const provider = new DecorationLocationsProvider(cmakeProcess, buildDirectoryResolver, coverageInfoFileResolver);
 
-      return provider.obtainDecorationForUncoveredCodeRegions().should.eventually.be.rejectedWith(
+      return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
         'Error: Could not build the specified cmake target. ' +
         "Ensure 'cmake-llvm-coverage Cmake Target' setting is properly set.");
     });
 
   it('should not be able to provide any decoration for uncovered code regions ' +
-    'when regular expression patterns for file name containing coverage info ' +
-    'do not lead to find files containing coverage information',
+    'when the coverage info file name does not target an existing file',
     () => {
       const cmakeProcess = buildSucceedingCmakeProcess();
       const buildDirectoryResolver = buildSucceedingBuildTreeDirectoryResolver();
-      const failingCoverageInfoFileResolver = buildFailingCoverageInfoFileResolver();
+      const failingCoverageInfoFileResolver = buildFailingUncoveredCodeRegionsCollector();
 
-      const provider = new DecorationLocationProvider(cmakeProcess, buildDirectoryResolver, failingCoverageInfoFileResolver);
+      const provider = new DecorationLocationsProvider(cmakeProcess, buildDirectoryResolver, failingCoverageInfoFileResolver);
 
-      return provider.obtainDecorationForUncoveredCodeRegions().should.eventually.be.rejectedWith(
-        'Error: Could not find any file containing coverage information using ' +
-        'regular expression patterns provided in settings. ' +
-        'Ensure \'cmake-llvm-coverage Cmake Target\' setting is properly set.');
+      return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
+        'Error: Could not find the file containing coverage information. ' +
+        'Ensure \'cmake-llvm-coverage Cmake Target\' and/or \'cmake-llvm-coverage Coverage Info File Name\' ' +
+        'settings are properly set.');
     });
 
   it('should be able to provide decoration for uncovered code regions ' +
@@ -104,10 +103,10 @@ describe('DecorationLocationProvider service behavior.', () => {
     () => {
       const cmakeProcess = buildSucceedingCmakeProcess();
       const buildDirectoryResolver = buildSucceedingBuildTreeDirectoryResolver();
-      const failingCoverageInfoFileResolver = buildSucceedingCoverageInfoFileResolver();
+      const failingCoverageInfoFileResolver = buildSucceedingUncoveredCodeRegionsCollector();
 
-      const provider = new DecorationLocationProvider(cmakeProcess, buildDirectoryResolver, failingCoverageInfoFileResolver);
+      const provider = new DecorationLocationsProvider(cmakeProcess, buildDirectoryResolver, failingCoverageInfoFileResolver);
 
-      return provider.obtainDecorationForUncoveredCodeRegions().should.eventually.be.fulfilled;
+      return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.fulfilled;
     });
 });

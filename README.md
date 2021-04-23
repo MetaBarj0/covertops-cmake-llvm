@@ -58,10 +58,9 @@ your cmake project, relative to your workspace directory.
 information in json format files. Those files may be generated in the build
 directory specified in the `cmake-llvm-coverage.buildTreeDirectory` setting.
 The specified target must exist.
-- `cmake-llvm-coverage.coverageInfoFileNamePatterns`: Regular expression
-patterns to use in order to find coverage information files from the build
-tree root directory. At least one file name is expected to be resolved using
-specified patterns.
+- `cmake-llvm-coverage.coverageInfoFileName`: The name of the json file
+containing coverage information. This file will be searched within the
+`buildTreeDirectory` hierarchy. This file must be unique.
 - `cmake-llvm-coverage.additionalCmakeOptions`: Additional options to pass to
 `cmake`, for instance, variable definitions indicating which compiler to use,
 preprocessor defines, etc.

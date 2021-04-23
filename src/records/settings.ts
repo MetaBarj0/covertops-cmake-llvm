@@ -2,7 +2,7 @@ export type Settings = {
   cmakeCommand: string;
   buildTreeDirectory: string;
   cmakeTarget: string;
-  coverageInfoFileNamePatterns: Array<string>,
+  coverageInfoFileName: string,
   rootDirectory: string,
   additionalCmakeOptions: Array<string>
 };

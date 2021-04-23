@@ -1,19 +1,19 @@
 import { CoverageDecorations } from '../records/coverageDecorations';
 import { CmakeProcess } from '../ports/cmakeProcess';
 import { BuildTreeDirectoryResolver } from '../ports/buildTreeDirectoryResolver';
-import { CoverageInfoFilesResolver } from '../ports/coverageInfoFilesResolver';
+import { UncoveredCodeRegionsCollector } from '../ports/uncoveredCodeRegionsCollector';
 
-export class DecorationLocationProvider {
+export class DecorationLocationsProvider {
   constructor(
     cmakeProcess: CmakeProcess,
     buildTreeDirectoryResolver: BuildTreeDirectoryResolver,
-    coverageInfoFileResolver: CoverageInfoFilesResolver) {
+    coverageInfoFileResolver: UncoveredCodeRegionsCollector) {
     this.cmakeProcess = cmakeProcess;
     this.buildTreeDirectoryResolver = buildTreeDirectoryResolver;
     this.coverageInfoFileResolver = coverageInfoFileResolver;
   }
 
-  async obtainDecorationForUncoveredCodeRegions() {
+  async getDecorationLocationsForUncoveredCodeRegions() {
     await Promise.all([
       this.buildTreeDirectoryResolver.getFullPath(),
       this.cmakeProcess.buildCmakeTarget(),
@@ -24,15 +24,15 @@ export class DecorationLocationProvider {
 
   private async gatherCoverageInfo() {
     try {
-      await this.coverageInfoFileResolver.findAllFiles();
+      await this.coverageInfoFileResolver.collectUncoveredCodeRegions();
     } catch (e) {
-      throw new Error('Error: Could not find any file containing coverage information using ' +
-        'regular expression patterns provided in settings. ' +
-        'Ensure \'cmake-llvm-coverage Cmake Target\' setting is properly set.');
+      throw new Error('Error: Could not find the file containing coverage information. ' +
+        'Ensure \'cmake-llvm-coverage Cmake Target\' and/or \'cmake-llvm-coverage Coverage Info File Name\' ' +
+        'settings are properly set.');
     }
   }
 
   private readonly cmakeProcess: CmakeProcess;
   private readonly buildTreeDirectoryResolver: BuildTreeDirectoryResolver;
-  private readonly coverageInfoFileResolver: CoverageInfoFilesResolver;
+  private readonly coverageInfoFileResolver: UncoveredCodeRegionsCollector;
 }

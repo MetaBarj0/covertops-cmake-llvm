@@ -59,18 +59,12 @@
             "scope": "window",
             "description": "The target that generates coverage information in json format files. Those files may be generated in the build directory specified in the `Build Tree Directory` setting. The specified target must exist."
           },
-          "cmake-llvm-coverage.coverageInfoFileNamePatterns": {
-            "type": "array",
-            "minItems": 1,
-            "items": {
-              "type": "string",
-              "minLength": 1
-            },
-            "default": [
-              "default\\.covdata\\.json"
-            ],
+          "cmake-llvm-coverage.coverageInfoFileName": {
+            "type": "string",
+            "default": "default.covdata.json",
+            "minLength": 1,
             "scope": "window",
-            "description": "Regular expression patterns to use in order to find coverage information files from the build tree root directory. At least one file name is expected to be resolved using specified patterns."
+            "description": "The name of the json file containing coverage information. This file will be searched within the `buildTreeDirectory` hierarchy. This file must be unique."
           },
           "cmake-llvm-coverage.additionalCmakeOptions": {
             "type": "array",

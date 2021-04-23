@@ -1,25 +1,25 @@
-import { CoverageInfoFilesResolver } from '../../../../src/ports/coverageInfoFilesResolver';
+import { UncoveredCodeRegionsCollector } from '../../../../src/ports/uncoveredCodeRegionsCollector';
 
-class FailingCoverageInfoFileResolver implements CoverageInfoFilesResolver {
-  findAllFiles() {
+class FailingUncoveredCodeRegionsCollector implements UncoveredCodeRegionsCollector {
+  collectUncoveredCodeRegions() {
     return Promise.reject();
   }
 };
 
-class SucceedingCoverageInfoFileResolver implements CoverageInfoFilesResolver {
-  findAllFiles() {
+class SucceedingUncoveredCodeRegionsCollector implements UncoveredCodeRegionsCollector {
+  collectUncoveredCodeRegions() {
     return Promise.resolve();
   }
 };
 
-export function buildFailingCoverageInfoFileResolver() {
-  return new FailingCoverageInfoFileResolver();
+export function buildFailingUncoveredCodeRegionsCollector() {
+  return new FailingUncoveredCodeRegionsCollector();
 }
 
-export function buildSucceedingCoverageInfoFileResolver() {
-  return new SucceedingCoverageInfoFileResolver();
+export function buildSucceedingUncoveredCodeRegionsCollector() {
+  return new SucceedingUncoveredCodeRegionsCollector();
 }
 
-export function buildFakeCoverageInfoFileResolver() {
-  return buildFailingCoverageInfoFileResolver();
+export function buildFakeUncoveredCodeRegionsCollector() {
+  return buildFailingUncoveredCodeRegionsCollector();
 }
