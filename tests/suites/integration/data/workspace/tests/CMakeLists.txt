@@ -14,7 +14,7 @@ set(CATCH2_MODULE_PATH ${catch2_SOURCE_DIR}/contrib/
 
 list(APPEND CMAKE_MODULE_PATH ${CATCH2_MODULE_PATH})
 
-add_executable(Tests "nocoverage.cpp")
+add_executable(Tests "partialcoverage.cpp")
 
 set_property(TARGET Tests PROPERTY CXX_STANDARD 20)
 
