@@ -15,7 +15,7 @@ export class DecorationLocationsProvider {
 
   async getDecorationLocationsForUncoveredCodeRegions() {
     await Promise.all([
-      this.buildTreeDirectoryResolver.getFullPath(),
+      this.buildTreeDirectoryResolver.resolveFullPath(),
       this.cmakeProcess.buildCmakeTarget(),
       this.gatherCoverageInfo()]);
 

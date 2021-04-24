@@ -1,13 +1,13 @@
 import { BuildTreeDirectoryResolver } from '../../../../src/ports/buildTreeDirectoryResolver';
 
 class SucceedingBuildTreeDirectoryResolver implements BuildTreeDirectoryResolver {
-  getFullPath() {
-    return Promise.resolve('');
+  resolveFullPath() {
+    return Promise.resolve();
   }
 }
 
 class FailingBuildTreeDirectoryResolver implements BuildTreeDirectoryResolver {
-  getFullPath() {
+  resolveFullPath() {
     return Promise.reject(
       'Error: Build tree directory cannot be found. ' +
       'Ensure \'cmake-llvm-coverage Build Tree Directory\' setting is properly set.');

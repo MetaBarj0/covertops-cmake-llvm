@@ -1,3 +1,3 @@
 export type BuildTreeDirectoryResolver = {
-  getFullPath(): Promise<string>;
+  resolveFullPath(): Promise<void>;
 };

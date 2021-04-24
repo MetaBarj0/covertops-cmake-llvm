@@ -9,13 +9,13 @@ export class FileSystemBuildTreeDirectoryResolver implements BuildTreeDirectoryR
     this.settings = settings;
   }
 
-  async getFullPath(): Promise<string> {
+  async resolveFullPath(): Promise<void> {
     return new Promise((resolve, reject) => {
       const directoryPath = this.constructDirectoryPath();
 
       fs.stat(directoryPath)
         .then(_ => {
-          resolve(directoryPath);
+          resolve();
         })
         .catch(_ => {
           reject(`Cannot find the build tree directory. Ensure the 'cmake-llvm-coverage Build Tree Directory' ` +

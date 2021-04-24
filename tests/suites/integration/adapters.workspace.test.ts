@@ -42,7 +42,7 @@ describe('The way adapters can be instantiated when vscode has an active workspa
       settings.buildTreeDirectory = 'buildz';
       const resolver = new FileSystemBuildTreeDirectoryResolver(settings);
 
-      return resolver.getFullPath().should.eventually.be.rejectedWith(
+      return resolver.resolveFullPath().should.eventually.be.rejectedWith(
         "Cannot find the build tree directory. Ensure the 'cmake-llvm-coverage Build Tree Directory' " +
         'setting is correctly set and target to an existing cmake build tree directory.');
     });
@@ -53,7 +53,7 @@ describe('The way adapters can be instantiated when vscode has an active workspa
       const settings = new ExtensionSettings();
       const resolver = new FileSystemBuildTreeDirectoryResolver(settings);
 
-      return resolver.getFullPath().should.eventually.be.fulfilled;
+      return resolver.resolveFullPath().should.eventually.be.fulfilled;
     });
 
   it('should not throw when instantiating a cmake process adapter with an incorrect setting.', () => {
