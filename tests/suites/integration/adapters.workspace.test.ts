@@ -1,14 +1,11 @@
 import * as chai from 'chai';
-import * as mocha from 'mocha';
+import { describe, it } from 'mocha';
 import * as chaiAsPromised from 'chai-as-promised';
 import { env } from 'process';
 import * as path from 'path';
 
 chai.use(chaiAsPromised);
 chai.should();
-
-const describe = mocha.describe;
-const it = mocha.it;
 
 import { ExtensionSettings } from '../../../src/adapters/extensionSettings';
 import { FileSystemBuildTreeDirectoryResolver } from '../../../src/adapters/fileSystemBuildTreeDirectoryResolver';
