@@ -7,32 +7,23 @@ export class DecorationLocationsProvider {
   constructor(
     cmakeProcess: CmakeProcess,
     buildTreeDirectoryResolver: BuildTreeDirectoryResolver,
-    coverageInfoFileResolver: UncoveredCodeRegionsCollector) {
+    uncoveredCodeRegionsCollector: UncoveredCodeRegionsCollector) {
     this.cmakeProcess = cmakeProcess;
     this.buildTreeDirectoryResolver = buildTreeDirectoryResolver;
-    this.coverageInfoFileResolver = coverageInfoFileResolver;
+    this.uncoveredCodeRegionsCollector = uncoveredCodeRegionsCollector;
   }
 
   async getDecorationLocationsForUncoveredCodeRegions() {
     await Promise.all([
       this.buildTreeDirectoryResolver.resolveFullPath(),
-      this.cmakeProcess.buildCmakeTarget(),
-      this.gatherCoverageInfo()]);
+      this.cmakeProcess.buildCmakeTarget()]);
 
-    return <CoverageDecorations>{};
-  }
+    await this.uncoveredCodeRegionsCollector.collectUncoveredCodeRegions();
 
-  private async gatherCoverageInfo() {
-    try {
-      await this.coverageInfoFileResolver.collectUncoveredCodeRegions();
-    } catch (e) {
-      throw new Error('Error: Could not find the file containing coverage information. ' +
-        'Ensure \'cmake-llvm-coverage Cmake Target\' and/or \'cmake-llvm-coverage Coverage Info File Name\' ' +
-        'settings are properly set.');
-    }
+    return new class implements CoverageDecorations { };
   }
 
   private readonly cmakeProcess: CmakeProcess;
   private readonly buildTreeDirectoryResolver: BuildTreeDirectoryResolver;
-  private readonly coverageInfoFileResolver: UncoveredCodeRegionsCollector;
+  private readonly uncoveredCodeRegionsCollector: UncoveredCodeRegionsCollector;
 }

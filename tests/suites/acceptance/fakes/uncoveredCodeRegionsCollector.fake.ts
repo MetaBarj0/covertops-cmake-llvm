@@ -2,7 +2,9 @@ import { UncoveredCodeRegionsCollector } from '../../../../src/ports/uncoveredCo
 
 class FailingUncoveredCodeRegionsCollector implements UncoveredCodeRegionsCollector {
   collectUncoveredCodeRegions() {
-    return Promise.reject();
+    return Promise.reject('Error: Could not find the file containing coverage information. ' +
+      'Ensure \'cmake-llvm-coverage Cmake Target\' and/or \'cmake-llvm-coverage Coverage Info File Name\' ' +
+      'settings are properly set.');
   }
 };
 
