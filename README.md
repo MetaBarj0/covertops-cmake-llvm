@@ -6,6 +6,10 @@ using Llvm capabilities.
 This extension will show all regions of code that are not covered for the
 currently edited source code file.
 
+The primary purpose of this extension is to help the developer to ensure
+she/he is following the Test Driven Development discipline correctly by
+reporting any region of the code that is not covered by a test.
+
 `Insert gif here`
 
 ## Features
@@ -30,10 +34,9 @@ capabilities. You will need :
 
 ### Note for Visual Studio 2019 users on Windows
 
-You can install the Llvm toolchain version 10 with the visual studio
-installer.
-As well, you can install a recent version of CMake directly from the Visual
-Studio 2019 installer program.
+You can install a recent version of the Llvm toolchain with the visual studio
+installer. As well, you can install a recent version of CMake directly from
+the Visual Studio 2019 installer program.
 
 ## Recommended extensions
 
@@ -47,15 +50,16 @@ immoderatly to get proficient with C++ and Visual Studio Code.
 
 ## Extension settings
 
-The behavior of this extension can be set thanks to the following configuration switches:
+The behavior of this extension can be set thanks to the following settings:
 
 - `cmake-llvm-coverage.cmakeCommand`: The command to invoke cmake. May be an
 absolute path on the file system or just `cmake` if this latter is in your
 `$PATH` environment variable.
 - `cmake-llvm-coverage.buildTreeDirectory`: The build tree root directory of
-your cmake project, relative to your workspace directory.
+your cmake project, relative to your workspace directory. This directory must
+exist, thus, ensure you generated your cmake project beforehand.
 - `cmake-llvm-coverage.cmakeTarget`: The target that generates coverage
-information in json format files. Those files may be generated in the build
+information in a json format file. This file may be generated in the build
 directory specified in the `cmake-llvm-coverage.buildTreeDirectory` setting.
 The specified target must exist.
 - `cmake-llvm-coverage.coverageInfoFileName`: The name of the json file
@@ -63,14 +67,21 @@ containing coverage information. This file will be searched within the
 `buildTreeDirectory` hierarchy. This file must be unique.
 - `cmake-llvm-coverage.additionalCmakeOptions`: Additional options to pass to
 `cmake`, for instance, variable definitions indicating which compiler to use,
-preprocessor defines, etc.
+preprocessor defines, the generator, etc.
 
 ## Designing simple code coverage targets with cmake
 
 Following is a small guide on how to design code coverage target for cmake
-that are useable with this extension. This guide is extracted from the
-<https://gitlab.com/troctsch.cpp/adventofcode> repository. This is a C++
-project.
+that are useable with this extension. This target rely on 2 distinct
+projects:
+
+- A static library project named whose the target name is `Lib`
+- A test project whose the target name is `Tests`
+
+The coverage reporting target is named `reportCoverageDetails`.
+
+**To verify**: This target may be added in its very own sub directory and used
+from a main CMakeLists.txt file.
 
 ### Conditional coverage
 
@@ -100,14 +111,16 @@ target aiming to generate precise coverage information in a json file :
 ```cmake
 # given conditional coverage reporting is enabled
 if(${ENABLE_COVERAGE_WITH_LLVM})
-  # specific flags to build the covered project (here AdventOfCode). Enable
-  # source based Coverage see:
+  # specific flags to build the covered project. Enable source based Coverage
+  # see:
   # https://releases.llvm.org/10.0.0/tools/clang/docs/SourceBasedCodeCoverage.html
-  target_compile_options(AdventOfCode PRIVATE
+  target_compile_options(Lib PRIVATE
                          -fprofile-instr-generate -fcoverage-mapping)
+  target_link_options(Tests PRIVATE
+                       -fprofile-instr-generate -fcoverage-mapping)
 
   # Useful variables used later, specific to llvm tools path and output
-  # directory (here, it is the output directory of the Tests target)
+  # directory
   get_filename_component(llvmBinPath ${CMAKE_CXX_COMPILER} DIRECTORY)
   set(llvmProfData ${llvmBinPath}/llvm-profdata)
   set(llvmCov ${llvmBinPath}/llvm-cov)
@@ -125,14 +138,13 @@ if(${ENABLE_COVERAGE_WITH_LLVM})
   # the test suite has been executed with latest modifications and latest
   # coverage data.
   add_custom_command(OUTPUT .testSuite.executed
-                     DEPENDS AdventOfCode Tests
+                     DEPENDS Lib Tests
                      COMMAND $<TARGET_FILE:Tests>
                      COMMAND ${CMAKE_COMMAND}
                      ARGS -E touch .testSuite.executed)
 
-  # A target to generate detailed coverage information in json format. This is
-  # a target needed by the extension which will utilize the produced
-  # default.covdata.json output file. To get help on how to exploit it, see:
+  # A target to generate detailed coverage information in json format. To get
+  # help on how to exploit it, see:
   # https://stackoverflow.com/questions/56013927/how-to-read-llvm-cov-json-format
   # https://llvm.org/doxygen/structllvm_1_1coverage_1_1CoverageSegment.html
   # https://llvm.org/doxygen/structllvm_1_1coverage_1_1CounterMappingRegion.html
@@ -140,8 +152,7 @@ if(${ENABLE_COVERAGE_WITH_LLVM})
                     DEPENDS default.covdata.json)
 
   # An internal command used to generate detailed coverage information in a
-  # file. This command is also mandatory as it is responsible to create the
-  # json file containing coverage info.
+  # file
   add_custom_command(OUTPUT default.covdata.json
                      DEPENDS default.profdata
                      COMMAND ${llvmCov} export --format=text
@@ -149,27 +160,6 @@ if(${ENABLE_COVERAGE_WITH_LLVM})
                        --instr-profile=${testsBinaryDir}/default.profdata
                        > ${testsBinaryDir}/default.covdata.json
                        VERBATIM)
-
-  # following section shows some useful targets and commands that are not
-  # mandatory for the extension to work.
-
-  # A target to generate a coverage summary. It will be output to the standard
-  # output (OPTIONAL: This one is not strictly required for the extension to
-  # work)
-  add_custom_target(reportCoverageSummary
-                    DEPENDS default.profdata
-                    COMMAND ${llvmCov} report $<TARGET_FILE:Tests>
-                      -instr-profile=${testsBinaryDir}/default.profdata)
-
-  # A post build internal command executed each time the reportCoverageDetails
-  # target is executed and reporting where is located the file containing
-  # detailled coverage information. Not strictly necessary for the extension
-  # but convenient.
-  add_custom_command(TARGET reportCoverageDetails
-                     POST_BUILD
-                     COMMAND ${CMAKE_COMMAND}
-                       -E echo "Coverage data generated"
-                               "in ${testsBinaryDir}/default.covdata.json")
 endif()
 ```
 
