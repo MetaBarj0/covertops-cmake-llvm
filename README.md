@@ -69,6 +69,14 @@ containing coverage information. This file will be searched within the
 `cmake`, for instance, variable definitions indicating which compiler to use,
 preprocessor defines, the generator, etc.
 
+## Default color
+
+One can customize the background color for the decoration associated to an
+uncovered region of code. Check the
+`cmakeLlvmCoverage.uncoveredCodeRegionBackground` color when editing
+`workbench: colorCustomization` in your settings.json file. The default
+value is `#FF0055` for all dark, light or high contrast themes.
+
 ## Designing simple code coverage targets with cmake
 
 Following is a small guide on how to design code coverage target for cmake

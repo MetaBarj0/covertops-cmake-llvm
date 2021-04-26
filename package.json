@@ -99,6 +99,17 @@
         "title": "Display uncovered code regions",
         "enablement": "resourceLangId == cpp"
       }
+    ],
+    "colors": [
+      {
+        "id": "cmakeLlvmCoverage.uncoveredCodeRegionBackground",
+        "description": "Background decoration for an uncovered code region",
+        "defaults": {
+          "dark": "#FF000055",
+          "light": "#FF000055",
+          "highContrast": "#FF000055"
+        }
+      }
     ]
   },
   "scripts": {
