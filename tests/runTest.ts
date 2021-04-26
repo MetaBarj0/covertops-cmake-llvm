@@ -9,6 +9,12 @@ function runAcceptanceTests(extensionDevelopmentPath: string) {
   return runTests({ extensionDevelopmentPath, extensionTestsPath });
 }
 
+function runUnitTests(extensionDevelopmentPath: string) {
+  const extensionTestsPath = path.resolve(__dirname, './suites/unit/index');
+
+  return runTests({ extensionDevelopmentPath, extensionTestsPath });
+}
+
 function runIntegrationTestsWithoutWorkspace(extensionDevelopmentPath: string) {
   const extensionTestsPath = path.resolve(__dirname, './suites/integration/index.noworkspace');
 
@@ -35,6 +41,7 @@ async function main() {
     const extensionDevelopmentPath = path.resolve(__dirname, '../..');
 
     await runAcceptanceTests(extensionDevelopmentPath);
+    await runUnitTests(extensionDevelopmentPath);
     await runIntegrationTestsWithoutWorkspace(extensionDevelopmentPath);
     await runIntegrationTestsWithWorkspace(extensionDevelopmentPath);
   } catch (error) {

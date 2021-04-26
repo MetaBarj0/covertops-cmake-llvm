@@ -32,6 +32,20 @@
       "preLaunchTask": "npm: test-compile"
     },
     {
+      "name": "Extension Unit Tests",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--disable-extensions",
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "--extensionTestsPath=${workspaceFolder}/out/tests/suites/unit/index"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/out/tests/acceptance/**/*.js"
+      ],
+      "preLaunchTask": "npm: test-compile"
+    },
+    {
       "name": "Extension no workspace Integration Tests",
       "type": "extensionHost",
       "request": "launch",
