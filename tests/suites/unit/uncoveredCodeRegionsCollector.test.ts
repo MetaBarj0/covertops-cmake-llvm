@@ -7,26 +7,29 @@ chai.should();
 
 import { StreamedUncoveredCodeRegionsCollector } from '../../../src/adapters/streamedUncoveredCodeRegionsCollector';
 
-import { Readable, ReadableOptions } from 'stream';
+import { Readable } from 'stream';
 
 describe('UncoveredCodeRegionsCollector behavior', () => {
-  it('should throw an exception when attempting to collect uncovered code region if the input stream is empty', () => {
-    const collector = new StreamedUncoveredCodeRegionsCollector(buildEmptyInputStream());
+  const theories = [buildNotJsonStream(), buildEmptyInputStream()];
 
-    return collector.collectUncoveredCodeRegions().should.eventually.be.rejectedWith(
-      'Cannot collect any missing coverage information. Input is empty.\n' +
-      'Ensure the cmake target you specified in `cmake-llvm-coverage: Cmake Target` setting lead to the creation ' +
-      'of a coverage information file.');
+  theories.forEach(readable => {
+    it('should throw an exception when attempting to collect uncovered code regions if the input stream ' +
+      'does not contain a json document.', () => {
+
+        const collector = new StreamedUncoveredCodeRegionsCollector(readable);
+
+        return collector.collectUncoveredCodeRegions().should.eventually.be.rejectedWith(
+          'Cannot collect any missing coverage information. Input is not a json document.\n' +
+          'Ensure the file you specified in `cmake-llvm-coverage: Coverage Info File Name` setting ' +
+          'target a json file containing coverage information.');
+      });
   });
 
-  it('should throw an exception when attempting to collect uncovered code region if the input stream ' +
-    'does not contain a json document.', () => {
-      const collector = new StreamedUncoveredCodeRegionsCollector(buildNotJsonStream());
+  it('should not throw when attempting to collect uncovered code regions if the input stream ' +
+    'is an empty json object', () => {
+      const collector = new StreamedUncoveredCodeRegionsCollector(buildEmptyJsonObjectStream());
 
-      return collector.collectUncoveredCodeRegions().should.eventually.be.rejectedWith(
-        'Cannot collect any missing coverage information. Input is not a json document.\n' +
-        'Ensure the file you specified in `cmake-llvm-coverage: Coverage Info File Name` setting ' +
-        'target a json file containing coverage information.');
+      return collector.collectUncoveredCodeRegions().should.eventually.be.fulfilled;
     });
 });
 
@@ -38,4 +41,8 @@ function buildEmptyInputStream(): Readable {
 
 function buildNotJsonStream(): Readable {
   return Readable.from('foo');
+}
+
+function buildEmptyJsonObjectStream(): Readable {
+  return Readable.from(JSON.stringify({}));
 }
