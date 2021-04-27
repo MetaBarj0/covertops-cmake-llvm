@@ -31,12 +31,9 @@ describe('UncoveredCodeRegionsCollector behavior', () => {
 });
 
 function buildEmptyInputStream(): Readable {
-  return new class extends Readable {
-    constructor(options?: ReadableOptions) {
-      super(options);
-      this.push(null);
-    }
-  };
+  const empty = (function* () { })();
+
+  return Readable.from(empty);
 }
 
 function buildNotJsonStream(): Readable {
