@@ -19,12 +19,12 @@ export class ExtensionSettings implements Settings {
     this.additionalCmakeOptions = vscodeSettings.get('additionalCmakeOptions') as Array<string>;
   }
 
-  buildTreeDirectory: string;
-  cmakeCommand: string;
-  cmakeTarget: string;
-  coverageInfoFileName: string;
-  rootDirectory: string;
-  additionalCmakeOptions: Array<string>;
+  readonly buildTreeDirectory: string;
+  readonly cmakeCommand: string;
+  readonly cmakeTarget: string;
+  readonly coverageInfoFileName: string;
+  readonly rootDirectory: string;
+  readonly additionalCmakeOptions: Array<string>;
 
   private ensureWorkspaceExists() {
     if (vscode.workspace.workspaceFolders === undefined) {

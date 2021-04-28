@@ -1,8 +1,8 @@
 export type Settings = {
-  cmakeCommand: string;
-  buildTreeDirectory: string;
-  cmakeTarget: string;
-  coverageInfoFileName: string,
-  rootDirectory: string,
-  additionalCmakeOptions: Array<string>
+  readonly cmakeCommand: string;
+  readonly buildTreeDirectory: string;
+  readonly cmakeTarget: string;
+  readonly coverageInfoFileName: string,
+  readonly rootDirectory: string,
+  readonly additionalCmakeOptions: Array<string>
 };
