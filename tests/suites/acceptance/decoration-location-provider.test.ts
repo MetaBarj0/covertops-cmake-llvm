@@ -5,26 +5,26 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
-import { DecorationLocationsProvider } from '../../../src/domain/services/decorationLocationsProvider';
+import { DecorationLocationsProvider } from '../../../src/domain/services/decoration-locations-provider';
 
 import {
   buildFakeCmakeProcess,
   buildSucceedingCmakeProcess,
   buildFailingCmakeProcessForUnreachableCmake,
   buildFailingCmakeProcessForBadTarget,
-} from './fakes/cmakeProcess.fake';
+} from './fakes/cmake-process.fake';
 
 import {
   buildFakeBuildTreeDirectoryResolver,
   buildSucceedingBuildTreeDirectoryResolver,
   buildFailingBuildTreeDirectoryResolver
-} from './fakes/buildTreeDirectoryResolver.fake';
+} from './fakes/build-tree-directory-resolver.fake';
 
 import {
   buildFakeUncoveredCodeRegionsCollector,
   buildFailingUncoveredCodeRegionsCollector,
   buildSucceedingUncoveredCodeRegionsCollector
-} from './fakes/uncoveredCodeRegionsCollector.fake';
+} from './fakes/uncovered-code-regions-collector.fake';
 
 describe('DecorationLocationProvider service behavior.', () => {
   it('should be correctly instantiated with faked adapters.', () => {

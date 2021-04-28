@@ -1,7 +1,7 @@
-import { CoverageDecorations } from '../value-objects/coverageDecorations';
-import { CmakeProcess } from '../ports/cmakeProcess';
-import { BuildTreeDirectoryResolver } from '../ports/buildTreeDirectoryResolver';
-import { UncoveredCodeRegionsCollector } from '../ports/uncoveredCodeRegionsCollector';
+import { CoverageDecorations } from '../value-objects/coverage-decorations';
+import { CmakeProcess } from '../ports/cmake-process';
+import { BuildTreeDirectoryResolver } from '../ports/build-tree-directory-resolver';
+import { UncoveredCodeRegionsCollector } from '../ports/uncovered-code-regions-collector';
 
 export class DecorationLocationsProvider {
   constructor(

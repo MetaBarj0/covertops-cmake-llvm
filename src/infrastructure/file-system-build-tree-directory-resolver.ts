@@ -1,4 +1,4 @@
-import { BuildTreeDirectoryResolver } from "../domain/ports/buildTreeDirectoryResolver";
+import { BuildTreeDirectoryResolver } from "../domain/ports/build-tree-directory-resolver";
 import { Settings } from '../domain/value-objects/settings';
 
 import { promises as fs } from 'fs';

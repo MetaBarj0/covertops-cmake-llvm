@@ -5,9 +5,9 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
-import { ExtensionSettings } from '../../../src/infrastructure/extensionSettings';
-import { FileSystemBuildTreeDirectoryResolver } from '../../../src/infrastructure/fileSystemBuildTreeDirectoryResolver';
-import { RealCmakeProcess } from '../../../src/infrastructure/realCmakeProcess';
+import { ExtensionSettings } from '../../../src/infrastructure/extension-settings';
+import { FileSystemBuildTreeDirectoryResolver } from '../../../src/infrastructure/file-system-build-tree-directory-resolver';
+import { RealCmakeProcess } from '../../../src/infrastructure/real-cmake-process';
 
 import * as vscode from 'vscode';
 import { env } from 'process';

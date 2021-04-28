@@ -1,5 +1,5 @@
 import { Settings } from "../domain/value-objects/settings";
-import { CmakeProcess } from "../domain/ports/cmakeProcess";
+import { CmakeProcess } from "../domain/ports/cmake-process";
 
 import * as cp from 'child_process';
 

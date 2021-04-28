@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import { describe, it } from 'mocha';
 import * as chaiAsPromised from 'chai-as-promised';
-import { ExtensionSettings } from '../../../src/infrastructure/extensionSettings';
+import { ExtensionSettings } from '../../../src/infrastructure/extension-settings';
 
 chai.use(chaiAsPromised);
 chai.should();

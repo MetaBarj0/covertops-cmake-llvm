@@ -1,4 +1,4 @@
-import { UncoveredCodeRegionsCollector } from '../../../../src/domain/ports/uncoveredCodeRegionsCollector';
+import { UncoveredCodeRegionsCollector } from '../../../../src/domain/ports/uncovered-code-regions-collector';
 
 class FailingUncoveredCodeRegionsCollector implements UncoveredCodeRegionsCollector {
   collectUncoveredCodeRegions() {
