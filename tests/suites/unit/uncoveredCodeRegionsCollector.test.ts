@@ -5,7 +5,7 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
-import { StreamedUncoveredCodeRegionsCollector } from '../../../src/adapters/streamedUncoveredCodeRegionsCollector';
+import { StreamedUncoveredCodeRegionsCollector } from '../../../src/infrastructure/streamedUncoveredCodeRegionsCollector';
 
 import { Readable } from 'stream';
 

@@ -1,4 +1,4 @@
-import { UncoveredCodeRegionsCollector } from "../ports/uncoveredCodeRegionsCollector";
+import { UncoveredCodeRegionsCollector } from "../domain/ports/uncoveredCodeRegionsCollector";
 
 import { Readable } from 'stream';
 

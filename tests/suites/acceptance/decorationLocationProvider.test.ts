@@ -5,7 +5,7 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
-import { DecorationLocationsProvider } from '../../../src/services/decorationLocationsProvider';
+import { DecorationLocationsProvider } from '../../../src/domain/services/decorationLocationsProvider';
 
 import {
   buildFakeCmakeProcess,

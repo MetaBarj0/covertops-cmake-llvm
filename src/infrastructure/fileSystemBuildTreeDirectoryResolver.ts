@@ -1,5 +1,5 @@
-import { BuildTreeDirectoryResolver } from "../ports/buildTreeDirectoryResolver";
-import { Settings } from "../records/settings";
+import { BuildTreeDirectoryResolver } from "../domain/ports/buildTreeDirectoryResolver";
+import { Settings } from '../domain/value-objects/settings';
 
 import { promises as fs } from 'fs';
 import * as path from 'path';

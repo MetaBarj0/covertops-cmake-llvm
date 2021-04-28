@@ -1,4 +1,4 @@
-import { Settings } from '../records/settings';
+import { Settings } from '../domain/value-objects/settings';
 
 import * as vscode from 'vscode';
 

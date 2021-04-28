@@ -1,4 +1,4 @@
-import { BuildTreeDirectoryResolver } from '../../../../src/ports/buildTreeDirectoryResolver';
+import { BuildTreeDirectoryResolver } from '../../../../src/domain/ports/buildTreeDirectoryResolver';
 
 class SucceedingBuildTreeDirectoryResolver implements BuildTreeDirectoryResolver {
   resolveFullPath() {

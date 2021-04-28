@@ -1,4 +1,4 @@
-import { CoverageDecorations } from '../records/coverageDecorations';
+import { CoverageDecorations } from '../value-objects/coverageDecorations';
 import { CmakeProcess } from '../ports/cmakeProcess';
 import { BuildTreeDirectoryResolver } from '../ports/buildTreeDirectoryResolver';
 import { UncoveredCodeRegionsCollector } from '../ports/uncoveredCodeRegionsCollector';
