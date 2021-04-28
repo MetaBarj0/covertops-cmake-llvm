@@ -1,11 +1,9 @@
-import { UncoveredCodeRegionsCollector } from "../domain/ports/uncovered-code-regions-collector";
-
 import { Readable } from 'stream';
 
 import { parser } from 'stream-json/Parser';
 import { chain } from 'stream-chain';
 
-export class StreamedUncoveredCodeRegionsCollector implements UncoveredCodeRegionsCollector {
+export class StreamedUncoveredCodeRegionsCollector {
   constructor(inputStream: Readable) {
     this.inputStream = inputStream;
   }

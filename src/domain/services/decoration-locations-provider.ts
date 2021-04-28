@@ -1,16 +1,16 @@
 import { CoverageDecorations } from '../value-objects/coverage-decorations';
 import { CmakeProcess } from '../ports/cmake-process';
 import { BuildTreeDirectoryResolver } from '../ports/build-tree-directory-resolver';
-import { UncoveredCodeRegionsCollector } from '../ports/uncovered-code-regions-collector';
+import { StreamedUncoveredCodeRegionsCollector } from '../services/streamed-uncovered-code-regions-collector';
 
 export class DecorationLocationsProvider {
   constructor(
     cmakeProcess: CmakeProcess,
     buildTreeDirectoryResolver: BuildTreeDirectoryResolver,
-    uncoveredCodeRegionsCollector: UncoveredCodeRegionsCollector) {
+    streamedUncoveredCodeRegionsCollector: StreamedUncoveredCodeRegionsCollector) {
     this.cmakeProcess = cmakeProcess;
     this.buildTreeDirectoryResolver = buildTreeDirectoryResolver;
-    this.uncoveredCodeRegionsCollector = uncoveredCodeRegionsCollector;
+    this.streamedUncoveredCodeRegionsCollector = streamedUncoveredCodeRegionsCollector;
   }
 
   async getDecorationLocationsForUncoveredCodeRegions() {
@@ -18,12 +18,12 @@ export class DecorationLocationsProvider {
       this.buildTreeDirectoryResolver.resolveFullPath(),
       this.cmakeProcess.buildCmakeTarget()]);
 
-    await this.uncoveredCodeRegionsCollector.collectUncoveredCodeRegions();
+    await this.streamedUncoveredCodeRegionsCollector.collectUncoveredCodeRegions();
 
     return new class implements CoverageDecorations { };
   }
 
   private readonly cmakeProcess: CmakeProcess;
   private readonly buildTreeDirectoryResolver: BuildTreeDirectoryResolver;
-  private readonly uncoveredCodeRegionsCollector: UncoveredCodeRegionsCollector;
+  private readonly streamedUncoveredCodeRegionsCollector: StreamedUncoveredCodeRegionsCollector;
 }
