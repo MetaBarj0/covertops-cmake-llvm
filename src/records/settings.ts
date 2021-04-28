@@ -4,5 +4,5 @@ export type Settings = {
   readonly cmakeTarget: string;
   readonly coverageInfoFileName: string,
   readonly rootDirectory: string,
-  readonly additionalCmakeOptions: Array<string>
+  readonly additionalCmakeOptions: ReadonlyArray<string>
 };

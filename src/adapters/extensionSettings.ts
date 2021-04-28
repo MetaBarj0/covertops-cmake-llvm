@@ -24,7 +24,7 @@ export class ExtensionSettings implements Settings {
   readonly cmakeTarget: string;
   readonly coverageInfoFileName: string;
   readonly rootDirectory: string;
-  readonly additionalCmakeOptions: Array<string>;
+  readonly additionalCmakeOptions: ReadonlyArray<string>;
 
   private ensureWorkspaceExists() {
     if (vscode.workspace.workspaceFolders === undefined) {

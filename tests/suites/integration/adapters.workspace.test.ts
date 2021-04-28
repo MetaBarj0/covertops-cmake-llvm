@@ -1,8 +1,6 @@
 import * as chai from 'chai';
-import { describe, it } from 'mocha';
+import { describe, it, before, after } from 'mocha';
 import * as chaiAsPromised from 'chai-as-promised';
-import { env } from 'process';
-import * as path from 'path';
 
 chai.use(chaiAsPromised);
 chai.should();
@@ -12,8 +10,10 @@ import { FileSystemBuildTreeDirectoryResolver } from '../../../src/adapters/file
 import { RealCmakeProcess } from '../../../src/adapters/realCmakeProcess';
 
 import * as vscode from 'vscode';
+import { env } from 'process';
+import * as path from 'path';
 
-describe('The way adapters can be instantiated when vscode has an active workspace', () => {
+describe('The internal services can be instantiated when vscode has an active workspace', () => {
   it('should not throw any exception when instantiating extension settings and settings should be set with default values', () => {
     const settings = new ExtensionSettings();
 
@@ -27,85 +27,122 @@ describe('The way adapters can be instantiated when vscode has an active workspa
     settings.rootDirectory.should.be.equal(rootFolder);
   });
 
-  it('should not throw an exception when instantiating a build tree directory resolver with an incorrect setting.', () => {
-    const settings = new ExtensionSettings();
+  describe('with incorrect build tree directory setting', () => {
+    before('Modifying build tree directory setting', async () => {
+      await vscode.workspace.getConfiguration('cmake-llvm-coverage').update('buildTreeDirectory', 'buildz');
+    });
 
-    settings.buildTreeDirectory = 'buildz';
+    it('should not be possible to access the full path of the build tree directory using a ' +
+      'build tree directory resolver instance set up with an incorrect build tree directory in settings.',
+      () => {
+        const settings = new ExtensionSettings();
+        const resolver = new FileSystemBuildTreeDirectoryResolver(settings);
 
-    (() => { new FileSystemBuildTreeDirectoryResolver(settings); }).should.not.throw();
+        return resolver.resolveFullPath().should.eventually.be.rejectedWith(
+          "Cannot find the build tree directory. Ensure the 'cmake-llvm-coverage Build Tree Directory' " +
+          'setting is correctly set and target to an existing cmake build tree directory.');
+      });
+
+    after('restoring build tree directory setting', async () => {
+      await vscode.workspace.getConfiguration('cmake-llvm-coverage').update('buildTreeDirectory', 'build');
+    });
   });
 
-  it('should not be possible to access the full path of the build tree directory using a ' +
-    'build tree directory resolver instance set up with an incorrect build tree directory in settings.',
-    () => {
-      const settings = new ExtensionSettings();
-      settings.buildTreeDirectory = 'buildz';
-      const resolver = new FileSystemBuildTreeDirectoryResolver(settings);
-
-      return resolver.resolveFullPath().should.eventually.be.rejectedWith(
-        "Cannot find the build tree directory. Ensure the 'cmake-llvm-coverage Build Tree Directory' " +
-        'setting is correctly set and target to an existing cmake build tree directory.');
+  describe('with invalid cmake command setting', () => {
+    before('Modifying cmake command setting', async () => {
+      await vscode.workspace.getConfiguration('cmake-llvm-coverage').update('cmakeCommand', 'cmakez');
     });
 
-  it('should be possible to access the full path of the build tree directory using a ' +
-    'build tree directory resolver instance.',
-    () => {
-      const settings = new ExtensionSettings();
-      const resolver = new FileSystemBuildTreeDirectoryResolver(settings);
+    it('should throw when attempting to build an assumed valid specified cmake target in settings ' +
+      'with an unreachable cmake command', () => {
+        const settings = new ExtensionSettings();
+        const process = new RealCmakeProcess(settings);
 
-      return resolver.resolveFullPath().should.eventually.be.fulfilled;
+        return process.buildCmakeTarget().should.eventually.be.rejectedWith(
+          "Cannot find the cmake command. Ensure the 'cmake-llvm-coverage Cmake Command' " +
+          'setting is correctly set. Have you verified your PATH environment variable?');
+      });
+
+    after('restoring cmake command setting', async () => {
+      await vscode.workspace.getConfiguration('cmake-llvm-coverage').update('cmakeCommand', 'cmake');
     });
-
-  it('should not throw when instantiating a cmake process adapter with an incorrect setting.', () => {
-    const settings = new ExtensionSettings();
-    settings.cmakeCommand = 'cmakez';
-
-    (() => { new RealCmakeProcess(settings); }).should.not.throw();
   });
 
-  it('should throw when attempting to build an assumed valid specified cmake target in settings ' +
-    'with an unreachable cmake command', () => {
-      const settings = new ExtensionSettings();
-      settings.cmakeCommand = 'cmakez';
-      const process = new RealCmakeProcess(settings);
+  describe('with invalid cmake target setting and additional cmake options', () => {
+    let originalEnvPath: string;
 
-      return process.buildCmakeTarget().should.eventually.be.rejectedWith(
-        "Cannot find the cmake command. Ensure the 'cmake-llvm-coverage Cmake Command' " +
-        'setting is correctly set. Have you verified your PATH environment variable?');
+    before('Modifying cmake target and additional options settings and PATH environment variable', async () => {
+      await vscode.workspace.getConfiguration('cmake-llvm-coverage')
+        .update('cmakeTarget', 'Oh my god! This is clearly an invalid cmake target');
+      await vscode.workspace.getConfiguration('cmake-llvm-coverage').update(
+        'additionalCmakeOptions', ['-DCMAKE_CXX_COMPILER=clang++', '-G', 'Ninja']);
+
+      originalEnvPath = prependLlvmBinDirToPathEnvironmentVariable();
     });
 
-  it('should throw when attempting to build an invalid specified cmake target in settings ' +
-    'with a reachable cmake command', () => {
-      prependLlvmBinDirToPathEnvironmentVariable();
+    it('should throw when attempting to build an invalid specified cmake target in settings ' +
+      'with a reachable cmake command', () => {
 
+        const settings = new ExtensionSettings();
+
+        const process = new RealCmakeProcess(settings, env);
+
+        return process.buildCmakeTarget().should.eventually.be.rejectedWith(
+          `Error: Could not build the specified cmake target ${settings.cmakeTarget}. ` +
+          "Ensure 'cmake-llvm-coverage Cmake Target' setting is properly set.");
+      });
+
+    after('restoring cmake target and additonal options settings and PATH environment variable', async () => {
+      await vscode.workspace.getConfiguration('cmake-llvm-coverage').update('cmakeTarget', 'reportCoverageDetails');
+      await vscode.workspace.getConfiguration('cmake-llvm-coverage').update('additionalCmakeOptions', []);
+
+      env['PATH'] = originalEnvPath;
+    });
+  });
+
+  describe('with correct settings and additional cmake options', () => {
+    let originalEnvPath: string;
+
+    before('Modifying additional cmake command options PATH environment variable', async () => {
+      await vscode.workspace.getConfiguration('cmake-llvm-coverage').update(
+        'additionalCmakeOptions', ['-DCMAKE_CXX_COMPILER=clang++', '-G', 'Ninja']);
+
+      originalEnvPath = prependLlvmBinDirToPathEnvironmentVariable();
+    });
+
+    it('should be possible to access the full path of the build tree directory using a ' +
+      'build tree directory resolver instance.',
+      () => {
+        const settings = new ExtensionSettings();
+        const resolver = new FileSystemBuildTreeDirectoryResolver(settings);
+
+        return resolver.resolveFullPath().should.eventually.be.fulfilled;
+      });
+
+    it('should not throw when attempting to build a valid cmake target specified in settings', () => {
       const settings = new ExtensionSettings();
-      settings.cmakeTarget = 'Oh my god! This is clearly an invalid cmake target';
-      settings.additionalCmakeOptions.push('-DCMAKE_CXX_COMPILER=clang++', '-G', 'Ninja');
 
       const process = new RealCmakeProcess(settings, env);
 
-      return process.buildCmakeTarget().should.eventually.be.rejectedWith(
-        `Error: Could not build the specified cmake target ${settings.cmakeTarget}. ` +
-        "Ensure 'cmake-llvm-coverage Cmake Target' setting is properly set.");
+      return process.buildCmakeTarget().should.eventually.be.fulfilled;
     });
 
-  it('should not throw when attempting to build a valid cmake target specified in settings', () => {
-    prependLlvmBinDirToPathEnvironmentVariable();
+    after('restoring additional cmake command options and PATH environment variable', async () => {
+      await vscode.workspace.getConfiguration('cmake-llvm-coverage').update('additionalCmakeOptions', []);
 
-    const settings = new ExtensionSettings();
-    settings.additionalCmakeOptions.push('-DCMAKE_CXX_COMPILER=clang++', '-G', 'Ninja');
-
-    const process = new RealCmakeProcess(settings, env);
-
-    return process.buildCmakeTarget().should.eventually.be.fulfilled;
+      env['PATH'] = originalEnvPath;
+    });
   });
 });
 
-function prependLlvmBinDirToPathEnvironmentVariable() {
+function prependLlvmBinDirToPathEnvironmentVariable(): string {
+  const oldPath = <string>env['PATH'];
+
   if (env['LLVM_DIR']) {
     const binDir = path.join(env['LLVM_DIR'], 'bin');
     const currentPath = <string>env['PATH'];
-    const newPath = `${binDir}${path.delimiter}${currentPath}`;
-    env['PATH'] = newPath;
+    env['PATH'] = `${binDir}${path.delimiter}${currentPath}`;
   }
+
+  return oldPath;
 }
