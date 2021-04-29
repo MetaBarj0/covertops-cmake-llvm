@@ -86,7 +86,7 @@ function buildFakedVscodeWorkspaceWithoutWorkspaceFolder(): VscodeWorkspaceLike 
 
     private getUndefinedConfiguration() {
       return new class implements VscodeWorkspaceConfigurationLike {
-        get(_: string) { return undefined; }
+        get(_section: string) { return undefined; }
       };
     }
   };

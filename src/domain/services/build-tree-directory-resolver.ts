@@ -1,14 +1,14 @@
 import { BigIntStats, PathLike, StatOptions, Stats } from 'fs';
 import * as path from 'path';
-import { Settings } from '../value-objects/settings';
+import { VscodeWorkspaceLike, SettingsProvider } from '../services/settings-provider';
 
 export type StatFileLike = {
   stat(path: PathLike, opts?: StatOptions): Promise<Stats | BigIntStats>
 };
 
 export class BuildTreeDirectoryResolver {
-  constructor(settings: Settings, statFile: StatFileLike) {
-    this.settings = settings;
+  constructor(workspace: VscodeWorkspaceLike, statFile: StatFileLike) {
+    this.workspace = workspace;
     this.statFile = statFile;
   }
 
@@ -24,9 +24,10 @@ export class BuildTreeDirectoryResolver {
   }
 
   private get constructBuildTreeDirectoryAbsolutePath() {
-    return path.join(this.settings.rootDirectory, this.settings.buildTreeDirectory);
+    const settings = new SettingsProvider(this.workspace).settings;
+    return path.resolve(settings.rootDirectory, settings.buildTreeDirectory);
   }
 
   private statFile: StatFileLike;
-  private settings: Settings;
+  private workspace: VscodeWorkspaceLike;
 };
