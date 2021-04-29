@@ -3,7 +3,7 @@ import { Readable } from 'stream';
 import { parser } from 'stream-json/Parser';
 import { chain } from 'stream-chain';
 
-export class StreamedUncoveredCodeRegionsCollector {
+export class UncoveredCodeRegionsCollector {
   constructor(inputStream: Readable) {
     this.inputStream = inputStream;
   }

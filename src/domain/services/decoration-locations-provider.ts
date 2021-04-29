@@ -1,13 +1,13 @@
 import { CoverageDecorations } from '../value-objects/coverage-decorations';
 import { CmakeProcess } from '../ports/cmake-process';
 import { BuildTreeDirectoryResolver } from '../ports/build-tree-directory-resolver';
-import { StreamedUncoveredCodeRegionsCollector } from '../services/streamed-uncovered-code-regions-collector';
+import { UncoveredCodeRegionsCollector } from './uncovered-code-regions-collector';
 
 export class DecorationLocationsProvider {
   constructor(
     cmakeProcess: CmakeProcess,
     buildTreeDirectoryResolver: BuildTreeDirectoryResolver,
-    streamedUncoveredCodeRegionsCollector: StreamedUncoveredCodeRegionsCollector) {
+    streamedUncoveredCodeRegionsCollector: UncoveredCodeRegionsCollector) {
     this.cmakeProcess = cmakeProcess;
     this.buildTreeDirectoryResolver = buildTreeDirectoryResolver;
     this.streamedUncoveredCodeRegionsCollector = streamedUncoveredCodeRegionsCollector;
@@ -25,5 +25,5 @@ export class DecorationLocationsProvider {
 
   private readonly cmakeProcess: CmakeProcess;
   private readonly buildTreeDirectoryResolver: BuildTreeDirectoryResolver;
-  private readonly streamedUncoveredCodeRegionsCollector: StreamedUncoveredCodeRegionsCollector;
+  private readonly streamedUncoveredCodeRegionsCollector: UncoveredCodeRegionsCollector;
 }

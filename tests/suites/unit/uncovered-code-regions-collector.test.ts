@@ -5,7 +5,7 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
-import { StreamedUncoveredCodeRegionsCollector } from '../../../src/domain/services/streamed-uncovered-code-regions-collector';
+import { UncoveredCodeRegionsCollector } from '../../../src/domain/services/uncovered-code-regions-collector';
 
 import { Readable } from 'stream';
 
@@ -16,7 +16,7 @@ describe('UncoveredCodeRegionsCollector behavior', () => {
     it('should throw an exception when attempting to collect uncovered code regions if the input stream ' +
       'does not contain a json document.', () => {
 
-        const collector = new StreamedUncoveredCodeRegionsCollector(readable);
+        const collector = new UncoveredCodeRegionsCollector(readable);
 
         return collector.collectUncoveredCodeRegions().should.eventually.be.rejectedWith(
           'Cannot collect any missing coverage information. Input is not a json document.\n' +
@@ -27,7 +27,7 @@ describe('UncoveredCodeRegionsCollector behavior', () => {
 
   it('should not throw when attempting to collect uncovered code regions if the input stream ' +
     'is an empty json object', () => {
-      const collector = new StreamedUncoveredCodeRegionsCollector(buildEmptyJsonObjectStream());
+      const collector = new UncoveredCodeRegionsCollector(buildEmptyJsonObjectStream());
 
       return collector.collectUncoveredCodeRegions().should.eventually.be.fulfilled;
     });

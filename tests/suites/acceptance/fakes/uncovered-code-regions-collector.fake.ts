@@ -1,7 +1,7 @@
 import { Readable } from "stream";
-import { StreamedUncoveredCodeRegionsCollector } from "../../../../src/domain/services/streamed-uncovered-code-regions-collector";
+import { UncoveredCodeRegionsCollector } from "../../../../src/domain/services/uncovered-code-regions-collector";
 
-class FailingUncoveredCodeRegionsCollector extends StreamedUncoveredCodeRegionsCollector {
+class FailingUncoveredCodeRegionsCollector extends UncoveredCodeRegionsCollector {
   collectUncoveredCodeRegions() {
     return Promise.reject('Error: Could not find the file containing coverage information. ' +
       'Ensure \'cmake-llvm-coverage Cmake Target\' and/or \'cmake-llvm-coverage Coverage Info File Name\' ' +
@@ -9,7 +9,7 @@ class FailingUncoveredCodeRegionsCollector extends StreamedUncoveredCodeRegionsC
   }
 };
 
-class SucceedingUncoveredCodeRegionsCollector extends StreamedUncoveredCodeRegionsCollector {
+class SucceedingUncoveredCodeRegionsCollector extends UncoveredCodeRegionsCollector {
   collectUncoveredCodeRegions() {
     return Promise.resolve();
   }
