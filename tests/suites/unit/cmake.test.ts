@@ -4,6 +4,7 @@ import * as chaiAsPromised from 'chai-as-promised';
 
 import { SettingsProvider, VscodeWorkspaceLike } from '../../../src/domain/services/settings-provider';
 import { workspace } from './builders';
+
 import buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings =
 workspace.buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings;
 
@@ -14,9 +15,7 @@ describe('the behavior of the cmake internal service used to build the target ' 
   'giving the file containing coverage info', () => {
     it('should be instantiated with correct dependencies for process and workspace ' +
       'but throw when asking for building a target with a wrong cmake command setting', () => {
-        const workspace = buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings({
-          ['cmakeCommand']: ''
-        });
+        const workspace = buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings({ 'cmakeCommand': '' });
         const process = buildFakeProcessForWrongCmakeCommand();
 
         const cmake = new Cmake(workspace, process);
@@ -81,9 +80,13 @@ function buildFakeProcessForWrongCmakeCommand() {
       _args: readonly string[] | null | undefined,
       _options: ExecFileOptionsLike,
       callback: (error: ExecFileExceptionLike | null, stdout: string, stderr: string) => void) {
-      callback(new class implements ExecFileExceptionLike {
-        message = `${file}: command not found.`;
-      },
+      let error: ExecFileExceptionLike | null = null;
+      if (!file)
+        error = new class implements ExecFileExceptionLike {
+          message = `${file}: command not found.`;
+        };
+
+      callback(error,
         'stdout',
         'stderr');
 
