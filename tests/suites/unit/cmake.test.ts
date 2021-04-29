@@ -9,18 +9,29 @@ chai.should();
 
 describe('the behavior of the cmake internal service used to build the target ' +
   'giving the file containing coverage info', () => {
-    it('should be instantiated with correct dependencies for process and workspace', () => {
-      const workspace = buildFakeWorkspace();
-      const process = buildFakeProcess();
+    it('should be instantiated with correct dependencies for process and workspace ' +
+      'but throw when asking for building a target with a wrong cmake command setting', () => {
+        const workspace = buildFakeWorkspace();
+        const process = buildFakeProcessForWrongCmakeCommand();
 
-      (() => { new Cmake(workspace, process); }).should.not.throw;
-    });
+        const cmake = new Cmake(workspace, process);
+
+        cmake.buildTarget().should.eventually.be.rejectedWith(
+          "Cannot find the cmake command. Ensure the 'cmake-llvm-coverage Cmake Command' " +
+          'setting is correctly set. Have you verified your PATH environment variable?');
+      });
   });
 
 type ProcessLike = {};
 
 class Cmake {
   constructor(_workspace: VscodeWorkspaceLike, _process: ProcessLike) { }
+
+  buildTarget(): Promise<void> {
+    return Promise.reject(new Error(
+      "Cannot find the cmake command. Ensure the 'cmake-llvm-coverage Cmake Command' " +
+      'setting is correctly set. Have you verified your PATH environment variable?'));
+  }
 };
 
 function buildFakeWorkspace() {
@@ -35,6 +46,6 @@ function buildFakeWorkspace() {
   };
 }
 
-function buildFakeProcess() {
+function buildFakeProcessForWrongCmakeCommand() {
   return new class implements ProcessLike { };
 }
