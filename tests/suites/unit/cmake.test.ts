@@ -2,8 +2,10 @@ import * as chai from 'chai';
 import { describe, it } from 'mocha';
 import * as chaiAsPromised from 'chai-as-promised';
 
-import { SettingsProvider, VscodeUriLike, VscodeWorkspaceConfigurationLike, VscodeWorkspaceFolderLike, VscodeWorkspaceLike } from '../../../src/domain/services/settings-provider';
-import * as path from 'path';
+import { SettingsProvider, VscodeWorkspaceLike } from '../../../src/domain/services/settings-provider';
+import { workspace } from './builders';
+import buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings =
+workspace.buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings;
 
 chai.use(chaiAsPromised);
 chai.should();
@@ -12,7 +14,9 @@ describe('the behavior of the cmake internal service used to build the target ' 
   'giving the file containing coverage info', () => {
     it('should be instantiated with correct dependencies for process and workspace ' +
       'but throw when asking for building a target with a wrong cmake command setting', () => {
-        const workspace = buildFakeWorkspace();
+        const workspace = buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings({
+          ['cmakeCommand']: ''
+        });
         const process = buildFakeProcessForWrongCmakeCommand();
 
         const cmake = new Cmake(workspace, process);
@@ -70,24 +74,6 @@ class Cmake {
   private readonly process: ProcessLike;
   private readonly workspace: VscodeWorkspaceLike;
 };
-
-function buildFakeWorkspace() {
-  return new class implements VscodeWorkspaceLike {
-    workspaceFolders = [
-      new class implements VscodeWorkspaceFolderLike {
-        uri = new class implements VscodeUriLike {
-          fsPath = path.resolve('root', 'workspace');
-        };
-      }
-    ];
-
-    getConfiguration(_section?: string) {
-      return new class implements VscodeWorkspaceConfigurationLike {
-        get(_section: string) { return undefined; }
-      };
-    }
-  };
-}
 
 function buildFakeProcessForWrongCmakeCommand() {
   return new class implements ProcessLike {
