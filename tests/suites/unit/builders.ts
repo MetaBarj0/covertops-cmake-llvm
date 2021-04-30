@@ -13,6 +13,7 @@ import {
 } from '../../../src/domain/services/cmake';
 
 import * as path from 'path';
+import { Readable } from 'stream';
 
 export namespace workspace {
   type Overrides = {
@@ -134,5 +135,21 @@ export namespace process {
         };
       }
     };
+  }
+}
+
+export namespace stream {
+  export function buildEmptyInputStream(): Readable {
+    const empty = (function* () { })();
+
+    return Readable.from(empty);
+  }
+
+  export function buildNotJsonStream(): Readable {
+    return Readable.from('foo');
+  }
+
+  export function buildEmptyJsonObjectStream(): Readable {
+    return Readable.from(JSON.stringify({}));
   }
 }

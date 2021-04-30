@@ -6,8 +6,11 @@ chai.use(chaiAsPromised);
 chai.should();
 
 import { UncoveredCodeRegionsCollector } from '../../../src/domain/services/uncovered-code-regions-collector';
+import { stream } from './builders';
 
-import { Readable } from 'stream';
+import buildEmptyInputStream = stream.buildEmptyInputStream;
+import buildEmptyJsonObjectStream = stream.buildEmptyJsonObjectStream;
+import buildNotJsonStream = stream.buildNotJsonStream;
 
 describe('UncoveredCodeRegionsCollector behavior', () => {
   const theories = [buildNotJsonStream(), buildEmptyInputStream()];
@@ -32,17 +35,3 @@ describe('UncoveredCodeRegionsCollector behavior', () => {
       return collector.collectUncoveredCodeRegions().should.eventually.be.fulfilled;
     });
 });
-
-function buildEmptyInputStream(): Readable {
-  const empty = (function* () { })();
-
-  return Readable.from(empty);
-}
-
-function buildNotJsonStream(): Readable {
-  return Readable.from('foo');
-}
-
-function buildEmptyJsonObjectStream(): Readable {
-  return Readable.from(JSON.stringify({}));
-}
