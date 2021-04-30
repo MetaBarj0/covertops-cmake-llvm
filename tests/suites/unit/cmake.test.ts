@@ -2,11 +2,14 @@ import * as chai from 'chai';
 import { describe, it } from 'mocha';
 import * as chaiAsPromised from 'chai-as-promised';
 
-import { SettingsProvider, VscodeWorkspaceLike } from '../../../src/domain/services/settings-provider';
-import { workspace } from './builders';
+import { Cmake } from '../../../src/domain/services/cmake';
+
+import { workspace, process } from './builders';
 
 import buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings =
 workspace.buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings;
+
+import buildFakeProcess = process.buildFakeProcess;
 
 chai.use(chaiAsPromised);
 chai.should();
@@ -16,81 +19,37 @@ describe('the behavior of the cmake internal service used to build the target ' 
     it('should be instantiated with correct dependencies for process and workspace ' +
       'but throw when asking for building a target with a wrong cmake command setting', () => {
         const workspace = buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings({ 'cmakeCommand': '' });
-        const process = buildFakeProcessForWrongCmakeCommand();
+        const process = buildFakeProcess();
 
         const cmake = new Cmake(workspace, process);
 
         return cmake.buildTarget().should.eventually.be.rejectedWith(
-          "Cannot find the cmake command. Ensure the 'cmake-llvm-coverage Cmake Command' " +
+          "Cannot find the cmake command. Ensure the 'cmake-llvm-coverage: Cmake Command' " +
           'setting is correctly set. Have you verified your PATH environment variable?');
       });
+
+    it('should be instantiated with correct dependencies for process and workspace ' +
+      'but throw when asking for building a target with a wrong cmake target setting', () => {
+        const workspace = buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings({ 'cmakeTarget': '' });
+        const process = buildFakeProcess();
+
+        const cmake = new Cmake(workspace, process);
+
+        const target = workspace.getConfiguration('cmake-llvm-coverage').get<string>('cmakeTarget');
+
+        return cmake.buildTarget().should.eventually.be.rejectedWith(
+          `Cannot build the cmake target: '${target}'. Make sure the ` +
+          "'cmake-llvm-coverage: Cmake Target' setting is correctly set."
+        );
+      });
+
+    it('should be instantiated with correct dependencies for process and workspace ' +
+      'and succeed when asking for building a target with good settings', () => {
+        const workspace = buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings();
+        const process = buildFakeProcess();
+
+        const cmake = new Cmake(workspace, process);
+
+        return cmake.buildTarget().should.eventually.be.fulfilled;
+      });
   });
-
-type ExecFileOptionsLike = {
-  cwd?: string;
-  env?: NodeJS.ProcessEnv;
-};
-
-type ExecFileExceptionLike = {
-  message: string;
-};
-
-type ChildProcessLike = {};
-
-type ProcessLike = {
-  execFile(
-    file: string,
-    args: ReadonlyArray<string> | undefined | null,
-    options: ExecFileOptionsLike,
-    callback: (error: ExecFileExceptionLike | null, stdout: string, stderr: string) => void
-  ): ChildProcessLike;
-};
-
-class Cmake {
-  constructor(workspace: VscodeWorkspaceLike, process: ProcessLike) {
-    this.process = process;
-    this.workspace = workspace;
-  }
-
-  buildTarget(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const settings = new SettingsProvider(this.workspace).settings;
-      const cmakeCommand = settings.cmakeCommand;
-
-      this.process.execFile(
-        cmakeCommand, ['--version'], {},
-        (error, _stdout, _stderr) => {
-          if (error)
-            return reject(new Error(
-              "Cannot find the cmake command. Ensure the 'cmake-llvm-coverage Cmake Command' " +
-              'setting is correctly set. Have you verified your PATH environment variable?'));
-
-          resolve();
-        });
-    });
-  }
-
-  private readonly process: ProcessLike;
-  private readonly workspace: VscodeWorkspaceLike;
-};
-
-function buildFakeProcessForWrongCmakeCommand() {
-  return new class implements ProcessLike {
-    execFile(file: string,
-      _args: readonly string[] | null | undefined,
-      _options: ExecFileOptionsLike,
-      callback: (error: ExecFileExceptionLike | null, stdout: string, stderr: string) => void) {
-      let error: ExecFileExceptionLike | null = null;
-      if (!file)
-        error = new class implements ExecFileExceptionLike {
-          message = `${file}: command not found.`;
-        };
-
-      callback(error,
-        'stdout',
-        'stderr');
-
-      return new class implements ChildProcessLike { };
-    }
-  };
-}

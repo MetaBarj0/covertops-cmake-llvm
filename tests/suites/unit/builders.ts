@@ -5,6 +5,13 @@ import {
   VscodeWorkspaceConfigurationLike
 } from '../../../src/domain/services/settings-provider';
 
+import {
+  ChildProcessLike,
+  ExecFileExceptionLike,
+  ExecFileOptionsLike,
+  ProcessLike
+} from '../../../src/domain/services/cmake';
+
 import * as path from 'path';
 
 export namespace workspace {
@@ -68,6 +75,64 @@ export namespace workspace {
           get(_section: string) { return undefined; }
         };
       };
+    };
+  }
+}
+
+export namespace process {
+  export function buildFakeProcess() {
+    return new class implements ProcessLike {
+      execFile(file: string,
+        args: readonly string[] | null | undefined,
+        _options: ExecFileOptionsLike,
+        callback: (error: ExecFileExceptionLike | null, stdout: string, stderr: string) => void) {
+        const childProcess = new class implements ChildProcessLike { };
+        if (!args)
+          return childProcess;
+
+        callback(this.getPotentialError(file, args),
+          'stdout',
+          'stderr');
+
+        return childProcess;
+      }
+
+      private getPotentialError(file: string, args: ReadonlyArray<string>): ExecFileExceptionLike | null {
+        const potentialError = [
+          this.getCmakeCommandPotentialError(file),
+          this.getCmakeTargetPotentialError(args)]
+          .find(potentialError => {
+            return potentialError !== null;
+          });
+
+        if (potentialError)
+          return potentialError;
+
+        return null;
+      }
+
+      private getCmakeCommandPotentialError(file: string) {
+        if (!file)
+          return new class implements ExecFileExceptionLike {
+            message = `"${file}": command not found.`;
+          };
+
+        return null;
+      }
+
+      private getCmakeTargetPotentialError(args: ReadonlyArray<string>) {
+        const targetFlagIndex = args.indexOf('--target');
+        if (targetFlagIndex === -1)
+          return null;
+
+        const target = args[targetFlagIndex + 1];
+
+        if (target)
+          return null;
+        return new class implements ExecFileExceptionLike {
+          message = `"${target}": incorrect target`;
+        };
+      }
     };
   }
 }
