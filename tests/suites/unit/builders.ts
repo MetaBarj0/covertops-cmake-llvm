@@ -12,8 +12,11 @@ import {
   ProcessLike
 } from '../../../src/domain/services/cmake';
 
+import { StatFileLike } from '../../../src/domain/services/build-tree-directory-resolver';
+
 import * as path from 'path';
 import { Readable } from 'stream';
+import { BigIntStats, PathLike, StatOptions, Stats } from 'fs';
 
 export namespace workspace {
   type Overrides = {
@@ -151,5 +154,23 @@ export namespace stream {
 
   export function buildEmptyJsonObjectStream(): Readable {
     return Readable.from(JSON.stringify({}));
+  }
+}
+
+export namespace statFile {
+  export function buildFailingFakeStatFile() {
+    return new class implements StatFileLike {
+      stat(_path: PathLike, _opts?: StatOptions): Promise<Stats | BigIntStats> {
+        return Promise.reject();
+      }
+    };
+  }
+
+  export function buildSucceedingFakeStatFile() {
+    return new class implements StatFileLike {
+      stat(_path: PathLike, _opts?: StatOptions): Promise<Stats | BigIntStats> {
+        return Promise.resolve(new Stats());
+      }
+    };
   }
 }
