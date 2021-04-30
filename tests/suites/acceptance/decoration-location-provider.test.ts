@@ -7,103 +7,103 @@ chai.should();
 
 import { DecorationLocationsProvider } from '../../../src/domain/services/decoration-locations-provider';
 
-import {
-  buildFakeCmakeProcess,
-  buildSucceedingCmakeProcess,
-  buildFailingCmakeProcessForUnreachableCmake,
-  buildFailingCmakeProcessForBadTarget,
-} from './fakes/cmake-process.fake';
+import { process, statFile, stream, workspace } from '../../builders/fake-adapters';
 
-import {
-  buildFakeBuildTreeDirectoryResolver,
-  buildSucceedingBuildTreeDirectoryResolver,
-  buildFailingBuildTreeDirectoryResolver
-} from './fakes/build-tree-directory-resolver.fake';
-
-import {
-  buildFakeUncoveredCodeRegionsCollector,
-  buildFailingUncoveredCodeRegionsCollector,
-  buildSucceedingUncoveredCodeRegionsCollector
-} from './fakes/uncovered-code-regions-collector.fake';
+import buildFakeProcess = process.buildFakeProcess;
+import buildSucceedingFakeStatFile = statFile.buildSucceedingFakeStatFile;
+import buildFailingFakeStatFile = statFile.buildFailingFakeStatFile;
+import buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings = workspace.buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings;
+import buildFakeOverridableWorkspace = workspace.buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings;
+import buildEmptyInputStream = stream.buildEmptyInputStream;
 
 describe('DecorationLocationProvider service behavior.', () => {
   it('should be correctly instantiated with faked adapters.', () => {
-    (() => {
-      new DecorationLocationsProvider(
-        buildFakeCmakeProcess(),
-        buildFakeBuildTreeDirectoryResolver(),
-        buildFakeUncoveredCodeRegionsCollector());
-    }).should.not.throw();
+    const instantiation = () => {
+      new DecorationLocationsProvider({
+        workspace: buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(),
+        statFile: buildFailingFakeStatFile(),
+        process: buildFakeProcess(),
+        inputStream: buildEmptyInputStream()
+      });
+    };
+
+    instantiation.should.not.throw();
   });
-
-  it('should not be able to provide any decoration for uncovered code regions ' +
-    'when the cmake command cannot be reached.',
-    () => {
-      const cmakeProcess = buildFailingCmakeProcessForUnreachableCmake();
-      const buildTreeDirectoryResolver = buildSucceedingBuildTreeDirectoryResolver();
-      const coverageInfoFileResolver = buildSucceedingUncoveredCodeRegionsCollector();
-
-      const provider = new DecorationLocationsProvider(cmakeProcess, buildTreeDirectoryResolver, coverageInfoFileResolver);
-
-      return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
-        "Cannot find the cmake command. Ensure the 'cmake-llvm-coverage Cmake Command' " +
-        'setting is correctly set. Have you verified your PATH environment variable?');
-    });
 
   it('should not be able to provide any decoration for uncovered code regions ' +
     'when the build tree directory can not be found though cmake command ' +
     'is invocable',
     () => {
-      const cmakeProcess = buildSucceedingCmakeProcess();
-      const buildTreeDirectoryResolver = buildFailingBuildTreeDirectoryResolver();
-      const coverageInfoFileResolver = buildSucceedingUncoveredCodeRegionsCollector();
-
-      const provider = new DecorationLocationsProvider(cmakeProcess, buildTreeDirectoryResolver, coverageInfoFileResolver);
+      const provider = new DecorationLocationsProvider({
+        workspace: buildFakeOverridableWorkspace(),
+        statFile: buildFailingFakeStatFile(),
+        process: buildFakeProcess(),
+        inputStream: buildEmptyInputStream()
+      });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
-        'Error: Build tree directory cannot be found. ' +
-        'Ensure \'cmake-llvm-coverage Build Tree Directory\' setting is properly set.');
+        "Cannot find the build tree directory. Ensure the 'cmake-llvm-coverage Build Tree Directory' " +
+        'setting is correctly set and target to an existing cmake build tree directory.');
+    });
+
+  it('should not be able to provide any decoration for uncovered code regions ' +
+    'when the cmake command cannot be reached.',
+    () => {
+      const provider = new DecorationLocationsProvider({
+        workspace: buildFakeOverridableWorkspace({ 'cmakeCommand': '' }),
+        statFile: buildSucceedingFakeStatFile(),
+        process: buildFakeProcess(),
+        inputStream: buildEmptyInputStream()
+      });
+
+      return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
+        "Cannot find the cmake command. Ensure the 'cmake-llvm-coverage: Cmake Command' " +
+        'setting is correctly set. Have you verified your PATH environment variable?');
     });
 
   it('should not be able to provide any decoration for uncovered code regions ' +
     'when the cmake target cannot be run by cmake though the cmake command is invocable and ' +
     'the build tree directory exists.',
     () => {
-      const cmakeProcess = buildFailingCmakeProcessForBadTarget();
-      const buildDirectoryResolver = buildSucceedingBuildTreeDirectoryResolver();
-      const coverageInfoFileResolver = buildSucceedingUncoveredCodeRegionsCollector();
+      const workspace = buildFakeOverridableWorkspace({ 'cmakeTarget': '' });
+      const target = workspace.getConfiguration('cmake-llvm-workspace').get('cmakeTarget');
 
-      const provider = new DecorationLocationsProvider(cmakeProcess, buildDirectoryResolver, coverageInfoFileResolver);
-
-      return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
-        'Error: Could not build the specified cmake target. ' +
-        "Ensure 'cmake-llvm-coverage Cmake Target' setting is properly set.");
-    });
-
-  it('should not be able to provide any decoration for uncovered code regions ' +
-    'when the coverage info file name does not target an existing file',
-    () => {
-      const cmakeProcess = buildSucceedingCmakeProcess();
-      const buildDirectoryResolver = buildSucceedingBuildTreeDirectoryResolver();
-      const failingCoverageInfoFileResolver = buildFailingUncoveredCodeRegionsCollector();
-
-      const provider = new DecorationLocationsProvider(cmakeProcess, buildDirectoryResolver, failingCoverageInfoFileResolver);
+      const provider = new DecorationLocationsProvider({
+        workspace: workspace,
+        statFile: buildSucceedingFakeStatFile(),
+        process: buildFakeProcess(),
+        inputStream: buildEmptyInputStream()
+      });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
-        'Error: Could not find the file containing coverage information. ' +
-        'Ensure \'cmake-llvm-coverage Cmake Target\' and/or \'cmake-llvm-coverage Coverage Info File Name\' ' +
-        'settings are properly set.');
+        `Cannot build the cmake target: '${target}'. Make sure the ` +
+        "'cmake-llvm-coverage: Cmake Target' setting is correctly set.");
     });
 
-  it('should be able to provide decoration for uncovered code regions ' +
-    'when all adapters work as expected.',
-    () => {
-      const cmakeProcess = buildSucceedingCmakeProcess();
-      const buildDirectoryResolver = buildSucceedingBuildTreeDirectoryResolver();
-      const failingCoverageInfoFileResolver = buildSucceedingUncoveredCodeRegionsCollector();
+  // it('should not be able to provide any decoration for uncovered code regions ' +
+  //   'when the coverage info file name does not target an existing file',
+  //   () => {
+  //     const cmakeProcess = buildSucceedingCmakeProcess();
+  //     const buildDirectoryResolver = buildSucceedingBuildTreeDirectoryResolver();
+  //     const failingCoverageInfoFileResolver = buildFailingUncoveredCodeRegionsCollector();
 
-      const provider = new DecorationLocationsProvider(cmakeProcess, buildDirectoryResolver, failingCoverageInfoFileResolver);
+  //     const provider = new DecorationLocationsProvider(cmakeProcess, buildDirectoryResolver, failingCoverageInfoFileResolver);
 
-      return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.fulfilled;
-    });
+  //     return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
+  //       'Error: Could not find the file containing coverage information. ' +
+  //       'Ensure \'cmake-llvm-coverage Cmake Target\' and/or \'cmake-llvm-coverage Coverage Info File Name\' ' +
+  //       'settings are properly set.');
+  //   });
+
+  // it('should be able to provide decoration for uncovered code regions ' +
+  //   'when all adapters work as expected.',
+  //   () => {
+  //     const cmakeProcess = buildSucceedingCmakeProcess();
+  //     const buildDirectoryResolver = buildSucceedingBuildTreeDirectoryResolver();
+  //     const failingCoverageInfoFileResolver = buildSucceedingUncoveredCodeRegionsCollector();
+
+  //     const provider = new DecorationLocationsProvider(cmakeProcess, buildDirectoryResolver, failingCoverageInfoFileResolver);
+
+  //     return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.fulfilled;
+  //   });
 });

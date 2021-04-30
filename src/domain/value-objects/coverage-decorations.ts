@@ -1,2 +1,1 @@
-export type CoverageDecorations = {
-};
+export class CoverageDecorations { };

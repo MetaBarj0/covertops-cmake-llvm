@@ -1,29 +1,33 @@
-import { CoverageDecorations } from '../value-objects/coverage-decorations';
-import { CmakeProcess } from '../ports/cmake-process';
-import { BuildTreeDirectoryResolver } from '../ports/build-tree-directory-resolver';
-import { UncoveredCodeRegionsCollector } from './uncovered-code-regions-collector';
+import { VscodeWorkspaceLike } from './settings-provider';
+import { StatFileLike, BuildTreeDirectoryResolver } from './build-tree-directory-resolver';
+import { Cmake, ProcessLike } from './cmake';
+import { Readable } from 'stream';
+
+type Adapters = {
+  workspace: VscodeWorkspaceLike,
+  statFile: StatFileLike,
+  process: ProcessLike,
+  inputStream: Readable
+};
 
 export class DecorationLocationsProvider {
-  constructor(
-    cmakeProcess: CmakeProcess,
-    buildTreeDirectoryResolver: BuildTreeDirectoryResolver,
-    streamedUncoveredCodeRegionsCollector: UncoveredCodeRegionsCollector) {
-    this.cmakeProcess = cmakeProcess;
-    this.buildTreeDirectoryResolver = buildTreeDirectoryResolver;
-    this.streamedUncoveredCodeRegionsCollector = streamedUncoveredCodeRegionsCollector;
+  constructor(adapters: Adapters) {
+    this.workspace = adapters.workspace;
+    this.statFile = adapters.statFile;
+    this.process = adapters.process;
+    this.inputStream = adapters.inputStream;
   }
 
   async getDecorationLocationsForUncoveredCodeRegions() {
-    await Promise.all([
-      this.buildTreeDirectoryResolver.resolveFullPath(),
-      this.cmakeProcess.buildCmakeTarget()]);
+    const buildTreeDirectoryResolver = new BuildTreeDirectoryResolver(this.workspace, this.statFile);
+    await buildTreeDirectoryResolver.resolveBuildTreeDirectoryRelativePath();
 
-    await this.streamedUncoveredCodeRegionsCollector.collectUncoveredCodeRegions();
-
-    return new class implements CoverageDecorations { };
+    const cmake = new Cmake(this.workspace, this.process);
+    await cmake.buildTarget();
   }
 
-  private readonly cmakeProcess: CmakeProcess;
-  private readonly buildTreeDirectoryResolver: BuildTreeDirectoryResolver;
-  private readonly streamedUncoveredCodeRegionsCollector: UncoveredCodeRegionsCollector;
+  private readonly workspace: VscodeWorkspaceLike;
+  private readonly statFile: StatFileLike;
+  private readonly process: ProcessLike;
+  private readonly inputStream: Readable;
 }
