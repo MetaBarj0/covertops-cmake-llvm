@@ -4,11 +4,11 @@ import * as chaiAsPromised from 'chai-as-promised';
 
 import { BuildTreeDirectoryResolver } from '../../../src/domain/services/build-tree-directory-resolver';
 
-import { workspace } from './builders';
+import { workspace } from '../../builders/fake-adapters';
 import buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings =
 workspace.buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings;
 
-import { statFile } from './builders';
+import { statFile } from '../../builders/fake-adapters';
 import buildFailingFakeStatFile = statFile.buildFailingFakeStatFile;
 import buildSucceedingFakeStatFile = statFile.buildSucceedingFakeStatFile;
 

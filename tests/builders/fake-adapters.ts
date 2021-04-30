@@ -3,16 +3,16 @@ import {
   VscodeWorkspaceFolderLike,
   VscodeUriLike,
   VscodeWorkspaceConfigurationLike
-} from '../../../src/domain/services/settings-provider';
+} from '../../src/domain/services/settings-provider';
 
 import {
   ChildProcessLike,
   ExecFileExceptionLike,
   ExecFileOptionsLike,
   ProcessLike
-} from '../../../src/domain/services/cmake';
+} from '../../src/domain/services/cmake';
 
-import { StatFileLike } from '../../../src/domain/services/build-tree-directory-resolver';
+import { StatFileLike } from '../../src/domain/services/build-tree-directory-resolver';
 
 import * as path from 'path';
 import { Readable } from 'stream';

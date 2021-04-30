@@ -6,7 +6,7 @@ chai.use(chaiAsPromised);
 chai.should();
 
 import { UncoveredCodeRegionsCollector } from '../../../src/domain/services/uncovered-code-regions-collector';
-import { stream } from './builders';
+import { stream } from '../../builders/fake-adapters';
 
 import buildEmptyInputStream = stream.buildEmptyInputStream;
 import buildEmptyJsonObjectStream = stream.buildEmptyJsonObjectStream;

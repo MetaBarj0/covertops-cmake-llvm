@@ -10,7 +10,7 @@ import {
   VscodeWorkspaceFolderLike,
 } from '../../../src/domain/services/settings-provider';
 
-import { workspace } from './builders';
+import { workspace } from '../../builders/fake-adapters';
 
 import buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings =
 workspace.buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings;

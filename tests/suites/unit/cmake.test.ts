@@ -4,7 +4,7 @@ import * as chaiAsPromised from 'chai-as-promised';
 
 import { Cmake } from '../../../src/domain/services/cmake';
 
-import { workspace, process } from './builders';
+import { workspace, process } from '../../builders/fake-adapters';
 
 import buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings =
 workspace.buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings;
