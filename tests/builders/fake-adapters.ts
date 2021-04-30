@@ -12,15 +12,16 @@ import {
   ProcessLike
 } from '../../src/domain/services/cmake';
 
-import { StatFileLike } from '../../src/domain/services/build-tree-directory-resolver';
+import { StatFileLike } from '../../src/domain/services/file-or-directory-resolver';
 
 import * as path from 'path';
 import { Readable } from 'stream';
 import { BigIntStats, PathLike, StatOptions, Stats } from 'fs';
+import { Settings } from '../../src/domain/value-objects/settings';
 
 export namespace workspace {
   type Overrides = {
-    [key: string]: any
+    -readonly [k in keyof Settings]?: any
   };
 
   export function buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings(overrides: Overrides = {}): VscodeWorkspaceLike {
@@ -32,7 +33,7 @@ export namespace workspace {
       workspaceFolders = [
         new class implements VscodeWorkspaceFolderLike {
           uri = new class implements VscodeUriLike {
-            fsPath = path.resolve('some', 'fake', 'path');
+            fsPath = path.resolve('.');
           };
         }];
 
@@ -42,7 +43,7 @@ export namespace workspace {
             this.overrides = overrides;
           }
 
-          get<T>(section: string): T | undefined {
+          get<T>(section: keyof Settings): T | undefined {
             if (this.overrides[section] !== undefined)
               return this.overrides[section];
 
@@ -57,8 +58,8 @@ export namespace workspace {
                 return 'reportCoverageDetails' as unknown as T | undefined;
               case 'coverageInfoFileName':
                 return 'default.covdata.json' as unknown as T | undefined;
-              default:
-                return undefined;
+              case 'rootDirectory':
+                return '.' as unknown as T | undefined;
             }
           }
 

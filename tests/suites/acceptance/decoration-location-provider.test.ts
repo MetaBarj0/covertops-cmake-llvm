@@ -50,7 +50,7 @@ describe('DecorationLocationProvider service behavior.', () => {
     'when the cmake command cannot be reached.',
     () => {
       const provider = new DecorationLocationsProvider({
-        workspace: buildFakeOverridableWorkspace({ 'cmakeCommand': '' }),
+        workspace: buildFakeOverridableWorkspace({ cmakeCommand: '' }),
         statFile: buildSucceedingFakeStatFile(),
         process: buildFakeProcess(),
         inputStream: buildEmptyInputStream()
@@ -65,7 +65,7 @@ describe('DecorationLocationProvider service behavior.', () => {
     'when the cmake target cannot be run by cmake though the cmake command is invocable and ' +
     'the build tree directory exists.',
     () => {
-      const workspace = buildFakeOverridableWorkspace({ 'cmakeTarget': '' });
+      const workspace = buildFakeOverridableWorkspace({ cmakeTarget: '' });
       const target = workspace.getConfiguration('cmake-llvm-workspace').get('cmakeTarget');
 
       const provider = new DecorationLocationsProvider({
@@ -80,20 +80,21 @@ describe('DecorationLocationProvider service behavior.', () => {
         "'cmake-llvm-coverage: Cmake Target' setting is correctly set.");
     });
 
-  // it('should not be able to provide any decoration for uncovered code regions ' +
-  //   'when the coverage info file name does not target an existing file',
-  //   () => {
-  //     const cmakeProcess = buildSucceedingCmakeProcess();
-  //     const buildDirectoryResolver = buildSucceedingBuildTreeDirectoryResolver();
-  //     const failingCoverageInfoFileResolver = buildFailingUncoveredCodeRegionsCollector();
+  it('should not be able to provide any decoration for uncovered code regions ' +
+    'when the coverage info file name does not target an existing file',
+    () => {
+      const provider = new DecorationLocationsProvider({
+        workspace: buildFakeOverridableWorkspace({ coverageInfoFileName: '' }),
+        statFile: buildSucceedingFakeStatFile(),
+        process: buildFakeProcess(),
+        inputStream: buildEmptyInputStream()
+      });
 
-  //     const provider = new DecorationLocationsProvider(cmakeProcess, buildDirectoryResolver, failingCoverageInfoFileResolver);
-
-  //     return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
-  //       'Error: Could not find the file containing coverage information. ' +
-  //       'Ensure \'cmake-llvm-coverage Cmake Target\' and/or \'cmake-llvm-coverage Coverage Info File Name\' ' +
-  //       'settings are properly set.');
-  //   });
+      return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
+        'Error: Could not find the file containing coverage information. ' +
+        'Ensure \'cmake-llvm-coverage Cmake Target\' and/or \'cmake-llvm-coverage Coverage Info File Name\' ' +
+        'settings are properly set.');
+    });
 
   // it('should be able to provide decoration for uncovered code regions ' +
   //   'when all adapters work as expected.',
