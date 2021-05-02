@@ -42,7 +42,7 @@ describe('DecorationLocationProvider service behavior.', () => {
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
-        "Cannot find the build tree directory. Ensure the 'cmake-llvm-coverage Build Tree Directory' " +
+        "Cannot find the build tree directory. Ensure the 'cmake-llvm-coverage: Build Tree Directory' " +
         'setting is correctly set and target to an existing cmake build tree directory.');
     });
 
