@@ -35,7 +35,6 @@ describe('how the file or directory resolver works with a fake file system stat 
       const fakedStatFile = buildSucceedingFakeStatFile();
       const resolver = new BuildTreeDirectoryResolver(fakedWorkspace, fakedStatFile);
 
-      // TODO: find a better less narrow assertion
-      return resolver.resolveBuildTreeDirectoryAbsolutePath().should.eventually.be.not.empty;
+      return resolver.resolveBuildTreeDirectoryAbsolutePath().should.eventually.be.fulfilled;
     });
 });
