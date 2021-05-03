@@ -14,7 +14,7 @@ import buildSucceedingFakeStatFile = statFile.buildSucceedingFakeStatFile;
 import buildFailingFakeStatFile = statFile.buildFailingFakeStatFile;
 import buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings = workspace.buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings;
 import buildFakeOverridableWorkspace = workspace.buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings;
-import buildFakeGlobSearch = glob.buildFakeGlobSearchForNoMatch;
+import buildFakeGlobSearchForNoMatch = glob.buildFakeGlobSearchForNoMatch;
 
 describe('DecorationLocationProvider service behavior.', () => {
   it('should be correctly instantiated with faked adapters.', () => {
@@ -23,7 +23,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         workspace: buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(),
         statFile: buildFailingFakeStatFile(),
         process: buildFakeProcess(),
-        globSearch: buildFakeGlobSearch()
+        globSearch: buildFakeGlobSearchForNoMatch()
       });
     };
 
@@ -38,7 +38,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         workspace: buildFakeOverridableWorkspace(),
         statFile: buildFailingFakeStatFile(),
         process: buildFakeProcess(),
-        globSearch: buildFakeGlobSearch()
+        globSearch: buildFakeGlobSearchForNoMatch()
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
@@ -53,7 +53,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         workspace: buildFakeOverridableWorkspace({ cmakeCommand: '' }),
         statFile: buildSucceedingFakeStatFile(),
         process: buildFakeProcess(),
-        globSearch: buildFakeGlobSearch()
+        globSearch: buildFakeGlobSearchForNoMatch()
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
@@ -72,7 +72,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         workspace: workspace,
         statFile: buildSucceedingFakeStatFile(),
         process: buildFakeProcess(),
-        globSearch: buildFakeGlobSearch()
+        globSearch: buildFakeGlobSearchForNoMatch()
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
@@ -84,16 +84,17 @@ describe('DecorationLocationProvider service behavior.', () => {
     'when the coverage info file name does not target an existing file',
     () => {
       const provider = new DecorationLocationsProvider({
-        workspace: buildFakeOverridableWorkspace({ coverageInfoFileName: '' }),
+        workspace: buildFakeOverridableWorkspace({ coverageInfoFileName: 'baadf00d' }),
         statFile: buildSucceedingFakeStatFile(),
         process: buildFakeProcess(),
-        globSearch: buildFakeGlobSearch()
+        globSearch: buildFakeGlobSearchForNoMatch()
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
-        'Error: Could not find the file containing coverage information. ' +
-        'Ensure \'cmake-llvm-coverage Cmake Target\' and/or \'cmake-llvm-coverage Coverage Info File Name\' ' +
-        'settings are properly set.');
+        'Cannot resolve the coverage info file path in the build tree directory. ' +
+        'Ensure that both ' +
+        "'cmake-llvm-coverage: Build Tree Directory' and 'cmake-llvm-coverage: Coverage Info File Name' " +
+        'settings are correctly set.');
     });
 
   // it('should be able to provide decoration for uncovered code regions ' +
