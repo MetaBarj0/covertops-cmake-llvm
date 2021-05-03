@@ -88,19 +88,6 @@ export namespace workspace {
 }
 
 export namespace process {
-  export function buildFakeSucceedingProcess() {
-    return new class implements ProcessLike {
-      execFile(
-        _file: string,
-        _args: readonly string[] | null | undefined,
-        _options: ExecFileOptionsLike,
-        _callback: (error: ExecFileExceptionLike | null, stdout: string, stderr: string) => void): ChildProcessLike {
-        return new class implements ChildProcessLike { };
-      }
-    };
-  }
-
-  // todo: this stub is too complex
   export function buildFakeProcess() {
     return new class implements ProcessLike {
       execFile(file: string,

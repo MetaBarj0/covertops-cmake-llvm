@@ -10,7 +10,6 @@ import { DecorationLocationsProvider } from '../../../src/domain/services/decora
 import { process, statFile, workspace, glob } from '../../builders/fake-adapters';
 
 import buildFakeProcess = process.buildFakeProcess;
-import buildFakeSucceedingProcess = process.buildFakeSucceedingProcess;
 import buildSucceedingFakeStatFile = statFile.buildSucceedingFakeStatFile;
 import buildFailingFakeStatFile = statFile.buildFailingFakeStatFile;
 import buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings = workspace.buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings;
@@ -23,7 +22,7 @@ describe('DecorationLocationProvider service behavior.', () => {
       new DecorationLocationsProvider({
         workspace: buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(),
         statFile: buildFailingFakeStatFile(),
-        process: buildFakeSucceedingProcess(),
+        process: buildFakeProcess(),
         globSearch: buildFakeGlobSearchForNoMatch()
       });
     };
@@ -38,7 +37,7 @@ describe('DecorationLocationProvider service behavior.', () => {
       const provider = new DecorationLocationsProvider({
         workspace: buildFakeOverridableWorkspace(),
         statFile: buildFailingFakeStatFile(),
-        process: buildFakeSucceedingProcess(),
+        process: buildFakeProcess(),
         globSearch: buildFakeGlobSearchForNoMatch()
       });
 
@@ -97,4 +96,16 @@ describe('DecorationLocationProvider service behavior.', () => {
         "'cmake-llvm-coverage: Build Tree Directory' and 'cmake-llvm-coverage: Coverage Info File Name' " +
         'settings are correctly set.');
     });
+
+  // it('should be able to provide decoration for uncovered code regions ' +
+  //   'when all adapters work as expected.',
+  //   () => {
+  //     const cmakeProcess = buildSucceedingCmakeProcess();
+  //     const buildDirectoryResolver = buildSucceedingBuildTreeDirectoryResolver();
+  //     const failingCoverageInfoFileResolver = buildSucceedingUncoveredCodeRegionsCollector();
+
+  //     const provider = new DecorationLocationsProvider(cmakeProcess, buildDirectoryResolver, failingCoverageInfoFileResolver);
+
+  //     return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.fulfilled;
+  //   });
 });
