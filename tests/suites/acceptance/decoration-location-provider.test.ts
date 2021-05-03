@@ -14,7 +14,7 @@ import buildSucceedingFakeStatFile = statFile.buildSucceedingFakeStatFile;
 import buildFailingFakeStatFile = statFile.buildFailingFakeStatFile;
 import buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings = workspace.buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings;
 import buildFakeOverridableWorkspace = workspace.buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings;
-import buildFakeGlobSearch = glob.buildFakeGlobSearch;
+import buildFakeGlobSearch = glob.buildFakeGlobSearchForNoMatch;
 
 describe('DecorationLocationProvider service behavior.', () => {
   it('should be correctly instantiated with faked adapters.', () => {

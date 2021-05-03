@@ -180,7 +180,27 @@ export namespace statFile {
 }
 
 export namespace glob {
-  export function buildFakeGlobSearch() {
-    return new class implements GlobSearchLike { };
+  export function buildFakeGlobSearchForNoMatch() {
+    return new class implements GlobSearchLike {
+      search(_pattern: string) {
+        return Promise.resolve([]);
+      }
+    };
+  }
+
+  export function buildFakeGlobSearchForSeveralMatch() {
+    return new class implements GlobSearchLike {
+      search(_pattern: string) {
+        return Promise.resolve(['', '']);
+      }
+    };
+  }
+
+  export function buildFakeGlobSearchForExactlyOneMatch() {
+    return new class implements GlobSearchLike {
+      search(_pattern: string) {
+        return Promise.resolve(['oneMatchShow']);
+      }
+    };
   }
 }

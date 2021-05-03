@@ -9,12 +9,14 @@ import { CoverageInfoFileResolver } from '../../../src/domain/services/coverage-
 import { glob, workspace } from '../../builders/fake-adapters';
 
 import buildFakeWorkspace = workspace.buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings;
-import buildFakeGlobSearch = glob.buildFakeGlobSearch;
+import buildFakeGlobSearchForNoMatch = glob.buildFakeGlobSearchForNoMatch;
+import buildFakeGlobSearchForSeveralMatch = glob.buildFakeGlobSearchForSeveralMatch;
+import buildFakeGlobSearchForExactlyOneMatch = glob.buildFakeGlobSearchForExactlyOneMatch;
 
 describe('the behavior of the coverage info file resolving internal service', () => {
   it('should fail if the glob searched from the build tree directory does not find one file', () => {
     const workspace = buildFakeWorkspace();
-    const globSearch = buildFakeGlobSearch();
+    const globSearch = buildFakeGlobSearchForNoMatch();
 
     const resolver = new CoverageInfoFileResolver(workspace, globSearch);
 
@@ -26,10 +28,24 @@ describe('the behavior of the coverage info file resolving internal service', ()
   });
 
   it('should fail if the glob searched from the build tree directory finds more than one file', () => {
-    (() => { }).should.throw('test is not implemented');
+    const workspace = buildFakeWorkspace();
+    const globSearch = buildFakeGlobSearchForSeveralMatch();
+
+    const resolver = new CoverageInfoFileResolver(workspace, globSearch);
+
+    return resolver.resolveCoverageInfoFileFullPath().should.eventually.be.rejectedWith(
+      'More than one coverage information file have been found. ' +
+      'Ensure that both ' +
+      "'cmake-llvm-coverage: Build Tree Directory' and 'cmake-llvm-coverage: Coverage Info File Name' " +
+      'settings are correctly set.');
   });
 
   it('should resolve correctly if the glob searched from the build tree directory find exactly one file.', () => {
-    (() => { }).should.throw('test is not implemented');
+    const workspace = buildFakeWorkspace();
+    const globSearch = buildFakeGlobSearchForExactlyOneMatch();
+
+    const resolver = new CoverageInfoFileResolver(workspace, globSearch);
+
+    return resolver.resolveCoverageInfoFileFullPath().should.eventually.be.fulfilled;
   });
 });
