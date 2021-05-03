@@ -9,12 +9,14 @@ import { DecorationLocationsProvider } from '../../../src/domain/services/decora
 
 import { process, statFile, workspace, glob } from '../../builders/fake-adapters';
 
-import buildFakeProcess = process.buildFakeProcess;
+import buildFakeFailingProcess = process.buildFakeFailingProcess;
+import buildFakeSucceedingProcess = process.buildFakeSucceedingProcess;
 import buildSucceedingFakeStatFile = statFile.buildSucceedingFakeStatFile;
 import buildFailingFakeStatFile = statFile.buildFailingFakeStatFile;
 import buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings = workspace.buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings;
 import buildFakeOverridableWorkspace = workspace.buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings;
 import buildFakeGlobSearchForNoMatch = glob.buildFakeGlobSearchForNoMatch;
+import { buildFakeCmakeProcess } from './fakes/cmake-process.fake';
 
 describe('DecorationLocationProvider service behavior.', () => {
   it('should be correctly instantiated with faked adapters.', () => {
@@ -22,7 +24,8 @@ describe('DecorationLocationProvider service behavior.', () => {
       new DecorationLocationsProvider({
         workspace: buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(),
         statFile: buildFailingFakeStatFile(),
-        process: buildFakeProcess(),
+        processForCmakeCommand: buildFakeFailingProcess(),
+        processForCmakeTarget: buildFakeFailingProcess(),
         globSearch: buildFakeGlobSearchForNoMatch()
       });
     };
@@ -37,7 +40,8 @@ describe('DecorationLocationProvider service behavior.', () => {
       const provider = new DecorationLocationsProvider({
         workspace: buildFakeOverridableWorkspace(),
         statFile: buildFailingFakeStatFile(),
-        process: buildFakeProcess(),
+        processForCmakeCommand: buildFakeFailingProcess(),
+        processForCmakeTarget: buildFakeFailingProcess(),
         globSearch: buildFakeGlobSearchForNoMatch()
       });
 
@@ -52,7 +56,8 @@ describe('DecorationLocationProvider service behavior.', () => {
       const provider = new DecorationLocationsProvider({
         workspace: buildFakeOverridableWorkspace({ cmakeCommand: '' }),
         statFile: buildSucceedingFakeStatFile(),
-        process: buildFakeProcess(),
+        processForCmakeCommand: buildFakeFailingProcess(),
+        processForCmakeTarget: buildFakeFailingProcess(),
         globSearch: buildFakeGlobSearchForNoMatch()
       });
 
@@ -71,7 +76,8 @@ describe('DecorationLocationProvider service behavior.', () => {
       const provider = new DecorationLocationsProvider({
         workspace: workspace,
         statFile: buildSucceedingFakeStatFile(),
-        process: buildFakeProcess(),
+        processForCmakeCommand: buildFakeSucceedingProcess(),
+        processForCmakeTarget: buildFakeFailingProcess(),
         globSearch: buildFakeGlobSearchForNoMatch()
       });
 
@@ -86,7 +92,8 @@ describe('DecorationLocationProvider service behavior.', () => {
       const provider = new DecorationLocationsProvider({
         workspace: buildFakeOverridableWorkspace({ coverageInfoFileName: 'baadf00d' }),
         statFile: buildSucceedingFakeStatFile(),
-        process: buildFakeProcess(),
+        processForCmakeCommand: buildFakeSucceedingProcess(),
+        processForCmakeTarget: buildFakeSucceedingProcess(),
         globSearch: buildFakeGlobSearchForNoMatch()
       });
 

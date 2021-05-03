@@ -20,10 +20,17 @@ export type ProcessLike = {
   ): ChildProcessLike;
 };
 
+type CmakeAdapters = {
+  workspace: VscodeWorkspaceLike,
+  processForCommand: ProcessLike,
+  processForTarget: ProcessLike
+};
+
 export class Cmake {
-  constructor(workspace: VscodeWorkspaceLike, process: ProcessLike) {
-    this.process = process;
-    this.workspace = workspace;
+  constructor(adapters: CmakeAdapters) {
+    this.workspace = adapters.workspace;
+    this.processForCommand = adapters.processForCommand;
+    this.processForTarget = adapters.processForTarget;
   }
 
   buildTarget(): Promise<void> {
@@ -31,7 +38,7 @@ export class Cmake {
       const settings = new SettingsProvider(this.workspace).settings;
       const cmakeCommand = settings.cmakeCommand;
 
-      this.process.execFile(
+      this.processForCommand.execFile(
         cmakeCommand, ['--version'], {},
         (error, _stdout, _stderr) => {
           if (error)
@@ -43,7 +50,7 @@ export class Cmake {
       const build = settings.buildTreeDirectory;
       const target = settings.cmakeTarget;
 
-      this.process.execFile(
+      this.processForTarget.execFile(
         cmakeCommand, ['--build', build, '--target', target], {},
         (error, _stdout, _stderr) => {
           if (error)
@@ -56,6 +63,7 @@ export class Cmake {
     });
   }
 
-  private readonly process: ProcessLike;
+  private readonly processForCommand: ProcessLike;
+  private readonly processForTarget: ProcessLike;
   private readonly workspace: VscodeWorkspaceLike;
 };

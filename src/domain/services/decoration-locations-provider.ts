@@ -6,7 +6,8 @@ import { CoverageInfoFileResolver, GlobSearchLike } from './coverage-info-file-r
 type Adapters = {
   workspace: VscodeWorkspaceLike,
   statFile: StatFileLike,
-  process: ProcessLike,
+  processForCmakeCommand: ProcessLike,
+  processForCmakeTarget: ProcessLike,
   globSearch: GlobSearchLike
 };
 
@@ -14,7 +15,8 @@ export class DecorationLocationsProvider {
   constructor(adapters: Adapters) {
     this.workspace = adapters.workspace;
     this.statFile = adapters.statFile;
-    this.process = adapters.process;
+    this.processForCmakeCommand = adapters.processForCmakeCommand;
+    this.processForCmakeTarget = adapters.processForCmakeTarget;
     this.globSearch = adapters.globSearch;
   }
 
@@ -22,7 +24,12 @@ export class DecorationLocationsProvider {
     const buildTreeDirectoryResolver = new BuildTreeDirectoryResolver(this.workspace, this.statFile);
     await buildTreeDirectoryResolver.resolveBuildTreeDirectoryAbsolutePath();
 
-    const cmake = new Cmake(this.workspace, this.process);
+    const cmake = new Cmake({
+      workspace: this.workspace,
+      processForCommand: this.processForCmakeCommand,
+      processForTarget: this.processForCmakeTarget
+    });
+
     await cmake.buildTarget();
 
     const coverageInfoFileResolver = new CoverageInfoFileResolver(this.workspace, this.globSearch);
@@ -33,6 +40,7 @@ export class DecorationLocationsProvider {
 
   private readonly workspace: VscodeWorkspaceLike;
   private readonly statFile: StatFileLike;
-  private readonly process: ProcessLike;
+  private readonly processForCmakeCommand: ProcessLike;
+  private readonly processForCmakeTarget: ProcessLike;
   private readonly globSearch: GlobSearchLike;
 }
