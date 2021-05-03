@@ -8,7 +8,7 @@ chai.should();
 import { CoverageInfoFileResolver } from '../../../src/domain/services/coverage-info-file-resolver';
 import { glob, workspace } from '../../builders/fake-adapters';
 
-import buildFakeWorkspace = workspace.buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings;
+import buildFakeWorkspace = workspace.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings;
 import buildFakeGlobSearchForNoMatch = glob.buildFakeGlobSearchForNoMatch;
 import buildFakeGlobSearchForSeveralMatch = glob.buildFakeGlobSearchForSeveralMatch;
 import buildFakeGlobSearchForExactlyOneMatch = glob.buildFakeGlobSearchForExactlyOneMatch;

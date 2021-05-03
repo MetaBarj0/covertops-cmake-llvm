@@ -27,7 +27,7 @@ export namespace workspace {
     -readonly [k in keyof Settings]?: any
   };
 
-  export function buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings(overrides: Overrides = {}): VscodeWorkspaceLike {
+  export function buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(overrides: Overrides = {}): VscodeWorkspaceLike {
     return new class implements VscodeWorkspaceLike {
       constructor(overrides: Overrides) {
         this.overrides = overrides;
@@ -74,7 +74,7 @@ export namespace workspace {
     }(overrides);
   }
 
-  export function buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(): VscodeWorkspaceLike {
+  export function buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(): VscodeWorkspaceLike {
     return new class implements VscodeWorkspaceLike {
       workspaceFolders = undefined;
 

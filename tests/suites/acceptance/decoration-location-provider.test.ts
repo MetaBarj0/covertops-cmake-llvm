@@ -13,10 +13,9 @@ import buildFakeFailingProcess = process.buildFakeFailingProcess;
 import buildFakeSucceedingProcess = process.buildFakeSucceedingProcess;
 import buildSucceedingFakeStatFile = statFile.buildSucceedingFakeStatFile;
 import buildFailingFakeStatFile = statFile.buildFailingFakeStatFile;
-import buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings = workspace.buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings;
-import buildFakeOverridableWorkspace = workspace.buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings;
+import buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings = workspace.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings;
+import buildFakeOverridableWorkspace = workspace.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings;
 import buildFakeGlobSearchForNoMatch = glob.buildFakeGlobSearchForNoMatch;
-import { buildFakeCmakeProcess } from './fakes/cmake-process.fake';
 
 describe('DecorationLocationProvider service behavior.', () => {
   it('should be correctly instantiated with faked adapters.', () => {
@@ -103,16 +102,4 @@ describe('DecorationLocationProvider service behavior.', () => {
         "'cmake-llvm-coverage: Build Tree Directory' and 'cmake-llvm-coverage: Coverage Info File Name' " +
         'settings are correctly set.');
     });
-
-  // it('should be able to provide decoration for uncovered code regions ' +
-  //   'when all adapters work as expected.',
-  //   () => {
-  //     const cmakeProcess = buildSucceedingCmakeProcess();
-  //     const buildDirectoryResolver = buildSucceedingBuildTreeDirectoryResolver();
-  //     const failingCoverageInfoFileResolver = buildSucceedingUncoveredCodeRegionsCollector();
-
-  //     const provider = new DecorationLocationsProvider(cmakeProcess, buildDirectoryResolver, failingCoverageInfoFileResolver);
-
-  //     return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.fulfilled;
-  //   });
 });

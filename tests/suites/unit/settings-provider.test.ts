@@ -13,10 +13,10 @@ import {
 import { workspace } from '../../builders/fake-adapters';
 
 import buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings =
-workspace.buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings;
+workspace.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings;
 
 import buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings =
-workspace.buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings;
+workspace.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings;
 
 describe('how the settings provider works with a fake of vscode api for configuration', () => {
   it('should be instantiated correctly with a vscode workspace-like instance and provide ' +

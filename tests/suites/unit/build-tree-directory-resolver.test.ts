@@ -6,7 +6,7 @@ import { BuildTreeDirectoryResolver } from '../../../src/domain/services/build-t
 
 import { workspace } from '../../builders/fake-adapters';
 import buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings =
-workspace.buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings;
+workspace.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings;
 
 import { statFile } from '../../builders/fake-adapters';
 import buildFailingFakeStatFile = statFile.buildFailingFakeStatFile;
