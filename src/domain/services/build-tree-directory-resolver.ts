@@ -6,7 +6,7 @@ export type StatFileLike = {
   stat(path: PathLike, opts?: StatOptions): Promise<Stats | BigIntStats>
 };
 
-export class FileOrDirectoryResolver {
+export class BuildTreeDirectoryResolver {
   constructor(workspace: VscodeWorkspaceLike, statFile: StatFileLike) {
     this.workspace = workspace;
     this.statFile = statFile;
@@ -21,12 +21,6 @@ export class FileOrDirectoryResolver {
         "Cannot find the build tree directory. Ensure the 'cmake-llvm-coverage: Build Tree Directory' " +
         'setting is correctly set and target to an existing cmake build tree directory.');
     }
-  }
-
-  async resolveCoverageInformationFileName() {
-    return Promise.reject(
-      "Cannot find the file containing coverage information. Ensure the 'cmake-llvm-coverage: Coverage Info File Name' " +
-      'setting is correctly set and this file is produced by building the cmake target.');
   }
 
   private get constructBuildTreeDirectoryAbsolutePath() {

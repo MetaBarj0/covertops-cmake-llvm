@@ -1,5 +1,5 @@
 import { VscodeWorkspaceLike } from './settings-provider';
-import { StatFileLike, FileOrDirectoryResolver } from './file-or-directory-resolver';
+import { StatFileLike, BuildTreeDirectoryResolver } from './build-tree-directory-resolver';
 import { Cmake, ProcessLike } from './cmake';
 import { Readable } from 'stream';
 
@@ -19,7 +19,7 @@ export class DecorationLocationsProvider {
   }
 
   async getDecorationLocationsForUncoveredCodeRegions() {
-    const buildTreeDirectoryResolver = new FileOrDirectoryResolver(this.workspace, this.statFile);
+    const buildTreeDirectoryResolver = new BuildTreeDirectoryResolver(this.workspace, this.statFile);
     await buildTreeDirectoryResolver.resolveBuildTreeDirectoryRelativePath();
 
     const cmake = new Cmake(this.workspace, this.process);

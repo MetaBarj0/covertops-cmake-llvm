@@ -12,7 +12,7 @@ import {
   ProcessLike
 } from '../../src/domain/services/cmake';
 
-import { StatFileLike } from '../../src/domain/services/file-or-directory-resolver';
+import { StatFileLike } from '../../src/domain/services/build-tree-directory-resolver';
 
 import * as path from 'path';
 import { Readable } from 'stream';
