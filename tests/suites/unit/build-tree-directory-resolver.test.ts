@@ -23,7 +23,7 @@ describe('how the file or directory resolver works with a fake file system stat 
       const fakedStatFile = buildFailingFakeStatFile();
       const resolver = new BuildTreeDirectoryResolver(fakedWorkspace, fakedStatFile);
 
-      return resolver.resolveBuildTreeDirectoryRelativePath().should.eventually.be.rejectedWith(
+      return resolver.resolveBuildTreeDirectoryAbsolutePath().should.eventually.be.rejectedWith(
         "Cannot find the build tree directory. Ensure the 'cmake-llvm-coverage: Build Tree Directory' " +
         'setting is correctly set and target to an existing cmake build tree directory.');
     });
@@ -35,6 +35,7 @@ describe('how the file or directory resolver works with a fake file system stat 
       const fakedStatFile = buildSucceedingFakeStatFile();
       const resolver = new BuildTreeDirectoryResolver(fakedWorkspace, fakedStatFile);
 
-      return resolver.resolveBuildTreeDirectoryRelativePath().should.eventually.be.not.empty;
+      // TODO: find a better less narrow assertion
+      return resolver.resolveBuildTreeDirectoryAbsolutePath().should.eventually.be.not.empty;
     });
 });

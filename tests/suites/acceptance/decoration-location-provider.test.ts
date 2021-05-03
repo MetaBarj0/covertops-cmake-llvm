@@ -7,14 +7,14 @@ chai.should();
 
 import { DecorationLocationsProvider } from '../../../src/domain/services/decoration-locations-provider';
 
-import { process, statFile, stream, workspace } from '../../builders/fake-adapters';
+import { process, statFile, workspace, glob } from '../../builders/fake-adapters';
 
 import buildFakeProcess = process.buildFakeProcess;
 import buildSucceedingFakeStatFile = statFile.buildSucceedingFakeStatFile;
 import buildFailingFakeStatFile = statFile.buildFailingFakeStatFile;
 import buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings = workspace.buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings;
 import buildFakeOverridableWorkspace = workspace.buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings;
-import buildEmptyInputStream = stream.buildEmptyInputStream;
+import buildFakeGlobSearch = glob.buildFakeGlobSearch;
 
 describe('DecorationLocationProvider service behavior.', () => {
   it('should be correctly instantiated with faked adapters.', () => {
@@ -23,7 +23,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         workspace: buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(),
         statFile: buildFailingFakeStatFile(),
         process: buildFakeProcess(),
-        inputStream: buildEmptyInputStream()
+        globSearch: buildFakeGlobSearch()
       });
     };
 
@@ -38,7 +38,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         workspace: buildFakeOverridableWorkspace(),
         statFile: buildFailingFakeStatFile(),
         process: buildFakeProcess(),
-        inputStream: buildEmptyInputStream()
+        globSearch: buildFakeGlobSearch()
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
@@ -53,7 +53,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         workspace: buildFakeOverridableWorkspace({ cmakeCommand: '' }),
         statFile: buildSucceedingFakeStatFile(),
         process: buildFakeProcess(),
-        inputStream: buildEmptyInputStream()
+        globSearch: buildFakeGlobSearch()
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
@@ -72,7 +72,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         workspace: workspace,
         statFile: buildSucceedingFakeStatFile(),
         process: buildFakeProcess(),
-        inputStream: buildEmptyInputStream()
+        globSearch: buildFakeGlobSearch()
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
@@ -87,7 +87,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         workspace: buildFakeOverridableWorkspace({ coverageInfoFileName: '' }),
         statFile: buildSucceedingFakeStatFile(),
         process: buildFakeProcess(),
-        inputStream: buildEmptyInputStream()
+        globSearch: buildFakeGlobSearch()
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(

@@ -14,10 +14,13 @@ import {
 
 import { StatFileLike } from '../../src/domain/services/build-tree-directory-resolver';
 
+import { GlobSearchLike } from '../../src/domain/services/coverage-info-file-resolver';
+
 import * as path from 'path';
-import { Readable } from 'stream';
 import { BigIntStats, PathLike, StatOptions, Stats } from 'fs';
 import { Settings } from '../../src/domain/value-objects/settings';
+
+import { Readable } from 'stream';
 
 export namespace workspace {
   type Overrides = {
@@ -173,5 +176,11 @@ export namespace statFile {
         return Promise.resolve(new Stats());
       }
     };
+  }
+}
+
+export namespace glob {
+  export function buildFakeGlobSearch() {
+    return new class implements GlobSearchLike { };
   }
 }

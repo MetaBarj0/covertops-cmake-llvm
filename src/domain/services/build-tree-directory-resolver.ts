@@ -12,7 +12,7 @@ export class BuildTreeDirectoryResolver {
     this.statFile = statFile;
   }
 
-  async resolveBuildTreeDirectoryRelativePath() {
+  async resolveBuildTreeDirectoryAbsolutePath() {
     try {
       await this.statFile.stat(this.constructBuildTreeDirectoryAbsolutePath);
       return Promise.resolve(this.constructBuildTreeDirectoryAbsolutePath);
