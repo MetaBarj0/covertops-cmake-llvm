@@ -33,34 +33,67 @@ export class Cmake {
     this.processForTarget = adapters.processForTarget;
   }
 
-  buildTarget(): Promise<void> {
+  async buildTarget(): Promise<void> {
+    await this.ensureCmakeIsReachable();
+    await this.generate();
+
+    return this.build();
+  }
+
+  private ensureCmakeIsReachable(): Promise<void> {
+    return this.executeCmakeCommandWith({
+      process: this.processForCommand,
+      arguments: ['--version'],
+      potentialErrorMessage:
+        "Cannot find the cmake command. Ensure the 'cmake-llvm-coverage: Cmake Command' " +
+        'setting is correctly set. Have you verified your PATH environment variable?'
+    });
+  }
+
+  private generate(): Promise<void> {
+    const settings = new SettingsProvider(this.workspace).settings;
+    const build = settings.buildTreeDirectory;
+    const source = settings.rootDirectory;
+
+    return this.executeCmakeCommandWith({
+      process: this.processForTarget,
+      arguments: ['-B', build, '-S', source, ...settings.additionalCmakeOptions],
+      potentialErrorMessage:
+        `Error: Could not build the specified cmake target ${settings.cmakeTarget}. ` +
+        "Ensure 'cmake-llvm-coverage: Cmake Target' setting is properly set."
+    });
+  }
+
+  private build(): Promise<void> {
+    const settings = new SettingsProvider(this.workspace).settings;
+    const build = settings.buildTreeDirectory;
+    const target = settings.cmakeTarget;
+
+    return this.executeCmakeCommandWith({
+      process: this.processForTarget,
+      arguments: ['--build', build, '--target', target],
+      potentialErrorMessage:
+        `Error: Could not build the specified cmake target ${settings.cmakeTarget}. ` +
+        "Ensure 'cmake-llvm-coverage: Cmake Target' setting is properly set."
+    });
+  }
+
+  private executeCmakeCommandWith(options: { process: ProcessLike, arguments: ReadonlyArray<string>, potentialErrorMessage: string }): Promise<void> {
     return new Promise((resolve, reject) => {
       const settings = new SettingsProvider(this.workspace).settings;
       const cmakeCommand = settings.cmakeCommand;
 
-      this.processForCommand.execFile(
-        cmakeCommand, ['--version'], {},
-        (error, _stdout, _stderr) => {
-          if (error)
-            return reject(new Error(
-              "Cannot find the cmake command. Ensure the 'cmake-llvm-coverage: Cmake Command' " +
-              'setting is correctly set. Have you verified your PATH environment variable?'));
-        });
-
-      const build = settings.buildTreeDirectory;
-      const target = settings.cmakeTarget;
-
-      this.processForTarget.execFile(
-        cmakeCommand, ['--build', build, '--target', target],
+      options.process.execFile(
+        cmakeCommand, options.arguments,
         {
-          cwd: settings.rootDirectory
+          cwd: settings.rootDirectory,
+          env: process.env
         },
         (error, _stdout, _stderr) => {
           if (error)
             return reject(new Error(
-              `Error: Could not build the specified cmake target ${settings.cmakeTarget}. ` +
-              "Ensure 'cmake-llvm-coverage: Cmake Target' setting is properly set.\n" +
-              error.message));
+              `${options.potentialErrorMessage}\n${error.message}`));
+
           resolve();
         });
     });

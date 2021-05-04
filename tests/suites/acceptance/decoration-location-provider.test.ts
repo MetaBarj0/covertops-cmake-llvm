@@ -66,7 +66,7 @@ describe('DecorationLocationProvider service behavior.', () => {
     });
 
   it('should not be able to provide any decoration for uncovered code regions ' +
-    'when the cmake target cannot be run by cmake though the cmake command is invocable and ' +
+    'when the cmake target cannot be built by cmake though the cmake command is invocable and ' +
     'the build tree directory exists.',
     () => {
       const workspace = buildFakeOverridableWorkspace({ cmakeTarget: '' });
