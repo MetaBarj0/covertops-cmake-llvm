@@ -23,7 +23,7 @@ export class SettingsProvider {
   }
 
   get settings(): Settings {
-    if (this.workspace.workspaceFolders === undefined)
+    if (!this.workspace.workspaceFolders)
       throw new Error('A workspace must be loaded to get coverage information.');
 
     const workspaceSettings = this.workspace.getConfiguration('cmake-llvm-coverage');

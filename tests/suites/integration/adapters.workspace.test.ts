@@ -5,10 +5,6 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
-import { ExtensionSettings } from '../../../src/infrastructure/extension-settings';
-import { FileSystemBuildTreeDirectoryResolver } from '../../../src/infrastructure/file-system-build-tree-directory-resolver';
-import { RealCmakeProcess } from '../../../src/infrastructure/real-cmake-process';
-
 import * as vscode from 'vscode';
 import { env } from 'process';
 import * as path from 'path';
@@ -17,7 +13,6 @@ import { BuildTreeDirectoryResolver } from '../../../src/domain/services/build-t
 import { promises as fs } from 'fs';
 import { Cmake } from '../../../src/domain/services/cmake';
 import * as cp from 'child_process';
-import { settings } from 'node:cluster';
 
 describe('The internal services can be instantiated when vscode has an active workspace', () => {
   it('should not throw any exception when instantiating extension settings and settings should be set with default values', () => {
