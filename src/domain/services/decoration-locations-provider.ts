@@ -1,4 +1,4 @@
-import { VscodeWorkspaceLike } from './settings-provider';
+import { SettingsProvider, VscodeWorkspaceLike } from './settings-provider';
 import { StatFileLike, BuildTreeDirectoryResolver } from './build-tree-directory-resolver';
 import { Cmake, ProcessLike } from './cmake';
 import { CoverageInfoFileResolver, GlobSearchLike } from './coverage-info-file-resolver';

@@ -41,9 +41,8 @@ describe('the behavior of the cmake internal service used to build the target ' 
         const target = workspace.getConfiguration('cmake-llvm-coverage').get<string>('cmakeTarget');
 
         return cmake.buildTarget().should.eventually.be.rejectedWith(
-          `Cannot build the cmake target: '${target}'. Make sure the ` +
-          "'cmake-llvm-coverage: Cmake Target' setting is correctly set."
-        );
+          `Error: Could not build the specified cmake target ${target}. ` +
+          "Ensure 'cmake-llvm-coverage: Cmake Target' setting is properly set.");
       });
 
     it('should be instantiated with correct dependencies for all processes and workspace ' +

@@ -81,8 +81,8 @@ describe('DecorationLocationProvider service behavior.', () => {
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
-        `Cannot build the cmake target: '${target}'. Make sure the ` +
-        "'cmake-llvm-coverage: Cmake Target' setting is correctly set.");
+        `Error: Could not build the specified cmake target ${target}. ` +
+        "Ensure 'cmake-llvm-coverage: Cmake Target' setting is properly set.");
     });
 
   it('should not be able to provide any decoration for uncovered code regions ' +

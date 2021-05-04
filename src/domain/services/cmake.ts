@@ -51,15 +51,18 @@ export class Cmake {
       const target = settings.cmakeTarget;
 
       this.processForTarget.execFile(
-        cmakeCommand, ['--build', build, '--target', target], {},
+        cmakeCommand, ['--build', build, '--target', target],
+        {
+          cwd: settings.rootDirectory
+        },
         (error, _stdout, _stderr) => {
           if (error)
             return reject(new Error(
-              `Cannot build the cmake target: '${target}'. Make sure the ` +
-              "'cmake-llvm-coverage: Cmake Target' setting is correctly set."));
+              `Error: Could not build the specified cmake target ${settings.cmakeTarget}. ` +
+              "Ensure 'cmake-llvm-coverage: Cmake Target' setting is properly set.\n" +
+              error.message));
+          resolve();
         });
-
-      resolve();
     });
   }
 

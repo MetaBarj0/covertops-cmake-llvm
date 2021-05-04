@@ -12,10 +12,16 @@ import { RealCmakeProcess } from '../../../src/infrastructure/real-cmake-process
 import * as vscode from 'vscode';
 import { env } from 'process';
 import * as path from 'path';
+import { SettingsProvider } from '../../../src/domain/services/settings-provider';
+import { BuildTreeDirectoryResolver } from '../../../src/domain/services/build-tree-directory-resolver';
+import { promises as fs } from 'fs';
+import { Cmake } from '../../../src/domain/services/cmake';
+import * as cp from 'child_process';
+import { settings } from 'node:cluster';
 
 describe('The internal services can be instantiated when vscode has an active workspace', () => {
   it('should not throw any exception when instantiating extension settings and settings should be set with default values', () => {
-    const settings = new ExtensionSettings();
+    const settings = new SettingsProvider(vscode.workspace).settings;
 
     settings.buildTreeDirectory.should.be.equal('build');
     settings.cmakeCommand.should.be.equal('cmake');
@@ -35,11 +41,10 @@ describe('The internal services can be instantiated when vscode has an active wo
     it('should not be possible to access the full path of the build tree directory using a ' +
       'build tree directory resolver instance set up with an incorrect build tree directory in settings.',
       () => {
-        const settings = new ExtensionSettings();
-        const resolver = new FileSystemBuildTreeDirectoryResolver(settings);
+        const resolver = new BuildTreeDirectoryResolver(vscode.workspace, { stat: fs.stat });
 
-        return resolver.resolveFullPath().should.eventually.be.rejectedWith(
-          "Cannot find the build tree directory. Ensure the 'cmake-llvm-coverage Build Tree Directory' " +
+        return resolver.resolveBuildTreeDirectoryAbsolutePath().should.eventually.be.rejectedWith(
+          "Cannot find the build tree directory. Ensure the 'cmake-llvm-coverage: Build Tree Directory' " +
           'setting is correctly set and target to an existing cmake build tree directory.');
       });
 
@@ -55,11 +60,16 @@ describe('The internal services can be instantiated when vscode has an active wo
 
     it('should throw when attempting to build an assumed valid specified cmake target in settings ' +
       'with an unreachable cmake command', () => {
-        const settings = new ExtensionSettings();
-        const process = new RealCmakeProcess(settings);
+        const settings = new SettingsProvider(vscode.workspace).settings;
 
-        return process.buildCmakeTarget().should.eventually.be.rejectedWith(
-          "Cannot find the cmake command. Ensure the 'cmake-llvm-coverage Cmake Command' " +
+        const cmake = new Cmake({
+          workspace: vscode.workspace,
+          processForCommand: { execFile: cp.execFile },
+          processForTarget: { execFile: cp.execFile }
+        });
+
+        return cmake.buildTarget().should.eventually.be.rejectedWith(
+          "Cannot find the cmake command. Ensure the 'cmake-llvm-coverage: Cmake Command' " +
           'setting is correctly set. Have you verified your PATH environment variable?');
       });
 
@@ -82,14 +92,17 @@ describe('The internal services can be instantiated when vscode has an active wo
 
     it('should throw when attempting to build an invalid specified cmake target in settings ' +
       'with a reachable cmake command', () => {
+        const settings = new SettingsProvider(vscode.workspace).settings;
 
-        const settings = new ExtensionSettings();
+        const cmake = new Cmake({
+          workspace: vscode.workspace,
+          processForCommand: { execFile: cp.execFile },
+          processForTarget: { execFile: cp.execFile }
+        });
 
-        const process = new RealCmakeProcess(settings, env);
-
-        return process.buildCmakeTarget().should.eventually.be.rejectedWith(
+        return cmake.buildTarget().should.eventually.be.rejectedWith(
           `Error: Could not build the specified cmake target ${settings.cmakeTarget}. ` +
-          "Ensure 'cmake-llvm-coverage Cmake Target' setting is properly set.");
+          "Ensure 'cmake-llvm-coverage: Cmake Target' setting is properly set.");
       });
 
     after('restoring cmake target and additonal options settings and PATH environment variable', async () => {
@@ -103,7 +116,7 @@ describe('The internal services can be instantiated when vscode has an active wo
   describe('with correct settings and additional cmake options', () => {
     let originalEnvPath: string;
 
-    before('Modifying additional cmake command options PATH environment variable', async () => {
+    before('Modifying additional cmake command options, PATH environment variable ', async () => {
       await vscode.workspace.getConfiguration('cmake-llvm-coverage').update(
         'additionalCmakeOptions', ['-DCMAKE_CXX_COMPILER=clang++', '-G', 'Ninja']);
 
@@ -113,18 +126,20 @@ describe('The internal services can be instantiated when vscode has an active wo
     it('should be possible to access the full path of the build tree directory using a ' +
       'build tree directory resolver instance.',
       () => {
-        const settings = new ExtensionSettings();
-        const resolver = new FileSystemBuildTreeDirectoryResolver(settings);
+        const resolver = new BuildTreeDirectoryResolver(vscode.workspace, { stat: fs.stat });
 
-        return resolver.resolveFullPath().should.eventually.be.fulfilled;
+        return resolver.resolveBuildTreeDirectoryAbsolutePath().should.eventually.be.fulfilled;
       });
 
     it('should not throw when attempting to build a valid cmake target specified in settings', () => {
-      const settings = new ExtensionSettings();
+      const settings = new SettingsProvider(vscode.workspace).settings;
+      const cmake = new Cmake({
+        workspace: vscode.workspace,
+        processForCommand: { execFile: cp.execFile },
+        processForTarget: { execFile: cp.execFile }
+      });
 
-      const process = new RealCmakeProcess(settings, env);
-
-      return process.buildCmakeTarget().should.eventually.be.fulfilled;
+      return cmake.buildTarget().should.eventually.be.fulfilled;
     });
 
     after('restoring additional cmake command options and PATH environment variable', async () => {
