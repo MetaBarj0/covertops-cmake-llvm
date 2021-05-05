@@ -26,7 +26,7 @@ export class CoverageInfoFileResolver {
 
     if (searchResult.length > 1)
       return Promise.reject(
-        'More than one coverage information file have been found. ' +
+        'More than one coverage information file have been found in the build tree directory. ' +
         'Ensure that both ' +
         `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
         'settings are correctly set.');

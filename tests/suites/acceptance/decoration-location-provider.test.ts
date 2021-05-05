@@ -14,8 +14,9 @@ import buildFakeSucceedingProcess = process.buildFakeSucceedingProcess;
 import buildSucceedingFakeStatFile = statFile.buildFakeSucceedingStatFile;
 import buildFailingFakeStatFile = statFile.buildFakeFailingStatFile;
 import buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings = workspace.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings;
-import buildFakeOverridableWorkspace = workspace.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings;
+import buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings = workspace.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings;
 import buildFakeGlobSearchForNoMatch = glob.buildFakeGlobSearchForNoMatch;
+import buildFakeGlobSearchForSeveralMatch = glob.buildFakeGlobSearchForSeveralMatch;
 import buildFakeFailingFs = fs.buildFakeFailingFs;
 
 describe('DecorationLocationProvider service behavior.', () => {
@@ -39,7 +40,7 @@ describe('DecorationLocationProvider service behavior.', () => {
     'is invocable',
     () => {
       const provider = new DecorationLocationsProvider({
-        workspace: buildFakeOverridableWorkspace(),
+        workspace: buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
         statFile: buildFailingFakeStatFile(),
         processForCmakeCommand: buildFakeFailingProcess(),
         processForCmakeTarget: buildFakeFailingProcess(),
@@ -56,7 +57,7 @@ describe('DecorationLocationProvider service behavior.', () => {
     'when the cmake command cannot be reached.',
     () => {
       const provider = new DecorationLocationsProvider({
-        workspace: buildFakeOverridableWorkspace({ cmakeCommand: '' }),
+        workspace: buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ cmakeCommand: '' }),
         statFile: buildSucceedingFakeStatFile(),
         processForCmakeCommand: buildFakeFailingProcess(),
         processForCmakeTarget: buildFakeFailingProcess(),
@@ -73,7 +74,7 @@ describe('DecorationLocationProvider service behavior.', () => {
     'when the cmake target cannot be built by cmake though the cmake command is invocable and ' +
     'the build tree directory exists.',
     () => {
-      const workspace = buildFakeOverridableWorkspace({ cmakeTarget: '' });
+      const workspace = buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ cmakeTarget: '' });
       const target = workspace.getConfiguration('cmake-llvm-workspace').get('cmakeTarget');
 
       const provider = new DecorationLocationsProvider({
@@ -94,7 +95,7 @@ describe('DecorationLocationProvider service behavior.', () => {
     'when the coverage info file name does not target an existing file',
     () => {
       const provider = new DecorationLocationsProvider({
-        workspace: buildFakeOverridableWorkspace({ coverageInfoFileName: 'baadf00d' }),
+        workspace: buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ coverageInfoFileName: 'baadf00d' }),
         statFile: buildSucceedingFakeStatFile(),
         processForCmakeCommand: buildFakeSucceedingProcess(),
         processForCmakeTarget: buildFakeSucceedingProcess(),
@@ -104,6 +105,24 @@ describe('DecorationLocationProvider service behavior.', () => {
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
         'Cannot resolve the coverage info file path in the build tree directory. ' +
+        'Ensure that both ' +
+        `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
+        'settings are correctly set.');
+    });
+
+  it('should not not able to provide any decoration for uncovered code regions ' +
+    'when there are more than one generated coverage information file that are found', () => {
+      const provider = new DecorationLocationsProvider({
+        workspace: buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
+        statFile: buildSucceedingFakeStatFile(),
+        processForCmakeCommand: buildFakeSucceedingProcess(),
+        processForCmakeTarget: buildFakeSucceedingProcess(),
+        globSearch: buildFakeGlobSearchForSeveralMatch(),
+        fs: buildFakeFailingFs()
+      });
+
+      return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
+        'More than one coverage information file have been found in the build tree directory. ' +
         'Ensure that both ' +
         `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
         'settings are correctly set.');
