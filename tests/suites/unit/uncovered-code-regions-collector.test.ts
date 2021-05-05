@@ -11,6 +11,7 @@ import { stream } from '../../builders/fake-adapters';
 import buildEmptyInputStream = stream.buildEmptyInputStream;
 import buildEmptyJsonObjectStream = stream.buildEmptyJsonObjectStream;
 import buildNotJsonStream = stream.buildNotJsonStream;
+import { extensionName } from '../../../src/extension-name';
 
 describe('UncoveredCodeRegionsCollector behavior', () => {
   const theories = [buildNotJsonStream(), buildEmptyInputStream()];
@@ -23,7 +24,7 @@ describe('UncoveredCodeRegionsCollector behavior', () => {
 
         return collector.collectUncoveredCodeRegions().should.eventually.be.rejectedWith(
           'Cannot collect any missing coverage information. Input is not a json document.\n' +
-          'Ensure the file you specified in `cmake-llvm-coverage: Coverage Info File Name` setting ' +
+          `Ensure the file you specified in '${extensionName}: Coverage Info File Name' setting ` +
           'target a json file containing coverage information.');
       });
   });

@@ -11,6 +11,7 @@ workspace.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings;
 
 import buildFakeFailingProcess = process.buildFakeFailingProcess;
 import buildFakeSucceedingProcess = process.buildFakeSucceedingProcess;
+import { extensionName } from '../../../src/extension-name';
 
 chai.use(chaiAsPromised);
 chai.should();
@@ -26,7 +27,7 @@ describe('the behavior of the cmake internal service used to build the target ' 
         const cmake = new Cmake({ workspace, processForCommand, processForTarget });
 
         return cmake.buildTarget().should.eventually.be.rejectedWith(
-          "Cannot find the cmake command. Ensure the 'cmake-llvm-coverage: Cmake Command' " +
+          `Cannot find the cmake command. Ensure the '${extensionName}: Cmake Command' ` +
           'setting is correctly set. Have you verified your PATH environment variable?');
       });
 
@@ -38,11 +39,11 @@ describe('the behavior of the cmake internal service used to build the target ' 
 
         const cmake = new Cmake({ workspace, processForCommand, processForTarget });
 
-        const target = workspace.getConfiguration('cmake-llvm-coverage').get<string>('cmakeTarget');
+        const target = workspace.getConfiguration(extensionName).get<string>('cmakeTarget');
 
         return cmake.buildTarget().should.eventually.be.rejectedWith(
           `Error: Could not build the specified cmake target ${target}. ` +
-          "Ensure 'cmake-llvm-coverage: Cmake Target' setting is properly set.");
+          `Ensure '${extensionName}: Cmake Target' setting is properly set.`);
       });
 
     it('should be instantiated with correct dependencies for all processes and workspace ' +

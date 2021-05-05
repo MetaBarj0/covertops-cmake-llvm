@@ -2,6 +2,7 @@ import { Readable } from 'stream';
 
 import { parser } from 'stream-json/Parser';
 import { chain } from 'stream-chain';
+import { extensionName } from '../../extension-name';
 
 export class UncoveredCodeRegionsCollector {
   constructor(inputStream: Readable) {
@@ -35,7 +36,7 @@ export class UncoveredCodeRegionsCollector {
   private becauseOfInvalidJson(reject: (reason?: any) => void): void {
     reject(
       'Cannot collect any missing coverage information. Input is not a json document.\n' +
-      'Ensure the file you specified in `cmake-llvm-coverage: Coverage Info File Name` setting ' +
+      `Ensure the file you specified in '${extensionName}: Coverage Info File Name' setting ` +
       'target a json file containing coverage information.'
     );
   }

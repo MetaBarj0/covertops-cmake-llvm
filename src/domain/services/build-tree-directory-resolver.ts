@@ -1,5 +1,6 @@
 import { BigIntStats, MakeDirectoryOptions, PathLike, StatOptions, Stats } from 'fs';
 import * as path from 'path';
+import { extensionName } from '../../extension-name';
 import { VscodeWorkspaceLike, SettingsProvider } from './settings-provider';
 
 export type StatFileLike = {
@@ -22,7 +23,7 @@ export class BuildTreeDirectoryResolver {
 
     if (path.isAbsolute(buildTreeDirectory))
       return Promise.reject(
-        "Incorrect absolute path specified in 'cmake-llvm-coverage: Build Tree Directory'. It must be a relative path.");
+        `Incorrect absolute path specified in '${extensionName}: Build Tree Directory'. It must be a relative path.`);
 
     return await this.statAndCreateIfNeeded(buildTreeDirectory);
   }
@@ -36,7 +37,7 @@ export class BuildTreeDirectoryResolver {
           .catch(_ => {
             return Promise.reject(
               'Cannot find or create the build tree directory. Ensure the ' +
-              "'cmake-llvm-coverage: Build Tree Directory' setting is a valid relative path.");
+              `'${extensionName}: Build Tree Directory' setting is a valid relative path.`);
           });
       });
 

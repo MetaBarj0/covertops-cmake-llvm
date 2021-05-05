@@ -1,4 +1,5 @@
 import path = require('path');
+import { extensionName } from '../../extension-name';
 import { SettingsProvider, VscodeWorkspaceLike } from './settings-provider';
 
 export type GlobSearchLike = {
@@ -19,14 +20,14 @@ export class CoverageInfoFileResolver {
       return Promise.reject(
         'Cannot resolve the coverage info file path in the build tree directory. ' +
         'Ensure that both ' +
-        "'cmake-llvm-coverage: Build Tree Directory' and 'cmake-llvm-coverage: Coverage Info File Name' " +
+        `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
         'settings are correctly set.');
 
     if (searchResult.length > 1)
       return Promise.reject(
         'More than one coverage information file have been found. ' +
         'Ensure that both ' +
-        "'cmake-llvm-coverage: Build Tree Directory' and 'cmake-llvm-coverage: Coverage Info File Name' " +
+        `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
         'settings are correctly set.');
   }
 

@@ -1,3 +1,4 @@
+import { extensionName } from '../../extension-name';
 import { SettingsProvider, VscodeWorkspaceLike } from './settings-provider';
 
 export type ExecFileExceptionLike = {
@@ -45,7 +46,7 @@ export class Cmake {
       process: this.processForCommand,
       arguments: ['--version'],
       potentialErrorMessage:
-        "Cannot find the cmake command. Ensure the 'cmake-llvm-coverage: Cmake Command' " +
+        `Cannot find the cmake command. Ensure the '${extensionName}: Cmake Command' ` +
         'setting is correctly set. Have you verified your PATH environment variable?'
     });
   }
@@ -60,7 +61,7 @@ export class Cmake {
       arguments: ['-B', build, '-S', source, ...settings.additionalCmakeOptions],
       potentialErrorMessage:
         `Error: Could not build the specified cmake target ${settings.cmakeTarget}. ` +
-        "Ensure 'cmake-llvm-coverage: Cmake Target' setting is properly set."
+        `Ensure '${extensionName}: Cmake Target' setting is properly set.`
     });
   }
 
@@ -74,7 +75,7 @@ export class Cmake {
       arguments: ['--build', build, '--target', target],
       potentialErrorMessage:
         `Error: Could not build the specified cmake target ${settings.cmakeTarget}. ` +
-        "Ensure 'cmake-llvm-coverage: Cmake Target' setting is properly set."
+        `Ensure '${extensionName}: Cmake Target' setting is properly set.`
     });
   }
 

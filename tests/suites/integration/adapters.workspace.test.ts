@@ -13,6 +13,8 @@ import { BuildTreeDirectoryResolver } from '../../../src/domain/services/build-t
 import { promises as fs } from 'fs';
 import { Cmake } from '../../../src/domain/services/cmake';
 import * as cp from 'child_process';
+import { extensionName } from '../../../src/extension-name';
+import { extname } from 'node:path';
 
 describe('The internal services can be instantiated when vscode has an active workspace', () => {
   it('should not throw any exception when instantiating extension settings and settings should be set with default values', () => {
@@ -30,7 +32,7 @@ describe('The internal services can be instantiated when vscode has an active wo
 
   describe('with incorrect absolute path build tree directory setting', () => {
     before('Modifying build tree directory setting', async () => {
-      await vscode.workspace.getConfiguration('cmake-llvm-coverage').update('buildTreeDirectory', '/buildz');
+      await vscode.workspace.getConfiguration(extensionName).update('buildTreeDirectory', '/buildz');
     });
 
     it('should not be possible to access the full path of the build tree directory using a ' +
@@ -43,17 +45,17 @@ describe('The internal services can be instantiated when vscode has an active wo
         });
 
         return resolver.resolveBuildTreeDirectoryAbsolutePath().should.eventually.be.rejectedWith(
-          "Incorrect absolute path specified in 'cmake-llvm-coverage: Build Tree Directory'. It must be a relative path.");
+          `Incorrect absolute path specified in '${extensionName}: Build Tree Directory'. It must be a relative path.`);
       });
 
     after('restoring build tree directory setting', async () => {
-      await vscode.workspace.getConfiguration('cmake-llvm-coverage').update('buildTreeDirectory', 'build');
+      await vscode.workspace.getConfiguration(extensionName).update('buildTreeDirectory', 'build');
     });
   });
 
   describe('with invalid relative path build tree directory setting', () => {
     before('Modifying build tree directory setting', async () => {
-      await vscode.workspace.getConfiguration('cmake-llvm-coverage').update('buildTreeDirectory', '*<>buildz<>*\0');
+      await vscode.workspace.getConfiguration(extensionName).update('buildTreeDirectory', '*<>buildz<>*\0');
     });
 
     it('should not be possible to access the full path of the build tree directory using a ' +
@@ -67,17 +69,17 @@ describe('The internal services can be instantiated when vscode has an active wo
 
         return resolver.resolveBuildTreeDirectoryAbsolutePath().should.eventually.be.rejectedWith(
           'Cannot find or create the build tree directory. Ensure the ' +
-          "'cmake-llvm-coverage: Build Tree Directory' setting is a valid relative path.");
+          `'${extensionName}: Build Tree Directory' setting is a valid relative path.`);
       });
 
     after('restoring build tree directory setting', async () => {
-      await vscode.workspace.getConfiguration('cmake-llvm-coverage').update('buildTreeDirectory', 'build');
+      await vscode.workspace.getConfiguration(extensionName).update('buildTreeDirectory', 'build');
     });
   });
 
   describe('with invalid cmake command setting', () => {
     before('Modifying cmake command setting', async () => {
-      await vscode.workspace.getConfiguration('cmake-llvm-coverage').update('cmakeCommand', 'cmakez');
+      await vscode.workspace.getConfiguration(extensionName).update('cmakeCommand', 'cmakez');
     });
 
     it('should throw when attempting to build an assumed valid specified cmake target in settings ' +
@@ -91,12 +93,12 @@ describe('The internal services can be instantiated when vscode has an active wo
         });
 
         return cmake.buildTarget().should.eventually.be.rejectedWith(
-          "Cannot find the cmake command. Ensure the 'cmake-llvm-coverage: Cmake Command' " +
+          `Cannot find the cmake command. Ensure the '${extensionName}: Cmake Command' ` +
           'setting is correctly set. Have you verified your PATH environment variable?');
       });
 
     after('restoring cmake command setting', async () => {
-      await vscode.workspace.getConfiguration('cmake-llvm-coverage').update('cmakeCommand', 'cmake');
+      await vscode.workspace.getConfiguration(extensionName).update('cmakeCommand', 'cmake');
     });
   });
 
@@ -104,9 +106,9 @@ describe('The internal services can be instantiated when vscode has an active wo
     let originalEnvPath: string;
 
     before('Modifying cmake target and additional options settings and PATH environment variable', async () => {
-      await vscode.workspace.getConfiguration('cmake-llvm-coverage')
+      await vscode.workspace.getConfiguration(extensionName)
         .update('cmakeTarget', 'Oh my god! This is clearly an invalid cmake target');
-      await vscode.workspace.getConfiguration('cmake-llvm-coverage').update(
+      await vscode.workspace.getConfiguration(extensionName).update(
         'additionalCmakeOptions', ['-DCMAKE_CXX_COMPILER=clang++', '-G', 'Ninja']);
 
       originalEnvPath = prependLlvmBinDirToPathEnvironmentVariable();
@@ -124,12 +126,12 @@ describe('The internal services can be instantiated when vscode has an active wo
 
         return cmake.buildTarget().should.eventually.be.rejectedWith(
           `Error: Could not build the specified cmake target ${settings.cmakeTarget}. ` +
-          "Ensure 'cmake-llvm-coverage: Cmake Target' setting is properly set.");
+          `Ensure '${extensionName}: Cmake Target' setting is properly set.`);
       });
 
     after('restoring cmake target and additonal options settings and PATH environment variable', async () => {
-      await vscode.workspace.getConfiguration('cmake-llvm-coverage').update('cmakeTarget', 'reportCoverageDetails');
-      await vscode.workspace.getConfiguration('cmake-llvm-coverage').update('additionalCmakeOptions', []);
+      await vscode.workspace.getConfiguration(extensionName).update('cmakeTarget', 'reportCoverageDetails');
+      await vscode.workspace.getConfiguration(extensionName).update('additionalCmakeOptions', []);
 
       env['PATH'] = originalEnvPath;
     });
@@ -139,7 +141,7 @@ describe('The internal services can be instantiated when vscode has an active wo
     let originalEnvPath: string;
 
     before('Modifying additional cmake command options, PATH environment variable ', async () => {
-      await vscode.workspace.getConfiguration('cmake-llvm-coverage').update(
+      await vscode.workspace.getConfiguration(extensionName).update(
         'additionalCmakeOptions', ['-DCMAKE_CXX_COMPILER=clang++', '-G', 'Ninja']);
 
       originalEnvPath = prependLlvmBinDirToPathEnvironmentVariable();
@@ -169,7 +171,7 @@ describe('The internal services can be instantiated when vscode has an active wo
     });
 
     after('restoring additional cmake command options and PATH environment variable', async () => {
-      await vscode.workspace.getConfiguration('cmake-llvm-coverage').update('additionalCmakeOptions', []);
+      await vscode.workspace.getConfiguration(extensionName).update('additionalCmakeOptions', []);
 
       env['PATH'] = originalEnvPath;
     });

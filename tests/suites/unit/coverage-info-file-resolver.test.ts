@@ -12,6 +12,7 @@ import buildFakeWorkspace = workspace.buildFakeWorkspaceWithWorkspaceFolderAndOv
 import buildFakeGlobSearchForNoMatch = glob.buildFakeGlobSearchForNoMatch;
 import buildFakeGlobSearchForSeveralMatch = glob.buildFakeGlobSearchForSeveralMatch;
 import buildFakeGlobSearchForExactlyOneMatch = glob.buildFakeGlobSearchForExactlyOneMatch;
+import { extensionName } from '../../../src/extension-name';
 
 describe('the behavior of the coverage info file resolving internal service', () => {
   it('should fail if the glob searched from the build tree directory does not find one file', () => {
@@ -23,7 +24,7 @@ describe('the behavior of the coverage info file resolving internal service', ()
     return resolver.resolveCoverageInfoFileFullPath().should.eventually.be.rejectedWith(
       'Cannot resolve the coverage info file path in the build tree directory. ' +
       'Ensure that both ' +
-      "'cmake-llvm-coverage: Build Tree Directory' and 'cmake-llvm-coverage: Coverage Info File Name' " +
+      `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
       'settings are correctly set.');
   });
 
@@ -36,7 +37,7 @@ describe('the behavior of the coverage info file resolving internal service', ()
     return resolver.resolveCoverageInfoFileFullPath().should.eventually.be.rejectedWith(
       'More than one coverage information file have been found. ' +
       'Ensure that both ' +
-      "'cmake-llvm-coverage: Build Tree Directory' and 'cmake-llvm-coverage: Coverage Info File Name' " +
+      `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
       'settings are correctly set.');
   });
 

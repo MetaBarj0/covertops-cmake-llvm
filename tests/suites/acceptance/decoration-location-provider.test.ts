@@ -1,3 +1,4 @@
+// TODO: rearrange imports
 import * as chai from 'chai';
 import { describe, it } from 'mocha';
 import * as chaiAsPromised from 'chai-as-promised';
@@ -17,6 +18,7 @@ import buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings = works
 import buildFakeOverridableWorkspace = workspace.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings;
 import buildFakeGlobSearchForNoMatch = glob.buildFakeGlobSearchForNoMatch;
 import buildFakeFailingFs = fs.buildFakeFailingFs;
+import { extensionName } from '../../../src/extension-name';
 
 describe('DecorationLocationProvider service behavior.', () => {
   it('should be correctly instantiated with faked adapters.', () => {
@@ -49,7 +51,7 @@ describe('DecorationLocationProvider service behavior.', () => {
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
         'Cannot find or create the build tree directory. Ensure the ' +
-        "'cmake-llvm-coverage: Build Tree Directory' setting is a valid relative path.");
+        `'${extensionName}: Build Tree Directory' setting is a valid relative path.`);
     });
 
   it('should not be able to provide any decoration for uncovered code regions ' +
@@ -65,7 +67,7 @@ describe('DecorationLocationProvider service behavior.', () => {
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
-        "Cannot find the cmake command. Ensure the 'cmake-llvm-coverage: Cmake Command' " +
+        `Cannot find the cmake command. Ensure the '${extensionName}: Cmake Command' ` +
         'setting is correctly set. Have you verified your PATH environment variable?');
     });
 
@@ -87,7 +89,7 @@ describe('DecorationLocationProvider service behavior.', () => {
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
         `Error: Could not build the specified cmake target ${target}. ` +
-        "Ensure 'cmake-llvm-coverage: Cmake Target' setting is properly set.");
+        `Ensure '${extensionName}: Cmake Target' setting is properly set.`);
     });
 
   it('should not be able to provide any decoration for uncovered code regions ' +
@@ -105,7 +107,7 @@ describe('DecorationLocationProvider service behavior.', () => {
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
         'Cannot resolve the coverage info file path in the build tree directory. ' +
         'Ensure that both ' +
-        "'cmake-llvm-coverage: Build Tree Directory' and 'cmake-llvm-coverage: Coverage Info File Name' " +
+        `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
         'settings are correctly set.');
     });
 });
