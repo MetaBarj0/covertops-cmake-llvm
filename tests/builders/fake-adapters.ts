@@ -12,12 +12,12 @@ import {
   ProcessLike
 } from '../../src/domain/services/cmake';
 
-import { StatFileLike } from '../../src/domain/services/build-tree-directory-resolver';
+import { FsLike, StatFileLike } from '../../src/domain/services/build-tree-directory-resolver';
 
 import { GlobSearchLike } from '../../src/domain/services/coverage-info-file-resolver';
 
 import * as path from 'path';
-import { BigIntStats, PathLike, StatOptions, Stats } from 'fs';
+import { BigIntStats, MakeDirectoryOptions, PathLike, StatOptions, Stats } from 'fs';
 import { Settings } from '../../src/domain/value-objects/settings';
 
 import { Readable } from 'stream';
@@ -139,7 +139,7 @@ export namespace stream {
 }
 
 export namespace statFile {
-  export function buildFailingFakeStatFile() {
+  export function buildFakeFailingStatFile() {
     return new class implements StatFileLike {
       stat(_path: PathLike, _opts?: StatOptions): Promise<Stats | BigIntStats> {
         return Promise.reject();
@@ -147,7 +147,7 @@ export namespace statFile {
     };
   }
 
-  export function buildSucceedingFakeStatFile() {
+  export function buildFakeSucceedingStatFile() {
     return new class implements StatFileLike {
       stat(_path: PathLike, _opts?: StatOptions): Promise<Stats | BigIntStats> {
         return Promise.resolve(new Stats());
@@ -177,6 +177,24 @@ export namespace glob {
     return new class implements GlobSearchLike {
       search(_pattern: string) {
         return Promise.resolve(['oneMatchShow']);
+      }
+    };
+  }
+}
+
+export namespace fs {
+  export function buildFakeFailingFs() {
+    return new class implements FsLike {
+      mkdir(_path: PathLike, _options: MakeDirectoryOptions & { recursive: true; }): Promise<string | undefined> {
+        return Promise.reject();
+      }
+    };
+  }
+
+  export function buildFakeSucceedingFs() {
+    return new class implements FsLike {
+      mkdir(_path: PathLike, _options: MakeDirectoryOptions & { recursive: true; }): Promise<string | undefined> {
+        return Promise.resolve('/build/tree/directory');
       }
     };
   }

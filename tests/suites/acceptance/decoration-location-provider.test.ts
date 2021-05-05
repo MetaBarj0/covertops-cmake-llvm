@@ -7,15 +7,16 @@ chai.should();
 
 import { DecorationLocationsProvider } from '../../../src/domain/services/decoration-locations-provider';
 
-import { process, statFile, workspace, glob } from '../../builders/fake-adapters';
+import { process, statFile, workspace, glob, fs } from '../../builders/fake-adapters';
 
 import buildFakeFailingProcess = process.buildFakeFailingProcess;
 import buildFakeSucceedingProcess = process.buildFakeSucceedingProcess;
-import buildSucceedingFakeStatFile = statFile.buildSucceedingFakeStatFile;
-import buildFailingFakeStatFile = statFile.buildFailingFakeStatFile;
+import buildSucceedingFakeStatFile = statFile.buildFakeSucceedingStatFile;
+import buildFailingFakeStatFile = statFile.buildFakeFailingStatFile;
 import buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings = workspace.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings;
 import buildFakeOverridableWorkspace = workspace.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings;
 import buildFakeGlobSearchForNoMatch = glob.buildFakeGlobSearchForNoMatch;
+import buildFakeFailingFs = fs.buildFakeFailingFs;
 
 describe('DecorationLocationProvider service behavior.', () => {
   it('should be correctly instantiated with faked adapters.', () => {
@@ -25,7 +26,8 @@ describe('DecorationLocationProvider service behavior.', () => {
         statFile: buildFailingFakeStatFile(),
         processForCmakeCommand: buildFakeFailingProcess(),
         processForCmakeTarget: buildFakeFailingProcess(),
-        globSearch: buildFakeGlobSearchForNoMatch()
+        globSearch: buildFakeGlobSearchForNoMatch(),
+        fs: buildFakeFailingFs()
       });
     };
 
@@ -33,7 +35,7 @@ describe('DecorationLocationProvider service behavior.', () => {
   });
 
   it('should not be able to provide any decoration for uncovered code regions ' +
-    'when the build tree directory can not be found though cmake command ' +
+    'when the build tree directory can not be found and / or created though cmake command ' +
     'is invocable',
     () => {
       const provider = new DecorationLocationsProvider({
@@ -41,12 +43,13 @@ describe('DecorationLocationProvider service behavior.', () => {
         statFile: buildFailingFakeStatFile(),
         processForCmakeCommand: buildFakeFailingProcess(),
         processForCmakeTarget: buildFakeFailingProcess(),
-        globSearch: buildFakeGlobSearchForNoMatch()
+        globSearch: buildFakeGlobSearchForNoMatch(),
+        fs: buildFakeFailingFs()
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
-        "Cannot find the build tree directory. Ensure the 'cmake-llvm-coverage: Build Tree Directory' " +
-        'setting is correctly set and target to an existing cmake build tree directory.');
+        'Cannot find or create the build tree directory. Ensure the ' +
+        "'cmake-llvm-coverage: Build Tree Directory' setting is a valid relative path.");
     });
 
   it('should not be able to provide any decoration for uncovered code regions ' +
@@ -57,7 +60,8 @@ describe('DecorationLocationProvider service behavior.', () => {
         statFile: buildSucceedingFakeStatFile(),
         processForCmakeCommand: buildFakeFailingProcess(),
         processForCmakeTarget: buildFakeFailingProcess(),
-        globSearch: buildFakeGlobSearchForNoMatch()
+        globSearch: buildFakeGlobSearchForNoMatch(),
+        fs: buildFakeFailingFs()
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
@@ -77,7 +81,8 @@ describe('DecorationLocationProvider service behavior.', () => {
         statFile: buildSucceedingFakeStatFile(),
         processForCmakeCommand: buildFakeSucceedingProcess(),
         processForCmakeTarget: buildFakeFailingProcess(),
-        globSearch: buildFakeGlobSearchForNoMatch()
+        globSearch: buildFakeGlobSearchForNoMatch(),
+        fs: buildFakeFailingFs()
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
@@ -93,7 +98,8 @@ describe('DecorationLocationProvider service behavior.', () => {
         statFile: buildSucceedingFakeStatFile(),
         processForCmakeCommand: buildFakeSucceedingProcess(),
         processForCmakeTarget: buildFakeSucceedingProcess(),
-        globSearch: buildFakeGlobSearchForNoMatch()
+        globSearch: buildFakeGlobSearchForNoMatch(),
+        fs: buildFakeFailingFs()
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(

@@ -28,19 +28,46 @@ describe('The internal services can be instantiated when vscode has an active wo
     settings.rootDirectory.should.be.equal(rootFolder);
   });
 
-  describe('with incorrect build tree directory setting', () => {
+  describe('with incorrect absolute path build tree directory setting', () => {
     before('Modifying build tree directory setting', async () => {
-      await vscode.workspace.getConfiguration('cmake-llvm-coverage').update('buildTreeDirectory', 'buildz');
+      await vscode.workspace.getConfiguration('cmake-llvm-coverage').update('buildTreeDirectory', '/buildz');
     });
 
     it('should not be possible to access the full path of the build tree directory using a ' +
-      'build tree directory resolver instance set up with an incorrect build tree directory in settings.',
+      'build tree directory resolver instance set up with an incorrect absolute path build tree directory in settings.',
       () => {
-        const resolver = new BuildTreeDirectoryResolver(vscode.workspace, { stat: fs.stat });
+        const resolver = new BuildTreeDirectoryResolver({
+          workspace: vscode.workspace,
+          statFile: { stat: fs.stat },
+          fs: { mkdir: fs.mkdir }
+        });
 
         return resolver.resolveBuildTreeDirectoryAbsolutePath().should.eventually.be.rejectedWith(
-          "Cannot find the build tree directory. Ensure the 'cmake-llvm-coverage: Build Tree Directory' " +
-          'setting is correctly set and target to an existing cmake build tree directory.');
+          "Incorrect absolute path specified in 'cmake-llvm-coverage: Build Tree Directory'. It must be a relative path.");
+      });
+
+    after('restoring build tree directory setting', async () => {
+      await vscode.workspace.getConfiguration('cmake-llvm-coverage').update('buildTreeDirectory', 'build');
+    });
+  });
+
+  describe('with invalid relative path build tree directory setting', () => {
+    before('Modifying build tree directory setting', async () => {
+      await vscode.workspace.getConfiguration('cmake-llvm-coverage').update('buildTreeDirectory', '*<>buildz<>*');
+    });
+
+    it('should not be possible to access the full path of the build tree directory using a ' +
+      'build tree directory resolver instance set up with an invalid relative path build tree directory in settings.',
+      () => {
+        const resolver = new BuildTreeDirectoryResolver({
+          workspace: vscode.workspace,
+          statFile: { stat: fs.stat },
+          fs: { mkdir: fs.mkdir }
+        });
+
+        return resolver.resolveBuildTreeDirectoryAbsolutePath().should.eventually.be.rejectedWith(
+          'Cannot find or create the build tree directory. Ensure the ' +
+          "'cmake-llvm-coverage: Build Tree Directory' setting is a valid relative path.");
       });
 
     after('restoring build tree directory setting', async () => {
@@ -121,7 +148,11 @@ describe('The internal services can be instantiated when vscode has an active wo
     it('should be possible to access the full path of the build tree directory using a ' +
       'build tree directory resolver instance.',
       () => {
-        const resolver = new BuildTreeDirectoryResolver(vscode.workspace, { stat: fs.stat });
+        const resolver = new BuildTreeDirectoryResolver({
+          workspace: vscode.workspace,
+          statFile: { stat: fs.stat },
+          fs: { mkdir: fs.mkdir }
+        });
 
         return resolver.resolveBuildTreeDirectoryAbsolutePath().should.eventually.be.fulfilled;
       });

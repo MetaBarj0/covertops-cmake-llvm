@@ -1,5 +1,5 @@
-import { SettingsProvider, VscodeWorkspaceLike } from './settings-provider';
-import { StatFileLike, BuildTreeDirectoryResolver } from './build-tree-directory-resolver';
+import { VscodeWorkspaceLike } from './settings-provider';
+import { StatFileLike, BuildTreeDirectoryResolver, FsLike } from './build-tree-directory-resolver';
 import { Cmake, ProcessLike } from './cmake';
 import { CoverageInfoFileResolver, GlobSearchLike } from './coverage-info-file-resolver';
 
@@ -8,7 +8,8 @@ type Adapters = {
   statFile: StatFileLike,
   processForCmakeCommand: ProcessLike,
   processForCmakeTarget: ProcessLike,
-  globSearch: GlobSearchLike
+  globSearch: GlobSearchLike,
+  fs: FsLike
 };
 
 export class DecorationLocationsProvider {
@@ -18,10 +19,11 @@ export class DecorationLocationsProvider {
     this.processForCmakeCommand = adapters.processForCmakeCommand;
     this.processForCmakeTarget = adapters.processForCmakeTarget;
     this.globSearch = adapters.globSearch;
+    this.fs = adapters.fs;
   }
 
   async getDecorationLocationsForUncoveredCodeRegions() {
-    const buildTreeDirectoryResolver = new BuildTreeDirectoryResolver(this.workspace, this.statFile);
+    const buildTreeDirectoryResolver = new BuildTreeDirectoryResolver({ workspace: this.workspace, statFile: this.statFile, fs: this.fs });
     await buildTreeDirectoryResolver.resolveBuildTreeDirectoryAbsolutePath();
 
     const cmake = new Cmake({
@@ -43,4 +45,5 @@ export class DecorationLocationsProvider {
   private readonly processForCmakeCommand: ProcessLike;
   private readonly processForCmakeTarget: ProcessLike;
   private readonly globSearch: GlobSearchLike;
+  private readonly fs: FsLike;
 }
