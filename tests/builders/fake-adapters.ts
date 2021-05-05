@@ -13,13 +13,11 @@ import {
 } from '../../src/domain/services/cmake';
 
 import { FsLike, StatFileLike } from '../../src/domain/services/build-tree-directory-resolver';
-
+import { Settings } from '../../src/domain/value-objects/settings';
 import { GlobSearchLike } from '../../src/domain/services/coverage-info-file-resolver';
 
 import * as path from 'path';
 import { BigIntStats, MakeDirectoryOptions, PathLike, StatOptions, Stats } from 'fs';
-import { Settings } from '../../src/domain/value-objects/settings';
-
 import { Readable } from 'stream';
 
 export namespace workspace {

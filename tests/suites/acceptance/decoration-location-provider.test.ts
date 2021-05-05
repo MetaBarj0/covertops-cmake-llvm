@@ -1,4 +1,3 @@
-// TODO: rearrange imports
 import * as chai from 'chai';
 import { describe, it } from 'mocha';
 import * as chaiAsPromised from 'chai-as-promised';
@@ -6,8 +5,8 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
+import { extensionName } from '../../../src/extension-name';
 import { DecorationLocationsProvider } from '../../../src/domain/services/decoration-locations-provider';
-
 import { process, statFile, workspace, glob, fs } from '../../builders/fake-adapters';
 
 import buildFakeFailingProcess = process.buildFakeFailingProcess;
@@ -18,7 +17,6 @@ import buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings = works
 import buildFakeOverridableWorkspace = workspace.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings;
 import buildFakeGlobSearchForNoMatch = glob.buildFakeGlobSearchForNoMatch;
 import buildFakeFailingFs = fs.buildFakeFailingFs;
-import { extensionName } from '../../../src/extension-name';
 
 describe('DecorationLocationProvider service behavior.', () => {
   it('should be correctly instantiated with faked adapters.', () => {

@@ -1,8 +1,8 @@
-import { Readable } from 'stream';
+import { extensionName } from '../../extension-name';
 
+import { Readable } from 'stream';
 import { parser } from 'stream-json/Parser';
 import { chain } from 'stream-chain';
-import { extensionName } from '../../extension-name';
 
 export class UncoveredCodeRegionsCollector {
   constructor(inputStream: Readable) {

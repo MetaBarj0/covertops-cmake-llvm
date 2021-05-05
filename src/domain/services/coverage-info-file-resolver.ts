@@ -1,6 +1,7 @@
-import path = require('path');
 import { extensionName } from '../../extension-name';
 import { SettingsProvider, VscodeWorkspaceLike } from './settings-provider';
+
+import path = require('path');
 
 export type GlobSearchLike = {
 

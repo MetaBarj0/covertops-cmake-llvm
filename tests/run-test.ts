@@ -1,6 +1,5 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
-
 import { runTests } from 'vscode-test';
 
 function runAcceptanceTests(extensionDevelopmentPath: string) {

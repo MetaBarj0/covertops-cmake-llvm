@@ -26,7 +26,7 @@ export function configureAndRun(testsGlob: string, options: Mocha.MochaOptions =
         // Run the mocha test
         mocha.run(failures => {
           if (failures > 0) {
-            reject(new Error(`${failures} tests failed.`));
+            reject(new Error(`${failures} test(s) failed.`));
           } else {
             resolve();
           }

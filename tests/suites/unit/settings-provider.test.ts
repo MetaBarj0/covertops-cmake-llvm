@@ -14,7 +14,6 @@ import { workspace } from '../../builders/fake-adapters';
 
 import buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings =
 workspace.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings;
-
 import buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings =
 workspace.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings;
 

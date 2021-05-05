@@ -1,7 +1,8 @@
-import { BigIntStats, MakeDirectoryOptions, PathLike, StatOptions, Stats } from 'fs';
-import * as path from 'path';
 import { extensionName } from '../../extension-name';
 import { VscodeWorkspaceLike, SettingsProvider } from './settings-provider';
+
+import { BigIntStats, MakeDirectoryOptions, PathLike, StatOptions, Stats } from 'fs';
+import * as path from 'path';
 
 export type StatFileLike = {
   stat(path: PathLike, opts?: StatOptions): Promise<Stats | BigIntStats>

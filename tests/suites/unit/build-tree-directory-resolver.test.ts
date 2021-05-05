@@ -2,7 +2,12 @@ import * as chai from 'chai';
 import { describe, it } from 'mocha';
 import * as chaiAsPromised from 'chai-as-promised';
 
+chai.use(chaiAsPromised);
+chai.should();
+
+import { extensionName } from '../../../src/extension-name';
 import { BuildTreeDirectoryResolver } from '../../../src/domain/services/build-tree-directory-resolver';
+import { SettingsProvider } from '../../../src/domain/services/settings-provider';
 
 import { workspace } from '../../builders/fake-adapters';
 import buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings =
@@ -13,12 +18,8 @@ import buildFakeFailingStatFile = statFile.buildFakeFailingStatFile;
 import buildFakeSucceedingStatFile = statFile.buildFakeSucceedingStatFile;
 import buildFakeFailingFs = fs.buildFakeFailingFs;
 import buildFakeSucceedingFs = fs.buildFakeSucceedingFs;
-import path = require('path');
-import { SettingsProvider } from '../../../src/domain/services/settings-provider';
-import { extensionName } from '../../../src/extension-name';
 
-chai.use(chaiAsPromised);
-chai.should();
+import path = require('path');
 
 describe('the build tree directory resolver behavior regardin the build tree directory setting value', () => {
   it('should fail to resolve when the build tree directory setting look like an absolute path', () => {

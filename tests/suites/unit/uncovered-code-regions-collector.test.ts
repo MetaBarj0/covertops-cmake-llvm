@@ -5,13 +5,14 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
+import { extensionName } from '../../../src/extension-name';
 import { UncoveredCodeRegionsCollector } from '../../../src/domain/services/uncovered-code-regions-collector';
+
 import { stream } from '../../builders/fake-adapters';
 
 import buildEmptyInputStream = stream.buildEmptyInputStream;
 import buildEmptyJsonObjectStream = stream.buildEmptyJsonObjectStream;
 import buildNotJsonStream = stream.buildNotJsonStream;
-import { extensionName } from '../../../src/extension-name';
 
 describe('UncoveredCodeRegionsCollector behavior', () => {
   const theories = [buildNotJsonStream(), buildEmptyInputStream()];

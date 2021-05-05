@@ -5,14 +5,15 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
+import { extensionName } from '../../../src/extension-name';
 import { CoverageInfoFileResolver } from '../../../src/domain/services/coverage-info-file-resolver';
+
 import { glob, workspace } from '../../builders/fake-adapters';
 
 import buildFakeWorkspace = workspace.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings;
 import buildFakeGlobSearchForNoMatch = glob.buildFakeGlobSearchForNoMatch;
 import buildFakeGlobSearchForSeveralMatch = glob.buildFakeGlobSearchForSeveralMatch;
 import buildFakeGlobSearchForExactlyOneMatch = glob.buildFakeGlobSearchForExactlyOneMatch;
-import { extensionName } from '../../../src/extension-name';
 
 describe('the behavior of the coverage info file resolving internal service', () => {
   it('should fail if the glob searched from the build tree directory does not find one file', () => {

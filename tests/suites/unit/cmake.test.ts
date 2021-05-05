@@ -2,19 +2,19 @@ import * as chai from 'chai';
 import { describe, it } from 'mocha';
 import * as chaiAsPromised from 'chai-as-promised';
 
+chai.use(chaiAsPromised);
+chai.should();
+
+import { extensionName } from '../../../src/extension-name';
+
 import { Cmake } from '../../../src/domain/services/cmake';
 
 import { workspace, process } from '../../builders/fake-adapters';
 
 import buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings =
 workspace.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings;
-
 import buildFakeFailingProcess = process.buildFakeFailingProcess;
 import buildFakeSucceedingProcess = process.buildFakeSucceedingProcess;
-import { extensionName } from '../../../src/extension-name';
-
-chai.use(chaiAsPromised);
-chai.should();
 
 describe('the behavior of the cmake internal service used to build the target ' +
   'giving the file containing coverage info', () => {
