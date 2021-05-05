@@ -53,7 +53,7 @@ describe('The internal services can be instantiated when vscode has an active wo
 
   describe('with invalid relative path build tree directory setting', () => {
     before('Modifying build tree directory setting', async () => {
-      await vscode.workspace.getConfiguration('cmake-llvm-coverage').update('buildTreeDirectory', '*<>buildz<>*');
+      await vscode.workspace.getConfiguration('cmake-llvm-coverage').update('buildTreeDirectory', '*<>buildz<>*\0');
     });
 
     it('should not be possible to access the full path of the build tree directory using a ' +
