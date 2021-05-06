@@ -13,8 +13,6 @@ if(${ENABLE_COVERAGE_WITH_LLVM})
   set(llvmProfData ${llvmBinPath}/llvm-profdata)
   set(llvmCov ${llvmBinPath}/llvm-cov)
 
-  set(testsBinaryDir $<TARGET_FILE_DIR:PartiallyCoveredTests>)
-
   # An internal custom command used as dependency of exposed targets to
   # generate coverage data
   add_custom_command(OUTPUT default.profdata
@@ -34,6 +32,7 @@ if(${ENABLE_COVERAGE_WITH_LLVM})
                      COMMAND $<TARGET_FILE:PartiallyCoveredTests>
                      COMMAND ${CMAKE_COMMAND}
                        ARGS -E touch .testSuite.executed
+                     VERBATIM
                      USES_TERMINAL)
 
   # A target to generate detailed coverage information in json format. To get
@@ -41,7 +40,7 @@ if(${ENABLE_COVERAGE_WITH_LLVM})
   # https://stackoverflow.com/questions/56013927/how-to-read-llvm-cov-json-format
   # https://llvm.org/doxygen/structllvm_1_1coverage_1_1CoverageSegment.html
   # https://llvm.org/doxygen/structllvm_1_1coverage_1_1CounterMappingRegion.html
-  add_custom_target(reportCoverageDetails
+  add_custom_target(generateCoverageInfoJsonFile
                     DEPENDS default.covdata.json)
 
   # An internal command used to generate detailed coverage information in a
@@ -53,5 +52,6 @@ if(${ENABLE_COVERAGE_WITH_LLVM})
                        $<TARGET_FILE:PartiallyCoveredLib>
                        --instr-profile=default.profdata
                        > default.covdata.json
-                       VERBATIM)
+                     VERBATIM
+                     USES_TERMINAL)
 endif()

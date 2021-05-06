@@ -57,7 +57,7 @@ export namespace workspace {
               case 'cmakeCommand':
                 return 'cmake' as unknown as T | undefined;
               case 'cmakeTarget':
-                return 'reportCoverageDetails' as unknown as T | undefined;
+                return 'generateCoverageInfoJsonFile' as unknown as T | undefined;
               case 'coverageInfoFileName':
                 return 'default.covdata.json' as unknown as T | undefined;
               case 'rootDirectory':

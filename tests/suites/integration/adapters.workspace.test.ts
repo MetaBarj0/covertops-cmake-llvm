@@ -22,7 +22,7 @@ describe('The internal services can be instantiated when vscode has an active wo
 
     settings.buildTreeDirectory.should.be.equal('build');
     settings.cmakeCommand.should.be.equal('cmake');
-    settings.cmakeTarget.should.be.equal('reportCoverageDetails');
+    settings.cmakeTarget.should.be.equal('generateCoverageInfoJsonFile');
     settings.coverageInfoFileName.should.be.equal('default.covdata.json');
     settings.additionalCmakeOptions.should.be.empty;
 
@@ -130,7 +130,7 @@ describe('The internal services can be instantiated when vscode has an active wo
       });
 
     after('restoring cmake target and additonal options settings and PATH environment variable', async () => {
-      await vscode.workspace.getConfiguration(extensionName).update('cmakeTarget', 'reportCoverageDetails');
+      await vscode.workspace.getConfiguration(extensionName).update('cmakeTarget', 'generateCoverageInfoJsonFile');
       await vscode.workspace.getConfiguration(extensionName).update('additionalCmakeOptions', []);
 
       env['PATH'] = originalEnvPath;

@@ -54,7 +54,7 @@
           },
           "cmake-llvm-coverage.cmakeTarget": {
             "type": "string",
-            "default": "reportCoverageDetails",
+            "default": "generateCoverageInfoJsonFile",
             "minLength": 1,
             "scope": "window",
             "description": "The target that generates coverage information in json format files. Those files may be generated in the build directory specified in the `Build Tree Directory` setting. The specified target must exist."

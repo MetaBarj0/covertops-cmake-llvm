@@ -27,7 +27,7 @@ describe('how the settings provider works with a fake of vscode api for configur
       settings.additionalCmakeOptions.should.be.empty;
       settings.buildTreeDirectory.should.be.equal('build');
       settings.cmakeCommand.should.be.equal('cmake');
-      settings.cmakeTarget.should.be.equal('reportCoverageDetails');
+      settings.cmakeTarget.should.be.equal('generateCoverageInfoJsonFile');
       settings.coverageInfoFileName.should.be.equal('default.covdata.json');
 
       const workspaceFolders = fakedWorkspace.workspaceFolders as Array<VscodeWorkspaceFolderLike>;
