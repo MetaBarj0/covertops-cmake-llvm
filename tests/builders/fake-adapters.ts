@@ -122,7 +122,7 @@ export namespace process {
 }
 
 export namespace stream {
-  export function buildEmptyInputStream(): Readable {
+  export function buildEmptyReadableStream(): Readable {
     const empty = (function* () { })();
 
     return Readable.from(empty);
@@ -136,10 +136,10 @@ export namespace stream {
     return Readable.from(JSON.stringify({}));
   }
 
-  export function buildFakeStreamBuilder() {
+  export function buildFakeStreamBuilder(streamFactory: () => Readable) {
     return new class implements StreamBuilder {
       createReadStreamFromPath(_path: string) {
-        return buildEmptyInputStream();
+        return streamFactory();
       }
     };
   }

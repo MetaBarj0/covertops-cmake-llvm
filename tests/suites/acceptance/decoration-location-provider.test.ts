@@ -20,6 +20,7 @@ import buildFakeGlobSearchForSeveralMatch = glob.buildFakeGlobSearchForSeveralMa
 import buildFakeGlobSearchForExactlyOneMatch = glob.buildFakeGlobSearchForExactlyOneMatch;
 import buildFakeFailingFs = fs.buildFakeFailingFs;
 import buildFakeStreamBuilder = stream.buildFakeStreamBuilder;
+import buildEmptyReadableStream = stream.buildEmptyReadableStream;
 
 describe('DecorationLocationProvider service behavior.', () => {
   it('should be correctly instantiated with faked adapters.', () => {
@@ -31,7 +32,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         processForCmakeTarget: buildFakeFailingProcess(),
         globSearch: buildFakeGlobSearchForNoMatch(),
         fs: buildFakeFailingFs(),
-        streamBuilder: buildFakeStreamBuilder(),
+        streamBuilder: buildFakeStreamBuilder(buildEmptyReadableStream),
       });
     };
 
@@ -49,7 +50,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         processForCmakeTarget: buildFakeFailingProcess(),
         globSearch: buildFakeGlobSearchForNoMatch(),
         fs: buildFakeFailingFs(),
-        streamBuilder: buildFakeStreamBuilder(),
+        streamBuilder: buildFakeStreamBuilder(buildEmptyReadableStream),
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
@@ -67,7 +68,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         processForCmakeTarget: buildFakeFailingProcess(),
         globSearch: buildFakeGlobSearchForNoMatch(),
         fs: buildFakeFailingFs(),
-        streamBuilder: buildFakeStreamBuilder(),
+        streamBuilder: buildFakeStreamBuilder(buildEmptyReadableStream),
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
@@ -89,7 +90,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         processForCmakeTarget: buildFakeFailingProcess(),
         globSearch: buildFakeGlobSearchForNoMatch(),
         fs: buildFakeFailingFs(),
-        streamBuilder: buildFakeStreamBuilder(),
+        streamBuilder: buildFakeStreamBuilder(buildEmptyReadableStream),
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
@@ -107,7 +108,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         processForCmakeTarget: buildFakeSucceedingProcess(),
         globSearch: buildFakeGlobSearchForNoMatch(),
         fs: buildFakeFailingFs(),
-        streamBuilder: buildFakeStreamBuilder(),
+        streamBuilder: buildFakeStreamBuilder(buildEmptyReadableStream),
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
@@ -126,7 +127,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         processForCmakeTarget: buildFakeSucceedingProcess(),
         globSearch: buildFakeGlobSearchForSeveralMatch(),
         fs: buildFakeFailingFs(),
-        streamBuilder: buildFakeStreamBuilder(),
+        streamBuilder: buildFakeStreamBuilder(buildEmptyReadableStream),
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
@@ -136,22 +137,26 @@ describe('DecorationLocationProvider service behavior.', () => {
         'settings are correctly set.');
     });
 
-  it('should fail to provide decoration when found coverage info file does not contain a json document.', () => {
-    const provider = new DecorationLocationsProvider({
-      workspace: buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-      statFile: buildSucceedingFakeStatFile(),
-      processForCmakeCommand: buildFakeSucceedingProcess(),
-      processForCmakeTarget: buildFakeSucceedingProcess(),
-      globSearch: buildFakeGlobSearchForExactlyOneMatch(),
-      fs: buildFakeFailingFs(),
-      streamBuilder: buildFakeStreamBuilder()
-    });
+  describe('Behavior of the coverage info collection', () => {
+    [buildEmptyReadableStream].forEach(streamFactory => {
+      it('should fail to provide decoration when found coverage info file does not contain a valid json document', () => {
+        const provider = new DecorationLocationsProvider({
+          workspace: buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
+          statFile: buildSucceedingFakeStatFile(),
+          processForCmakeCommand: buildFakeSucceedingProcess(),
+          processForCmakeTarget: buildFakeSucceedingProcess(),
+          globSearch: buildFakeGlobSearchForExactlyOneMatch(),
+          fs: buildFakeFailingFs(),
+          streamBuilder: buildFakeStreamBuilder(streamFactory)
+        });
 
-    return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
-      'Invalid coverage information file have been found in the build tree directory. ' +
-      'Coverage information file must contain llvm coverage report in json format. ' +
-      'Ensure that both ' +
-      `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
-      'settings are correctly set.');
+        return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
+          'Invalid coverage information file have been found in the build tree directory. ' +
+          'Coverage information file must contain llvm coverage report in json format. ' +
+          'Ensure that both ' +
+          `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
+          'settings are correctly set.');
+      });
+    });
   });
 });

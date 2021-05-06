@@ -10,7 +10,7 @@ import { UncoveredCodeRegionsCollector } from '../../../src/domain/services/unco
 
 import { stream } from '../../builders/fake-adapters';
 
-import buildEmptyInputStream = stream.buildEmptyInputStream;
+import buildEmptyInputStream = stream.buildEmptyReadableStream;
 import buildEmptyJsonObjectStream = stream.buildEmptyJsonObjectStream;
 import buildNotJsonStream = stream.buildNotJsonStream;
 
