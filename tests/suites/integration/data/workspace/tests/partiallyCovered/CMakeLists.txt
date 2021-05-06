@@ -31,7 +31,7 @@ if(${ENABLE_COVERAGE_WITH_LLVM})
   # https://releases.llvm.org/10.0.0/tools/clang/docs/SourceBasedCodeCoverage.html
   target_compile_options(PartiallyCoveredLib PRIVATE
                          -fprofile-instr-generate -fcoverage-mapping)
-  target_link_options(Tests PRIVATE
+  target_link_options(PartiallyCoveredLib PRIVATE
                        -fprofile-instr-generate -fcoverage-mapping)
 
   # Useful variables used later, specific to llvm tools path and output
@@ -61,7 +61,8 @@ if(${ENABLE_COVERAGE_WITH_LLVM})
                        ARGS -E copy $<TARGET_FILE:PartiallyCoveredLib> $<TARGET_FILE_DIR:Tests>
                      COMMAND $<TARGET_FILE:Tests>
                      COMMAND ${CMAKE_COMMAND}
-                       ARGS -E touch .testSuite.executed)
+                       ARGS -E touch .testSuite.executed
+                     USES_TERMINAL)
 
   # A target to generate detailed coverage information in json format. To get
   # help on how to exploit it, see:
