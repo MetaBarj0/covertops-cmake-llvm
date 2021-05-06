@@ -2,10 +2,15 @@ if(${ENABLE_COVERAGE_WITH_LLVM})
   # specific flags to build the covered project. Enable source based Coverage
   # see:
   # https://releases.llvm.org/10.0.0/tools/clang/docs/SourceBasedCodeCoverage.html
+  # TODO: notice multiple target usage here
   target_compile_options(PartiallyCoveredLib PRIVATE
                          -fprofile-instr-generate -fcoverage-mapping)
   target_link_options(PartiallyCoveredLib PRIVATE
-                       -fprofile-instr-generate -fcoverage-mapping)
+                      -fprofile-instr-generate -fcoverage-mapping)
+  target_compile_options(FullyCoveredLib PRIVATE
+                         -fprofile-instr-generate -fcoverage-mapping)
+  target_link_options(FullyCoveredLib PRIVATE
+                      -fprofile-instr-generate -fcoverage-mapping)
 
   # Useful variables used later, specific to llvm tools path and output
   # directory
@@ -19,17 +24,37 @@ if(${ENABLE_COVERAGE_WITH_LLVM})
                      DEPENDS .testSuite.executed
                      COMMAND ${llvmProfData}
                        ARGS merge 
-                       -sparse default.profraw
+                       -sparse
+                       # TODO: notice multiple target usage here
+                       $<TARGET_NAME_IF_EXISTS:PartiallyCoveredTests>.profraw
+                       $<TARGET_NAME_IF_EXISTS:FullyCoveredTests>.profraw
                        -o default.profdata)
 
   # An internal command used as dependency for exposed targets. Ensures that
   # the test suite has been executed with latest modifications and latest
   # coverage data.
   add_custom_command(OUTPUT .testSuite.executed
-                     DEPENDS PartiallyCoveredLib PartiallyCoveredTests
+                     DEPENDS
+                       # TODO: notice multiple target usage here
+                       PartiallyCoveredLib PartiallyCoveredTests
+                       FullyCoveredLib FullyCoveredTests
+
+                     # TODO: notice multiple target usage here
+                     # TODO: possible one to many and many to one mapping
+                     #       between test suites and production code
                      COMMAND ${CMAKE_COMMAND}
                        ARGS -E copy $<TARGET_FILE:PartiallyCoveredLib> $<TARGET_FILE_DIR:PartiallyCoveredTests>
+                     COMMAND ${CMAKE_COMMAND}
+                       ARGS -E copy $<TARGET_FILE:FullyCoveredLib> $<TARGET_FILE_DIR:FullyCoveredTests>
+
+                     # TODO: notice multiple target usage here
                      COMMAND $<TARGET_FILE:PartiallyCoveredTests>
+                     COMMAND ${CMAKE_COMMAND}
+                       ARGS -E rename default.profraw $<TARGET_NAME_IF_EXISTS:PartiallyCoveredTests>.profraw
+                     COMMAND $<TARGET_FILE:FullyCoveredTests>
+                     COMMAND ${CMAKE_COMMAND}
+                       ARGS -E rename default.profraw $<TARGET_NAME_IF_EXISTS:FullyCoveredTests>.profraw
+
                      COMMAND ${CMAKE_COMMAND}
                        ARGS -E touch .testSuite.executed
                      VERBATIM
@@ -49,7 +74,9 @@ if(${ENABLE_COVERAGE_WITH_LLVM})
                      DEPENDS default.profdata
                      COMMAND ${llvmCov}
                        ARGS export --format=text
-                       $<TARGET_FILE:PartiallyCoveredLib>
+                       # TODO: notice multiple target usage here
+                       --object=$<TARGET_FILE:PartiallyCoveredLib>
+                       --object=$<TARGET_FILE:FullyCoveredLib>
                        --instr-profile=default.profdata
                        > default.covdata.json
                      VERBATIM

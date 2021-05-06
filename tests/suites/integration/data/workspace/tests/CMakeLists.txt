@@ -1,1 +1,1 @@
-subdirs("partiallyCovered")
+subdirs("partiallyCovered" "fullyCovered")

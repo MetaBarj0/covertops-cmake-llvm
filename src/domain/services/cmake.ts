@@ -90,10 +90,10 @@ export class Cmake {
           cwd: settings.rootDirectory,
           env: process.env
         },
-        (error, stdout, stderr) => {
+        (error, _stdout, stderr) => {
           if (error)
             return reject(new Error(
-              `${options.potentialErrorMessage}\n${error.message}\n${stderr}\n${stdout}`));
+              `${options.potentialErrorMessage}\n${error.message}\n${stderr}`));
 
           resolve();
         });

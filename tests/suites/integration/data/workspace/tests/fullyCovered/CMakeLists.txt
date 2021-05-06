@@ -14,13 +14,13 @@ set(CATCH2_MODULE_PATH ${catch2_SOURCE_DIR}/contrib/
 
 list(APPEND CMAKE_MODULE_PATH ${CATCH2_MODULE_PATH})
 
-add_executable(PartiallyCoveredTests "partialCoverage.cpp")
+add_executable(FullyCoveredTests "fullCoverage.cpp")
 
-set_property(TARGET PartiallyCoveredTests PROPERTY CXX_STANDARD 20)
+set_property(TARGET FullyCoveredTests PROPERTY CXX_STANDARD 20)
 
-target_compile_options(PartiallyCoveredTests PRIVATE
+target_compile_options(FullyCoveredTests PRIVATE
                        -Wall -Wextra -Wconversion -Wsign-conversion)
-target_link_libraries(PartiallyCoveredTests PRIVATE PartiallyCoveredLib PRIVATE Catch2::Catch2)
+target_link_libraries(FullyCoveredTests PRIVATE FullyCoveredLib PRIVATE Catch2::Catch2)
 
 include(Catch)
-catch_discover_tests(PartiallyCoveredTests)
+catch_discover_tests(FullyCoveredTests)
