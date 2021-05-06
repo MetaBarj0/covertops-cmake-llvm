@@ -110,6 +110,26 @@
           "highContrast": "#FF000055"
         }
       }
+    ],
+    "languages": [
+      {
+        "id": "cpp",
+        "aliases": [
+          "c++",
+          "C++",
+          "cpp",
+          "CPP"
+        ],
+        "extensions": [
+          ".cpp",
+          ".hpp",
+          ".cxx",
+          ".hxx",
+          ".c++",
+          ".h++",
+          "h"
+        ]
+      }
     ]
   },
   "scripts": {
