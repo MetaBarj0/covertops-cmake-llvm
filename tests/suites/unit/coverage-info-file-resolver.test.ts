@@ -36,7 +36,7 @@ describe('the behavior of the coverage info file resolving internal service', ()
     const resolver = new CoverageInfoFileResolver(workspace, globSearch);
 
     return resolver.resolveCoverageInfoFileFullPath().should.eventually.be.rejectedWith(
-      'More than one coverage information file have been found. ' +
+      'More than one coverage information file have been found in the build tree directory. ' +
       'Ensure that both ' +
       `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
       'settings are correctly set.');

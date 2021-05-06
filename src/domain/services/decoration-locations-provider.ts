@@ -1,7 +1,9 @@
+import { extensionName } from '../../extension-name';
 import { VscodeWorkspaceLike } from './settings-provider';
 import { StatFileLike, BuildTreeDirectoryResolver, FsLike } from './build-tree-directory-resolver';
 import { Cmake, ProcessLike } from './cmake';
 import { CoverageInfoFileResolver, GlobSearchLike } from './coverage-info-file-resolver';
+import { StreamBuilder } from './uncovered-code-regions-collector';
 
 type Adapters = {
   workspace: VscodeWorkspaceLike,
@@ -9,7 +11,8 @@ type Adapters = {
   processForCmakeCommand: ProcessLike,
   processForCmakeTarget: ProcessLike,
   globSearch: GlobSearchLike,
-  fs: FsLike
+  fs: FsLike,
+  streamBuilder: StreamBuilder
 };
 
 export class DecorationLocationsProvider {
@@ -37,7 +40,12 @@ export class DecorationLocationsProvider {
     const coverageInfoFileResolver = new CoverageInfoFileResolver(this.workspace, this.globSearch);
     await coverageInfoFileResolver.resolveCoverageInfoFileFullPath();
 
-    return Promise.reject('getDecorationLocationsForUncoveredCodeRegions implementation is not yet complete.');
+    return Promise.reject(
+      'Invalid coverage information file have been found in the build tree directory. ' +
+      'Coverage information file must contain llvm coverage report in json format. ' +
+      'Ensure that both ' +
+      `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
+      'settings are correctly set.');
   }
 
   private readonly workspace: VscodeWorkspaceLike;

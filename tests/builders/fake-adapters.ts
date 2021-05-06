@@ -15,6 +15,7 @@ import {
 import { FsLike, StatFileLike } from '../../src/domain/services/build-tree-directory-resolver';
 import { Settings } from '../../src/domain/value-objects/settings';
 import { GlobSearchLike } from '../../src/domain/services/coverage-info-file-resolver';
+import { StreamBuilder } from '../../src/domain/services/uncovered-code-regions-collector';
 
 import * as path from 'path';
 import { BigIntStats, MakeDirectoryOptions, PathLike, StatOptions, Stats } from 'fs';
@@ -133,6 +134,14 @@ export namespace stream {
 
   export function buildEmptyJsonObjectStream(): Readable {
     return Readable.from(JSON.stringify({}));
+  }
+
+  export function buildFakeStreamBuilder() {
+    return new class implements StreamBuilder {
+      createReadStreamFromPath(_path: string) {
+        return buildEmptyInputStream();
+      }
+    };
   }
 }
 

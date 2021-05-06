@@ -7,28 +7,31 @@ chai.should();
 
 import { extensionName } from '../../../src/extension-name';
 import { DecorationLocationsProvider } from '../../../src/domain/services/decoration-locations-provider';
-import { process, statFile, workspace, glob, fs } from '../../builders/fake-adapters';
+import { process, statFile, workspace, glob, fs, stream } from '../../builders/fake-adapters';
 
 import buildFakeFailingProcess = process.buildFakeFailingProcess;
 import buildFakeSucceedingProcess = process.buildFakeSucceedingProcess;
 import buildSucceedingFakeStatFile = statFile.buildFakeSucceedingStatFile;
-import buildFailingFakeStatFile = statFile.buildFakeFailingStatFile;
+import buildFakeFailingStatFile = statFile.buildFakeFailingStatFile;
 import buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings = workspace.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings;
 import buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings = workspace.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings;
 import buildFakeGlobSearchForNoMatch = glob.buildFakeGlobSearchForNoMatch;
 import buildFakeGlobSearchForSeveralMatch = glob.buildFakeGlobSearchForSeveralMatch;
+import buildFakeGlobSearchForExactlyOneMatch = glob.buildFakeGlobSearchForExactlyOneMatch;
 import buildFakeFailingFs = fs.buildFakeFailingFs;
+import buildFakeStreamBuilder = stream.buildFakeStreamBuilder;
 
 describe('DecorationLocationProvider service behavior.', () => {
   it('should be correctly instantiated with faked adapters.', () => {
     const instantiation = () => {
       new DecorationLocationsProvider({
         workspace: buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(),
-        statFile: buildFailingFakeStatFile(),
+        statFile: buildFakeFailingStatFile(),
         processForCmakeCommand: buildFakeFailingProcess(),
         processForCmakeTarget: buildFakeFailingProcess(),
         globSearch: buildFakeGlobSearchForNoMatch(),
-        fs: buildFakeFailingFs()
+        fs: buildFakeFailingFs(),
+        streamBuilder: buildFakeStreamBuilder(),
       });
     };
 
@@ -41,11 +44,12 @@ describe('DecorationLocationProvider service behavior.', () => {
     () => {
       const provider = new DecorationLocationsProvider({
         workspace: buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-        statFile: buildFailingFakeStatFile(),
+        statFile: buildFakeFailingStatFile(),
         processForCmakeCommand: buildFakeFailingProcess(),
         processForCmakeTarget: buildFakeFailingProcess(),
         globSearch: buildFakeGlobSearchForNoMatch(),
-        fs: buildFakeFailingFs()
+        fs: buildFakeFailingFs(),
+        streamBuilder: buildFakeStreamBuilder(),
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
@@ -62,7 +66,8 @@ describe('DecorationLocationProvider service behavior.', () => {
         processForCmakeCommand: buildFakeFailingProcess(),
         processForCmakeTarget: buildFakeFailingProcess(),
         globSearch: buildFakeGlobSearchForNoMatch(),
-        fs: buildFakeFailingFs()
+        fs: buildFakeFailingFs(),
+        streamBuilder: buildFakeStreamBuilder(),
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
@@ -83,7 +88,8 @@ describe('DecorationLocationProvider service behavior.', () => {
         processForCmakeCommand: buildFakeSucceedingProcess(),
         processForCmakeTarget: buildFakeFailingProcess(),
         globSearch: buildFakeGlobSearchForNoMatch(),
-        fs: buildFakeFailingFs()
+        fs: buildFakeFailingFs(),
+        streamBuilder: buildFakeStreamBuilder(),
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
@@ -100,7 +106,8 @@ describe('DecorationLocationProvider service behavior.', () => {
         processForCmakeCommand: buildFakeSucceedingProcess(),
         processForCmakeTarget: buildFakeSucceedingProcess(),
         globSearch: buildFakeGlobSearchForNoMatch(),
-        fs: buildFakeFailingFs()
+        fs: buildFakeFailingFs(),
+        streamBuilder: buildFakeStreamBuilder(),
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
@@ -118,7 +125,8 @@ describe('DecorationLocationProvider service behavior.', () => {
         processForCmakeCommand: buildFakeSucceedingProcess(),
         processForCmakeTarget: buildFakeSucceedingProcess(),
         globSearch: buildFakeGlobSearchForSeveralMatch(),
-        fs: buildFakeFailingFs()
+        fs: buildFakeFailingFs(),
+        streamBuilder: buildFakeStreamBuilder(),
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
@@ -127,4 +135,23 @@ describe('DecorationLocationProvider service behavior.', () => {
         `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
         'settings are correctly set.');
     });
+
+  it('should fail to provide decoration when found coverage info file does not contain a json document.', () => {
+    const provider = new DecorationLocationsProvider({
+      workspace: buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
+      statFile: buildSucceedingFakeStatFile(),
+      processForCmakeCommand: buildFakeSucceedingProcess(),
+      processForCmakeTarget: buildFakeSucceedingProcess(),
+      globSearch: buildFakeGlobSearchForExactlyOneMatch(),
+      fs: buildFakeFailingFs(),
+      streamBuilder: buildFakeStreamBuilder()
+    });
+
+    return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
+      'Invalid coverage information file have been found in the build tree directory. ' +
+      'Coverage information file must contain llvm coverage report in json format. ' +
+      'Ensure that both ' +
+      `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
+      'settings are correctly set.');
+  });
 });
