@@ -8,39 +8,18 @@ export type StreamBuilder = {
   createReadStreamFromPath(path: string): Readable;
 };
 export class UncoveredCodeRegionsCollector {
-  constructor(inputStream: Readable) {
-    this.inputStream = inputStream;
+  constructor(streamBuilder: StreamBuilder) {
+    this.streamBuilder = streamBuilder;
   }
 
-  collectUncoveredCodeRegions(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      let empty = true;
-
-      chain([
-        this.inputStream,
-        parser({ streamKeys: false, streamValues: false })
-      ])
-        .on('error', () => {
-          return this.becauseOfInvalidJson(reject);
-        })
-        .on('data', _ => {
-          empty = false;
-        })
-        .on('end', () => {
-          if (empty)
-            return this.becauseOfInvalidJson(reject);
-          return resolve();
-        });
-    });
+  collectUncoveredCodeRegions(_sourceFilePath: string) {
+    return Promise.reject(
+      'Invalid coverage information file have been found in the build tree directory. ' +
+      'Coverage information file must contain llvm coverage report in json format. ' +
+      'Ensure that both ' +
+      `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
+      'settings are correctly set.');
   }
 
-  private readonly inputStream: Readable;
-
-  private becauseOfInvalidJson(reject: (reason?: any) => void): void {
-    reject(
-      'Cannot collect any missing coverage information. Input is not a json document.\n' +
-      `Ensure the file you specified in '${extensionName}: Coverage Info File Name' setting ` +
-      'target a json file containing coverage information.'
-    );
-  }
+  private readonly streamBuilder: StreamBuilder;
 };

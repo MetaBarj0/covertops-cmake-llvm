@@ -3,7 +3,8 @@ import { VscodeWorkspaceLike } from './settings-provider';
 import { StatFileLike, BuildTreeDirectoryResolver, FsLike } from './build-tree-directory-resolver';
 import { Cmake, ProcessLike } from './cmake';
 import { CoverageInfoFileResolver, GlobSearchLike } from './coverage-info-file-resolver';
-import { StreamBuilder } from './uncovered-code-regions-collector';
+import { StreamBuilder, UncoveredCodeRegionsCollector } from './uncovered-code-regions-collector';
+import { Stream } from 'stream';
 
 type Adapters = {
   workspace: VscodeWorkspaceLike,
@@ -23,9 +24,10 @@ export class DecorationLocationsProvider {
     this.processForCmakeTarget = adapters.processForCmakeTarget;
     this.globSearch = adapters.globSearch;
     this.fs = adapters.fs;
+    this.streamBuilder = adapters.streamBuilder;
   }
 
-  async getDecorationLocationsForUncoveredCodeRegions(_sourceFilePath: string) {
+  async getDecorationLocationsForUncoveredCodeRegions(sourceFilePath: string) {
     const buildTreeDirectoryResolver = new BuildTreeDirectoryResolver({ workspace: this.workspace, statFile: this.statFile, fs: this.fs });
     await buildTreeDirectoryResolver.resolveBuildTreeDirectoryAbsolutePath();
 
@@ -40,12 +42,9 @@ export class DecorationLocationsProvider {
     const coverageInfoFileResolver = new CoverageInfoFileResolver(this.workspace, this.globSearch);
     await coverageInfoFileResolver.resolveCoverageInfoFileFullPath();
 
-    return Promise.reject(
-      'Invalid coverage information file have been found in the build tree directory. ' +
-      'Coverage information file must contain llvm coverage report in json format. ' +
-      'Ensure that both ' +
-      `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
-      'settings are correctly set.');
+    const collector = new UncoveredCodeRegionsCollector(this.streamBuilder);
+
+    return collector.collectUncoveredCodeRegions(sourceFilePath);
   }
 
   private readonly workspace: VscodeWorkspaceLike;
@@ -54,4 +53,5 @@ export class DecorationLocationsProvider {
   private readonly processForCmakeTarget: ProcessLike;
   private readonly globSearch: GlobSearchLike;
   private readonly fs: FsLike;
+  private readonly streamBuilder: StreamBuilder;
 }
