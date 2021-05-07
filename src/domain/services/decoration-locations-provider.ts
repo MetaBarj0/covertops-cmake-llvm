@@ -25,7 +25,7 @@ export class DecorationLocationsProvider {
     this.fs = adapters.fs;
   }
 
-  async getDecorationLocationsForUncoveredCodeRegions() {
+  async getDecorationLocationsForUncoveredCodeRegions(_sourceFilePath: string) {
     const buildTreeDirectoryResolver = new BuildTreeDirectoryResolver({ workspace: this.workspace, statFile: this.statFile, fs: this.fs });
     await buildTreeDirectoryResolver.resolveBuildTreeDirectoryAbsolutePath();
 

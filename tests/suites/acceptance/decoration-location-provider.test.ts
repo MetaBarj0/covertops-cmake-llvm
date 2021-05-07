@@ -7,6 +7,7 @@ chai.should();
 
 import { extensionName } from '../../../src/extension-name';
 import { DecorationLocationsProvider } from '../../../src/domain/services/decoration-locations-provider';
+import { CoverageDecorations } from '../../../src/domain/value-objects/coverage-decorations';
 import { process, statFile, workspace, glob, fs, stream } from '../../builders/fake-adapters';
 
 import buildFakeFailingProcess = process.buildFakeFailingProcess;
@@ -19,11 +20,13 @@ import buildFakeGlobSearchForNoMatch = glob.buildFakeGlobSearchForNoMatch;
 import buildFakeGlobSearchForSeveralMatch = glob.buildFakeGlobSearchForSeveralMatch;
 import buildFakeGlobSearchForExactlyOneMatch = glob.buildFakeGlobSearchForExactlyOneMatch;
 import buildFakeFailingFs = fs.buildFakeFailingFs;
+import buildFakeSucceedingFs = fs.buildFakeSucceedingFs;
 import buildFakeStreamBuilder = stream.buildFakeStreamBuilder;
 import buildEmptyReadableStream = stream.buildEmptyReadableStream;
 import buildNotJsonStream = stream.buildNotJsonStream;
 import buildEmptyJsonObjectStream = stream.buildEmptyJsonObjectStream;
 import buildAnyJsonThatIsNotLlvmCoverageExportStream = stream.buildAnyJsonThatIsNotLlvmCoverageExportStream;
+import buildValidLlvmCoverageJsonObjectStream = stream.buildValidLlvmCoverageJsonObjectStream;
 
 describe('DecorationLocationProvider service behavior.', () => {
   it('should be correctly instantiated with faked adapters.', () => {
@@ -56,7 +59,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         streamBuilder: buildFakeStreamBuilder(buildEmptyReadableStream),
       });
 
-      return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
+      return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
         'Cannot find or create the build tree directory. Ensure the ' +
         `'${extensionName}: Build Tree Directory' setting is a valid relative path.`);
     });
@@ -74,7 +77,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         streamBuilder: buildFakeStreamBuilder(buildEmptyReadableStream),
       });
 
-      return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
+      return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
         `Cannot find the cmake command. Ensure the '${extensionName}: Cmake Command' ` +
         'setting is correctly set. Have you verified your PATH environment variable?');
     });
@@ -96,7 +99,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         streamBuilder: buildFakeStreamBuilder(buildEmptyReadableStream),
       });
 
-      return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
+      return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
         `Error: Could not build the specified cmake target ${target}. ` +
         `Ensure '${extensionName}: Cmake Target' setting is properly set.`);
     });
@@ -114,7 +117,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         streamBuilder: buildFakeStreamBuilder(buildEmptyReadableStream),
       });
 
-      return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
+      return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
         'Cannot resolve the coverage info file path in the build tree directory. ' +
         'Ensure that both ' +
         `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
@@ -133,14 +136,14 @@ describe('DecorationLocationProvider service behavior.', () => {
         streamBuilder: buildFakeStreamBuilder(buildEmptyReadableStream),
       });
 
-      return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
+      return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
         'More than one coverage information file have been found in the build tree directory. ' +
         'Ensure that both ' +
         `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
         'settings are correctly set.');
     });
 
-  describe('Behavior of the coverage info collection', () => {
+  describe('the behavior of the coverage info collection with invalid coverage info file content', () => {
     [
       buildEmptyReadableStream,
       buildNotJsonStream,
@@ -158,13 +161,30 @@ describe('DecorationLocationProvider service behavior.', () => {
           streamBuilder: buildFakeStreamBuilder(streamFactory)
         });
 
-        return provider.getDecorationLocationsForUncoveredCodeRegions().should.eventually.be.rejectedWith(
+        return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
           'Invalid coverage information file have been found in the build tree directory. ' +
           'Coverage information file must contain llvm coverage report in json format. ' +
           'Ensure that both ' +
           `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
           'settings are correctly set.');
       });
+    });
+  });
+
+  describe.skip('the behavior of the coverage info collection with valid minimal json document', () => {
+    it('should succed to collect coverage information for the requested file', () => {
+      const provider = new DecorationLocationsProvider({
+        workspace: buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
+        statFile: buildSucceedingFakeStatFile(),
+        processForCmakeCommand: buildFakeSucceedingProcess(),
+        processForCmakeTarget: buildFakeSucceedingProcess(),
+        globSearch: buildFakeGlobSearchForExactlyOneMatch(),
+        fs: buildFakeSucceedingFs(),
+        streamBuilder: buildFakeStreamBuilder(buildValidLlvmCoverageJsonObjectStream)
+      });
+
+      return provider.getDecorationLocationsForUncoveredCodeRegions('/a/source/file.cpp')
+        .should.eventually.be.an.instanceOf(CoverageDecorations);
     });
   });
 });

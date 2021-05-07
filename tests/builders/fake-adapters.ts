@@ -145,6 +145,67 @@ export namespace stream {
     }));
   }
 
+  export function buildValidLlvmCoverageJsonObjectStream() {
+    return Readable.from(JSON.stringify({
+      "data": [
+        {
+          "files": [
+            {
+              "filename": "/a/source/file.cpp",
+              "summary": {
+                "regions": {
+                  "count": 2,
+                  "covered": 2,
+                  "notcovered": 0,
+                  "percent": 100
+                }
+              }
+            }
+          ],
+          "functions": [
+            {
+              "filenames": [
+                "/a/source/file.cpp"
+              ],
+              "regions": [
+                [
+                  4,
+                  52,
+                  4,
+                  54,
+                  1,
+                  0,
+                  0,
+                  0
+                ]
+              ]
+
+            },
+            {
+              "filenames": [
+                "/a/source/file.cpp"
+              ],
+              "regions": [
+                [
+                  6,
+                  53,
+                  6,
+                  71,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ]
+            },
+          ]
+        }
+      ],
+      "type": "llvm.coverage.json.export",
+      "version": "2.0.1"
+    }));
+  }
+
   export function buildFakeStreamBuilder(streamFactory: () => Readable) {
     return new class implements StreamBuilder {
       createReadStreamFromPath(_path: string) {
