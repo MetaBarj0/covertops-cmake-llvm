@@ -30,6 +30,7 @@ This extension utilize source based coverage feature of Llvm and cmake
 capabilities. You will need :
 
 - A recent version of cmake installed on your system
+- A recent version of the Ninja build system
 - The Llvm toolchain version greater or equal to 10
 
 ### Note for Visual Studio 2019 users on Windows
@@ -88,10 +89,10 @@ projects:
 
 The coverage reporting target is named `generateCoverageInfoJsonFile`.
 
-**To verify**: This target may be added in its very own sub directory and used
+**Verified**: This target may be added in its very own sub directory and used
 from a main CMakeLists.txt file.
 
-### Conditional coverage
+### Conditional coverage (TODO: Update...)
 
 First, it is advisable to create a cmake cache variable to conditionally
 enable or disable coverage reporting targets. In your root `CMakeLists.txt`

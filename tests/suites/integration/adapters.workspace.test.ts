@@ -30,29 +30,6 @@ describe('The internal services can be instantiated when vscode has an active wo
     settings.rootDirectory.should.be.equal(rootFolder);
   });
 
-  describe('with incorrect absolute path build tree directory setting', () => {
-    before('Modifying build tree directory setting', async () => {
-      await vscode.workspace.getConfiguration(extensionName).update('buildTreeDirectory', '/buildz');
-    });
-
-    it('should not be possible to access the full path of the build tree directory using a ' +
-      'build tree directory resolver instance set up with an incorrect absolute path build tree directory in settings.',
-      () => {
-        const resolver = new BuildTreeDirectoryResolver({
-          workspace: vscode.workspace,
-          statFile: { stat: fs.stat },
-          fs: { mkdir: fs.mkdir }
-        });
-
-        return resolver.resolveBuildTreeDirectoryAbsolutePath().should.eventually.be.rejectedWith(
-          `Incorrect absolute path specified in '${extensionName}: Build Tree Directory'. It must be a relative path.`);
-      });
-
-    after('restoring build tree directory setting', async () => {
-      await vscode.workspace.getConfiguration(extensionName).update('buildTreeDirectory', 'build');
-    });
-  });
-
   describe('with invalid relative path build tree directory setting', () => {
     before('Modifying build tree directory setting', async () => {
       await vscode.workspace.getConfiguration(extensionName).update('buildTreeDirectory', '*<>buildz<>*\0');
@@ -84,8 +61,6 @@ describe('The internal services can be instantiated when vscode has an active wo
 
     it('should throw when attempting to build an assumed valid specified cmake target in settings ' +
       'with an unreachable cmake command', () => {
-        const settings = new SettingsProvider(vscode.workspace).settings;
-
         const cmake = new Cmake({
           workspace: vscode.workspace,
           processForCommand: { execFile: cp.execFile },
@@ -160,7 +135,6 @@ describe('The internal services can be instantiated when vscode has an active wo
       });
 
     it('should not throw when attempting to build a valid cmake target specified in settings', () => {
-      const settings = new SettingsProvider(vscode.workspace).settings;
       const cmake = new Cmake({
         workspace: vscode.workspace,
         processForCommand: { execFile: cp.execFile },
