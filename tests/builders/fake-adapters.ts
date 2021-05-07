@@ -136,6 +136,15 @@ export namespace stream {
     return Readable.from(JSON.stringify({}));
   }
 
+  export function buildAnyJsonThatIsNotLlvmCoverageExportStream() {
+    return Readable.from(JSON.stringify({
+      foo: 'bar',
+      bar: ['baz', 42, {
+        hello: 'world'
+      }]
+    }));
+  }
+
   export function buildFakeStreamBuilder(streamFactory: () => Readable) {
     return new class implements StreamBuilder {
       createReadStreamFromPath(_path: string) {

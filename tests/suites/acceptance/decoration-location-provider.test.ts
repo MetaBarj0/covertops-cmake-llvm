@@ -21,6 +21,9 @@ import buildFakeGlobSearchForExactlyOneMatch = glob.buildFakeGlobSearchForExactl
 import buildFakeFailingFs = fs.buildFakeFailingFs;
 import buildFakeStreamBuilder = stream.buildFakeStreamBuilder;
 import buildEmptyReadableStream = stream.buildEmptyReadableStream;
+import buildNotJsonStream = stream.buildNotJsonStream;
+import buildEmptyJsonObjectStream = stream.buildEmptyJsonObjectStream;
+import buildAnyJsonThatIsNotLlvmCoverageExportStream = stream.buildAnyJsonThatIsNotLlvmCoverageExportStream;
 
 describe('DecorationLocationProvider service behavior.', () => {
   it('should be correctly instantiated with faked adapters.', () => {
@@ -138,7 +141,12 @@ describe('DecorationLocationProvider service behavior.', () => {
     });
 
   describe('Behavior of the coverage info collection', () => {
-    [buildEmptyReadableStream].forEach(streamFactory => {
+    [
+      buildEmptyReadableStream,
+      buildNotJsonStream,
+      buildEmptyJsonObjectStream,
+      buildAnyJsonThatIsNotLlvmCoverageExportStream
+    ].forEach(streamFactory => {
       it('should fail to provide decoration when found coverage info file does not contain a valid json document', () => {
         const provider = new DecorationLocationsProvider({
           workspace: buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
