@@ -36,7 +36,12 @@ export class UncoveredCodeRegionsCollector {
           `\n${error.message}`);
       });
 
-      pipeline.on('data', () => { resolve(new CoverageDecorations()); });
+      pipeline.on('data', () => {
+        resolve(new CoverageDecorations({
+          file: sourceFilePath,
+          locations: []
+        }));
+      });
     });
   }
 
