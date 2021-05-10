@@ -143,7 +143,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         'settings are correctly set.');
     });
 
-  describe.skip('the behavior of the coverage info collection with invalid coverage info file content', () => {
+  describe('the behavior of the coverage info collection with invalid coverage info file content', () => {
     [
       buildEmptyReadableStream,
       buildNotJsonStream,
