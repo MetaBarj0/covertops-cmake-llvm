@@ -18,7 +18,7 @@ export class UncoveredCodeRegionsCollector {
   }
 
   collectUncoveredCodeRegions(sourceFilePath: string) {
-    return new Promise<CoverageDecorations>((resolve, reject) => {
+    return new Promise<CoverageDecorations>((_resolve, reject) => {
       const pipeline = chain([
         this.streamBuilder.createReadStreamFromPath(sourceFilePath),
         parser(),
@@ -34,13 +34,6 @@ export class UncoveredCodeRegionsCollector {
           `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
           'settings are correctly set.' +
           `\n${error.message}`);
-      });
-
-      pipeline.on('data', () => {
-        resolve(new CoverageDecorations({
-          file: sourceFilePath,
-          locations: []
-        }));
       });
     });
   }

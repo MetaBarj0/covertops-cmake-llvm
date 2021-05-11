@@ -18,8 +18,8 @@ class Range {
 };
 
 type CoverageDecorationsData = {
-  file: string;
-  locations: ReadonlyArray<Range>;
+  readonly file: string;
+  readonly locations: ReadonlyArray<Range>;
 };
 
 export class CoverageDecorations implements CoverageDecorationsData {
