@@ -146,9 +146,7 @@ describe('DecorationLocationProvider service behavior.', () => {
   describe('the behavior of the coverage info collection with invalid coverage info file content', () => {
     [
       buildEmptyReadableStream,
-      buildNotJsonStream,
-      buildEmptyJsonObjectStream,
-      buildAnyJsonThatIsNotLlvmCoverageExportStream
+      buildNotJsonStream
     ].forEach(streamFactory => {
       it('should fail to provide decoration when found coverage info file does not contain a valid json document', () => {
         const provider = new DecorationLocationsProvider({
