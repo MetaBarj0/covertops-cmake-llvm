@@ -1,42 +1,51 @@
 class Position {
-  constructor(position: Position) {
-    this.line = position.line;
-    this.column = position.column;
+  constructor(other: Position) {
+    this.line = other.line;
+    this.column = other.column;
   }
 
   readonly line: number;
   readonly column: number;
 }
-class Range {
-  constructor(range: Range) {
-    this.begin = new Position(range.begin);
-    this.end = new Position(range.end);
+class Location {
+  constructor(other: Location) {
+    this.begin = new Position(other.begin);
+    this.end = new Position(other.end);
   }
 
   readonly begin: Position;
   readonly end: Position;
 };
 
-type CoverageDecorationsData = {
+class FileDecorations {
+  constructor(other: FileDecorations) {
+    this.file = other.file;
+    this.locations = new Array<Location>(...other.locations);
+  }
+
   readonly file: string;
-  readonly locations: ReadonlyArray<Range>;
+  readonly locations: ReadonlyArray<Location>;
+};
+
+type CoverageDecorationsData = {
+  readonly fileDecorations: ReadonlyArray<FileDecorations>;
 };
 
 export class CoverageDecorations implements CoverageDecorationsData {
-  constructor(coverageDecorations: CoverageDecorationsData) {
-    this.file = coverageDecorations.file;
-
-    const locations = new Array<Range>();
-    coverageDecorations.locations.forEach(range => { locations.push(new Range(range)); });
-    this.locations = locations;
+  constructor(other: CoverageDecorationsData) {
+    this.fileDecorations = new Array<FileDecorations>(...other.fileDecorations);
   }
 
-  getFor(requiredFile: string) {
+  getFor(requiredFile: string): FileDecorations {
+    const found = this.fileDecorations.find(value => { return value.file === requiredFile; });
+
+    if (found)
+      return found;
+
     throw new Error(
       'Cannot find any uncovered code regions for the file: ' +
       `${requiredFile}. Ensure this file belongs to a project that is covered by at least a test project.`);
   }
 
-  readonly file: string;
-  readonly locations: ReadonlyArray<Range>;
+  readonly fileDecorations: ReadonlyArray<FileDecorations>;
 };
