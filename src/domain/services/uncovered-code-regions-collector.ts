@@ -21,9 +21,7 @@ export class UncoveredCodeRegionsCollector {
     return new Promise<CoverageDecorations>((_resolve, reject) => {
       const pipeline = chain([
         this.streamBuilder.createReadStreamFromPath(sourceFilePath),
-        parser(),
-        pick({ filter: 'data' }),
-        streamArray()
+        parser()
       ]);
 
       pipeline.on('error', error => {

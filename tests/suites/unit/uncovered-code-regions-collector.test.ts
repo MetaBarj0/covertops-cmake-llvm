@@ -10,14 +10,15 @@ import { UncoveredCodeRegionsCollector } from '../../../src/domain/services/unco
 
 import { stream } from '../../builders/fake-adapters';
 
-import buildEmptyInputStream = stream.buildEmptyReadableStream;
+import buildEmptyReadableStream = stream.buildEmptyReadableStream;
 import buildNotJsonStream = stream.buildNotJsonStream;
 import buildFakeStreamBuilder = stream.buildFakeStreamBuilder;
+import buildEmptyJsonObjectStream = stream.buildEmptyJsonObjectStream;
 
 describe('UncoveredCodeRegionsCollector behavior with invalid file content', () => {
   [
     buildNotJsonStream,
-    buildEmptyInputStream
+    buildEmptyReadableStream
   ]
     .forEach(factory => {
       it('should throw an exception when attempting to collect uncovered code regions if the input stream ' +
