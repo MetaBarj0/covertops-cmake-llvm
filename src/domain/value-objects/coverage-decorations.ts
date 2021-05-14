@@ -39,12 +39,12 @@ export class CoverageDecorations implements CoverageDecorationsData {
   getFor(requiredFile: string): FileDecorations {
     const found = this.fileDecorations.find(value => { return value.file === requiredFile; });
 
-    if (found)
-      return found;
+    if (!found)
+      throw new Error(
+        'Cannot find any uncovered code regions for the file: ' +
+        `${requiredFile}. Ensure this file belongs to a project that is covered by at least a test project.`);
 
-    throw new Error(
-      'Cannot find any uncovered code regions for the file: ' +
-      `${requiredFile}. Ensure this file belongs to a project that is covered by at least a test project.`);
+    return found;
   }
 
   readonly fileDecorations: ReadonlyArray<FileDecorations>;
