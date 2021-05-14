@@ -23,7 +23,7 @@ describe('UncoveredCodeRegionsCollector behavior with invalid file content', () 
     buildEmptyReadableStream,
     buildEmptyJsonObjectStream,
     buildAnyJsonThatIsNotLlvmCoverageExportStream,
-    buildFactoryStreamFrom({ data: [] })
+    buildFactoryStreamFrom({ data: [{}] })
   ]
     .forEach(factory => {
       it('should throw an exception when attempting to collect uncovered code regions if the input stream ' +
@@ -39,9 +39,12 @@ describe('UncoveredCodeRegionsCollector behavior with invalid file content', () 
         });
     });
 
-  it('should not throw when streaming on an object containing a non empty array property named "data"', () => {
+  it('should fulfill when "data" items are well formed objects', () => {
     const collector = new UncoveredCodeRegionsCollector(buildFakeStreamBuilder(buildFactoryStreamFrom({
-      data: [{}]
+      data: [{
+        files: [{}],
+        functions: [{}]
+      }]
     })));
 
     return collector.collectUncoveredCodeRegions('foo').should.eventually.be.fulfilled;

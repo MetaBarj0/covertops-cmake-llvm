@@ -7,6 +7,8 @@ import { chain } from 'stream-chain';
 import { parser } from 'stream-json';
 import { pick } from 'stream-json/filters/Pick';
 import { streamArray } from 'stream-json/streamers/StreamArray';
+import { disassembler } from 'stream-json/Disassembler';
+import { streamObject } from 'stream-json/streamers/StreamObject';
 
 export type StreamBuilder = {
   createReadStreamFromPath(path: string): Readable;
@@ -23,7 +25,10 @@ export class UncoveredCodeRegionsCollector {
         this.streamBuilder.createReadStreamFromPath(sourceFilePath),
         parser({ emitClose: true }),
         pick({ filter: 'data' }),
-        streamArray()
+        streamArray(),
+        disassembler(),
+        pick({ filter: 'value' }),
+        streamObject()
       ]);
 
       pipeline.on('error', error => { reject(UncoveredCodeRegionsCollector.buildErrorMessage(error.message)); });
