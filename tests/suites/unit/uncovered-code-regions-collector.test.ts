@@ -22,7 +22,8 @@ describe('UncoveredCodeRegionsCollector behavior with invalid file content', () 
     buildNotJsonStream,
     buildEmptyReadableStream,
     buildEmptyJsonObjectStream,
-    buildAnyJsonThatIsNotLlvmCoverageExportStream
+    buildAnyJsonThatIsNotLlvmCoverageExportStream,
+    buildFactoryStreamFrom({ data: [] })
   ]
     .forEach(factory => {
       it('should throw an exception when attempting to collect uncovered code regions if the input stream ' +
