@@ -21,24 +21,36 @@ export class UncoveredCodeRegionsCollector {
     return new Promise<CoverageDecorations>((resolve, reject) => {
       const pipeline = chain([
         this.streamBuilder.createReadStreamFromPath(sourceFilePath),
-        parser(),
+        parser({ emitClose: true }),
         pick({ filter: 'data' }),
         streamArray()
       ]);
 
-      pipeline.on('error', error => {
-        reject(
-          'Invalid coverage information file have been found in the build tree directory. ' +
-          'Coverage information file must contain llvm coverage report in json format. ' +
-          'Ensure that both ' +
-          `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
-          'settings are correctly set.' +
-          `\n${error.message}`);
-      });
+      pipeline.on('error', error => { reject(UncoveredCodeRegionsCollector.buildErrorMessage(error.message)); });
 
-      pipeline.on('data', _chunk => { resolve(new CoverageDecorations({ fileDecorations: [] })); });
+      let dataFound = false;
+      pipeline
+        .on('data', _chunk => { dataFound = true; })
+        .on('close', () => {
+          if (!dataFound)
+            return reject(UncoveredCodeRegionsCollector.buildErrorMessage());
+
+          resolve(new CoverageDecorations({ fileDecorations: [] }));
+        });
     });
+  }
 
+  private static buildErrorMessage(extra?: string) {
+    const base = 'Invalid coverage information file have been found in the build tree directory. ' +
+      'Coverage information file must contain llvm coverage report in json format. ' +
+      'Ensure that both ' +
+      `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
+      'settings are correctly set.';
+
+    if (extra)
+      return `${base}\n${extra}`;
+
+    return base;
   }
 
   private readonly streamBuilder: StreamBuilder;

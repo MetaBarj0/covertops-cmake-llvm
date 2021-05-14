@@ -14,11 +14,13 @@ import buildEmptyReadableStream = stream.buildEmptyReadableStream;
 import buildNotJsonStream = stream.buildNotJsonStream;
 import buildFakeStreamBuilder = stream.buildFakeStreamBuilder;
 import buildFactoryStreamFrom = stream.buildFactoryStreamFrom;
+import buildEmptyJsonObjectStream = stream.buildEmptyJsonObjectStream;
 
 describe('UncoveredCodeRegionsCollector behavior with invalid file content', () => {
   [
     buildNotJsonStream,
-    buildEmptyReadableStream
+    buildEmptyReadableStream,
+    buildEmptyJsonObjectStream
   ]
     .forEach(factory => {
       it('should throw an exception when attempting to collect uncovered code regions if the input stream ' +
