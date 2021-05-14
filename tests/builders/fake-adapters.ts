@@ -214,7 +214,7 @@ export namespace stream {
     };
   }
 
-  export function buildFactoryStreamFrom(from: { data: Array<unknown> }) {
+  export function buildFactoryStreamFrom(from: any) {
     return () => {
       return Readable.from(JSON.stringify(from));
     };
