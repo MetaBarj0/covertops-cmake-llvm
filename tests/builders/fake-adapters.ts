@@ -213,6 +213,12 @@ export namespace stream {
       }
     };
   }
+
+  export function buildFactoryStreamFrom(from: { data: Array<unknown> }) {
+    return () => {
+      return Readable.from(JSON.stringify(from));
+    };
+  }
 }
 
 export namespace statFile {

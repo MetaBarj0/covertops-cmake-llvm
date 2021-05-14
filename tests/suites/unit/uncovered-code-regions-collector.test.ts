@@ -13,7 +13,7 @@ import { stream } from '../../builders/fake-adapters';
 import buildEmptyReadableStream = stream.buildEmptyReadableStream;
 import buildNotJsonStream = stream.buildNotJsonStream;
 import buildFakeStreamBuilder = stream.buildFakeStreamBuilder;
-import buildEmptyJsonObjectStream = stream.buildEmptyJsonObjectStream;
+import buildFactoryStreamFrom = stream.buildFactoryStreamFrom;
 
 describe('UncoveredCodeRegionsCollector behavior with invalid file content', () => {
   [
@@ -23,7 +23,6 @@ describe('UncoveredCodeRegionsCollector behavior with invalid file content', () 
     .forEach(factory => {
       it('should throw an exception when attempting to collect uncovered code regions if the input stream ' +
         'does not contain a json document.', () => {
-
           const collector = new UncoveredCodeRegionsCollector(buildFakeStreamBuilder(factory));
 
           return collector.collectUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
@@ -34,4 +33,12 @@ describe('UncoveredCodeRegionsCollector behavior with invalid file content', () 
             'settings are correctly set.');
         });
     });
+
+  it('should not throw when streaming on an object containing a non empty array property named "data"', () => {
+    const collector = new UncoveredCodeRegionsCollector(buildFakeStreamBuilder(buildFactoryStreamFrom({
+      data: [{}]
+    })));
+
+    return collector.collectUncoveredCodeRegions('foo').should.eventually.be.fulfilled;
+  });
 });

@@ -18,10 +18,12 @@ export class UncoveredCodeRegionsCollector {
   }
 
   collectUncoveredCodeRegions(sourceFilePath: string) {
-    return new Promise<CoverageDecorations>((_resolve, reject) => {
+    return new Promise<CoverageDecorations>((resolve, reject) => {
       const pipeline = chain([
         this.streamBuilder.createReadStreamFromPath(sourceFilePath),
-        parser()
+        parser(),
+        pick({ filter: 'data' }),
+        streamArray()
       ]);
 
       pipeline.on('error', error => {
@@ -33,7 +35,10 @@ export class UncoveredCodeRegionsCollector {
           'settings are correctly set.' +
           `\n${error.message}`);
       });
+
+      pipeline.on('data', _chunk => { resolve(new CoverageDecorations({ fileDecorations: [] })); });
     });
+
   }
 
   private readonly streamBuilder: StreamBuilder;
