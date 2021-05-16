@@ -132,19 +132,6 @@ export namespace stream {
     return Readable.from('foo');
   }
 
-  export function buildEmptyJsonObjectStream(): Readable {
-    return Readable.from(JSON.stringify({}));
-  }
-
-  export function buildAnyJsonThatIsNotLlvmCoverageExportStream() {
-    return Readable.from(JSON.stringify({
-      foo: 'bar',
-      bar: ['baz', 42, {
-        hello: 'world'
-      }]
-    }));
-  }
-
   export function buildValidLlvmCoverageJsonObjectStream() {
     return Readable.from(JSON.stringify({
       "data": [
@@ -211,12 +198,6 @@ export namespace stream {
       createReadStreamFromPath(_path: string) {
         return streamFactory();
       }
-    };
-  }
-
-  export function buildFactoryStreamFrom(from: any) {
-    return () => {
-      return Readable.from(JSON.stringify(from));
     };
   }
 }

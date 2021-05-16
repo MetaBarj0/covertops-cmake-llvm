@@ -24,8 +24,6 @@ import buildFakeSucceedingFs = fs.buildFakeSucceedingFs;
 import buildFakeStreamBuilder = stream.buildFakeStreamBuilder;
 import buildEmptyReadableStream = stream.buildEmptyReadableStream;
 import buildNotJsonStream = stream.buildNotJsonStream;
-import buildEmptyJsonObjectStream = stream.buildEmptyJsonObjectStream;
-import buildAnyJsonThatIsNotLlvmCoverageExportStream = stream.buildAnyJsonThatIsNotLlvmCoverageExportStream;
 import buildValidLlvmCoverageJsonObjectStream = stream.buildValidLlvmCoverageJsonObjectStream;
 
 describe('DecorationLocationProvider service behavior.', () => {

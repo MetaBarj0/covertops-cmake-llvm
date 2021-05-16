@@ -3,13 +3,6 @@ import { extensionName } from '../../extension-name';
 import { Readable } from 'stream';
 import { CoverageDecorations } from '../value-objects/coverage-decorations';
 
-import { chain } from 'stream-chain';
-import { parser } from 'stream-json';
-import { pick } from 'stream-json/filters/Pick';
-import { streamArray } from 'stream-json/streamers/StreamArray';
-import { disassembler } from 'stream-json/Disassembler';
-import { streamObject } from 'stream-json/streamers/StreamObject';
-
 export type StreamBuilder = {
   createReadStreamFromPath(path: string): Readable;
 };
@@ -19,29 +12,9 @@ export class UncoveredCodeRegionsCollector {
     this.streamBuilder = streamBuilder;
   }
 
-  collectUncoveredCodeRegions(sourceFilePath: string) {
-    return new Promise<CoverageDecorations>((resolve, reject) => {
-      const pipeline = chain([
-        this.streamBuilder.createReadStreamFromPath(sourceFilePath),
-        parser({ emitClose: true }),
-        pick({ filter: 'data' }),
-        streamArray(),
-        disassembler(),
-        pick({ filter: 'value' }),
-        streamObject()
-      ]);
-
-      pipeline.on('error', error => { reject(UncoveredCodeRegionsCollector.buildErrorMessage(error.message)); });
-
-      let dataFound = false;
-      pipeline
-        .on('data', _chunk => { dataFound = true; })
-        .on('close', () => {
-          if (!dataFound)
-            return reject(UncoveredCodeRegionsCollector.buildErrorMessage());
-
-          resolve(new CoverageDecorations({ fileDecorations: [] }));
-        });
+  collectUncoveredCodeRegions(_sourceFilePath: string) {
+    return new Promise<CoverageDecorations>((_resolve, reject) => {
+      reject(UncoveredCodeRegionsCollector.buildErrorMessage('Not yet implemented.'));
     });
   }
 
