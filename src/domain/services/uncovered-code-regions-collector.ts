@@ -14,7 +14,7 @@ export class UncoveredCodeRegionsCollector {
 
   collectUncoveredCodeRegions(_sourceFilePath: string) {
     return new Promise<CoverageDecorations>((_resolve, reject) => {
-      reject(UncoveredCodeRegionsCollector.buildErrorMessage('Not yet implemented.'));
+      reject(UncoveredCodeRegionsCollector.buildErrorMessage('Not yet Implemented'));
     });
   }
 
