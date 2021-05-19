@@ -1,17 +1,17 @@
 import * as chai from 'chai';
 import { describe, it } from 'mocha';
 import * as chaiAsPromised from 'chai-as-promised';
-import { CoverageDecorations } from '../../../src/domain/value-objects/coverage-decorations';
+import { CollectedCoverageInfo } from '../../../src/domain/value-objects/collected-coverage-info';
 
 chai.use(chaiAsPromised);
 chai.should();
 
-describe('the contract of the decoration locations object', () => {
-  const locations = new CoverageDecorations({
-    fileDecorations: [
+describe('the contract of collected coverage info object', () => {
+  const locations = new CollectedCoverageInfo({
+    coverageInfoCollection: [
       {
         file: '/a/file.cpp',
-        locations: [
+        regions: [
           {
             begin: {
               line: 1,
@@ -33,7 +33,7 @@ describe('the contract of the decoration locations object', () => {
     ]
   });
 
-  it('should throw an error when attempting to get decorations locations for an unmanaged file', () => {
+  it('should throw an error when attempting to get collected coverage info from an unmanaged file', () => {
     const requiredFile = '/an/unmanaged/file.cpp';
 
     (() => { locations.getFor(requiredFile); }).should.throw(
@@ -41,13 +41,13 @@ describe('the contract of the decoration locations object', () => {
       `${requiredFile}. Ensure this file belongs to a project that is covered by at least a test project.`);
   });
 
-  it('should give the right file decoration for a managed file', () => {
+  it('should give the right collected coverage info from a managed file', () => {
     const requiredFile = '/a/file.cpp';
 
     const decorations = locations.getFor(requiredFile);
 
     decorations.file.should.be.equal(requiredFile);
-    decorations.locations.should.be.deep.equal(locations.fileDecorations[0].locations);
-    decorations.summary.should.be.deep.equal(locations.fileDecorations[0].summary);
+    decorations.regions.should.be.deep.equal(locations.coverageInfoCollection[0].regions);
+    decorations.summary.should.be.deep.equal(locations.coverageInfoCollection[0].summary);
   });
 });

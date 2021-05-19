@@ -7,7 +7,7 @@ chai.should();
 
 import { extensionName } from '../../../src/extension-name';
 import { DecorationLocationsProvider } from '../../../src/domain/services/decoration-locations-provider';
-import { CoverageDecorations } from '../../../src/domain/value-objects/coverage-decorations';
+import { CollectedCoverageInfo } from '../../../src/domain/value-objects/collected-coverage-info';
 import { process, statFile, workspace, glob, fs, stream } from '../../builders/fake-adapters';
 
 import buildFakeFailingProcess = process.buildFakeFailingProcess;
@@ -180,7 +180,7 @@ describe('DecorationLocationProvider service behavior.', () => {
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('/a/source/file.cpp')
-        .should.eventually.be.an.instanceOf(CoverageDecorations);
+        .should.eventually.be.an.instanceOf(CollectedCoverageInfo);
     });
   });
 });

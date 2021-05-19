@@ -7,8 +7,8 @@ class Position {
   readonly line: number;
   readonly column: number;
 }
-class Location {
-  constructor(other: Location) {
+class Region {
+  constructor(other: Region) {
     this.begin = new Position(other.begin);
     this.end = new Position(other.end);
   }
@@ -31,37 +31,37 @@ class Summary {
   readonly percent: number;
 };
 
-class FileDecorations {
-  constructor(other: FileDecorations) {
+class CoverageInfo {
+  constructor(other: CoverageInfo) {
     this.file = other.file;
-    this.locations = new Array<Location>(...other.locations);
+    this.regions = new Array<Region>(...other.regions);
     this.summary = new Summary(other.summary);
   }
 
   readonly file: string;
-  readonly locations: ReadonlyArray<Location>;
+  readonly regions: ReadonlyArray<Region>;
   readonly summary: Summary;
 };
 
-type CoverageDecorationsData = {
-  readonly fileDecorations: ReadonlyArray<FileDecorations>;
+type CollectedCoverageInfoContract = {
+  readonly coverageInfoCollection: ReadonlyArray<CoverageInfo>;
 };
 
-export class CoverageDecorations implements CoverageDecorationsData {
-  constructor(other: CoverageDecorationsData) {
-    this.fileDecorations = new Array<FileDecorations>(...other.fileDecorations);
+export class CollectedCoverageInfo implements CollectedCoverageInfoContract {
+  constructor(other: CollectedCoverageInfoContract) {
+    this.coverageInfoCollection = new Array<CoverageInfo>(...other.coverageInfoCollection);
   }
 
-  getFor(requiredFile: string): FileDecorations {
-    const found = this.fileDecorations.find(value => { return value.file === requiredFile; });
+  getFor(filePath: string): CoverageInfo {
+    const found = this.coverageInfoCollection.find(value => { return value.file === filePath; });
 
     if (!found)
       throw new Error(
         'Cannot find any uncovered code regions for the file: ' +
-        `${requiredFile}. Ensure this file belongs to a project that is covered by at least a test project.`);
+        `${filePath}. Ensure this file belongs to a project that is covered by at least a test project.`);
 
     return found;
   }
 
-  readonly fileDecorations: ReadonlyArray<FileDecorations>;
+  readonly coverageInfoCollection: ReadonlyArray<CoverageInfo>;
 };
