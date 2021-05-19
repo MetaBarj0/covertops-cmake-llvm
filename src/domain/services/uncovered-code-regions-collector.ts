@@ -14,21 +14,11 @@ export class UncoveredCodeRegionsCollector {
 
   collectUncoveredCodeRegions(_sourceFilePath: string) {
     return new Promise<CoverageDecorations>((_resolve, reject) => {
-      reject(UncoveredCodeRegionsCollector.buildErrorMessage('Not yet Implemented'));
+      reject('Coverage information file must contain llvm coverage report in json format. ' +
+        'Ensure that both ' +
+        `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
+        'settings are correctly set.');
     });
-  }
-
-  private static buildErrorMessage(extra?: string) {
-    const base = 'Invalid coverage information file have been found in the build tree directory. ' +
-      'Coverage information file must contain llvm coverage report in json format. ' +
-      'Ensure that both ' +
-      `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
-      'settings are correctly set.';
-
-    if (extra)
-      return `${base}\n${extra}`;
-
-    return base;
   }
 
   private readonly streamBuilder: StreamBuilder;

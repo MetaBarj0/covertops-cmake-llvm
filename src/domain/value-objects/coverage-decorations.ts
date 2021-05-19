@@ -17,14 +17,30 @@ class Location {
   readonly end: Position;
 };
 
+class Summary {
+  constructor(other: Summary) {
+    this.count = other.count;
+    this.covered = other.covered;
+    this.notCovered = other.notCovered;
+    this.percent = other.percent;
+  }
+
+  readonly count: number;
+  readonly covered: number;
+  readonly notCovered: number;
+  readonly percent: number;
+};
+
 class FileDecorations {
   constructor(other: FileDecorations) {
     this.file = other.file;
     this.locations = new Array<Location>(...other.locations);
+    this.summary = new Summary(other.summary);
   }
 
   readonly file: string;
   readonly locations: ReadonlyArray<Location>;
+  readonly summary: Summary;
 };
 
 type CoverageDecorationsData = {

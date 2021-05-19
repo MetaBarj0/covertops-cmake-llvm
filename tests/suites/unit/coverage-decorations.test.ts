@@ -22,7 +22,13 @@ describe('the contract of the decoration locations object', () => {
               column: 10
             }
           }
-        ]
+        ],
+        summary: {
+          count: 1,
+          covered: 0,
+          notCovered: 1,
+          percent: 0
+        }
       }
     ]
   });
@@ -42,5 +48,6 @@ describe('the contract of the decoration locations object', () => {
 
     decorations.file.should.be.equal(requiredFile);
     decorations.locations.should.be.deep.equal(locations.fileDecorations[0].locations);
+    decorations.summary.should.be.deep.equal(locations.fileDecorations[0].summary);
   });
 });
