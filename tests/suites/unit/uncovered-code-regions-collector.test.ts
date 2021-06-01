@@ -38,21 +38,21 @@ describe('The collection of uncovered code region provided by a stream containin
 
 describe('the stream forking of coverage information provided by the LLVM', () => {
   it('should be possible to extract the root "data" array from the full json stream', () => {
-    const stream = s.buildValidLlvmCoverageJsonObjectStream();
+    const fullStream = s.buildValidLlvmCoverageJsonObjectStream();
 
-    const dataStream = extractDataObjectStreamFromFullStream(stream);
+    const dataObjectStream = extractDataObjectStreamFromFullStream(fullStream);
 
-    const dataStreamPromise = new Promise<void>((resolve, _reject) => {
-      dataStream.on('data', _chunk => { resolve(); });
+    const dataObjectStreamPromise = new Promise<void>((resolve, _reject) => {
+      dataObjectStream.on('data', _chunk => { resolve(); });
     });
 
-    return dataStreamPromise.should.eventually.be.fulfilled;
+    return dataObjectStreamPromise.should.eventually.be.fulfilled;
   });
 });
 
-function extractDataObjectStreamFromFullStream(mainStream: Readable): Readable {
+function extractDataObjectStreamFromFullStream(fullStream: Readable) {
   const pipeline = chain([
-    mainStream,
+    fullStream,
     parser(),
     pick({ filter: 'data' }),
     streamArray(),
