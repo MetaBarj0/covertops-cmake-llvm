@@ -48,17 +48,37 @@ describe('the stream forking of coverage information provided by the LLVM', () =
 
     return dataObjectStreamPromise.should.eventually.be.fulfilled;
   });
+
+  it('should be possible to extract the "files" array from the data object', () => {
+    const fullStream = s.buildValidLlvmCoverageJsonObjectStream();
+    const dataObjectStream = extractDataObjectStreamFromFullStream(fullStream);
+
+    const filesArrayStream = extractFilesArrayStreamFromDataObjectStream(dataObjectStream);
+
+    const filesArrayStreamPromise = new Promise<void>((resolve, _reject) => {
+      filesArrayStream.on('data', _chunk => { resolve(); });
+    });
+
+    return filesArrayStreamPromise.should.eventually.be.fulfilled;
+  });
 });
 
 function extractDataObjectStreamFromFullStream(fullStream: Readable) {
   const pipeline = chain([
     fullStream,
-    parser(),
+    parser({ streamValues: true }),
     pick({ filter: 'data' }),
     streamArray(),
-    disassembler(),
-    pick({ filter: 'value' }),
-    streamObject()
+    keyValueItem => keyValueItem.key === 0 ? keyValueItem.value : null
+  ]);
+
+  return pipeline;
+}
+
+function extractFilesArrayStreamFromDataObjectStream(dataObjectStream: Readable) {
+  const pipeline = chain([
+    dataObjectStream,
+    properties => properties.files
   ]);
 
   return pipeline;
