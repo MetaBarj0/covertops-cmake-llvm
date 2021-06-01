@@ -164,15 +164,7 @@ export namespace stream {
                   0,
                   0,
                   0
-                ]
-              ]
-
-            },
-            {
-              "filenames": [
-                "/a/source/file.cpp"
-              ],
-              "regions": [
+                ],
                 [
                   6,
                   53,
@@ -184,7 +176,8 @@ export namespace stream {
                   0
                 ]
               ]
-            },
+
+            }
           ]
         }
       ],

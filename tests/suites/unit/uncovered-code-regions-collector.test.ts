@@ -37,86 +37,21 @@ describe('The collection of uncovered code region provided by a stream containin
 
 // TODO: inside out part. Requalify tests as soon as needed
 describe('the stream forking of coverage information provided by the LLVM', () => {
-  it('should be possible to extract the root "data" array from the full json stream', () => {
+  it('should be possible to get an awaitable summary coverage report for a file', async () => {
+    const path = '/a/source/file.cpp';
     const fullStream = s.buildValidLlvmCoverageJsonObjectStream();
 
-    const dataObjectStream = extractDataObjectStreamFromFullStream(fullStream);
+    const summary = await reportCoverageSummaryFor(fullStream, path);
 
-    const dataObjectStreamPromise = new Promise<void>((resolve, _reject) => {
-      dataObjectStream.on('data', _chunk => { resolve(); });
-    });
-
-    return dataObjectStreamPromise.should.eventually.be.fulfilled;
-  });
-
-  it('should be possible to extract the "files" array from the data object', () => {
-    const fullStream = s.buildValidLlvmCoverageJsonObjectStream();
-    const dataObjectStream = extractDataObjectStreamFromFullStream(fullStream);
-
-    const filesArrayStream = extractFilesArrayStreamFromDataObjectStream(dataObjectStream);
-
-    const filesArrayStreamPromise = new Promise<void>((resolve, _reject) => {
-      filesArrayStream.on('data', _chunk => { resolve(); });
-    });
-
-    return filesArrayStreamPromise.should.eventually.be.fulfilled;
-  });
-
-  it('should be possible to get file summary coverage info from "files" stream', async () => {
-    const fullStream = s.buildValidLlvmCoverageJsonObjectStream();
-    const dataObjectStream = extractDataObjectStreamFromFullStream(fullStream);
-    const filesArrayStream = extractFilesArrayStreamFromDataObjectStream(dataObjectStream);
-
-    const fileSummary = await extractFileSummaryFromFilesArrayStreamFor(filesArrayStream, '/a/source/file.cpp');
-
-    fileSummary.count.should.be.equal(2);
-    fileSummary.covered.should.be.equal(2);
-    fileSummary.notCovered.should.be.equal(0);
-    fileSummary.percent.should.be.equal(100);
-  });
-
-  it('should be possible to extract the "functions" array from the data object', () => {
-    const fullStream = s.buildValidLlvmCoverageJsonObjectStream();
-    const dataObjectStream = extractDataObjectStreamFromFullStream(fullStream);
-
-    const functionsArrayStream = extractFunctionsArrayStreamFromDataObjectStream(dataObjectStream);
-
-    const functionsArrayStreamPromise = new Promise<void>((resolve, _reject) => {
-      functionsArrayStream.on('data', _chunk => { resolve(); });
-    });
-
-    return functionsArrayStreamPromise.should.eventually.be.fulfilled;
+    summary.count.should.be.equal(2);
+    summary.covered.should.be.equal(2);
+    summary.notCovered.should.be.equal(0);
+    summary.percent.should.be.equal(100);
   });
 });
 
 // TODO: refacto code into proper source files
-function extractDataObjectStreamFromFullStream(fullStream: Readable) {
-  const pipeline = chain([
-    fullStream,
-    parser({ streamValues: true }),
-    pick({ filter: 'data' }),
-    streamArray(),
-    keyValueItem => keyValueItem.key === 0 ? keyValueItem.value : null
-  ]);
-
-  return pipeline;
-}
-
-function extractFilesArrayStreamFromDataObjectStream(dataObjectStream: Readable) {
-  const pipeline = chain([
-    dataObjectStream,
-    properties => properties.files
-  ]);
-
-  return pipeline;
-}
-
-function extractFileSummaryFromFilesArrayStreamFor(filesArrayStream: Readable, sourceFilePath: string) {
-  const pipeline = chain([
-    filesArrayStream,
-    summary => summary.filename === sourceFilePath ? summary : null
-  ]);
-
+function fileSummary(pipeline: Readable) {
   return new Promise<Summary>((resolve, _reject) => {
     pipeline.once('data', chunk => {
       const s = chunk.summary.regions;
@@ -131,11 +66,24 @@ function extractFileSummaryFromFilesArrayStreamFor(filesArrayStream: Readable, s
   });
 }
 
-function extractFunctionsArrayStreamFromDataObjectStream(dataObjectStream: Readable) {
-  const pipeline = chain([
-    dataObjectStream,
-    properties => properties.functions
+function reportCoverageSummaryFor(fullStream: Readable, sourceFilePath: string) {
+  const fileSummaryStream = chain([
+    fullStream,
+    parser({ streamValues: true }),
+    pick({ filter: 'data' }),
+    streamArray(),
+    dataItem => {
+      if (dataItem.key !== 0)
+        return null;
+
+      const files = dataItem.value.files;
+
+      if (!files.filter((file: any) => file.filename === sourceFilePath))
+        return null;
+
+      return files;
+    }
   ]);
 
-  return pipeline;
+  return fileSummary(fileSummaryStream);
 }
