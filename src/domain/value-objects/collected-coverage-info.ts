@@ -17,7 +17,7 @@ class Region {
   readonly end: Position;
 };
 
-class Summary {
+export class Summary {
   constructor(other: Summary) {
     this.count = other.count;
     this.covered = other.covered;

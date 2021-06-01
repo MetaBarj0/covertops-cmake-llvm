@@ -3,6 +3,7 @@ import { describe, it } from 'mocha';
 import * as chaiAsPromised from 'chai-as-promised';
 
 import { UncoveredCodeRegionsCollector } from '../../../src/domain/services/uncovered-code-regions-collector';
+import { Summary } from '../../../src/domain/value-objects/collected-coverage-info';
 import { extensionName } from '../../../src/extension-name';
 
 import { stream as s } from '../../builders/fake-adapters';
@@ -11,8 +12,6 @@ import { chain } from 'stream-chain';
 import { parser } from 'stream-json';
 import { pick } from 'stream-json/filters/Pick';
 import { streamArray } from 'stream-json/streamers/StreamArray';
-import { disassembler } from 'stream-json/Disassembler';
-import { streamObject } from 'stream-json/streamers/StreamObject';
 
 chai.use(chaiAsPromised);
 chai.should();
@@ -61,6 +60,19 @@ describe('the stream forking of coverage information provided by the LLVM', () =
 
     return filesArrayStreamPromise.should.eventually.be.fulfilled;
   });
+
+  it('should be possible to get file summary coverage info from "files" stream', async () => {
+    const fullStream = s.buildValidLlvmCoverageJsonObjectStream();
+    const dataObjectStream = extractDataObjectStreamFromFullStream(fullStream);
+    const filesArrayStream = extractFilesArrayStreamFromDataObjectStream(dataObjectStream);
+
+    const fileSummary = await extractFileSummaryFromFilesArrayStreamFor(filesArrayStream, '/a/source/file.cpp');
+
+    fileSummary.count.should.be.equal(2);
+    fileSummary.covered.should.be.equal(2);
+    fileSummary.notCovered.should.be.equal(0);
+    fileSummary.percent.should.be.equal(100);
+  });
 });
 
 function extractDataObjectStreamFromFullStream(fullStream: Readable) {
@@ -82,4 +94,24 @@ function extractFilesArrayStreamFromDataObjectStream(dataObjectStream: Readable)
   ]);
 
   return pipeline;
+}
+
+function extractFileSummaryFromFilesArrayStreamFor(filesArrayStream: Readable, sourceFilePath: string) {
+  const pipeline = chain([
+    filesArrayStream,
+    summary => summary.filename === sourceFilePath ? summary : null
+  ]);
+
+  return new Promise<Summary>((resolve, _reject) => {
+    pipeline.once('data', chunk => {
+      const s = chunk.summary.regions;
+
+      resolve({
+        count: s.count,
+        covered: s.covered,
+        notCovered: s.notcovered,
+        percent: s.percent
+      });
+    });
+  });
 }
