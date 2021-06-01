@@ -35,6 +35,7 @@ describe('The collection of uncovered code region provided by a stream containin
   });
 });
 
+// TODO: inside out part. Requalify tests as soon as needed
 describe('the stream forking of coverage information provided by the LLVM', () => {
   it('should be possible to extract the root "data" array from the full json stream', () => {
     const fullStream = s.buildValidLlvmCoverageJsonObjectStream();
@@ -75,6 +76,7 @@ describe('the stream forking of coverage information provided by the LLVM', () =
   });
 });
 
+// TODO: refacto code into proper source files
 function extractDataObjectStreamFromFullStream(fullStream: Readable) {
   const pipeline = chain([
     fullStream,
