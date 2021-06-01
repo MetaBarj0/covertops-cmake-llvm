@@ -74,6 +74,19 @@ describe('the stream forking of coverage information provided by the LLVM', () =
     fileSummary.notCovered.should.be.equal(0);
     fileSummary.percent.should.be.equal(100);
   });
+
+  it('should be possible to extract the "functions" array from the data object', () => {
+    const fullStream = s.buildValidLlvmCoverageJsonObjectStream();
+    const dataObjectStream = extractDataObjectStreamFromFullStream(fullStream);
+
+    const functionsArrayStream = extractFunctionsArrayStreamFromDataObjectStream(dataObjectStream);
+
+    const functionsArrayStreamPromise = new Promise<void>((resolve, _reject) => {
+      functionsArrayStream.on('data', _chunk => { resolve(); });
+    });
+
+    return functionsArrayStreamPromise.should.eventually.be.fulfilled;
+  });
 });
 
 // TODO: refacto code into proper source files
@@ -116,4 +129,13 @@ function extractFileSummaryFromFilesArrayStreamFor(filesArrayStream: Readable, s
       });
     });
   });
+}
+
+function extractFunctionsArrayStreamFromDataObjectStream(dataObjectStream: Readable) {
+  const pipeline = chain([
+    dataObjectStream,
+    properties => properties.functions
+  ]);
+
+  return pipeline;
 }
