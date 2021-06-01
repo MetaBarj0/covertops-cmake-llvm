@@ -11,6 +11,8 @@ import { chain } from 'stream-chain';
 import { parser } from 'stream-json';
 import { pick } from 'stream-json/filters/Pick';
 import { streamArray } from 'stream-json/streamers/StreamArray';
+import { disassembler } from 'stream-json/Disassembler';
+import { streamObject } from 'stream-json/streamers/StreamObject';
 
 chai.use(chaiAsPromised);
 chai.should();
@@ -35,25 +37,28 @@ describe('The collection of uncovered code region provided by a stream containin
 });
 
 describe('the stream forking of coverage information provided by the LLVM', () => {
-  it('should be possible to extrat the root "data" array from the json stream', () => {
+  it('should be possible to extract the root "data" array from the full json stream', () => {
     const stream = s.buildValidLlvmCoverageJsonObjectStream();
 
-    const subStream = extractRootDataArrayFromMainStream(stream);
+    const dataStream = extractDataObjectStreamFromFullStream(stream);
 
-    var splitStreamPromise = new Promise<void>((resolve, _reject) => {
-      subStream.on('data', _chunk => { resolve(); });
+    const dataStreamPromise = new Promise<void>((resolve, _reject) => {
+      dataStream.on('data', _chunk => { resolve(); });
     });
 
-    return splitStreamPromise.should.eventually.be.fulfilled;
+    return dataStreamPromise.should.eventually.be.fulfilled;
   });
 });
 
-function extractRootDataArrayFromMainStream(mainStream: Readable): Readable {
+function extractDataObjectStreamFromFullStream(mainStream: Readable): Readable {
   const pipeline = chain([
     mainStream,
     parser(),
     pick({ filter: 'data' }),
-    streamArray()
+    streamArray(),
+    disassembler(),
+    pick({ filter: 'value' }),
+    streamObject()
   ]);
 
   return pipeline;
