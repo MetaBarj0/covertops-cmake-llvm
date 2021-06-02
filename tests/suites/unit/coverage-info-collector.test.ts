@@ -57,4 +57,16 @@ describe('The collection of coverage summary and uncovered code regions with a v
       .should.eventually.be.rejectedWith('Cannot find any summary coverage info for the file ' +
         `${sourceFilePath}. Ensure this source file is covered by a test in your project.`);
   });
+
+  it('should succeed in provided summary coverage info for handled source file', async () => {
+    const collector = new CoverageCollector(s.buildFakeStreamBuilder(s.buildValidLlvmCoverageJsonObjectStream));
+    const sourceFilePath = '/a/source/file.cpp';
+
+    const summary = await collector.collectFor(sourceFilePath).summary();
+
+    summary.count.should.be.equal(2);
+    summary.covered.should.be.equal(2);
+    summary.notCovered.should.be.equal(0);
+    summary.percent.should.be.equal(100);
+  });
 });
