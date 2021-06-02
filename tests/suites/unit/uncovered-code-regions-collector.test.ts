@@ -48,26 +48,22 @@ describe('the stream forking of coverage information provided by the LLVM', () =
     summary.notCovered.should.be.equal(0);
     summary.percent.should.be.equal(100);
   });
+
+  it('should be possible to asynchronously iterate coverage info for regions for a file', async () => {
+    const path = '/a/source/file.cpp';
+    const fullStream = s.buildValidLlvmCoverageJsonObjectStream();
+
+    const regionsCoverage = reportUncoveredRegionsFor(fullStream, path);
+
+    for await (const regionCoverage of regionsCoverage) {
+      regionCoverage?.should.not.be.null;
+    }
+  });
 });
 
 // TODO: refacto code into proper source files
-function fileSummary(pipeline: Readable) {
-  return new Promise<Summary>((resolve, _reject) => {
-    pipeline.once('data', chunk => {
-      const s = chunk.summary.regions;
-
-      resolve({
-        count: s.count,
-        covered: s.covered,
-        notCovered: s.notcovered,
-        percent: s.percent
-      });
-    });
-  });
-}
-
 function reportCoverageSummaryFor(fullStream: Readable, sourceFilePath: string) {
-  const fileSummaryStream = chain([
+  const pipeline = chain([
     fullStream,
     parser({ streamValues: true }),
     pick({ filter: 'data' }),
@@ -85,5 +81,62 @@ function reportCoverageSummaryFor(fullStream: Readable, sourceFilePath: string) 
     }
   ]);
 
-  return fileSummary(fileSummaryStream);
+  return new Promise<Summary>((resolve, _reject) => {
+    pipeline.once('data', chunk => {
+      const s = chunk.summary.regions;
+
+      resolve({
+        count: s.count,
+        covered: s.covered,
+        notCovered: s.notcovered,
+        percent: s.percent
+      });
+    });
+  });
+}
+
+function reportUncoveredRegionsFor(fullStream: Readable, sourceFilePath: string) {
+  const pipeline = chain([
+    fullStream,
+    parser({ streamValues: true }),
+    pick({ filter: 'data' }),
+    streamArray(),
+    dataItem => {
+      if (dataItem.key !== 0)
+        return null;
+
+      const functions = dataItem.value.functions;
+
+      const fn = functions.find((f: { filenames: ReadonlyArray<string> }) => f.filenames[0] === sourceFilePath);
+
+      return fn?.regions;
+    }
+  ]);
+
+  return {
+    [Symbol.asyncIterator]() {
+      type UncoveredRegion = [number, number, number, number, number, number, number, number];
+
+      type Iterator<T> = {
+        readonly value?: T,
+        readonly done: boolean
+      };
+
+      return {
+        async next() {
+          await new Promise<void>(resolve => {
+            pipeline.once('readable', () => { resolve(); });
+            pipeline.once('end', () => { resolve(); });
+          });
+
+          const uncoveredRegion = <UncoveredRegion>pipeline.read(1);
+
+          if (uncoveredRegion === null)
+            return new Promise<Iterator<UncoveredRegion>>(resolve => { resolve({ done: true }); });
+
+          return new Promise<Iterator<UncoveredRegion>>(resolve => { resolve({ done: false, value: uncoveredRegion }); });
+        }
+      };
+    }
+  };
 }
