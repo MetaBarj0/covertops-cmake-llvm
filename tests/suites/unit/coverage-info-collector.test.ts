@@ -47,3 +47,14 @@ describe('The collection of coverage summary and uncovered code regions with an 
     });
   });
 });
+
+describe('The collection of coverage summary and uncovered code regions with a valid input readable stream', () => {
+  it('should fail to provide coverage summary for an unhandled suurce file', () => {
+    const collector = new CoverageCollector(s.buildFakeStreamBuilder(s.buildValidLlvmCoverageJsonObjectStream));
+    const sourceFilePath = '/an/unhandled/source/file.cpp';
+
+    return collector.collectFor(sourceFilePath).summary()
+      .should.eventually.be.rejectedWith('Cannot find any summary coverage info for the file ' +
+        `${sourceFilePath}. Ensure this source file is covered by a test in your project.`);
+  });
+});

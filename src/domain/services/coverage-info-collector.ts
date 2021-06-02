@@ -35,6 +35,7 @@ export type CoverageInfo = {
   uncoveredRegions(): UncoveredRegionsAsyncIterator
 };
 
+// TODO : refacto private stuff
 export class CoverageCollector {
   constructor(llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder) {
     this.llvmCoverageInfoStreamBuilder = llvmCoverageInfoStreamBuilder;
@@ -60,7 +61,7 @@ export class CoverageCollector {
 
         const files = dataItem.value.files;
 
-        if (!files.filter((file: any) => file.filename === sourceFilePath))
+        if (!files.find((file: any) => file.filename === sourceFilePath))
           return null;
 
         return files;
@@ -68,16 +69,22 @@ export class CoverageCollector {
     ]);
 
     return new Promise<Summary>((resolve, reject) => {
-      pipeline.once('data', chunk => {
-        const s = chunk.summary.regions;
+      let summary: any;
 
-        resolve({
-          count: s.count,
-          covered: s.covered,
-          notCovered: s.notcovered,
-          percent: s.percent
-        });
-      })
+      pipeline
+        .once('data', chunk => { summary = chunk.summary.regions; })
+        .once('end', () => {
+          if (summary)
+            resolve({
+              count: summary.count,
+              covered: summary.covered,
+              notCovered: summary.notcovered,
+              percent: summary.percent
+            });
+          else
+            reject('Cannot find any summary coverage info for the file ' +
+              `${sourceFilePath}. Ensure this source file is covered by a test in your project.`);
+        })
         .once('error', err => {
           reject(new Error('Invalid coverage information file have been found in the build tree directory. ' +
             'Coverage information file must contain llvm coverage report in json format. ' +
