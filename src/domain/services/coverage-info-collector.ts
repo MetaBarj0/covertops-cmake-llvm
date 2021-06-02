@@ -27,6 +27,7 @@ type UncoveredRegionsIterator = {
 type UncoveredRegionsAsyncIterator = {
   [Symbol.asyncIterator](): {
     next(): Promise<UncoveredRegionsIterator>;
+    last: UncoveredRegions | undefined;
   }
 };
 
@@ -41,7 +42,6 @@ export class CoverageCollector {
     this.llvmCoverageInfoStreamBuilder = llvmCoverageInfoStreamBuilder;
   }
 
-  // TODO: refacto anonymous class implements...
   collectFor(sourceFilePath: string): CoverageInfo {
     return {
       summary: () => this.coverageSummaryFor(sourceFilePath),
@@ -61,10 +61,7 @@ export class CoverageCollector {
 
         const files = dataItem.value.files;
 
-        if (!files.find((file: any) => file.filename === sourceFilePath))
-          return null;
-
-        return files;
+        return files.find((file: any) => file.filename === sourceFilePath);
       }
     ]);
 
@@ -116,6 +113,8 @@ export class CoverageCollector {
     return {
       [Symbol.asyncIterator]() {
         return {
+          last: undefined,
+
           async next(): Promise<UncoveredRegionsIterator> {
             await new Promise<void>((resolve, reject) => {
               pipeline
@@ -130,12 +129,18 @@ export class CoverageCollector {
                 });
             });
 
-            const uncoveredRegion = <UncoveredRegions>pipeline.read(1);
+            const uncoveredRegions = <UncoveredRegions>pipeline.read(1);
 
-            if (uncoveredRegion === null)
-              return new Promise<UncoveredRegionsIterator>(resolve => { resolve({ done: true }); });
+            if (uncoveredRegions === null)
+              if (this.last)
+                return new Promise<UncoveredRegionsIterator>(resolve => { resolve({ done: true }); });
+              else
+                return Promise.reject('Cannot find any uncovered code regions for the file ' +
+                  `${sourceFilePath}. Ensure this source file is covered by a test in your project.`);
 
-            return new Promise<UncoveredRegionsIterator>(resolve => { resolve({ done: false, value: uncoveredRegion }); });
+            this.last = uncoveredRegions;
+
+            return new Promise<UncoveredRegionsIterator>(resolve => { resolve({ done: false, value: uncoveredRegions }); });
           }
         };
       }

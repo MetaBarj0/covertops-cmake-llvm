@@ -49,7 +49,7 @@ describe('The collection of coverage summary and uncovered code regions with an 
 });
 
 describe('The collection of coverage summary and uncovered code regions with a valid input readable stream', () => {
-  it('should fail to provide coverage summary for an unhandled suurce file', () => {
+  it('should fail to provide coverage summary for an unhandled source file', () => {
     const collector = new CoverageCollector(s.buildFakeStreamBuilder(s.buildValidLlvmCoverageJsonObjectStream));
     const sourceFilePath = '/an/unhandled/source/file.cpp';
 
@@ -68,5 +68,15 @@ describe('The collection of coverage summary and uncovered code regions with a v
     summary.covered.should.be.equal(2);
     summary.notCovered.should.be.equal(0);
     summary.percent.should.be.equal(100);
+  });
+
+  it('should fail to provide uncovered code regions for an unhandled source file', () => {
+    const collector = new CoverageCollector(s.buildFakeStreamBuilder(s.buildValidLlvmCoverageJsonObjectStream));
+    const sourceFilePath = '/an/unhandled/source/file.cpp';
+    const regions = collector.collectFor(sourceFilePath).uncoveredRegions();
+    const iterate = async () => { for await (const _region of regions); };
+
+    return iterate().should.eventually.be.rejectedWith('Cannot find any uncovered code regions for the file ' +
+      `${sourceFilePath}. Ensure this source file is covered by a test in your project.`);
   });
 });
