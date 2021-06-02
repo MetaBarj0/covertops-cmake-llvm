@@ -55,9 +55,8 @@ describe('the stream forking of coverage information provided by the LLVM', () =
 
     const regionsCoverage = reportUncoveredRegionsFor(fullStream, path);
 
-    for await (const regionCoverage of regionsCoverage) {
+    for await (const regionCoverage of regionsCoverage)
       regionCoverage?.should.not.be.null;
-    }
   });
 
   [
@@ -65,14 +64,25 @@ describe('the stream forking of coverage information provided by the LLVM', () =
     s.buildNotJsonStream(),
     s.buildInvalidLlvmCoverageJsonObjectStream()
   ].forEach(stream => {
-    it('should fail when attempting to access summray coverage info from an invalid stream', () => {
-
+    it('should fail when attempting to access summary coverage info from an invalid stream', () => {
       return reportCoverageSummaryFor(stream, 'path is not important here').should.eventually.be.rejectedWith(
         'Invalid coverage information file have been found in the build tree directory. ' +
         'Coverage information file must contain llvm coverage report in json format. ' +
         'Ensure that both ' +
         `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
         'settings are correctly set.');
+    });
+
+    it('should fail when attempting to access uncovered regions info from an invalid stream', () => {
+      const regionsCoverage = reportUncoveredRegionsFor(stream, 'path is not important here');
+
+      return (async () => { for await (const _regionCoverage of regionsCoverage) { } })()
+        .should.eventually.be.rejectedWith(
+          'Invalid coverage information file have been found in the build tree directory. ' +
+          'Coverage information file must contain llvm coverage report in json format. ' +
+          'Ensure that both ' +
+          `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
+          'settings are correctly set.');
     });
   });
 });
@@ -109,6 +119,7 @@ function reportCoverageSummaryFor(fullStream: Readable, sourceFilePath: string) 
       });
     })
       .once('error', err => {
+        // TODO: reject should use Error type constructor
         reject('Invalid coverage information file have been found in the build tree directory. ' +
           'Coverage information file must contain llvm coverage report in json format. ' +
           'Ensure that both ' +
@@ -147,9 +158,17 @@ function reportUncoveredRegionsFor(fullStream: Readable, sourceFilePath: string)
 
       return {
         async next() {
-          await new Promise<void>(resolve => {
-            pipeline.once('readable', () => { resolve(); });
-            pipeline.once('end', () => { resolve(); });
+          await new Promise<void>((resolve, reject) => {
+            pipeline
+              .once('readable', () => { resolve(); })
+              .once('end', () => { resolve(); })
+              .once('error', err => {
+                reject('Invalid coverage information file have been found in the build tree directory. ' +
+                  'Coverage information file must contain llvm coverage report in json format. ' +
+                  'Ensure that both ' +
+                  `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
+                  'settings are correctly set.' + err.message);
+              });
           });
 
           const uncoveredRegion = <UncoveredRegion>pipeline.read(1);
