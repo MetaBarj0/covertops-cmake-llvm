@@ -132,6 +132,15 @@ export namespace stream {
     return Readable.from('foo');
   }
 
+  export function buildInvalidLlvmCoverageJsonObjectStream() {
+    return Readable.from(JSON.stringify({
+      data: [
+        { foo: 'bar' },
+        {}
+      ]
+    }));
+  }
+
   export function buildValidLlvmCoverageJsonObjectStream() {
     return Readable.from(JSON.stringify({
       "data": [

@@ -59,6 +59,22 @@ describe('the stream forking of coverage information provided by the LLVM', () =
       regionCoverage?.should.not.be.null;
     }
   });
+
+  [
+    s.buildEmptyReadableStream(),
+    s.buildNotJsonStream(),
+    s.buildInvalidLlvmCoverageJsonObjectStream()
+  ].forEach(stream => {
+    it('should fail when attempting to access summray coverage info from an invalid stream', () => {
+
+      return reportCoverageSummaryFor(stream, 'path is not important here').should.eventually.be.rejectedWith(
+        'Invalid coverage information file have been found in the build tree directory. ' +
+        'Coverage information file must contain llvm coverage report in json format. ' +
+        'Ensure that both ' +
+        `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
+        'settings are correctly set.');
+    });
+  });
 });
 
 // TODO: refacto code into proper source files
@@ -81,7 +97,7 @@ function reportCoverageSummaryFor(fullStream: Readable, sourceFilePath: string) 
     }
   ]);
 
-  return new Promise<Summary>((resolve, _reject) => {
+  return new Promise<Summary>((resolve, reject) => {
     pipeline.once('data', chunk => {
       const s = chunk.summary.regions;
 
@@ -91,7 +107,14 @@ function reportCoverageSummaryFor(fullStream: Readable, sourceFilePath: string) 
         notCovered: s.notcovered,
         percent: s.percent
       });
-    });
+    })
+      .once('error', err => {
+        reject('Invalid coverage information file have been found in the build tree directory. ' +
+          'Coverage information file must contain llvm coverage report in json format. ' +
+          'Ensure that both ' +
+          `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
+          'settings are correctly set.' + err.message);
+      });
   });
 }
 
