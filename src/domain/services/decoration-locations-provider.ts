@@ -1,10 +1,8 @@
-import { extensionName } from '../../extension-name';
 import { VscodeWorkspaceLike } from './settings-provider';
 import { StatFileLike, BuildTreeDirectoryResolver, FsLike } from './build-tree-directory-resolver';
 import { Cmake, ProcessLike } from './cmake';
 import { CoverageInfoFileResolver, GlobSearchLike } from './coverage-info-file-resolver';
-import { StreamBuilder, UncoveredCodeRegionsCollector } from './uncovered-code-regions-collector';
-import { Stream } from 'stream';
+import { LLVMCoverageInfoStreamBuilder, CoverageCollector } from './coverage-info-collector';
 
 type Adapters = {
   workspace: VscodeWorkspaceLike,
@@ -13,7 +11,7 @@ type Adapters = {
   processForCmakeTarget: ProcessLike,
   globSearch: GlobSearchLike,
   fs: FsLike,
-  streamBuilder: StreamBuilder
+  streamBuilder: LLVMCoverageInfoStreamBuilder
 };
 
 export class DecorationLocationsProvider {
@@ -42,9 +40,9 @@ export class DecorationLocationsProvider {
     const coverageInfoFileResolver = new CoverageInfoFileResolver(this.workspace, this.globSearch);
     await coverageInfoFileResolver.resolveCoverageInfoFileFullPath();
 
-    const collector = new UncoveredCodeRegionsCollector(this.streamBuilder);
+    const collector = new CoverageCollector(this.streamBuilder);
 
-    return collector.collectUncoveredCodeRegions(sourceFilePath);
+    return collector.collectFor(sourceFilePath);
   }
 
   private readonly workspace: VscodeWorkspaceLike;
@@ -53,5 +51,5 @@ export class DecorationLocationsProvider {
   private readonly processForCmakeTarget: ProcessLike;
   private readonly globSearch: GlobSearchLike;
   private readonly fs: FsLike;
-  private readonly streamBuilder: StreamBuilder;
+  private readonly streamBuilder: LLVMCoverageInfoStreamBuilder;
 }

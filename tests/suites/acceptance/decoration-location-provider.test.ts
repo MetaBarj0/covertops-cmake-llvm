@@ -7,9 +7,10 @@ chai.should();
 
 import { extensionName } from '../../../src/extension-name';
 import { DecorationLocationsProvider } from '../../../src/domain/services/decoration-locations-provider';
-import { CollectedCoverageInfo } from '../../../src/domain/value-objects/collected-coverage-info';
+
 import { process, statFile, workspace, glob, fs, stream } from '../../builders/fake-adapters';
 
+// TODO: refacto that
 import buildFakeFailingProcess = process.buildFakeFailingProcess;
 import buildFakeSucceedingProcess = process.buildFakeSucceedingProcess;
 import buildSucceedingFakeStatFile = statFile.buildFakeSucceedingStatFile;
@@ -141,32 +142,6 @@ describe('DecorationLocationProvider service behavior.', () => {
         'settings are correctly set.');
     });
 
-  describe('the behavior of the coverage info collection with invalid coverage info file content', () => {
-    [
-      buildEmptyReadableStream,
-      buildNotJsonStream
-    ].forEach(streamFactory => {
-      it('should fail to provide decoration when found coverage info file does not contain a valid json document', () => {
-        const provider = new DecorationLocationsProvider({
-          workspace: buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-          statFile: buildSucceedingFakeStatFile(),
-          processForCmakeCommand: buildFakeSucceedingProcess(),
-          processForCmakeTarget: buildFakeSucceedingProcess(),
-          globSearch: buildFakeGlobSearchForExactlyOneMatch(),
-          fs: buildFakeFailingFs(),
-          streamBuilder: buildFakeStreamBuilder(streamFactory)
-        });
-
-        return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
-          'Invalid coverage information file have been found in the build tree directory. ' +
-          'Coverage information file must contain llvm coverage report in json format. ' +
-          'Ensure that both ' +
-          `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
-          'settings are correctly set.');
-      });
-    });
-  });
-
   describe.skip('the behavior of the coverage info collection with valid minimal json document', () => {
     it('should succed to collect coverage information for the requested file', () => {
       const provider = new DecorationLocationsProvider({
@@ -180,7 +155,8 @@ describe('DecorationLocationProvider service behavior.', () => {
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('/a/source/file.cpp')
-        .should.eventually.be.an.instanceOf(CollectedCoverageInfo);
+        .should.eventually.be.not.null;
     });
   });
 });
+

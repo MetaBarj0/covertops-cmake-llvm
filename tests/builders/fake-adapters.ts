@@ -15,7 +15,7 @@ import {
 import { FsLike, StatFileLike } from '../../src/domain/services/build-tree-directory-resolver';
 import { Settings } from '../../src/domain/value-objects/settings';
 import { GlobSearchLike } from '../../src/domain/services/coverage-info-file-resolver';
-import { StreamBuilder } from '../../src/domain/services/uncovered-code-regions-collector';
+import { LLVMCoverageInfoStreamBuilder } from '../../src/domain/services/coverage-info-collector';
 
 import * as path from 'path';
 import { BigIntStats, MakeDirectoryOptions, PathLike, StatOptions, Stats } from 'fs';
@@ -196,8 +196,8 @@ export namespace stream {
   }
 
   export function buildFakeStreamBuilder(streamFactory: () => Readable) {
-    return new class implements StreamBuilder {
-      createReadStreamFromPath(_path: string) {
+    return new class implements LLVMCoverageInfoStreamBuilder {
+      makeLLVMCoverageInfoStream() {
         return streamFactory();
       }
     };
