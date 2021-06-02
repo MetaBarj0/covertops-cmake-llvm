@@ -119,12 +119,11 @@ function reportCoverageSummaryFor(fullStream: Readable, sourceFilePath: string) 
       });
     })
       .once('error', err => {
-        // TODO: reject should use Error type constructor
-        reject('Invalid coverage information file have been found in the build tree directory. ' +
+        reject(new Error('Invalid coverage information file have been found in the build tree directory. ' +
           'Coverage information file must contain llvm coverage report in json format. ' +
           'Ensure that both ' +
           `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
-          'settings are correctly set.' + err.message);
+          'settings are correctly set.' + err.message));
       });
   });
 }
@@ -163,11 +162,11 @@ function reportUncoveredRegionsFor(fullStream: Readable, sourceFilePath: string)
               .once('readable', () => { resolve(); })
               .once('end', () => { resolve(); })
               .once('error', err => {
-                reject('Invalid coverage information file have been found in the build tree directory. ' +
+                reject(new Error('Invalid coverage information file have been found in the build tree directory. ' +
                   'Coverage information file must contain llvm coverage report in json format. ' +
                   'Ensure that both ' +
                   `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
-                  'settings are correctly set.' + err.message);
+                  'settings are correctly set.' + err.message));
               });
           });
 
