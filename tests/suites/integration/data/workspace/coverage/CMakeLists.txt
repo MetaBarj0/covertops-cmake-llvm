@@ -65,12 +65,12 @@ if(${ENABLE_COVERAGE_WITH_LLVM})
   # https://stackoverflow.com/questions/56013927/how-to-read-llvm-cov-json-format
   # https://llvm.org/doxygen/structllvm_1_1coverage_1_1CoverageSegment.html
   # https://llvm.org/doxygen/structllvm_1_1coverage_1_1CounterMappingRegion.html
-  add_custom_target(generateCoverageInfoJsonFile
-                    DEPENDS default.covdata.json)
+  add_custom_target(coverage
+                    DEPENDS coverage.json)
 
   # An internal command used to generate detailed coverage information in a
   # file
-  add_custom_command(OUTPUT default.covdata.json
+  add_custom_command(OUTPUT coverage.json
                      DEPENDS default.profdata
                      COMMAND ${llvmCov}
                        ARGS export --format=text
@@ -78,7 +78,7 @@ if(${ENABLE_COVERAGE_WITH_LLVM})
                        --object=$<TARGET_FILE:PartiallyCoveredLib>
                        --object=$<TARGET_FILE:FullyCoveredLib>
                        --instr-profile=default.profdata
-                       > default.covdata.json
+                       > coverage.json
                      VERBATIM
                      USES_TERMINAL)
 endif()

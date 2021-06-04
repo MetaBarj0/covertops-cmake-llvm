@@ -9,38 +9,31 @@ import { extensionName } from '../../../src/extension-name';
 import { BuildTreeDirectoryResolver } from '../../../src/domain/services/build-tree-directory-resolver';
 import { SettingsProvider } from '../../../src/domain/services/settings-provider';
 
-import { workspace } from '../../builders/fake-adapters';
-import buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings =
-workspace.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings;
-
-import { statFile, fs } from '../../builders/fake-adapters';
-import buildFakeFailingStatFile = statFile.buildFakeFailingStatFile;
-import buildFakeSucceedingStatFile = statFile.buildFakeSucceedingStatFile;
-import buildFakeFailingFs = fs.buildFakeFailingFs;
-import buildFakeSucceedingFs = fs.buildFakeSucceedingFs;
+import { statFile as sf, fs, workspace as w } from '../../builders/fake-adapters';
 
 import path = require('path');
 
-describe('the build tree directory resolver behavior regardin the build tree directory setting value', () => {
+describe('the build tree directory resolver behavior regarding the build tree directory setting value', () => {
   it('should fail to resolve when the build tree directory setting look like an absolute path', () => {
-    const workspace = buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings({
+    const workspace = w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({
       buildTreeDirectory: path.normalize('/absolute/build')
     });
-    const statFile = buildFakeFailingStatFile();
-    const fs = buildFakeFailingFs();
 
-    const resolver = new BuildTreeDirectoryResolver({ workspace, statFile, fs });
+    const statFile = sf.buildFakeFailingStatFile();
+    const failingFs = fs.buildFakeFailingFs();
+
+    const resolver = new BuildTreeDirectoryResolver({ workspace, statFile, fs: failingFs });
 
     return resolver.resolveBuildTreeDirectoryAbsolutePath().should.eventually.be.rejectedWith(
       `Incorrect absolute path specified in '${extensionName}: Build Tree Directory'. It must be a relative path.`);
   });
 
   it('should fail to resolve if specified relative path target does not exist and cannot be created', () => {
-    const workspace = buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings();
-    const statFile = buildFakeFailingStatFile();
-    const fs = buildFakeFailingFs();
+    const workspace = w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+    const statFile = sf.buildFakeFailingStatFile();
+    const failingFs = fs.buildFakeFailingFs();
 
-    const resolver = new BuildTreeDirectoryResolver({ workspace, statFile, fs });
+    const resolver = new BuildTreeDirectoryResolver({ workspace, statFile, fs: failingFs });
 
     return resolver.resolveBuildTreeDirectoryAbsolutePath().should.eventually.be.rejectedWith(
       'Cannot find or create the build tree directory. Ensure the ' +
@@ -48,12 +41,12 @@ describe('the build tree directory resolver behavior regardin the build tree dir
   });
 
   it('should resolve the full path of the build tree directory if the specified setting target an existing directory', () => {
-    const workspace = buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings();
+    const workspace = w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const settings = new SettingsProvider(workspace).settings;
-    const statFile = buildFakeSucceedingStatFile();
-    const fs = buildFakeFailingFs();
+    const statFile = sf.buildFakeSucceedingStatFile();
+    const failingFs = fs.buildFakeFailingFs();
 
-    const resolver = new BuildTreeDirectoryResolver({ workspace, statFile, fs });
+    const resolver = new BuildTreeDirectoryResolver({ workspace, statFile, fs: failingFs });
 
     return resolver.resolveBuildTreeDirectoryAbsolutePath().should.eventually.be.equal(
       `${path.join(settings.rootDirectory, settings.buildTreeDirectory)}`);
@@ -61,12 +54,12 @@ describe('the build tree directory resolver behavior regardin the build tree dir
 
   it('should resolve the full path of the build tree directory if the specified setting target ' +
     'an unexisting directory that can be created', () => {
-      const workspace = buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings();
+      const workspace = w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
       const settings = new SettingsProvider(workspace).settings;
-      const statFile = buildFakeFailingStatFile();
-      const fs = buildFakeSucceedingFs();
+      const statFile = sf.buildFakeFailingStatFile();
+      const succeedingFs = fs.buildFakeSucceedingFs();
 
-      const resolver = new BuildTreeDirectoryResolver({ workspace, statFile, fs });
+      const resolver = new BuildTreeDirectoryResolver({ workspace, statFile, fs: succeedingFs });
 
       return resolver.resolveBuildTreeDirectoryAbsolutePath().should.eventually.be.equal(
         `${path.join(settings.rootDirectory, settings.buildTreeDirectory)}`);

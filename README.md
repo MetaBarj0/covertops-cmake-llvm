@@ -87,7 +87,7 @@ projects:
 - A static library project named whose the target name is `Lib`
 - A test project whose the target name is `Tests`
 
-The coverage reporting target is named `generateCoverageInfoJsonFile`.
+The coverage reporting target is named `coverage`.
 
 **Verified**: This target may be added in its very own sub directory and used
 from a main CMakeLists.txt file.
@@ -157,17 +157,17 @@ if(${ENABLE_COVERAGE_WITH_LLVM})
   # https://stackoverflow.com/questions/56013927/how-to-read-llvm-cov-json-format
   # https://llvm.org/doxygen/structllvm_1_1coverage_1_1CoverageSegment.html
   # https://llvm.org/doxygen/structllvm_1_1coverage_1_1CounterMappingRegion.html
-  add_custom_target(generateCoverageInfoJsonFile
-                    DEPENDS default.covdata.json)
+  add_custom_target(coverage
+                    DEPENDS coverage.json)
 
   # An internal command used to generate detailed coverage information in a
   # file
-  add_custom_command(OUTPUT default.covdata.json
+  add_custom_command(OUTPUT coverage.json
                      DEPENDS default.profdata
                      COMMAND ${llvmCov} export --format=text
                        $<TARGET_FILE:Tests>
                        --instr-profile=${testsBinaryDir}/default.profdata
-                       > ${testsBinaryDir}/default.covdata.json
+                       > ${testsBinaryDir}/coverage.json
                        VERBATIM)
 endif()
 ```

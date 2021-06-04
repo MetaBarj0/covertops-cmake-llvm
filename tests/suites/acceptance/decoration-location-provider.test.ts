@@ -8,36 +8,26 @@ chai.should();
 import { extensionName } from '../../../src/extension-name';
 import { DecorationLocationsProvider } from '../../../src/domain/services/decoration-locations-provider';
 
-import { process, statFile, workspace, glob, fs, stream } from '../../builders/fake-adapters';
-
-// TODO: refacto that
-import buildFakeFailingProcess = process.buildFakeFailingProcess;
-import buildFakeSucceedingProcess = process.buildFakeSucceedingProcess;
-import buildSucceedingFakeStatFile = statFile.buildFakeSucceedingStatFile;
-import buildFakeFailingStatFile = statFile.buildFakeFailingStatFile;
-import buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings = workspace.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings;
-import buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings = workspace.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings;
-import buildFakeGlobSearchForNoMatch = glob.buildFakeGlobSearchForNoMatch;
-import buildFakeGlobSearchForSeveralMatch = glob.buildFakeGlobSearchForSeveralMatch;
-import buildFakeGlobSearchForExactlyOneMatch = glob.buildFakeGlobSearchForExactlyOneMatch;
-import buildFakeFailingFs = fs.buildFakeFailingFs;
-import buildFakeSucceedingFs = fs.buildFakeSucceedingFs;
-import buildFakeStreamBuilder = stream.buildFakeStreamBuilder;
-import buildEmptyReadableStream = stream.buildEmptyReadableStream;
-import buildNotJsonStream = stream.buildNotJsonStream;
-import buildValidLlvmCoverageJsonObjectStream = stream.buildValidLlvmCoverageJsonObjectStream;
+import {
+  process as p,
+  statFile as sf,
+  workspace as w,
+  glob as g,
+  fs,
+  stream as s
+} from '../../builders/fake-adapters';
 
 describe('DecorationLocationProvider service behavior.', () => {
   it('should be correctly instantiated with faked adapters.', () => {
     const instantiation = () => {
       new DecorationLocationsProvider({
-        workspace: buildFakedVscodeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(),
-        statFile: buildFakeFailingStatFile(),
-        processForCmakeCommand: buildFakeFailingProcess(),
-        processForCmakeTarget: buildFakeFailingProcess(),
-        globSearch: buildFakeGlobSearchForNoMatch(),
-        fs: buildFakeFailingFs(),
-        streamBuilder: buildFakeStreamBuilder(buildEmptyReadableStream),
+        workspace: w.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(),
+        statFile: sf.buildFakeFailingStatFile(),
+        processForCmakeCommand: p.buildFakeFailingProcess(),
+        processForCmakeTarget: p.buildFakeFailingProcess(),
+        globSearch: g.buildFakeGlobSearchForNoMatch(),
+        fs: fs.buildFakeFailingFs(),
+        llvmCoverageInfoStreamBuilder: s.buildFakeStreamBuilder(s.buildEmptyReadableStream),
       });
     };
 
@@ -46,16 +36,15 @@ describe('DecorationLocationProvider service behavior.', () => {
 
   it('should not be able to provide any decoration for uncovered code regions ' +
     'when the build tree directory can not be found and / or created though cmake command ' +
-    'is invocable',
-    () => {
+    'is invocable', () => {
       const provider = new DecorationLocationsProvider({
-        workspace: buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-        statFile: buildFakeFailingStatFile(),
-        processForCmakeCommand: buildFakeFailingProcess(),
-        processForCmakeTarget: buildFakeFailingProcess(),
-        globSearch: buildFakeGlobSearchForNoMatch(),
-        fs: buildFakeFailingFs(),
-        streamBuilder: buildFakeStreamBuilder(buildEmptyReadableStream),
+        workspace: w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
+        statFile: sf.buildFakeFailingStatFile(),
+        processForCmakeCommand: p.buildFakeFailingProcess(),
+        processForCmakeTarget: p.buildFakeFailingProcess(),
+        globSearch: g.buildFakeGlobSearchForNoMatch(),
+        fs: fs.buildFakeFailingFs(),
+        llvmCoverageInfoStreamBuilder: s.buildFakeStreamBuilder(s.buildEmptyReadableStream),
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
@@ -67,13 +56,13 @@ describe('DecorationLocationProvider service behavior.', () => {
     'when the cmake command cannot be reached.',
     () => {
       const provider = new DecorationLocationsProvider({
-        workspace: buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ cmakeCommand: '' }),
-        statFile: buildSucceedingFakeStatFile(),
-        processForCmakeCommand: buildFakeFailingProcess(),
-        processForCmakeTarget: buildFakeFailingProcess(),
-        globSearch: buildFakeGlobSearchForNoMatch(),
-        fs: buildFakeFailingFs(),
-        streamBuilder: buildFakeStreamBuilder(buildEmptyReadableStream),
+        workspace: w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ cmakeCommand: '' }),
+        statFile: sf.buildFakeSucceedingStatFile(),
+        processForCmakeCommand: p.buildFakeFailingProcess(),
+        processForCmakeTarget: p.buildFakeFailingProcess(),
+        globSearch: g.buildFakeGlobSearchForNoMatch(),
+        fs: fs.buildFakeFailingFs(),
+        llvmCoverageInfoStreamBuilder: s.buildFakeStreamBuilder(s.buildEmptyReadableStream),
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
@@ -85,17 +74,17 @@ describe('DecorationLocationProvider service behavior.', () => {
     'when the cmake target cannot be built by cmake though the cmake command is invocable and ' +
     'the build tree directory exists.',
     () => {
-      const workspace = buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ cmakeTarget: '' });
+      const workspace = w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ cmakeTarget: '' });
       const target = workspace.getConfiguration('cmake-llvm-workspace').get('cmakeTarget');
 
       const provider = new DecorationLocationsProvider({
-        workspace: workspace,
-        statFile: buildSucceedingFakeStatFile(),
-        processForCmakeCommand: buildFakeSucceedingProcess(),
-        processForCmakeTarget: buildFakeFailingProcess(),
-        globSearch: buildFakeGlobSearchForNoMatch(),
-        fs: buildFakeFailingFs(),
-        streamBuilder: buildFakeStreamBuilder(buildEmptyReadableStream),
+        workspace,
+        statFile: sf.buildFakeSucceedingStatFile(),
+        processForCmakeCommand: p.buildFakeSucceedingProcess(),
+        processForCmakeTarget: p.buildFakeFailingProcess(),
+        globSearch: g.buildFakeGlobSearchForNoMatch(),
+        fs: fs.buildFakeFailingFs(),
+        llvmCoverageInfoStreamBuilder: s.buildFakeStreamBuilder(s.buildEmptyReadableStream),
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
@@ -107,13 +96,13 @@ describe('DecorationLocationProvider service behavior.', () => {
     'when the coverage info file name does not target an existing file',
     () => {
       const provider = new DecorationLocationsProvider({
-        workspace: buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ coverageInfoFileName: 'baadf00d' }),
-        statFile: buildSucceedingFakeStatFile(),
-        processForCmakeCommand: buildFakeSucceedingProcess(),
-        processForCmakeTarget: buildFakeSucceedingProcess(),
-        globSearch: buildFakeGlobSearchForNoMatch(),
-        fs: buildFakeFailingFs(),
-        streamBuilder: buildFakeStreamBuilder(buildEmptyReadableStream),
+        workspace: w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ coverageInfoFileName: 'baadf00d' }),
+        statFile: sf.buildFakeSucceedingStatFile(),
+        processForCmakeCommand: p.buildFakeSucceedingProcess(),
+        processForCmakeTarget: p.buildFakeSucceedingProcess(),
+        globSearch: g.buildFakeGlobSearchForNoMatch(),
+        fs: fs.buildFakeFailingFs(),
+        llvmCoverageInfoStreamBuilder: s.buildFakeStreamBuilder(s.buildEmptyReadableStream),
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
@@ -126,13 +115,13 @@ describe('DecorationLocationProvider service behavior.', () => {
   it('should not not able to provide any decoration for uncovered code regions ' +
     'when there are more than one generated coverage information file that are found', () => {
       const provider = new DecorationLocationsProvider({
-        workspace: buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-        statFile: buildSucceedingFakeStatFile(),
-        processForCmakeCommand: buildFakeSucceedingProcess(),
-        processForCmakeTarget: buildFakeSucceedingProcess(),
-        globSearch: buildFakeGlobSearchForSeveralMatch(),
-        fs: buildFakeFailingFs(),
-        streamBuilder: buildFakeStreamBuilder(buildEmptyReadableStream),
+        workspace: w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
+        statFile: sf.buildFakeSucceedingStatFile(),
+        processForCmakeCommand: p.buildFakeSucceedingProcess(),
+        processForCmakeTarget: p.buildFakeSucceedingProcess(),
+        globSearch: g.buildFakeGlobSearchForSeveralMatch(),
+        fs: fs.buildFakeFailingFs(),
+        llvmCoverageInfoStreamBuilder: s.buildFakeStreamBuilder(s.buildEmptyReadableStream),
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
@@ -145,13 +134,13 @@ describe('DecorationLocationProvider service behavior.', () => {
   describe.skip('the behavior of the coverage info collection with valid minimal json document', () => {
     it('should succed to collect coverage information for the requested file', () => {
       const provider = new DecorationLocationsProvider({
-        workspace: buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-        statFile: buildSucceedingFakeStatFile(),
-        processForCmakeCommand: buildFakeSucceedingProcess(),
-        processForCmakeTarget: buildFakeSucceedingProcess(),
-        globSearch: buildFakeGlobSearchForExactlyOneMatch(),
-        fs: buildFakeSucceedingFs(),
-        streamBuilder: buildFakeStreamBuilder(buildValidLlvmCoverageJsonObjectStream)
+        workspace: w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
+        statFile: sf.buildFakeSucceedingStatFile(),
+        processForCmakeCommand: p.buildFakeSucceedingProcess(),
+        processForCmakeTarget: p.buildFakeSucceedingProcess(),
+        globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
+        fs: fs.buildFakeSucceedingFs(),
+        llvmCoverageInfoStreamBuilder: s.buildFakeStreamBuilder(s.buildValidLlvmCoverageJsonObjectStream)
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('/a/source/file.cpp')

@@ -4,6 +4,7 @@ import * as chaiAsPromised from 'chai-as-promised';
 
 import { CoverageCollector } from '../../../src/domain/services/coverage-info-collector';
 import { extensionName } from '../../../src/extension-name';
+import { RegionCoverageInfo } from '../../../src/domain/value-objects/region-coverage-info';
 
 import { stream as s } from '../../builders/fake-adapters';
 
@@ -19,7 +20,7 @@ describe('The collection of coverage summary and uncovered code regions with an 
     it('should fail to access to coverage summary', () => {
       const collector = new CoverageCollector(s.buildFakeStreamBuilder(streamFactory));
 
-      return collector.collectFor('').summary()
+      return collector.collectFor('').summary
         .should.eventually.be.rejectedWith('Invalid coverage information file have been found in the build tree directory. ' +
           'Coverage information file must contain llvm coverage report in json format. ' +
           'Ensure that both ' +
@@ -35,10 +36,10 @@ describe('The collection of coverage summary and uncovered code regions with an 
   ].forEach(streamFactory => {
     it('should fail to access to uncovered regions', () => {
       const collector = new CoverageCollector(s.buildFakeStreamBuilder(streamFactory));
-      const uncoveredRegions = collector.collectFor('').uncoveredRegions;
-      const iterate = async () => { for await (const _uncoveredRegion of uncoveredRegions()); };
+      const filecollected = collector.collectFor('');
+      const iterateOnUncoveredRegions = async () => { for await (const _region of filecollected.uncoveredRegions()); };
 
-      return iterate()
+      return iterateOnUncoveredRegions()
         .should.eventually.be.rejectedWith('Invalid coverage information file have been found in the build tree directory. ' +
           'Coverage information file must contain llvm coverage report in json format. ' +
           'Ensure that both ' +
@@ -53,7 +54,7 @@ describe('The collection of coverage summary and uncovered code regions with a v
     const collector = new CoverageCollector(s.buildFakeStreamBuilder(s.buildValidLlvmCoverageJsonObjectStream));
     const sourceFilePath = '/an/unhandled/source/file.cpp';
 
-    return collector.collectFor(sourceFilePath).summary()
+    return collector.collectFor(sourceFilePath).summary
       .should.eventually.be.rejectedWith('Cannot find any summary coverage info for the file ' +
         `${sourceFilePath}. Ensure this source file is covered by a test in your project.`);
   });
@@ -62,7 +63,7 @@ describe('The collection of coverage summary and uncovered code regions with a v
     const collector = new CoverageCollector(s.buildFakeStreamBuilder(s.buildValidLlvmCoverageJsonObjectStream));
     const sourceFilePath = '/a/source/file.cpp';
 
-    const summary = await collector.collectFor(sourceFilePath).summary();
+    const summary = await collector.collectFor(sourceFilePath).summary;
 
     summary.count.should.be.equal(2);
     summary.covered.should.be.equal(2);
@@ -73,10 +74,27 @@ describe('The collection of coverage summary and uncovered code regions with a v
   it('should fail to provide uncovered code regions for an unhandled source file', () => {
     const collector = new CoverageCollector(s.buildFakeStreamBuilder(s.buildValidLlvmCoverageJsonObjectStream));
     const sourceFilePath = '/an/unhandled/source/file.cpp';
-    const regions = collector.collectFor(sourceFilePath).uncoveredRegions();
-    const iterate = async () => { for await (const _region of regions); };
+    const filecollected = collector.collectFor(sourceFilePath);
+    const iterateOnUncoveredRegions = async () => { for await (const _region of filecollected.uncoveredRegions()); };
 
-    return iterate().should.eventually.be.rejectedWith('Cannot find any uncovered code regions for the file ' +
-      `${sourceFilePath}. Ensure this source file is covered by a test in your project.`);
+    return iterateOnUncoveredRegions()
+      .should.eventually.be.rejectedWith('Cannot find any uncovered code regions for the file ' +
+        `${sourceFilePath}. Ensure this source file is covered by a test in your project.`);
+  });
+
+  it('should succeed to provide uncovered regions for a handled source file', async () => {
+    const collector = new CoverageCollector(s.buildFakeStreamBuilder(s.buildValidLlvmCoverageJsonObjectStream));
+    const sourceFilePath = '/a/source/file.cpp';
+
+    const regions = await collector.collectFor(sourceFilePath).uncoveredRegions();
+
+    const uncoveredRegions: Array<RegionCoverageInfo> = [];
+
+    for await (const region of regions)
+      uncoveredRegions.push(region);
+
+    uncoveredRegions.length.should.be.equal(1);
+
+    // TODO: continue inmplementation here with relevant assertions
   });
 });

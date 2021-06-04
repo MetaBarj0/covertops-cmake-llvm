@@ -6,23 +6,17 @@ chai.use(chaiAsPromised);
 chai.should();
 
 import { extensionName } from '../../../src/extension-name';
-
 import { Cmake } from '../../../src/domain/services/cmake';
 
-import { workspace, process } from '../../builders/fake-adapters';
-
-import buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings =
-workspace.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings;
-import buildFakeFailingProcess = process.buildFakeFailingProcess;
-import buildFakeSucceedingProcess = process.buildFakeSucceedingProcess;
+import { workspace as w, process as p } from '../../builders/fake-adapters';
 
 describe('the behavior of the cmake internal service used to build the target ' +
   'giving the file containing coverage info', () => {
     it('should be instantiated with correct dependencies for process for cmake target building and workspace ' +
       'but throw when asking for building a target with a wrong cmake command setting', () => {
-        const workspace = buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings({ 'cmakeCommand': '' });
-        const processForCommand = buildFakeFailingProcess();
-        const processForTarget = buildFakeSucceedingProcess();
+        const workspace = w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ 'cmakeCommand': '' });
+        const processForCommand = p.buildFakeFailingProcess();
+        const processForTarget = p.buildFakeSucceedingProcess();
 
         const cmake = new Cmake({ workspace, processForCommand, processForTarget });
 
@@ -33,9 +27,9 @@ describe('the behavior of the cmake internal service used to build the target ' 
 
     it('should be instantiated with correct dependencies for process for cmake command invocation and workspace ' +
       'but throw when asking for building a target with a wrong cmake target setting', () => {
-        const workspace = buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings({ 'cmakeTarget': '' });
-        const processForCommand = buildFakeSucceedingProcess();
-        const processForTarget = buildFakeFailingProcess();
+        const workspace = w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ 'cmakeTarget': '' });
+        const processForCommand = p.buildFakeSucceedingProcess();
+        const processForTarget = p.buildFakeFailingProcess();
 
         const cmake = new Cmake({ workspace, processForCommand, processForTarget });
 
@@ -48,9 +42,9 @@ describe('the behavior of the cmake internal service used to build the target ' 
 
     it('should be instantiated with correct dependencies for all processes and workspace ' +
       'and succeed when asking for building a target with good settings', () => {
-        const workspace = buildFakedVscodeWorkspaceWithWorkspaceFolderAndWithOverridableDefaultSettings();
-        const processForCommand = buildFakeSucceedingProcess();
-        const processForTarget = buildFakeSucceedingProcess();
+        const workspace = w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+        const processForCommand = p.buildFakeSucceedingProcess();
+        const processForTarget = p.buildFakeSucceedingProcess();
 
         const cmake = new Cmake({ workspace, processForCommand, processForTarget });
 

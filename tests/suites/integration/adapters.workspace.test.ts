@@ -17,13 +17,13 @@ import * as cp from 'child_process';
 import { promises as fs } from 'fs';
 
 describe('The internal services can be instantiated when vscode has an active workspace', () => {
-  it('should not throw any exception when instantiating extension settings and settings should be set with default values', () => {
+  it('should not throw any exception when instantiating settings provider and settings should be set with default values', () => {
     const settings = new SettingsProvider(vscode.workspace).settings;
 
     settings.buildTreeDirectory.should.be.equal('build');
     settings.cmakeCommand.should.be.equal('cmake');
-    settings.cmakeTarget.should.be.equal('generateCoverageInfoJsonFile');
-    settings.coverageInfoFileName.should.be.equal('default.covdata.json');
+    settings.cmakeTarget.should.be.equal('coverage');
+    settings.coverageInfoFileName.should.be.equal('coverage.json');
     settings.additionalCmakeOptions.should.be.empty;
 
     const rootFolder = (vscode.workspace.workspaceFolders as Array<vscode.WorkspaceFolder>)[0].uri.fsPath;
@@ -105,7 +105,7 @@ describe('The internal services can be instantiated when vscode has an active wo
       });
 
     after('restoring cmake target and additonal options settings and PATH environment variable', async () => {
-      await vscode.workspace.getConfiguration(extensionName).update('cmakeTarget', 'generateCoverageInfoJsonFile');
+      await vscode.workspace.getConfiguration(extensionName).update('cmakeTarget', 'coverage');
       await vscode.workspace.getConfiguration(extensionName).update('additionalCmakeOptions', []);
 
       env['PATH'] = originalEnvPath;

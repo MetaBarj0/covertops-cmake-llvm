@@ -8,17 +8,12 @@ chai.should();
 import { extensionName } from '../../../src/extension-name';
 import { CoverageInfoFileResolver } from '../../../src/domain/services/coverage-info-file-resolver';
 
-import { glob, workspace } from '../../builders/fake-adapters';
-
-import buildFakeWorkspace = workspace.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings;
-import buildFakeGlobSearchForNoMatch = glob.buildFakeGlobSearchForNoMatch;
-import buildFakeGlobSearchForSeveralMatch = glob.buildFakeGlobSearchForSeveralMatch;
-import buildFakeGlobSearchForExactlyOneMatch = glob.buildFakeGlobSearchForExactlyOneMatch;
+import { glob as g, workspace as w } from '../../builders/fake-adapters';
 
 describe('the behavior of the coverage info file resolving internal service', () => {
   it('should fail if the glob searched from the build tree directory does not find one file', () => {
-    const workspace = buildFakeWorkspace();
-    const globSearch = buildFakeGlobSearchForNoMatch();
+    const workspace = w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+    const globSearch = g.buildFakeGlobSearchForNoMatch();
 
     const resolver = new CoverageInfoFileResolver(workspace, globSearch);
 
@@ -30,8 +25,8 @@ describe('the behavior of the coverage info file resolving internal service', ()
   });
 
   it('should fail if the glob searched from the build tree directory finds more than one file', () => {
-    const workspace = buildFakeWorkspace();
-    const globSearch = buildFakeGlobSearchForSeveralMatch();
+    const workspace = w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+    const globSearch = g.buildFakeGlobSearchForSeveralMatch();
 
     const resolver = new CoverageInfoFileResolver(workspace, globSearch);
 
@@ -43,8 +38,8 @@ describe('the behavior of the coverage info file resolving internal service', ()
   });
 
   it('should resolve correctly if the glob searched from the build tree directory find exactly one file.', () => {
-    const workspace = buildFakeWorkspace();
-    const globSearch = buildFakeGlobSearchForExactlyOneMatch();
+    const workspace = w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+    const globSearch = g.buildFakeGlobSearchForExactlyOneMatch();
 
     const resolver = new CoverageInfoFileResolver(workspace, globSearch);
 

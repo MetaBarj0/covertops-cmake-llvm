@@ -1,6 +1,21 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
+
 import { runTests } from 'vscode-test';
+
+(async function () {
+  try {
+    const extensionDevelopmentPath = path.resolve(__dirname, '../..');
+
+    await runAcceptanceTests(extensionDevelopmentPath);
+    await runUnitTests(extensionDevelopmentPath);
+    await runIntegrationTestsWithoutWorkspace(extensionDevelopmentPath);
+    await runIntegrationTestsWithWorkspace(extensionDevelopmentPath);
+  } catch (error) {
+    console.error('Failed to run tests\n' + error);
+    process.exit(1);
+  }
+})();
 
 function runAcceptanceTests(extensionDevelopmentPath: string) {
   const extensionTestsPath = path.resolve(__dirname, './suites/acceptance/index');
@@ -34,19 +49,3 @@ async function runIntegrationTestsWithWorkspace(extensionDevelopmentPath: string
 
   return runTests({ extensionDevelopmentPath, extensionTestsPath, launchArgs: [workspaceDirectory] });
 }
-
-async function main() {
-  try {
-    const extensionDevelopmentPath = path.resolve(__dirname, '../..');
-
-    await runAcceptanceTests(extensionDevelopmentPath);
-    await runUnitTests(extensionDevelopmentPath);
-    await runIntegrationTestsWithoutWorkspace(extensionDevelopmentPath);
-    await runIntegrationTestsWithWorkspace(extensionDevelopmentPath);
-  } catch (error) {
-    console.error('Failed to run tests\n' + error);
-    process.exit(1);
-  }
-}
-
-main();
