@@ -1,5 +1,7 @@
 # cmake-llvm-coverage
 
+[![Coverage Status](https://coveralls.io/repos/github/MetaBarj0/cmake-llvm-coverage/badge.svg?branch=master)](https://coveralls.io/github/MetaBarj0/cmake-llvm-coverage?branch=master)
+
 Visual code coverage indicators for source code files of a Cmake project
 using Llvm capabilities.
 
@@ -31,7 +33,7 @@ capabilities. You will need :
 
 - A recent version of cmake installed on your system
 - A recent version of the Ninja build system
-- The Llvm toolchain version greater or equal to 10
+- The Llvm toolchain version greater or equal to 11
 
 ### Note for Visual Studio 2019 users on Windows
 
