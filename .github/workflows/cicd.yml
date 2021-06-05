@@ -62,6 +62,8 @@ jobs:
         env: 
           LLVM_DIR: ${{ runner.temp }}/llvm
 
+      - name: Code coverage
+        uses: codecov/codecov-action@v1
   publish:
     if: startsWith(github.ref, 'refs/tags/releases')
     needs: build
