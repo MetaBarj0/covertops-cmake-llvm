@@ -1,6 +1,6 @@
 # cmake-llvm-coverage
 
-[![codecov](https://codecov.io/gh/MetaBarj0/cmake-llvm-coverage/branch/master/graph/badge.svg?token=50XNAD7AXW)](https://codecov.io/gh/MetaBarj0/cmake-llvm-coverage)
+[![Coverage Status](https://coveralls.io/repos/github/MetaBarj0/cmake-llvm-coverage/badge.svg?branch=master)](https://coveralls.io/github/MetaBarj0/cmake-llvm-coverage?branch=master)
 
 Visual code coverage indicators for source code files of a Cmake project
 using Llvm capabilities.
