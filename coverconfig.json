@@ -1,7 +1,7 @@
 {
   "enabled": true,
   "relativeSourcePath": "../src",
-  "relativeCoverageDir": "../../coverage",
+  "relativeCoverageDir": "./coverage",
   "ignorePatterns": [
     "**/node_modules/**"
   ],
@@ -11,5 +11,5 @@
     "html",
     "lcov"
   ],
-  "verbose": false
+  "verbose": true
 }
