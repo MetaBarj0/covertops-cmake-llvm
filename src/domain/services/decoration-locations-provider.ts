@@ -1,14 +1,14 @@
 import { VscodeWorkspaceLike } from './settings-provider';
 import * as BuildTreeDirectoryResolver from './internal/build-tree-directory-resolver';
-import { BuildSystemGenerator, ProcessLike } from './build-system-generator';
+import * as  BuildSystemGenerator from './internal/build-system-generator';
 import { CoverageInfoFileResolver, GlobSearchLike } from './coverage-info-file-resolver';
 import { LLVMCoverageInfoStreamBuilder, CoverageCollector } from './coverage-info-collector';
 
 type Adapters = {
   workspace: VscodeWorkspaceLike,
   statFile: BuildTreeDirectoryResolver.StatFileLike,
-  processForCmakeCommand: ProcessLike,
-  processForCmakeTarget: ProcessLike,
+  processForCmakeCommand: BuildSystemGenerator.ProcessLike,
+  processForCmakeTarget: BuildSystemGenerator.ProcessLike,
   globSearch: GlobSearchLike,
   fs: BuildTreeDirectoryResolver.FsLike,
   llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder
@@ -34,7 +34,7 @@ export class DecorationLocationsProvider {
 
     await buildTreeDirectoryResolver.resolveAbsolutePath();
 
-    const cmake = new BuildSystemGenerator({
+    const cmake = BuildSystemGenerator.make({
       workspace: this.workspace,
       processForCommand: this.processForCmakeCommand,
       processForTarget: this.processForCmakeTarget
@@ -52,8 +52,8 @@ export class DecorationLocationsProvider {
 
   private readonly workspace: VscodeWorkspaceLike;
   private readonly statFile: BuildTreeDirectoryResolver.StatFileLike;
-  private readonly processForCmakeCommand: ProcessLike;
-  private readonly processForCmakeTarget: ProcessLike;
+  private readonly processForCmakeCommand: BuildSystemGenerator.ProcessLike;
+  private readonly processForCmakeTarget: BuildSystemGenerator.ProcessLike;
   private readonly globSearch: GlobSearchLike;
   private readonly fs: BuildTreeDirectoryResolver.FsLike;
   private readonly llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder;

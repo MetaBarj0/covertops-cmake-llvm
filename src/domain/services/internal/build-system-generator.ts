@@ -1,5 +1,5 @@
-import * as definitions from '../../definitions';
-import { SettingsProvider, VscodeWorkspaceLike } from './settings-provider';
+import * as definitions from '../../../definitions';
+import { SettingsProvider, VscodeWorkspaceLike } from '../settings-provider';
 
 export type ExecFileExceptionLike = {
   message: string;
@@ -27,7 +27,7 @@ type Adapters = {
   processForTarget: ProcessLike
 };
 
-export class BuildSystemGenerator {
+class BuildSystemGenerator {
   constructor(adapters: Adapters) {
     this.workspace = adapters.workspace;
     this.processForCommand = adapters.processForCommand;
@@ -104,3 +104,7 @@ export class BuildSystemGenerator {
   private readonly processForTarget: ProcessLike;
   private readonly workspace: VscodeWorkspaceLike;
 };
+
+export function make(adapters: Adapters) {
+  return new BuildSystemGenerator(adapters);
+}

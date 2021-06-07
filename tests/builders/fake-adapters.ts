@@ -5,13 +5,7 @@ import {
   VscodeWorkspaceConfigurationLike
 } from '../../src/domain/services/settings-provider';
 
-import {
-  ChildProcessLike,
-  ExecFileExceptionLike,
-  ExecFileOptionsLike,
-  ProcessLike
-} from '../../src/domain/services/build-system-generator';
-
+import * as BuildSystemGenerator from '../../src/domain/services/internal/build-system-generator';
 import * as BuildTreeDirectoryResolver from '../../src/domain/services/internal/build-tree-directory-resolver';
 import { Settings } from '../../src/domain/value-objects/settings';
 import { GlobSearchLike } from '../../src/domain/services/coverage-info-file-resolver';
@@ -88,34 +82,36 @@ export namespace workspace {
 
 export namespace process {
   export function buildFakeFailingProcess() {
-    return new class implements ProcessLike {
+    return new class implements BuildSystemGenerator.ProcessLike {
       execFile(
         _file: string,
         _args: readonly string[] | null | undefined,
-        _options: ExecFileOptionsLike,
-        callback: (error: ExecFileExceptionLike | null, stdout: string, stderr: string) => void): ChildProcessLike {
+        _options: BuildSystemGenerator.ExecFileOptionsLike,
+        callback: (error: BuildSystemGenerator.ExecFileExceptionLike | null,
+          stdout: string, stderr: string) => void): BuildSystemGenerator.ChildProcessLike {
         callback(
-          new class implements ExecFileExceptionLike {
+          new class implements BuildSystemGenerator.ExecFileExceptionLike {
             message = 'Epic fail!';
           },
           'stdout',
           'stderr');
 
-        return new class implements ChildProcessLike { };
+        return new class implements BuildSystemGenerator.ChildProcessLike { };
       }
     };
   }
 
   export function buildFakeSucceedingProcess() {
-    return new class implements ProcessLike {
+    return new class implements BuildSystemGenerator.ProcessLike {
       execFile(
         _file: string,
         _args: readonly string[] | null | undefined,
-        _options: ExecFileOptionsLike,
-        callback: (error: ExecFileExceptionLike | null, stdout: string, stderr: string) => void): ChildProcessLike {
+        _options: BuildSystemGenerator.ExecFileOptionsLike,
+        callback: (error: BuildSystemGenerator.ExecFileExceptionLike | null,
+          stdout: string, stderr: string) => void): BuildSystemGenerator.ChildProcessLike {
         callback(null, 'epic success!', '');
 
-        return new class implements ChildProcessLike { };
+        return new class implements BuildSystemGenerator.ChildProcessLike { };
       }
     };
   }
