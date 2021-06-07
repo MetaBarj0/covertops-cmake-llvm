@@ -5,7 +5,7 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
-import { extensionNameInSettings } from '../../../src/definitions';
+import * as definitions from '../../../src/definitions';
 import { Cmake } from '../../../src/domain/services/cmake';
 
 import { workspace as w, process as p } from '../../builders/fake-adapters';
@@ -21,7 +21,7 @@ describe('the behavior of the cmake internal service used to build the target ' 
         const cmake = new Cmake({ workspace, processForCommand, processForTarget });
 
         return cmake.buildTarget().should.eventually.be.rejectedWith(
-          `Cannot find the cmake command. Ensure the '${extensionNameInSettings}: Cmake Command' ` +
+          `Cannot find the cmake command. Ensure the '${definitions.extensionNameInSettings}: Cmake Command' ` +
           'setting is correctly set. Have you verified your PATH environment variable?');
       });
 
@@ -33,11 +33,11 @@ describe('the behavior of the cmake internal service used to build the target ' 
 
         const cmake = new Cmake({ workspace, processForCommand, processForTarget });
 
-        const target = workspace.getConfiguration(extensionNameInSettings).get<string>('cmakeTarget');
+        const target = workspace.getConfiguration(definitions.extensionNameInSettings).get<string>('cmakeTarget');
 
         return cmake.buildTarget().should.eventually.be.rejectedWith(
           `Error: Could not build the specified cmake target ${target}. ` +
-          `Ensure '${extensionNameInSettings}: Cmake Target' setting is properly set.`);
+          `Ensure '${definitions.extensionNameInSettings}: Cmake Target' setting is properly set.`);
       });
 
     it('should be instantiated with correct dependencies for all processes and workspace ' +

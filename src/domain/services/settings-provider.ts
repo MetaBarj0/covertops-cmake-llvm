@@ -1,4 +1,3 @@
-// TODO: refacto import as module
 import * as definitions from '../../definitions';
 import { Settings } from '../value-objects/settings';
 

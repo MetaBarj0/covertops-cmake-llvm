@@ -3,7 +3,7 @@ import { describe, it } from 'mocha';
 import * as chaiAsPromised from 'chai-as-promised';
 
 import { CoverageCollector } from '../../../src/domain/services/coverage-info-collector';
-import { extensionNameInSettings } from '../../../src/definitions';
+import * as definitions from '../../../src/definitions';
 import { RegionCoverageInfo } from '../../../src/domain/value-objects/region-coverage-info';
 
 import { stream as s } from '../../builders/fake-adapters';
@@ -24,7 +24,8 @@ describe('The collection of coverage summary and uncovered code regions with an 
         .should.eventually.be.rejectedWith('Invalid coverage information file have been found in the build tree directory. ' +
           'Coverage information file must contain llvm coverage report in json format. ' +
           'Ensure that both ' +
-          `'${extensionNameInSettings}: Build Tree Directory' and '${extensionNameInSettings}: Coverage Info File Name' ` +
+          `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+          `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
           'settings are correctly set.');
     });
   });
@@ -43,7 +44,8 @@ describe('The collection of coverage summary and uncovered code regions with an 
         .should.eventually.be.rejectedWith('Invalid coverage information file have been found in the build tree directory. ' +
           'Coverage information file must contain llvm coverage report in json format. ' +
           'Ensure that both ' +
-          `'${extensionNameInSettings}: Build Tree Directory' and '${extensionNameInSettings}: Coverage Info File Name' ` +
+          `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+          `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
           'settings are correctly set.');
     });
   });

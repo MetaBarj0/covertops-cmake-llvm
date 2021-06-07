@@ -5,7 +5,7 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
-import { extensionNameInSettings } from '../../../src/definitions';
+import * as definitions from '../../../src/definitions';
 import { DecorationLocationsProvider } from '../../../src/domain/services/decoration-locations-provider';
 
 import {
@@ -49,7 +49,7 @@ describe('DecorationLocationProvider service behavior.', () => {
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
         'Cannot find or create the build tree directory. Ensure the ' +
-        `'${extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`);
+        `'${definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`);
     });
 
   it('should not be able to provide any decoration for uncovered code regions ' +
@@ -66,7 +66,7 @@ describe('DecorationLocationProvider service behavior.', () => {
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
-        `Cannot find the cmake command. Ensure the '${extensionNameInSettings}: Cmake Command' ` +
+        `Cannot find the cmake command. Ensure the '${definitions.extensionNameInSettings}: Cmake Command' ` +
         'setting is correctly set. Have you verified your PATH environment variable?');
     });
 
@@ -89,7 +89,7 @@ describe('DecorationLocationProvider service behavior.', () => {
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
         `Error: Could not build the specified cmake target ${target}. ` +
-        `Ensure '${extensionNameInSettings}: Cmake Target' setting is properly set.`);
+        `Ensure '${definitions.extensionNameInSettings}: Cmake Target' setting is properly set.`);
     });
 
   it('should not be able to provide any decoration for uncovered code regions ' +
@@ -108,7 +108,8 @@ describe('DecorationLocationProvider service behavior.', () => {
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
         'Cannot resolve the coverage info file path in the build tree directory. ' +
         'Ensure that both ' +
-        `'${extensionNameInSettings}: Build Tree Directory' and '${extensionNameInSettings}: Coverage Info File Name' ` +
+        `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+        `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
         'settings are correctly set.');
     });
 
@@ -127,7 +128,8 @@ describe('DecorationLocationProvider service behavior.', () => {
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
         'More than one coverage information file have been found in the build tree directory. ' +
         'Ensure that both ' +
-        `'${extensionNameInSettings}: Build Tree Directory' and '${extensionNameInSettings}: Coverage Info File Name' ` +
+        `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+        `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
         'settings are correctly set.');
     });
 

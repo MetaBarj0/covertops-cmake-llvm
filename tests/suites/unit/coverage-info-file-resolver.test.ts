@@ -5,7 +5,7 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
-import { extensionNameInSettings } from '../../../src/definitions';
+import * as definitions from '../../../src/definitions';
 import { CoverageInfoFileResolver } from '../../../src/domain/services/coverage-info-file-resolver';
 
 import { glob as g, workspace as w } from '../../builders/fake-adapters';
@@ -20,7 +20,8 @@ describe('the behavior of the coverage info file resolving internal service', ()
     return resolver.resolveCoverageInfoFileFullPath().should.eventually.be.rejectedWith(
       'Cannot resolve the coverage info file path in the build tree directory. ' +
       'Ensure that both ' +
-      `'${extensionNameInSettings}: Build Tree Directory' and '${extensionNameInSettings}: Coverage Info File Name' ` +
+      `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+      `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
       'settings are correctly set.');
   });
 
@@ -33,7 +34,8 @@ describe('the behavior of the coverage info file resolving internal service', ()
     return resolver.resolveCoverageInfoFileFullPath().should.eventually.be.rejectedWith(
       'More than one coverage information file have been found in the build tree directory. ' +
       'Ensure that both ' +
-      `'${extensionNameInSettings}: Build Tree Directory' and '${extensionNameInSettings}: Coverage Info File Name' ` +
+      `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+      `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
       'settings are correctly set.');
   });
 
