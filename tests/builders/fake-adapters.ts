@@ -4,7 +4,7 @@ import * as BuildSystemGenerator from '../../src/domain/services/internal/build-
 import * as BuildTreeDirectoryResolver from '../../src/domain/services/internal/build-tree-directory-resolver';
 import { Settings } from '../../src/domain/value-objects/settings';
 import { GlobSearchLike } from '../../src/domain/services/coverage-info-file-resolver';
-import { LLVMCoverageInfoStreamBuilder } from '../../src/domain/services/coverage-info-collector';
+import * as CoverageInfoCollector from '../../src/domain/services/internal/coverage-info-collector';
 
 import * as path from 'path';
 import { BigIntStats, MakeDirectoryOptions, PathLike, StatOptions, Stats } from 'fs';
@@ -187,7 +187,7 @@ export namespace stream {
   }
 
   export function buildFakeStreamBuilder(streamFactory: () => Readable) {
-    return new class implements LLVMCoverageInfoStreamBuilder {
+    return new class implements CoverageInfoCollector.LLVMCoverageInfoStreamBuilder {
       makeLLVMCoverageInfoStream() {
         return streamFactory();
       }

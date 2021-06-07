@@ -1,6 +1,6 @@
-import * as definitions from '../../definitions';
-import { CoverageSummary } from '../value-objects/coverage-summary';
-import { RawLLVMRegionCoverageInfo, RegionCoverageInfo } from '../value-objects/region-coverage-info';
+import * as definitions from '../../../definitions';
+import { CoverageSummary } from '../../value-objects/coverage-summary';
+import { RawLLVMRegionCoverageInfo, RegionCoverageInfo } from '../../value-objects/region-coverage-info';
 
 import { Readable } from 'stream';
 import { chain } from 'stream-chain';
@@ -12,7 +12,11 @@ export type LLVMCoverageInfoStreamBuilder = {
   makeLLVMCoverageInfoStream(): Readable;
 };
 
-export class CoverageCollector {
+export function make(llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder) {
+  return new CoverageInfoCollector(llvmCoverageInfoStreamBuilder);
+}
+
+class CoverageInfoCollector {
   constructor(llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder) {
     this.llvmCoverageInfoStreamBuilder = llvmCoverageInfoStreamBuilder;
   }
@@ -54,7 +58,7 @@ class CoverageInfo {
               `${this.sourceFilePath}. Ensure this source file is covered by a test in your project.`));
         })
         .once('error', err => {
-          reject(new Error(CoverageCollector.invalidInputReadableStreamMessage + err.message));
+          reject(new Error(CoverageInfoCollector.invalidInputReadableStreamMessage + err.message));
         });
     });
   };
@@ -148,7 +152,7 @@ class RegionCoverageInfoAsyncIteratorContract {
         .once('readable', () => { resolve(); })
         .once('end', () => { resolve(); })
         .once('error', err => {
-          reject(new Error(CoverageCollector.invalidInputReadableStreamMessage + err.message));
+          reject(new Error(CoverageInfoCollector.invalidInputReadableStreamMessage + err.message));
         });
     });
 

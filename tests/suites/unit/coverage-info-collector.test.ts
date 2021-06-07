@@ -2,7 +2,7 @@ import * as chai from 'chai';
 import { describe, it } from 'mocha';
 import * as chaiAsPromised from 'chai-as-promised';
 
-import { CoverageCollector } from '../../../src/domain/services/coverage-info-collector';
+import * as CoverageInfoCollector from '../../../src/domain/services/internal/coverage-info-collector';
 import * as definitions from '../../../src/definitions';
 import { RegionCoverageInfo } from '../../../src/domain/value-objects/region-coverage-info';
 
@@ -18,7 +18,7 @@ describe('The collection of coverage summary and uncovered code regions with an 
     s.buildNotJsonStream
   ].forEach(streamFactory => {
     it('should fail to access to coverage summary', () => {
-      const collector = new CoverageCollector(s.buildFakeStreamBuilder(streamFactory));
+      const collector = CoverageInfoCollector.make(s.buildFakeStreamBuilder(streamFactory));
 
       return collector.collectFor('').summary
         .should.eventually.be.rejectedWith('Invalid coverage information file have been found in the build tree directory. ' +
@@ -36,7 +36,7 @@ describe('The collection of coverage summary and uncovered code regions with an 
     s.buildNotJsonStream
   ].forEach(streamFactory => {
     it('should fail to access to uncovered regions', () => {
-      const collector = new CoverageCollector(s.buildFakeStreamBuilder(streamFactory));
+      const collector = CoverageInfoCollector.make(s.buildFakeStreamBuilder(streamFactory));
       const filecollected = collector.collectFor('');
       const iterateOnUncoveredRegions = async () => { for await (const _region of filecollected.uncoveredRegions()); };
 
@@ -53,7 +53,7 @@ describe('The collection of coverage summary and uncovered code regions with an 
 
 describe('The collection of coverage summary and uncovered code regions with a valid input readable stream', () => {
   it('should fail to provide coverage summary for an unhandled source file', () => {
-    const collector = new CoverageCollector(s.buildFakeStreamBuilder(s.buildValidLlvmCoverageJsonObjectStream));
+    const collector = CoverageInfoCollector.make(s.buildFakeStreamBuilder(s.buildValidLlvmCoverageJsonObjectStream));
     const sourceFilePath = '/an/unhandled/source/file.cpp';
 
     return collector.collectFor(sourceFilePath).summary
@@ -62,7 +62,7 @@ describe('The collection of coverage summary and uncovered code regions with a v
   });
 
   it('should succeed in provided summary coverage info for handled source file', async () => {
-    const collector = new CoverageCollector(s.buildFakeStreamBuilder(s.buildValidLlvmCoverageJsonObjectStream));
+    const collector = CoverageInfoCollector.make(s.buildFakeStreamBuilder(s.buildValidLlvmCoverageJsonObjectStream));
     const sourceFilePath = '/a/source/file.cpp';
 
     const summary = await collector.collectFor(sourceFilePath).summary;
@@ -74,7 +74,7 @@ describe('The collection of coverage summary and uncovered code regions with a v
   });
 
   it('should fail to provide uncovered code regions for an unhandled source file', () => {
-    const collector = new CoverageCollector(s.buildFakeStreamBuilder(s.buildValidLlvmCoverageJsonObjectStream));
+    const collector = CoverageInfoCollector.make(s.buildFakeStreamBuilder(s.buildValidLlvmCoverageJsonObjectStream));
     const sourceFilePath = '/an/unhandled/source/file.cpp';
     const filecollected = collector.collectFor(sourceFilePath);
     const iterateOnUncoveredRegions = async () => { for await (const _region of filecollected.uncoveredRegions()); };
@@ -85,7 +85,7 @@ describe('The collection of coverage summary and uncovered code regions with a v
   });
 
   it('should succeed to provide uncovered regions for a handled source file', async () => {
-    const collector = new CoverageCollector(s.buildFakeStreamBuilder(s.buildValidLlvmCoverageJsonObjectStream));
+    const collector = CoverageInfoCollector.make(s.buildFakeStreamBuilder(s.buildValidLlvmCoverageJsonObjectStream));
     const sourceFilePath = '/a/source/file.cpp';
 
     const regions = await collector.collectFor(sourceFilePath).uncoveredRegions();

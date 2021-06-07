@@ -2,7 +2,7 @@ import * as SettingsProvider from './internal/settings-provider';
 import * as BuildTreeDirectoryResolver from './internal/build-tree-directory-resolver';
 import * as  BuildSystemGenerator from './internal/build-system-generator';
 import { CoverageInfoFileResolver, GlobSearchLike } from './coverage-info-file-resolver';
-import { LLVMCoverageInfoStreamBuilder, CoverageCollector } from './coverage-info-collector';
+import * as CoverageInfoCollector from './internal/coverage-info-collector';
 
 type Adapters = {
   workspace: SettingsProvider.VscodeWorkspaceLike,
@@ -11,7 +11,7 @@ type Adapters = {
   processForCmakeTarget: BuildSystemGenerator.ProcessLike,
   globSearch: GlobSearchLike,
   fs: BuildTreeDirectoryResolver.FsLike,
-  llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder
+  llvmCoverageInfoStreamBuilder: CoverageInfoCollector.LLVMCoverageInfoStreamBuilder
 };
 
 export class DecorationLocationsProvider {
@@ -45,7 +45,7 @@ export class DecorationLocationsProvider {
     const coverageInfoFileResolver = new CoverageInfoFileResolver(this.workspace, this.globSearch);
     await coverageInfoFileResolver.resolveCoverageInfoFileFullPath();
 
-    const collector = new CoverageCollector(this.llvmCoverageInfoStreamBuilder);
+    const collector = CoverageInfoCollector.make(this.llvmCoverageInfoStreamBuilder);
 
     return collector.collectFor(sourceFilePath);
   }
@@ -56,5 +56,5 @@ export class DecorationLocationsProvider {
   private readonly processForCmakeTarget: BuildSystemGenerator.ProcessLike;
   private readonly globSearch: GlobSearchLike;
   private readonly fs: BuildTreeDirectoryResolver.FsLike;
-  private readonly llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder;
+  private readonly llvmCoverageInfoStreamBuilder: CoverageInfoCollector.LLVMCoverageInfoStreamBuilder;
 }
