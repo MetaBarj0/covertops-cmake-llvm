@@ -36,7 +36,7 @@
   "contributes": {
     "configuration": [
       {
-        "title": "cmake-llvm-coverage",
+        "title": "Cmake-llvm-coverage",
         "properties": {
           "cmake-llvm-coverage.cmakeCommand": {
             "type": "string",

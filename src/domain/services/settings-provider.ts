@@ -1,4 +1,5 @@
-import { extensionId } from '../../definitions';
+// TODO: refacto import as module
+import * as definitions from '../../definitions';
 import { Settings } from '../value-objects/settings';
 
 export type VscodeUriLike = {
@@ -27,7 +28,7 @@ export class SettingsProvider {
     if (!this.workspace.workspaceFolders)
       throw new Error('A workspace must be loaded to get coverage information.');
 
-    const workspaceSettings = this.workspace.getConfiguration(extensionId);
+    const workspaceSettings = this.workspace.getConfiguration(definitions.extensionId);
     const workspaceFolders = this.workspace.workspaceFolders as Array<VscodeWorkspaceFolderLike>;
     const rootDirectory = workspaceFolders[0].uri.fsPath;
 
