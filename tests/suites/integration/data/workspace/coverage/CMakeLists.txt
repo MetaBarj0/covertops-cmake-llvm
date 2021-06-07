@@ -1,7 +1,7 @@
-if(${ENABLE_COVERAGE_WITH_LLVM})
+if(${EXPOSE_COVERAGE_TARGET})
   # specific flags to build the covered project. Enable source based Coverage
   # see:
-  # https://releases.llvm.org/10.0.0/tools/clang/docs/SourceBasedCodeCoverage.html
+  # https://releases.llvm.org/11.0.0/tools/clang/docs/SourceBasedCodeCoverage.html
   # TODO: notice multiple target usage here
   target_compile_options(PartiallyCoveredLib PRIVATE
                          -fprofile-instr-generate -fcoverage-mapping)
@@ -21,7 +21,7 @@ if(${ENABLE_COVERAGE_WITH_LLVM})
   # An internal custom command used as dependency of exposed targets to
   # generate coverage data
   add_custom_command(OUTPUT default.profdata
-                     DEPENDS .testSuite.executed
+                     DEPENDS .testSuites.executed
                      COMMAND ${llvmProfData}
                        ARGS merge 
                        -sparse
@@ -31,9 +31,9 @@ if(${ENABLE_COVERAGE_WITH_LLVM})
                        -o default.profdata)
 
   # An internal command used as dependency for exposed targets. Ensures that
-  # the test suite has been executed with latest modifications and latest
+  # test suites have been executed with latest modifications and latest
   # coverage data.
-  add_custom_command(OUTPUT .testSuite.executed
+  add_custom_command(OUTPUT .testSuites.executed
                      DEPENDS
                        # TODO: notice multiple target usage here
                        PartiallyCoveredLib PartiallyCoveredTests
@@ -56,7 +56,7 @@ if(${ENABLE_COVERAGE_WITH_LLVM})
                        ARGS -E rename default.profraw $<TARGET_NAME_IF_EXISTS:FullyCoveredTests>.profraw
 
                      COMMAND ${CMAKE_COMMAND}
-                       ARGS -E touch .testSuite.executed
+                       ARGS -E touch .testSuites.executed
                      VERBATIM
                      USES_TERMINAL)
 
@@ -65,6 +65,7 @@ if(${ENABLE_COVERAGE_WITH_LLVM})
   # https://stackoverflow.com/questions/56013927/how-to-read-llvm-cov-json-format
   # https://llvm.org/doxygen/structllvm_1_1coverage_1_1CoverageSegment.html
   # https://llvm.org/doxygen/structllvm_1_1coverage_1_1CounterMappingRegion.html
+  # https://github.com/llvm/llvm-project/blob/aa4e6a609acdd00e06b54f525054bd5cf3624f0f/llvm/tools/llvm-cov/CoverageExporterJson.cpp#L15
   add_custom_target(coverage
                     DEPENDS coverage.json)
 

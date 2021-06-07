@@ -1,16 +1,24 @@
-# cmake-llvm-coverage
+# Cov (with cmake and llvm flavour)
 
-[![Coverage Status](https://coveralls.io/repos/github/MetaBarj0/cmake-llvm-coverage/badge.svg?branch=master)](https://coveralls.io/github/MetaBarj0/cmake-llvm-coverage?branch=master)
+![Continuous integration](https://github.com/metabarj0/cov-cmake-llvm/actions/workflows/cicd.yml/badge.svg)
 
-Visual code coverage indicators for source code files of a Cmake project
-using Llvm capabilities.
+Get a precise report of uncovered regions of your code handled by cmake and
+using a recent version of the llvm toolchain as easy as **hello world!**
 
-This extension will show all regions of code that are not covered for the
-currently edited source code file.
+This extension is pretty simple in its essence. It gives the ability to display
+precisely locations in your production code that are not covered by at least one
+test.
+
+To get this report, open an editor on a file that is actually handled by a build
+system generator (here `cmake`) and hit the button at the top right corner of
+the editor window.
 
 The primary purpose of this extension is to help the developer to ensure
 she/he is following the Test Driven Development discipline correctly by
 reporting any region of the code that is not covered by a test.
+
+It's designed to be run very frequently, to get quick and precise feedback on
+code coverage.
 
 `Insert gif here`
 
@@ -21,19 +29,29 @@ click!
 
 `insert image here`
 
-Shows both summary information with coverage percentage and precise uncovered
-region of code for the current source code file.
+Shows both summary information with coverage percentage for the currently edited
+file (in the output window) and precise uncovered region of code for the current
+source code file using `vscode` decorations in a read-only editor window.
 
 `insert image here`
 
+Great flexibility in its configuration, allowing you to override any setting to
+be perfectly suitable to your development environment.
+
 ## Requirement
 
-This extension utilize source based coverage feature of Llvm and cmake
+This extension utilizes source based coverage feature of Llvm and cmake
 capabilities. You will need :
 
 - A recent version of cmake installed on your system
 - A recent version of the Ninja build system
 - The Llvm toolchain version greater or equal to 11
+
+*Note*: Moreover, this first release need an existing target that creates coverage
+information in a json file. You'll find below a detailled how-to to help you in
+creating such a target.
+Future iterations may provide a wizard to help you configure the coverage target
+creation in a fluent manner.
 
 ### Note for Visual Studio 2019 users on Windows
 
@@ -55,110 +73,162 @@ immoderatly to get proficient with C++ and Visual Studio Code.
 
 The behavior of this extension can be set thanks to the following settings:
 
-- `cmake-llvm-coverage.cmakeCommand`: The command to invoke cmake. May be an
-absolute path on the file system or just `cmake` if this latter is in your
-`$PATH` environment variable.
-- `cmake-llvm-coverage.buildTreeDirectory`: The build tree root directory of
-your cmake project, relative to your workspace directory. This directory must
-exist, thus, ensure you generated your cmake project beforehand.
-- `cmake-llvm-coverage.cmakeTarget`: The target that generates coverage
-information in a json format file. This file may be generated in the build
-directory specified in the `cmake-llvm-coverage.buildTreeDirectory` setting.
-The specified target must exist.
-- `cmake-llvm-coverage.coverageInfoFileName`: The name of the json file
-containing coverage information. This file will be searched within the
-`buildTreeDirectory` hierarchy. This file must be unique.
-- `cmake-llvm-coverage.additionalCmakeOptions`: Additional options to pass to
-`cmake`, for instance, variable definitions indicating which compiler to use,
-preprocessor defines, the generator, etc.
+- `cov-cmake-llvm.cmakeCommand`: The command to invoke the build system
+generator (cmake). May be an absolute path on the file system or just `cmake` if
+this latter is in your `$PATH` environment variable.
+- `cov-cmake-llvm.buildTreeDirectory`: The build tree root directory of your
+project, relative to your workspace directory. Designed to be the target of the
+output of the build system generator.
+- `cov-cmake-llvm.cmakeTarget`: The target that generates coverage information
+in a json format file. This file may be generated in the build directory
+specified in the `Build Tree Directory` setting. The specified target must
+exist.
+- `cov-cmake-llvm.coverageInfoFileName`: The name of the json file containing
+coverage information. This file will be searched within the `buildTreeDirectory`
+hierarchy. This file must exist and be unique.
+- `cov-cmake-llvm.additionalCmakeOptions`: Additional options to pass to build
+system generator (cmake), for instance, variable definitions indicating which
+compiler / generator to use, preprocessor defines, etc.
 
 ## Default color
 
 One can customize the background color for the decoration associated to an
-uncovered region of code. Check the
-`cmakeLlvmCoverage.uncoveredCodeRegionBackground` color when editing
-`workbench: colorCustomization` in your settings.json file. The default
-value is `#FF0055` for all dark, light or high contrast themes.
+uncovered region of code. Check the `covCmakeLlvm.uncoveredCodeRegionBackground`
+color when editing `workbench: colorCustomization` in your settings.json file.
+The default value is `#FF0055` for all dark, light or high contrast themes.
 
-## Designing simple code coverage targets with cmake
+## Designing a simple code coverage target with cmake
 
 Following is a small guide on how to design code coverage target for cmake
-that are useable with this extension. This target rely on 2 distinct
-projects:
+that are useable with this extension.
+The output of this guide is a fully functional `coverage` target that will
+produce a `coverage.json` file within your build tree directory ready to be
+processed by this extension.
 
-- A static library project named whose the target name is `Lib`
-- A test project whose the target name is `Tests`
+### A sample project
 
-The coverage reporting target is named `coverage`.
+Considering a project organized as following:
 
-**Verified**: This target may be added in its very own sub directory and used
-from a main CMakeLists.txt file.
+``` txt
+<project root directory>
+|
+`-src/
+| |
+| `-lib.cpp
+| `-lib.hpp
+| `-CMakeLists.txt
+`-tests/
+| `-lib.cpp
+| `-CMakeLists.txt
+`-CMakeLists.txt
+```
 
-### Conditional coverage (TODO: Update...)
+This template exposes:
 
-First, it is advisable to create a cmake cache variable to conditionally
-enable or disable coverage reporting targets. In your root `CMakeLists.txt`
-file at the root of your project, add the following section :
+- a `src` directory, containing all the production code built with the `Lib` target.
+- a `tests` directory containing one suite of tests designed to cover code in
+  the `src` directory. This test project is built with the `Tests` target.
+
+At the end of this guide, you should have such a directory structure:
+
+``` txt
+<project root directory>
+|
+`-coverage/
+| |
+| `-CMakeLists.txt
+`-src/
+| |
+| `-lib.cpp
+| `-lib.hpp
+| `-CMakeLists.txt
+`-tests/
+| `-lib.cpp
+| `-CMakeLists.txt
+`-CMakeLists.txt
+```
+
+*Note* You can see the apparition of the `coverage` sub directory.
+
+### First step: Edit your root CMakeLists.txt file
+
+Quite easy; the purpose is to ensure that a recent `llvm` toolchain is usable on
+your system. The nature of the modification is appending the following code in
+your root `CMakeLists.txt` file:
 
 ```cmake
 if((${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
-  if((${CMAKE_CXX_COMPILER_VERSION} VERSION_EQUAL 10) OR
-     (${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 10))
-      set(ENABLE_COVERAGE_WITH_LLVM TRUE CACHE BOOL
-          "Enable testing coverage  Llvm tools")
-    endif()
+  if((${CMAKE_CXX_COMPILER_VERSION} VERSION_EQUAL 11) OR
+     (${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 11))
+      set(EXPOSE_COVERAGE_TARGET TRUE CACHE BOOL
+        "A 'coverage' target will be created and can be used to create a `coverage.json` file containing coverage information in the build tree directory.")
+  endif()
 endif()
+
+subdirs("coverage")
 ```
 
-Once the cache variable is defined, you can at ease enable or disable the
-code instrumentation aiming to provide coverage reports by modifying the
-value stored in the `ENABLE_COVERAGE_WITH_LLVM` cache variable.
+### Second step: The `coverage` sub-directory
 
-### Test suite coverage target
+The purpose is to create this sub-directory that will contain a single
+`CMakeLists.txt` file. This file will expose a `coverage` target responsible for
+generating a `coverage.json` file, that will contain all coverage information
+for your code that is covered by one or several suites of tests (or not, though
+not recommended at all :) ).
 
-Given a test suite sub directory, one way to proceed is to create a special
-target aiming to generate precise coverage information in a json file :
+Following is the content to put within the `CMakeLists.txt` file specifically
+suited for this project template. By your side, you may have to modify this
+content, depending on the structure, the complexity and various other factors of
+your project but it should be quite simple as you'll see:
 
 ```cmake
-# given conditional coverage reporting is enabled
-if(${ENABLE_COVERAGE_WITH_LLVM})
+if(${EXPOSE_COVERAGE_TARGET})
   # specific flags to build the covered project. Enable source based Coverage
   # see:
-  # https://releases.llvm.org/10.0.0/tools/clang/docs/SourceBasedCodeCoverage.html
+  # https://releases.llvm.org/11.0.0/tools/clang/docs/SourceBasedCodeCoverage.html
   target_compile_options(Lib PRIVATE
                          -fprofile-instr-generate -fcoverage-mapping)
-  target_link_options(Tests PRIVATE
-                       -fprofile-instr-generate -fcoverage-mapping)
+  target_link_options(Lib PRIVATE
+                      -fprofile-instr-generate -fcoverage-mapping)
 
   # Useful variables used later, specific to llvm tools path and output
   # directory
   get_filename_component(llvmBinPath ${CMAKE_CXX_COMPILER} DIRECTORY)
   set(llvmProfData ${llvmBinPath}/llvm-profdata)
   set(llvmCov ${llvmBinPath}/llvm-cov)
-  get_target_property(testsBinaryDir Tests BINARY_DIR)
 
   # An internal custom command used as dependency of exposed targets to
   # generate coverage data
   add_custom_command(OUTPUT default.profdata
-                     DEPENDS .testSuite.executed
-                     COMMAND ${llvmProfData} merge -sparse
-                       ${testsBinaryDir}/default.profraw -o
-                       ${testsBinaryDir}/default.profdata)
+                     DEPENDS .testSuites.executed
+                     COMMAND ${llvmProfData}
+                       ARGS merge 
+                       -sparse
+                       $<TARGET_NAME_IF_EXISTS:Tests>.profraw
+                       -o default.profdata)
 
   # An internal command used as dependency for exposed targets. Ensures that
-  # the test suite has been executed with latest modifications and latest
+  # test suites have been executed with latest modifications and latest
   # coverage data.
-  add_custom_command(OUTPUT .testSuite.executed
-                     DEPENDS Lib Tests
+  add_custom_command(OUTPUT .testSuites.executed
+                     DEPENDS
+                       Lib Tests
+                     COMMAND ${CMAKE_COMMAND}
+                       ARGS -E copy $<TARGET_FILE:Lib> $<TARGET_FILE_DIR:Tests>
                      COMMAND $<TARGET_FILE:Tests>
                      COMMAND ${CMAKE_COMMAND}
-                     ARGS -E touch .testSuite.executed)
+                       ARGS -E rename default.profraw $<TARGET_NAME_IF_EXISTS:Tests>.profraw
+                     COMMAND ${CMAKE_COMMAND}
+                       ARGS -E touch .testSuites.executed
+                     VERBATIM
+                     USES_TERMINAL)
 
   # A target to generate detailed coverage information in json format. To get
-  # help on how to exploit it, see:
+  # a grab on ow it is structured, see:
   # https://stackoverflow.com/questions/56013927/how-to-read-llvm-cov-json-format
   # https://llvm.org/doxygen/structllvm_1_1coverage_1_1CoverageSegment.html
   # https://llvm.org/doxygen/structllvm_1_1coverage_1_1CounterMappingRegion.html
+  # https://github.com/llvm/llvm-project/blob/aa4e6a609acdd00e06b54f525054bd5cf3624f0f/llvm/tools/llvm-cov/CoverageExporterJson.cpp#L15
   add_custom_target(coverage
                     DEPENDS coverage.json)
 
@@ -166,13 +236,24 @@ if(${ENABLE_COVERAGE_WITH_LLVM})
   # file
   add_custom_command(OUTPUT coverage.json
                      DEPENDS default.profdata
-                     COMMAND ${llvmCov} export --format=text
-                       $<TARGET_FILE:Tests>
-                       --instr-profile=${testsBinaryDir}/default.profdata
-                       > ${testsBinaryDir}/coverage.json
-                       VERBATIM)
+                     COMMAND ${llvmCov}
+                       ARGS export --format=text
+                       --object=$<TARGET_FILE:Lib>
+                       --instr-profile=default.profdata
+                       > coverage.json
+                     VERBATIM
+                     USES_TERMINAL)
 endif()
 ```
+
+The main thing to notice here is how are used both `Lib` and `Tests` targets.
+
+If you want to see a more elaborate though simple example, you can take a look
+in the integration test suite data of this extension in
+`tests/suites/integration/data/workspace` folder. In summary, there are 2 shared
+libraries (the production code) and 2 suites of tests demonstrating the creation
+of a single file containing all coverage information the extension need to
+report.
 
 ## Known Issues
 

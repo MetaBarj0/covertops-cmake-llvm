@@ -1,22 +1,24 @@
 {
-  "name": "cmake-llvm-coverage",
-  "displayName": "Source code coverage using cmake and Llvm compiler infrastructure.",
-  "description": "Visual code coverage indicators for source code files using Llvm and cmake capabilities.",
+  "name": "cov-cmake-llvm",
+  "displayName": "Cov (with cmake and llvm flavour).",
+  "description": "Get a precise report of uncovered regions of your code handled by cmake and the llvm as easy as hello world!",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.56.0"
   },
   "categories": [
     "Programming Languages",
-    "Linters"
+    "Linters",
+    "Testing",
+    "Visualization"
   ],
   "publisher": "SbastienLevy",
-  "homepage": "https://github.com/MetaBarj0/cmake-llvm-coverage",
+  "homepage": "https://github.com/MetaBarj0/cov-cmake-llvm",
   "repository": {
-    "url": "https://github.com/MetaBarj0/cmake-llvm-coverage"
+    "url": "https://github.com/MetaBarj0/cov-cmake-llvm"
   },
   "bugs": {
-    "url": "https://github.com/MetaBarj0/cmake-llvm-coverage/issues"
+    "url": "https://github.com/MetaBarj0/cov-cmake-llvm/issues"
   },
   "keywords": [
     "cmake",
@@ -30,50 +32,50 @@
     "lint"
   ],
   "activationEvents": [
-    "onCommand:cmake-llvm-coverage.displayMissingCoverage"
+    "onCommand:cov-cmake-llvm.reportUncoveredCodeRegionsInFile"
   ],
   "main": "./dist/main.js",
   "contributes": {
     "configuration": [
       {
-        "title": "Cmake-llvm-coverage",
+        "title": "Cov-Cmake-llvm",
         "properties": {
-          "cmake-llvm-coverage.cmakeCommand": {
+          "cov-cmake-llvm.cmakeCommand": {
             "type": "string",
             "default": "cmake",
             "minLength": 1,
             "scope": "window",
-            "description": "The command to invoke cmake. May be an absolute path on the file system or just `cmake` if this latter is in your `$PATH` environment variable."
+            "description": "The command to invoke the build system generator (cmake). May be an absolute path on the file system or just `cmake` if this latter is in your `$PATH` environment variable."
           },
-          "cmake-llvm-coverage.buildTreeDirectory": {
+          "cov-cmake-llvm.buildTreeDirectory": {
             "type": "string",
             "default": "build",
             "minLength": 1,
             "scope": "window",
-            "description": "The build tree root directory of your cmake project, relative to your workspace directory."
+            "description": "The build tree root directory of your project, relative to your workspace directory. Designed to be the target of the output of the build system generator."
           },
-          "cmake-llvm-coverage.cmakeTarget": {
+          "cov-cmake-llvm.cmakeTarget": {
             "type": "string",
             "default": "coverage",
             "minLength": 1,
             "scope": "window",
-            "description": "The target that generates coverage information in json format files. Those files may be generated in the build directory specified in the `Build Tree Directory` setting. The specified target must exist."
+            "description": "The target that generates coverage information in a json format file. This file may be generated in the build directory specified in the `Build Tree Directory` setting. The specified target must exist."
           },
-          "cmake-llvm-coverage.coverageInfoFileName": {
+          "cov-cmake-llvm.coverageInfoFileName": {
             "type": "string",
             "default": "coverage.json",
             "minLength": 1,
             "scope": "window",
-            "description": "The name of the json file containing coverage information. This file will be searched within the `buildTreeDirectory` hierarchy. This file must be unique."
+            "description": "The name of the json file containing coverage information. This file will be searched within the `buildTreeDirectory` hierarchy. This file must exist and be unique."
           },
-          "cmake-llvm-coverage.additionalCmakeOptions": {
+          "cov-cmake-llvm.additionalCmakeOptions": {
             "type": "array",
             "items": {
               "type": "string",
               "minLength": 1
             },
             "scope": "window",
-            "description": "Additional options to pass to cmake, for instance, variable definitions indicating which compiler to use, preprocessor defines, etc."
+            "description": "Additional options to pass to build system generator (cmake), for instance, variable definitions indicating which compiler / generator to use, preprocessor defines, etc."
           }
         }
       }
@@ -83,26 +85,26 @@
         {
           "when": "resourceLangId == cpp",
           "group": "navigation",
-          "command": "cmake-llvm-coverage.displayMissingCoverage"
+          "command": "cov-cmake-llvm.reportUncoveredCodeRegionsInFile"
         }
       ],
       "commandPalette": [
         {
           "when": "resourceLangId == cpp",
-          "command": "cmake-llvm-coverage.displayMissingCoverage"
+          "command": "cov-cmake-llvm.reportUncoveredCodeRegionsInFile"
         }
       ]
     },
     "commands": [
       {
-        "command": "cmake-llvm-coverage.displayMissingCoverage",
+        "command": "cov-cmake-llvm.reportUncoveredCodeRegionsInFile",
         "title": "Display uncovered code regions",
         "enablement": "resourceLangId == cpp"
       }
     ],
     "colors": [
       {
-        "id": "cmakeLlvmCoverage.uncoveredCodeRegionBackground",
+        "id": "covCmakeLlvm.uncoveredCodeRegionBackground",
         "description": "Background decoration for an uncovered code region",
         "defaults": {
           "dark": "#FF000055",
