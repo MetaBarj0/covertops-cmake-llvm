@@ -6,7 +6,7 @@ chai.use(chaiAsPromised);
 chai.should();
 
 import * as definitions from '../../../src/definitions';
-import { CoverageInfoFileResolver } from '../../../src/domain/services/coverage-info-file-resolver';
+import * as CoverageInfoFileResolver from '../../../src/domain/services/internal/coverage-info-file-resolver';
 
 import { glob as g, workspace as w } from '../../builders/fake-adapters';
 
@@ -15,7 +15,7 @@ describe('the behavior of the coverage info file resolving internal service', ()
     const workspace = w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const globSearch = g.buildFakeGlobSearchForNoMatch();
 
-    const resolver = new CoverageInfoFileResolver(workspace, globSearch);
+    const resolver = CoverageInfoFileResolver.make({ workspace, globSearch });
 
     return resolver.resolveCoverageInfoFileFullPath().should.eventually.be.rejectedWith(
       'Cannot resolve the coverage info file path in the build tree directory. ' +
@@ -29,7 +29,7 @@ describe('the behavior of the coverage info file resolving internal service', ()
     const workspace = w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const globSearch = g.buildFakeGlobSearchForSeveralMatch();
 
-    const resolver = new CoverageInfoFileResolver(workspace, globSearch);
+    const resolver = CoverageInfoFileResolver.make({ workspace, globSearch });
 
     return resolver.resolveCoverageInfoFileFullPath().should.eventually.be.rejectedWith(
       'More than one coverage information file have been found in the build tree directory. ' +
@@ -43,7 +43,7 @@ describe('the behavior of the coverage info file resolving internal service', ()
     const workspace = w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const globSearch = g.buildFakeGlobSearchForExactlyOneMatch();
 
-    const resolver = new CoverageInfoFileResolver(workspace, globSearch);
+    const resolver = CoverageInfoFileResolver.make({ workspace, globSearch });
 
     return resolver.resolveCoverageInfoFileFullPath().should.eventually.be.fulfilled;
   });

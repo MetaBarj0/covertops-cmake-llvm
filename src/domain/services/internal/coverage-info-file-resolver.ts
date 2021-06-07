@@ -1,5 +1,5 @@
-import * as definitions from '../../definitions';
-import * as SettingsProvider from './internal/settings-provider';
+import * as definitions from '../../../definitions';
+import * as SettingsProvider from './settings-provider';
 
 import path = require('path');
 
@@ -7,10 +7,19 @@ export type GlobSearchLike = {
   search(pattern: string): Promise<ReadonlyArray<string>>;
 };
 
-export class CoverageInfoFileResolver {
-  constructor(workspace: SettingsProvider.VscodeWorkspaceLike, globSearch: GlobSearchLike) {
-    this.globSearch = globSearch;
-    this.workspace = workspace;
+export function make(adapters: Adapters) {
+  return new CoverageInfoFileResolver(adapters);
+}
+
+type Adapters = {
+  workspace: SettingsProvider.VscodeWorkspaceLike,
+  globSearch: GlobSearchLike
+};
+
+class CoverageInfoFileResolver {
+  constructor(adapters: Adapters) {
+    this.globSearch = adapters.globSearch;
+    this.workspace = adapters.workspace;
   }
 
   async resolveCoverageInfoFileFullPath(): Promise<void> {

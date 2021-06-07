@@ -3,7 +3,7 @@ import * as SettingsProvider from '../../src/domain/services/internal/settings-p
 import * as BuildSystemGenerator from '../../src/domain/services/internal/build-system-generator';
 import * as BuildTreeDirectoryResolver from '../../src/domain/services/internal/build-tree-directory-resolver';
 import { Settings } from '../../src/domain/value-objects/settings';
-import { GlobSearchLike } from '../../src/domain/services/coverage-info-file-resolver';
+import * as CoverageInfoFileResolver from '../../src/domain/services/internal/coverage-info-file-resolver';
 import * as CoverageInfoCollector from '../../src/domain/services/internal/coverage-info-collector';
 
 import * as path from 'path';
@@ -215,7 +215,7 @@ export namespace statFile {
 
 export namespace glob {
   export function buildFakeGlobSearchForNoMatch() {
-    return new class implements GlobSearchLike {
+    return new class implements CoverageInfoFileResolver.GlobSearchLike {
       search(_pattern: string) {
         return Promise.resolve([]);
       }
@@ -223,7 +223,7 @@ export namespace glob {
   }
 
   export function buildFakeGlobSearchForSeveralMatch() {
-    return new class implements GlobSearchLike {
+    return new class implements CoverageInfoFileResolver.GlobSearchLike {
       search(_pattern: string) {
         return Promise.resolve(['', '']);
       }
@@ -231,7 +231,7 @@ export namespace glob {
   }
 
   export function buildFakeGlobSearchForExactlyOneMatch() {
-    return new class implements GlobSearchLike {
+    return new class implements CoverageInfoFileResolver.GlobSearchLike {
       search(_pattern: string) {
         return Promise.resolve(['oneMatchShow']);
       }
