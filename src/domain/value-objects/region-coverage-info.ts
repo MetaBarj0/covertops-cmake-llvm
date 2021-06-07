@@ -1,4 +1,3 @@
-// TODO: use namespaces
 export enum RegionKind { normal, other }
 
 export type RawLLVMRegionCoverageInfo = [number, number, number, number, number, number, number, number];

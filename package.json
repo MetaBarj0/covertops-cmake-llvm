@@ -32,7 +32,7 @@
   "activationEvents": [
     "onCommand:cmake-llvm-coverage.displayMissingCoverage"
   ],
-  "main": "./dist/extension.js",
+  "main": "./dist/main.js",
   "contributes": {
     "configuration": [
       {
