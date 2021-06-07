@@ -95,6 +95,17 @@ describe('The collection of coverage summary and uncovered code regions with a v
 
     uncoveredRegions.length.should.be.equal(1);
 
-    // TODO: continue inmplementation here with relevant assertions
+    const uncoveredRegion = uncoveredRegions[0];
+
+    uncoveredRegion.range.should.be.deep.equal({
+      start: {
+        line: 6,
+        character: 53
+      },
+      end: {
+        line: 6,
+        character: 71
+      }
+    });
   });
 });
