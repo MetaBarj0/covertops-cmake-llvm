@@ -7,7 +7,7 @@ chai.should();
 
 import { SettingsProvider } from '../../../src/domain/services/settings-provider';
 import * as BuildTreeDirectoryResolver from '../../../src/domain/services/internal/build-tree-directory-resolver';
-import { Cmake } from '../../../src/domain/services/cmake';
+import { BuildSystemGenerator } from '../../../src/domain/services/build-system-generator';
 import * as definitions from '../../../src/definitions';
 
 import * as vscode from 'vscode';
@@ -63,7 +63,7 @@ describe('The internal services can be instantiated when vscode has an active wo
 
     it('should throw when attempting to build an assumed valid specified cmake target in settings ' +
       'with an unreachable cmake command', () => {
-        const cmake = new Cmake({
+        const cmake = new BuildSystemGenerator({
           workspace: vscode.workspace,
           processForCommand: { execFile: cp.execFile },
           processForTarget: { execFile: cp.execFile }
@@ -95,7 +95,7 @@ describe('The internal services can be instantiated when vscode has an active wo
       'with a reachable cmake command', () => {
         const settings = new SettingsProvider(vscode.workspace).settings;
 
-        const cmake = new Cmake({
+        const cmake = new BuildSystemGenerator({
           workspace: vscode.workspace,
           processForCommand: { execFile: cp.execFile },
           processForTarget: { execFile: cp.execFile }
@@ -138,7 +138,7 @@ describe('The internal services can be instantiated when vscode has an active wo
       });
 
     it('should not throw when attempting to build a valid cmake target specified in settings', () => {
-      const cmake = new Cmake({
+      const cmake = new BuildSystemGenerator({
         workspace: vscode.workspace,
         processForCommand: { execFile: cp.execFile },
         processForTarget: { execFile: cp.execFile }

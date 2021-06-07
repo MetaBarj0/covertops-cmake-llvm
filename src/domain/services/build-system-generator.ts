@@ -21,28 +21,28 @@ export type ProcessLike = {
   ): ChildProcessLike;
 };
 
-type CmakeAdapters = {
+type Adapters = {
   workspace: VscodeWorkspaceLike,
   processForCommand: ProcessLike,
   processForTarget: ProcessLike
 };
 
-export class Cmake {
-  constructor(adapters: CmakeAdapters) {
+export class BuildSystemGenerator {
+  constructor(adapters: Adapters) {
     this.workspace = adapters.workspace;
     this.processForCommand = adapters.processForCommand;
     this.processForTarget = adapters.processForTarget;
   }
 
   async buildTarget(): Promise<void> {
-    await this.ensureCmakeIsReachable();
+    await this.ensureCommandIsReachable();
     await this.generate();
 
     return this.build();
   }
 
-  private ensureCmakeIsReachable(): Promise<void> {
-    return this.executeCmakeCommandWith({
+  private ensureCommandIsReachable(): Promise<void> {
+    return this.executeCommandWith({
       process: this.processForCommand,
       arguments: ['--version'],
       potentialErrorMessage:
@@ -56,7 +56,7 @@ export class Cmake {
     const build = settings.buildTreeDirectory;
     const source = settings.rootDirectory;
 
-    return this.executeCmakeCommandWith({
+    return this.executeCommandWith({
       process: this.processForTarget,
       arguments: ['-B', build, '-S', source, ...settings.additionalCmakeOptions],
       potentialErrorMessage:
@@ -70,7 +70,7 @@ export class Cmake {
     const build = settings.buildTreeDirectory;
     const target = settings.cmakeTarget;
 
-    return this.executeCmakeCommandWith({
+    return this.executeCommandWith({
       process: this.processForTarget,
       arguments: ['--build', build, '--target', target],
       potentialErrorMessage:
@@ -79,7 +79,7 @@ export class Cmake {
     });
   }
 
-  private executeCmakeCommandWith(options: { process: ProcessLike, arguments: ReadonlyArray<string>, potentialErrorMessage: string }): Promise<void> {
+  private executeCommandWith(options: { process: ProcessLike, arguments: ReadonlyArray<string>, potentialErrorMessage: string }): Promise<void> {
     return new Promise((resolve, reject) => {
       const settings = new SettingsProvider(this.workspace).settings;
       const cmakeCommand = settings.cmakeCommand;

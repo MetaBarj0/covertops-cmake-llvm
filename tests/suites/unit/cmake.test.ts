@@ -6,7 +6,7 @@ chai.use(chaiAsPromised);
 chai.should();
 
 import * as definitions from '../../../src/definitions';
-import { Cmake } from '../../../src/domain/services/cmake';
+import { BuildSystemGenerator } from '../../../src/domain/services/build-system-generator';
 
 import { workspace as w, process as p } from '../../builders/fake-adapters';
 
@@ -18,7 +18,7 @@ describe('the behavior of the cmake internal service used to build the target ' 
         const processForCommand = p.buildFakeFailingProcess();
         const processForTarget = p.buildFakeSucceedingProcess();
 
-        const cmake = new Cmake({ workspace, processForCommand, processForTarget });
+        const cmake = new BuildSystemGenerator({ workspace, processForCommand, processForTarget });
 
         return cmake.buildTarget().should.eventually.be.rejectedWith(
           `Cannot find the cmake command. Ensure the '${definitions.extensionNameInSettings}: Cmake Command' ` +
@@ -31,7 +31,7 @@ describe('the behavior of the cmake internal service used to build the target ' 
         const processForCommand = p.buildFakeSucceedingProcess();
         const processForTarget = p.buildFakeFailingProcess();
 
-        const cmake = new Cmake({ workspace, processForCommand, processForTarget });
+        const cmake = new BuildSystemGenerator({ workspace, processForCommand, processForTarget });
 
         const target = workspace.getConfiguration(definitions.extensionNameInSettings).get<string>('cmakeTarget');
 
@@ -46,7 +46,7 @@ describe('the behavior of the cmake internal service used to build the target ' 
         const processForCommand = p.buildFakeSucceedingProcess();
         const processForTarget = p.buildFakeSucceedingProcess();
 
-        const cmake = new Cmake({ workspace, processForCommand, processForTarget });
+        const cmake = new BuildSystemGenerator({ workspace, processForCommand, processForTarget });
 
         return cmake.buildTarget().should.eventually.be.fulfilled;
       });

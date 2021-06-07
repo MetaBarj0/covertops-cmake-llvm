@@ -1,6 +1,6 @@
 import { VscodeWorkspaceLike } from './settings-provider';
 import * as BuildTreeDirectoryResolver from './internal/build-tree-directory-resolver';
-import { Cmake, ProcessLike } from './cmake';
+import { BuildSystemGenerator, ProcessLike } from './build-system-generator';
 import { CoverageInfoFileResolver, GlobSearchLike } from './coverage-info-file-resolver';
 import { LLVMCoverageInfoStreamBuilder, CoverageCollector } from './coverage-info-collector';
 
@@ -34,7 +34,7 @@ export class DecorationLocationsProvider {
 
     await buildTreeDirectoryResolver.resolveAbsolutePath();
 
-    const cmake = new Cmake({
+    const cmake = new BuildSystemGenerator({
       workspace: this.workspace,
       processForCommand: this.processForCmakeCommand,
       processForTarget: this.processForCmakeTarget

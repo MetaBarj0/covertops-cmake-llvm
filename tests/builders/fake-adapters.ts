@@ -10,7 +10,7 @@ import {
   ExecFileExceptionLike,
   ExecFileOptionsLike,
   ProcessLike
-} from '../../src/domain/services/cmake';
+} from '../../src/domain/services/build-system-generator';
 
 import * as BuildTreeDirectoryResolver from '../../src/domain/services/internal/build-tree-directory-resolver';
 import { Settings } from '../../src/domain/value-objects/settings';
