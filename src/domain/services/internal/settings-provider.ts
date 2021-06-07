@@ -1,5 +1,5 @@
-import * as definitions from '../../definitions';
-import { Settings } from '../value-objects/settings';
+import * as definitions from '../../../definitions';
+import { Settings } from '../../value-objects/settings';
 
 export type VscodeUriLike = {
   readonly fsPath: string;
@@ -18,7 +18,11 @@ export type VscodeWorkspaceLike = {
   readonly getConfiguration: (section?: string | undefined) => VscodeWorkspaceConfigurationLike;
 };
 
-export class SettingsProvider {
+export function make(workspace: VscodeWorkspaceLike) {
+  return new SettingsProvider(workspace);
+}
+
+class SettingsProvider {
   constructor(workspace: VscodeWorkspaceLike) {
     this.workspace = workspace;
   }

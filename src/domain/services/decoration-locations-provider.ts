@@ -1,11 +1,11 @@
-import { VscodeWorkspaceLike } from './settings-provider';
+import * as SettingsProvider from './internal/settings-provider';
 import * as BuildTreeDirectoryResolver from './internal/build-tree-directory-resolver';
 import * as  BuildSystemGenerator from './internal/build-system-generator';
 import { CoverageInfoFileResolver, GlobSearchLike } from './coverage-info-file-resolver';
 import { LLVMCoverageInfoStreamBuilder, CoverageCollector } from './coverage-info-collector';
 
 type Adapters = {
-  workspace: VscodeWorkspaceLike,
+  workspace: SettingsProvider.VscodeWorkspaceLike,
   statFile: BuildTreeDirectoryResolver.StatFileLike,
   processForCmakeCommand: BuildSystemGenerator.ProcessLike,
   processForCmakeTarget: BuildSystemGenerator.ProcessLike,
@@ -50,7 +50,7 @@ export class DecorationLocationsProvider {
     return collector.collectFor(sourceFilePath);
   }
 
-  private readonly workspace: VscodeWorkspaceLike;
+  private readonly workspace: SettingsProvider.VscodeWorkspaceLike;
   private readonly statFile: BuildTreeDirectoryResolver.StatFileLike;
   private readonly processForCmakeCommand: BuildSystemGenerator.ProcessLike;
   private readonly processForCmakeTarget: BuildSystemGenerator.ProcessLike;

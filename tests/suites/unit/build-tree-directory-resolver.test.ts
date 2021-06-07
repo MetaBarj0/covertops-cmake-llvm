@@ -7,7 +7,7 @@ chai.should();
 
 import * as definitions from '../../../src/definitions';
 import * as BuildTreeDirectoryResolver from '../../../src/domain/services/internal/build-tree-directory-resolver';
-import { SettingsProvider } from '../../../src/domain/services/settings-provider';
+import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
 
 import { statFile as sf, fs, workspace as w } from '../../builders/fake-adapters';
 
@@ -42,7 +42,7 @@ describe('the build tree directory resolver behavior regarding the build tree di
 
   it('should resolve the full path of the build tree directory if the specified setting target an existing directory', () => {
     const workspace = w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
-    const settings = new SettingsProvider(workspace).settings;
+    const settings = SettingsProvider.make(workspace).settings;
     const statFile = sf.buildFakeSucceedingStatFile();
     const failingFs = fs.buildFakeFailingFs();
 
@@ -55,7 +55,7 @@ describe('the build tree directory resolver behavior regarding the build tree di
   it('should resolve the full path of the build tree directory if the specified setting target ' +
     'an unexisting directory that can be created', () => {
       const workspace = w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
-      const settings = new SettingsProvider(workspace).settings;
+      const settings = SettingsProvider.make(workspace).settings;
       const statFile = sf.buildFakeFailingStatFile();
       const succeedingFs = fs.buildFakeSucceedingFs();
 

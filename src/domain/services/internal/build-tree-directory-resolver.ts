@@ -1,5 +1,5 @@
 import * as definitions from '../../../definitions';
-import { VscodeWorkspaceLike, SettingsProvider } from '../settings-provider';
+import * as SettingsProvider from './settings-provider';
 
 import { BigIntStats, MakeDirectoryOptions, PathLike, StatOptions, Stats } from 'fs';
 import * as path from 'path';
@@ -16,17 +16,17 @@ export function make(adapters: Adapters) {
   return new BuildTreeDirectoryResolver(adapters);
 }
 
-type Adapters = { workspace: VscodeWorkspaceLike, statFile: StatFileLike, fs: FsLike };
+type Adapters = { workspace: SettingsProvider.VscodeWorkspaceLike, statFile: StatFileLike, fs: FsLike };
 
 class BuildTreeDirectoryResolver {
-  constructor(adapters: { workspace: VscodeWorkspaceLike, statFile: StatFileLike, fs: FsLike }) {
+  constructor(adapters: { workspace: SettingsProvider.VscodeWorkspaceLike, statFile: StatFileLike, fs: FsLike }) {
     this.workspace = adapters.workspace;
     this.statFile = adapters.statFile;
     this.fs = adapters.fs;
   }
 
   async resolveAbsolutePath() {
-    const buildTreeDirectory = new SettingsProvider(this.workspace).settings.buildTreeDirectory;
+    const buildTreeDirectory = SettingsProvider.make(this.workspace).settings.buildTreeDirectory;
 
     if (path.isAbsolute(buildTreeDirectory))
       return Promise.reject(
@@ -36,7 +36,7 @@ class BuildTreeDirectoryResolver {
   }
 
   private async statAndCreateIfNeeded(buildTreeDirectory: string) {
-    const settings = new SettingsProvider(this.workspace).settings;
+    const settings = SettingsProvider.make(this.workspace).settings;
 
     await this.stat(buildTreeDirectory)
       .catch(async _ => {
@@ -56,6 +56,6 @@ class BuildTreeDirectoryResolver {
   }
 
   private statFile: StatFileLike;
-  private workspace: VscodeWorkspaceLike;
+  private workspace: SettingsProvider.VscodeWorkspaceLike;
   private fs: FsLike;
 };

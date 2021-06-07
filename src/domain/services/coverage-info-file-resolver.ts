@@ -1,5 +1,5 @@
 import * as definitions from '../../definitions';
-import { SettingsProvider, VscodeWorkspaceLike } from './settings-provider';
+import * as SettingsProvider from './internal/settings-provider';
 
 import path = require('path');
 
@@ -8,7 +8,7 @@ export type GlobSearchLike = {
 };
 
 export class CoverageInfoFileResolver {
-  constructor(workspace: VscodeWorkspaceLike, globSearch: GlobSearchLike) {
+  constructor(workspace: SettingsProvider.VscodeWorkspaceLike, globSearch: GlobSearchLike) {
     this.globSearch = globSearch;
     this.workspace = workspace;
   }
@@ -34,12 +34,12 @@ export class CoverageInfoFileResolver {
   }
 
   private get pattern() {
-    const settings = new SettingsProvider(this.workspace).settings;
+    const settings = SettingsProvider.make(this.workspace).settings;
     const posixRootPath = settings.rootDirectory.split(path.sep).join(path.posix.sep);
 
     return `${posixRootPath}${path.posix.sep}**${path.posix.sep}${settings.coverageInfoFileName}`;
   }
 
   private readonly globSearch: GlobSearchLike;
-  private readonly workspace: VscodeWorkspaceLike;
+  private readonly workspace: SettingsProvider.VscodeWorkspaceLike;
 };

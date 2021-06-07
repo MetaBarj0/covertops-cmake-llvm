@@ -5,7 +5,7 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
-import { SettingsProvider } from '../../../src/domain/services/settings-provider';
+import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
 import * as BuildTreeDirectoryResolver from '../../../src/domain/services/internal/build-tree-directory-resolver';
 import * as BuildSystemGenerator from '../../../src/domain/services/internal/build-system-generator';
 import * as definitions from '../../../src/definitions';
@@ -18,7 +18,7 @@ import { promises as fs } from 'fs';
 
 describe('The internal services can be instantiated when vscode has an active workspace', () => {
   it('should not throw any exception when instantiating settings provider and settings should be set with default values', () => {
-    const settings = new SettingsProvider(vscode.workspace).settings;
+    const settings = SettingsProvider.make(vscode.workspace).settings;
 
     settings.buildTreeDirectory.should.be.equal('build');
     settings.cmakeCommand.should.be.equal('cmake');
@@ -93,7 +93,7 @@ describe('The internal services can be instantiated when vscode has an active wo
 
     it('should throw when attempting to build an invalid specified cmake target in settings ' +
       'with a reachable cmake command', () => {
-        const settings = new SettingsProvider(vscode.workspace).settings;
+        const settings = SettingsProvider.make(vscode.workspace).settings;
 
         const cmake = BuildSystemGenerator.make({
           workspace: vscode.workspace,

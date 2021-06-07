@@ -1,9 +1,4 @@
-import {
-  VscodeWorkspaceLike,
-  VscodeWorkspaceFolderLike,
-  VscodeUriLike,
-  VscodeWorkspaceConfigurationLike
-} from '../../src/domain/services/settings-provider';
+import * as SettingsProvider from '../../src/domain/services/internal/settings-provider';
 
 import * as BuildSystemGenerator from '../../src/domain/services/internal/build-system-generator';
 import * as BuildTreeDirectoryResolver from '../../src/domain/services/internal/build-tree-directory-resolver';
@@ -20,21 +15,21 @@ export namespace workspace {
     -readonly [k in keyof Settings]?: any
   };
 
-  export function buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(overrides: Overrides = {}): VscodeWorkspaceLike {
-    return new class implements VscodeWorkspaceLike {
+  export function buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(overrides: Overrides = {}): SettingsProvider.VscodeWorkspaceLike {
+    return new class implements SettingsProvider.VscodeWorkspaceLike {
       constructor(overrides: Overrides) {
         this.overrides = overrides;
       }
 
       workspaceFolders = [
-        new class implements VscodeWorkspaceFolderLike {
-          uri = new class implements VscodeUriLike {
+        new class implements SettingsProvider.VscodeWorkspaceFolderLike {
+          uri = new class implements SettingsProvider.VscodeUriLike {
             fsPath = path.resolve('.');
           };
         }];
 
       getConfiguration(_section?: string) {
-        return new class implements VscodeWorkspaceConfigurationLike {
+        return new class implements SettingsProvider.VscodeWorkspaceConfigurationLike {
           constructor(overrides: Overrides) {
             this.overrides = overrides;
           }
@@ -67,12 +62,12 @@ export namespace workspace {
     }(overrides);
   }
 
-  export function buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(): VscodeWorkspaceLike {
-    return new class implements VscodeWorkspaceLike {
+  export function buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(): SettingsProvider.VscodeWorkspaceLike {
+    return new class implements SettingsProvider.VscodeWorkspaceLike {
       workspaceFolders = undefined;
 
       getConfiguration(_section?: string) {
-        return new class implements VscodeWorkspaceConfigurationLike {
+        return new class implements SettingsProvider.VscodeWorkspaceConfigurationLike {
           get(_section: string) { return undefined; }
         };
       };

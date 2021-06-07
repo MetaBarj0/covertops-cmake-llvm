@@ -1,5 +1,5 @@
 import * as definitions from '../../../definitions';
-import { SettingsProvider, VscodeWorkspaceLike } from '../settings-provider';
+import * as SettingsProvider from './settings-provider';
 
 export type ExecFileExceptionLike = {
   message: string;
@@ -22,10 +22,14 @@ export type ProcessLike = {
 };
 
 type Adapters = {
-  workspace: VscodeWorkspaceLike,
+  workspace: SettingsProvider.VscodeWorkspaceLike,
   processForCommand: ProcessLike,
   processForTarget: ProcessLike
 };
+
+export function make(adapters: Adapters) {
+  return new BuildSystemGenerator(adapters);
+}
 
 class BuildSystemGenerator {
   constructor(adapters: Adapters) {
@@ -52,7 +56,7 @@ class BuildSystemGenerator {
   }
 
   private generate(): Promise<void> {
-    const settings = new SettingsProvider(this.workspace).settings;
+    const settings = SettingsProvider.make(this.workspace).settings;
     const build = settings.buildTreeDirectory;
     const source = settings.rootDirectory;
 
@@ -66,7 +70,7 @@ class BuildSystemGenerator {
   }
 
   private build(): Promise<void> {
-    const settings = new SettingsProvider(this.workspace).settings;
+    const settings = SettingsProvider.make(this.workspace).settings;
     const build = settings.buildTreeDirectory;
     const target = settings.cmakeTarget;
 
@@ -81,7 +85,7 @@ class BuildSystemGenerator {
 
   private executeCommandWith(options: { process: ProcessLike, arguments: ReadonlyArray<string>, potentialErrorMessage: string }): Promise<void> {
     return new Promise((resolve, reject) => {
-      const settings = new SettingsProvider(this.workspace).settings;
+      const settings = SettingsProvider.make(this.workspace).settings;
       const cmakeCommand = settings.cmakeCommand;
 
       options.process.execFile(
@@ -102,9 +106,5 @@ class BuildSystemGenerator {
 
   private readonly processForCommand: ProcessLike;
   private readonly processForTarget: ProcessLike;
-  private readonly workspace: VscodeWorkspaceLike;
+  private readonly workspace: SettingsProvider.VscodeWorkspaceLike;
 };
-
-export function make(adapters: Adapters) {
-  return new BuildSystemGenerator(adapters);
-}
