@@ -1,16 +1,16 @@
 import { VscodeWorkspaceLike } from './settings-provider';
-import { StatFileLike, BuildTreeDirectoryResolver, FsLike } from './build-tree-directory-resolver';
+import * as BuildTreeDirectoryResolver from './internal/build-tree-directory-resolver';
 import { Cmake, ProcessLike } from './cmake';
 import { CoverageInfoFileResolver, GlobSearchLike } from './coverage-info-file-resolver';
 import { LLVMCoverageInfoStreamBuilder, CoverageCollector } from './coverage-info-collector';
 
 type Adapters = {
   workspace: VscodeWorkspaceLike,
-  statFile: StatFileLike,
+  statFile: BuildTreeDirectoryResolver.StatFileLike,
   processForCmakeCommand: ProcessLike,
   processForCmakeTarget: ProcessLike,
   globSearch: GlobSearchLike,
-  fs: FsLike,
+  fs: BuildTreeDirectoryResolver.FsLike,
   llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder
 };
 
@@ -26,8 +26,13 @@ export class DecorationLocationsProvider {
   }
 
   async getDecorationLocationsForUncoveredCodeRegions(sourceFilePath: string) {
-    const buildTreeDirectoryResolver = new BuildTreeDirectoryResolver({ workspace: this.workspace, statFile: this.statFile, fs: this.fs });
-    await buildTreeDirectoryResolver.resolveBuildTreeDirectoryAbsolutePath();
+    const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({
+      workspace: this.workspace,
+      statFile: this.statFile,
+      fs: this.fs
+    });
+
+    await buildTreeDirectoryResolver.resolveAbsolutePath();
 
     const cmake = new Cmake({
       workspace: this.workspace,
@@ -46,10 +51,10 @@ export class DecorationLocationsProvider {
   }
 
   private readonly workspace: VscodeWorkspaceLike;
-  private readonly statFile: StatFileLike;
+  private readonly statFile: BuildTreeDirectoryResolver.StatFileLike;
   private readonly processForCmakeCommand: ProcessLike;
   private readonly processForCmakeTarget: ProcessLike;
   private readonly globSearch: GlobSearchLike;
-  private readonly fs: FsLike;
+  private readonly fs: BuildTreeDirectoryResolver.FsLike;
   private readonly llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder;
 }

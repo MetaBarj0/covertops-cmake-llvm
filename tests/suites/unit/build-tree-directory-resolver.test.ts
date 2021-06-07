@@ -6,7 +6,7 @@ chai.use(chaiAsPromised);
 chai.should();
 
 import * as definitions from '../../../src/definitions';
-import { BuildTreeDirectoryResolver } from '../../../src/domain/services/build-tree-directory-resolver';
+import * as BuildTreeDirectoryResolver from '../../../src/domain/services/internal/build-tree-directory-resolver';
 import { SettingsProvider } from '../../../src/domain/services/settings-provider';
 
 import { statFile as sf, fs, workspace as w } from '../../builders/fake-adapters';
@@ -22,9 +22,9 @@ describe('the build tree directory resolver behavior regarding the build tree di
     const statFile = sf.buildFakeFailingStatFile();
     const failingFs = fs.buildFakeFailingFs();
 
-    const resolver = new BuildTreeDirectoryResolver({ workspace, statFile, fs: failingFs });
+    const resolver = BuildTreeDirectoryResolver.make({ workspace, statFile, fs: failingFs });
 
-    return resolver.resolveBuildTreeDirectoryAbsolutePath().should.eventually.be.rejectedWith(
+    return resolver.resolveAbsolutePath().should.eventually.be.rejectedWith(
       `Incorrect absolute path specified in '${definitions.extensionNameInSettings}: Build Tree Directory'. It must be a relative path.`);
   });
 
@@ -33,9 +33,9 @@ describe('the build tree directory resolver behavior regarding the build tree di
     const statFile = sf.buildFakeFailingStatFile();
     const failingFs = fs.buildFakeFailingFs();
 
-    const resolver = new BuildTreeDirectoryResolver({ workspace, statFile, fs: failingFs });
+    const resolver = BuildTreeDirectoryResolver.make({ workspace, statFile, fs: failingFs });
 
-    return resolver.resolveBuildTreeDirectoryAbsolutePath().should.eventually.be.rejectedWith(
+    return resolver.resolveAbsolutePath().should.eventually.be.rejectedWith(
       'Cannot find or create the build tree directory. Ensure the ' +
       `'${definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`);
   });
@@ -46,9 +46,9 @@ describe('the build tree directory resolver behavior regarding the build tree di
     const statFile = sf.buildFakeSucceedingStatFile();
     const failingFs = fs.buildFakeFailingFs();
 
-    const resolver = new BuildTreeDirectoryResolver({ workspace, statFile, fs: failingFs });
+    const resolver = BuildTreeDirectoryResolver.make({ workspace, statFile, fs: failingFs });
 
-    return resolver.resolveBuildTreeDirectoryAbsolutePath().should.eventually.be.equal(
+    return resolver.resolveAbsolutePath().should.eventually.be.equal(
       `${path.join(settings.rootDirectory, settings.buildTreeDirectory)}`);
   });
 
@@ -59,9 +59,9 @@ describe('the build tree directory resolver behavior regarding the build tree di
       const statFile = sf.buildFakeFailingStatFile();
       const succeedingFs = fs.buildFakeSucceedingFs();
 
-      const resolver = new BuildTreeDirectoryResolver({ workspace, statFile, fs: succeedingFs });
+      const resolver = BuildTreeDirectoryResolver.make({ workspace, statFile, fs: succeedingFs });
 
-      return resolver.resolveBuildTreeDirectoryAbsolutePath().should.eventually.be.equal(
+      return resolver.resolveAbsolutePath().should.eventually.be.equal(
         `${path.join(settings.rootDirectory, settings.buildTreeDirectory)}`);
     });
 });

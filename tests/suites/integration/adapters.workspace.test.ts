@@ -6,7 +6,7 @@ chai.use(chaiAsPromised);
 chai.should();
 
 import { SettingsProvider } from '../../../src/domain/services/settings-provider';
-import { BuildTreeDirectoryResolver } from '../../../src/domain/services/build-tree-directory-resolver';
+import * as BuildTreeDirectoryResolver from '../../../src/domain/services/internal/build-tree-directory-resolver';
 import { Cmake } from '../../../src/domain/services/cmake';
 import * as definitions from '../../../src/definitions';
 
@@ -40,13 +40,13 @@ describe('The internal services can be instantiated when vscode has an active wo
     it('should not be possible to access the full path of the build tree directory using a ' +
       'build tree directory resolver instance set up with an invalid relative path build tree directory in settings.',
       () => {
-        const resolver = new BuildTreeDirectoryResolver({
+        const resolver = BuildTreeDirectoryResolver.make({
           workspace: vscode.workspace,
           statFile: { stat: fs.stat },
           fs: { mkdir: fs.mkdir }
         });
 
-        return resolver.resolveBuildTreeDirectoryAbsolutePath().should.eventually.be.rejectedWith(
+        return resolver.resolveAbsolutePath().should.eventually.be.rejectedWith(
           'Cannot find or create the build tree directory. Ensure the ' +
           `'${definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`);
       });
@@ -128,13 +128,13 @@ describe('The internal services can be instantiated when vscode has an active wo
     it('should be possible to access the full path of the build tree directory using a ' +
       'build tree directory resolver instance.',
       () => {
-        const resolver = new BuildTreeDirectoryResolver({
+        const resolver = BuildTreeDirectoryResolver.make({
           workspace: vscode.workspace,
           statFile: { stat: fs.stat },
           fs: { mkdir: fs.mkdir }
         });
 
-        return resolver.resolveBuildTreeDirectoryAbsolutePath().should.eventually.be.fulfilled;
+        return resolver.resolveAbsolutePath().should.eventually.be.fulfilled;
       });
 
     it('should not throw when attempting to build a valid cmake target specified in settings', () => {

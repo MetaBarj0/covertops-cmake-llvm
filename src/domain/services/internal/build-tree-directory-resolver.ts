@@ -1,5 +1,5 @@
-import * as definitions from '../../definitions';
-import { VscodeWorkspaceLike, SettingsProvider } from './settings-provider';
+import * as definitions from '../../../definitions';
+import { VscodeWorkspaceLike, SettingsProvider } from '../settings-provider';
 
 import { BigIntStats, MakeDirectoryOptions, PathLike, StatOptions, Stats } from 'fs';
 import * as path from 'path';
@@ -12,14 +12,20 @@ export type FsLike = {
   mkdir(path: PathLike, options: MakeDirectoryOptions & { recursive: true; }): Promise<string | undefined>
 };
 
-export class BuildTreeDirectoryResolver {
+export function make(adapters: Adapters) {
+  return new BuildTreeDirectoryResolver(adapters);
+}
+
+type Adapters = { workspace: VscodeWorkspaceLike, statFile: StatFileLike, fs: FsLike };
+
+class BuildTreeDirectoryResolver {
   constructor(adapters: { workspace: VscodeWorkspaceLike, statFile: StatFileLike, fs: FsLike }) {
     this.workspace = adapters.workspace;
     this.statFile = adapters.statFile;
     this.fs = adapters.fs;
   }
 
-  async resolveBuildTreeDirectoryAbsolutePath() {
+  async resolveAbsolutePath() {
     const buildTreeDirectory = new SettingsProvider(this.workspace).settings.buildTreeDirectory;
 
     if (path.isAbsolute(buildTreeDirectory))

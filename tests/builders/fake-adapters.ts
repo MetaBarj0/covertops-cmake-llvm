@@ -12,7 +12,7 @@ import {
   ProcessLike
 } from '../../src/domain/services/cmake';
 
-import { FsLike, StatFileLike } from '../../src/domain/services/build-tree-directory-resolver';
+import * as BuildTreeDirectoryResolver from '../../src/domain/services/internal/build-tree-directory-resolver';
 import { Settings } from '../../src/domain/value-objects/settings';
 import { GlobSearchLike } from '../../src/domain/services/coverage-info-file-resolver';
 import { LLVMCoverageInfoStreamBuilder } from '../../src/domain/services/coverage-info-collector';
@@ -206,7 +206,7 @@ export namespace stream {
 
 export namespace statFile {
   export function buildFakeFailingStatFile() {
-    return new class implements StatFileLike {
+    return new class implements BuildTreeDirectoryResolver.StatFileLike {
       stat(_path: PathLike, _opts?: StatOptions): Promise<Stats | BigIntStats> {
         return Promise.reject();
       }
@@ -214,7 +214,7 @@ export namespace statFile {
   }
 
   export function buildFakeSucceedingStatFile() {
-    return new class implements StatFileLike {
+    return new class implements BuildTreeDirectoryResolver.StatFileLike {
       stat(_path: PathLike, _opts?: StatOptions): Promise<Stats | BigIntStats> {
         return Promise.resolve(new Stats());
       }
@@ -250,7 +250,7 @@ export namespace glob {
 
 export namespace fs {
   export function buildFakeFailingFs() {
-    return new class implements FsLike {
+    return new class implements BuildTreeDirectoryResolver.FsLike {
       mkdir(_path: PathLike, _options: MakeDirectoryOptions & { recursive: true; }): Promise<string | undefined> {
         return Promise.reject();
       }
@@ -258,7 +258,7 @@ export namespace fs {
   }
 
   export function buildFakeSucceedingFs() {
-    return new class implements FsLike {
+    return new class implements BuildTreeDirectoryResolver.FsLike {
       mkdir(_path: PathLike, _options: MakeDirectoryOptions & { recursive: true; }): Promise<string | undefined> {
         return Promise.resolve('/build/tree/directory');
       }
