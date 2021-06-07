@@ -5,7 +5,7 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
-import { extensionName } from '../../../src/extension-name';
+import { extensionId } from '../../../src/definitions';
 import { BuildTreeDirectoryResolver } from '../../../src/domain/services/build-tree-directory-resolver';
 import { SettingsProvider } from '../../../src/domain/services/settings-provider';
 
@@ -25,7 +25,7 @@ describe('the build tree directory resolver behavior regarding the build tree di
     const resolver = new BuildTreeDirectoryResolver({ workspace, statFile, fs: failingFs });
 
     return resolver.resolveBuildTreeDirectoryAbsolutePath().should.eventually.be.rejectedWith(
-      `Incorrect absolute path specified in '${extensionName}: Build Tree Directory'. It must be a relative path.`);
+      `Incorrect absolute path specified in '${extensionId}: Build Tree Directory'. It must be a relative path.`);
   });
 
   it('should fail to resolve if specified relative path target does not exist and cannot be created', () => {
@@ -37,7 +37,7 @@ describe('the build tree directory resolver behavior regarding the build tree di
 
     return resolver.resolveBuildTreeDirectoryAbsolutePath().should.eventually.be.rejectedWith(
       'Cannot find or create the build tree directory. Ensure the ' +
-      `'${extensionName}: Build Tree Directory' setting is a valid relative path.`);
+      `'${extensionId}: Build Tree Directory' setting is a valid relative path.`);
   });
 
   it('should resolve the full path of the build tree directory if the specified setting target an existing directory', () => {

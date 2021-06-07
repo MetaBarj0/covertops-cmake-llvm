@@ -1,4 +1,4 @@
-import { extensionName } from '../../extension-name';
+import { extensionId } from '../../definitions';
 import { CoverageSummary } from '../value-objects/coverage-summary';
 import { RawLLVMRegionCoverageInfo, RegionCoverageInfo } from '../value-objects/region-coverage-info';
 
@@ -25,7 +25,7 @@ export class CoverageCollector {
     'Invalid coverage information file have been found in the build tree directory. ' +
     'Coverage information file must contain llvm coverage report in json format. ' +
     'Ensure that both ' +
-    `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
+    `'${extensionId}: Build Tree Directory' and '${extensionId}: Coverage Info File Name' ` +
     'settings are correctly set.';
 
   private readonly llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder;

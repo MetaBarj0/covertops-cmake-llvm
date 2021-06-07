@@ -1,4 +1,4 @@
-import { extensionName } from '../../extension-name';
+import { extensionId } from '../../definitions';
 import { SettingsProvider, VscodeWorkspaceLike } from './settings-provider';
 
 import path = require('path');
@@ -20,14 +20,14 @@ export class CoverageInfoFileResolver {
       return Promise.reject(
         'Cannot resolve the coverage info file path in the build tree directory. ' +
         'Ensure that both ' +
-        `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
+        `'${extensionId}: Build Tree Directory' and '${extensionId}: Coverage Info File Name' ` +
         'settings are correctly set.');
 
     if (searchResult.length > 1)
       return Promise.reject(
         'More than one coverage information file have been found in the build tree directory. ' +
         'Ensure that both ' +
-        `'${extensionName}: Build Tree Directory' and '${extensionName}: Coverage Info File Name' ` +
+        `'${extensionId}: Build Tree Directory' and '${extensionId}: Coverage Info File Name' ` +
         'settings are correctly set.');
   }
 

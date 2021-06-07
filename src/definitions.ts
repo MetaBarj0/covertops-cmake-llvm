@@ -1,0 +1,1 @@
+export const extensionId = "cmake-llvm-coverage";

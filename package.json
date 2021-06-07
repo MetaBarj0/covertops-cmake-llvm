@@ -4,7 +4,7 @@
   "description": "Visual code coverage indicators for source code files using Llvm and cmake capabilities.",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.55.0"
+    "vscode": "^1.56.0"
   },
   "categories": [
     "Programming Languages",

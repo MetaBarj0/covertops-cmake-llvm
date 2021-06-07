@@ -1,4 +1,4 @@
-import { extensionName } from '../../extension-name';
+import { extensionId } from '../../definitions';
 import { VscodeWorkspaceLike, SettingsProvider } from './settings-provider';
 
 import { BigIntStats, MakeDirectoryOptions, PathLike, StatOptions, Stats } from 'fs';
@@ -24,7 +24,7 @@ export class BuildTreeDirectoryResolver {
 
     if (path.isAbsolute(buildTreeDirectory))
       return Promise.reject(
-        `Incorrect absolute path specified in '${extensionName}: Build Tree Directory'. It must be a relative path.`);
+        `Incorrect absolute path specified in '${extensionId}: Build Tree Directory'. It must be a relative path.`);
 
     return await this.statAndCreateIfNeeded(buildTreeDirectory);
   }
@@ -38,7 +38,7 @@ export class BuildTreeDirectoryResolver {
           .catch(_ => {
             return Promise.reject(
               'Cannot find or create the build tree directory. Ensure the ' +
-              `'${extensionName}: Build Tree Directory' setting is a valid relative path.`);
+              `'${extensionId}: Build Tree Directory' setting is a valid relative path.`);
           });
       });
 
