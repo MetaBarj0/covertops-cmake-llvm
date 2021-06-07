@@ -22,7 +22,7 @@ class CoverageInfoCollector {
   }
 
   collectFor(sourceFilePath: string): CoverageInfo {
-    return new CoverageInfo(this.llvmCoverageInfoStreamBuilder.makeLLVMCoverageInfoStream(), sourceFilePath);
+    return new CoverageInfo(this.llvmCoverageInfoStreamBuilder, sourceFilePath);
   }
 
   static readonly invalidInputReadableStreamMessage =
@@ -37,8 +37,8 @@ class CoverageInfoCollector {
 };
 
 class CoverageInfo {
-  constructor(stream: Readable, sourceFilePath: string) {
-    this.stream = stream;
+  constructor(llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder, sourceFilePath: string) {
+    this.llvmCoverageInfoStreamBuilder = llvmCoverageInfoStreamBuilder;
     this.sourceFilePath = sourceFilePath;
   }
 
@@ -104,7 +104,7 @@ class CoverageInfo {
 
   private extendBasicPipelineWith(fn: (dataItem: any) => any) {
     return chain([
-      this.stream,
+      this.llvmCoverageInfoStreamBuilder.makeLLVMCoverageInfoStream(),
       parser({ streamValues: true }),
       pick({ filter: 'data' }),
       streamArray(),
@@ -112,7 +112,7 @@ class CoverageInfo {
     ]);
   }
 
-  private readonly stream: Readable;
+  private readonly llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder;
   private readonly sourceFilePath: string;
 };
 

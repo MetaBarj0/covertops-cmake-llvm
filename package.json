@@ -171,7 +171,9 @@
     "webpack-cli": "^4.7.1"
   },
   "dependencies": {
+    "@types/globby": "^9.1.0",
     "@types/stream-json": "^1.7.0",
+    "globby": "^11.0.3",
     "stream-json": "^1.7.1"
   }
 }

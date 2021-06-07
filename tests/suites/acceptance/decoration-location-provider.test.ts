@@ -7,6 +7,7 @@ chai.should();
 
 import * as definitions from '../../../src/definitions';
 import { DecorationLocationsProvider } from '../../../src/domain/services/decoration-locations-provider';
+import { RegionCoverageInfo } from '../../../src/domain/value-objects/region-coverage-info';
 
 import {
   process as p,
@@ -133,8 +134,8 @@ describe('DecorationLocationProvider service behavior.', () => {
         'settings are correctly set.');
     });
 
-  describe.skip('the behavior of the coverage info collection with valid minimal json document', () => {
-    it('should succed to collect coverage information for the requested file', () => {
+  describe('the behavior of the coverage info collection with valid minimal json document', () => {
+    it('should succed to collect coverage information for the requested file', async () => {
       const provider = new DecorationLocationsProvider({
         workspace: w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
         statFile: sf.buildFakeSucceedingStatFile(),
@@ -145,8 +146,32 @@ describe('DecorationLocationProvider service behavior.', () => {
         llvmCoverageInfoStreamBuilder: s.buildFakeStreamBuilder(s.buildValidLlvmCoverageJsonObjectStream)
       });
 
-      return provider.getDecorationLocationsForUncoveredCodeRegions('/a/source/file.cpp')
-        .should.eventually.be.not.null;
+      const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions('/a/source/file.cpp');
+
+      const uncoveredRegions: Array<RegionCoverageInfo> = [];
+      for await (const region of decorations.uncoveredRegions())
+        uncoveredRegions.push(region);
+
+      const summary = await decorations.summary;
+
+      summary.should.be.deep.equal({
+        count: 2,
+        covered: 2,
+        notCovered: 0,
+        percent: 100
+      });
+
+      uncoveredRegions.length.should.be.equal(1);
+      uncoveredRegions[0].range.should.be.deep.equal({
+        start: {
+          line: 6,
+          character: 53
+        },
+        end: {
+          line: 6,
+          character: 71
+        }
+      });
     });
   });
 });
