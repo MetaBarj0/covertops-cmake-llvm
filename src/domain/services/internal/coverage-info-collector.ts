@@ -100,15 +100,23 @@ class CoverageInfo {
   }
 
   private preparePipelineForRegionCoverageInfo() {
-    return this.extendBasicPipelineWith(dataItem => {
+    const self = this;
+
+    return this.extendBasicPipelineWith(function* (dataItem) {
       if (dataItem.key !== 0)
         return null;
 
       const functions = dataItem.value.functions;
 
-      const fn = functions.find((f: { filenames: ReadonlyArray<string> }) => f.filenames[0] === this.sourceFilePath);
+      const functionsForSourceFilePath = functions.filter((f: { filenames: ReadonlyArray<string> }) => f.filenames[0] === self.sourceFilePath);
 
-      return fn?.regions;
+      // TODO: find out a way to get rid of any?
+      const regionsForSourceFilePath = functionsForSourceFilePath.map((fn: any) => fn.regions);
+
+      for (const region of regionsForSourceFilePath)
+        yield region;
+
+      return null;
     });
   }
 
@@ -119,6 +127,7 @@ class CoverageInfo {
 
       const files = dataItem.value.files;
 
+      // TODO: find out a way to get rid of any?
       return files.find((file: any) => file.filename === this.sourceFilePath);
     });
   }

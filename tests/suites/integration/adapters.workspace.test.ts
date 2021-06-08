@@ -202,6 +202,49 @@ describe('Nominal cases with real world adapters.', () => {
     uncoveredRegions.length.should.be.equal(0);
   });
 
+  it('should report correct coverage information for a specific file that is partially covered', async () => {
+    // TODO: factories for test entrypoints (and later applicative entry points)
+    const provider = new DecorationLocationsProvider({
+      workspace: vscode.workspace,
+      statFile: { stat: fs.stat },
+      processForCmakeCommand: { execFile: cp.execFile },
+      processForCmakeTarget: { execFile: cp.execFile },
+      globSearch: { search: globby },
+      fs: { mkdir: fs.mkdir },
+      llvmCoverageInfoStreamBuilder: { createStream: createReadStream }
+    });
+
+    const sourceFilePath = createAbsoluteSourceFilePathFrom('partiallyCovered/partiallyCoveredLib.cpp');
+
+    const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions(sourceFilePath);
+
+    // TODO refacto this in proper function exposing object with now awaitable stuff
+    const summary = await decorations.summary;
+
+    const uncoveredRegions: Array<RegionCoverageInfo> = [];
+    for await (const region of decorations.uncoveredRegions())
+      uncoveredRegions.push(region);
+
+    summary.should.be.deep.equal({
+      count: 2,
+      covered: 1,
+      notCovered: 1,
+      percent: 50
+    });
+
+    uncoveredRegions.length.should.be.equal(1);
+    uncoveredRegions[0].range.should.be.deep.equal({
+      start: {
+        line: 6,
+        character: 53
+      },
+      end: {
+        line: 6,
+        character: 71
+      }
+    });
+  });
+
   after('restoring additional cmake command options and PATH environment variable', async () => {
     await extensionConfiguration.update('additionalCmakeOptions', []);
 
