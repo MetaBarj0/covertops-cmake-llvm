@@ -36,8 +36,6 @@ class BuildTreeDirectoryResolver {
   }
 
   private async statAndCreateIfNeeded(buildTreeDirectory: string) {
-    const settings = SettingsProvider.make(this.workspace).settings;
-
     await this.stat(buildTreeDirectory)
       .catch(async _ => {
         await this.fs.mkdir(buildTreeDirectory, { recursive: true })
@@ -47,9 +45,6 @@ class BuildTreeDirectoryResolver {
               `'${definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`);
           });
       });
-
-    // TODO: refacto this value is never used outside of a test case
-    return `${path.join(settings.rootDirectory, settings.buildTreeDirectory)}`;
   }
 
   private async stat(buildTreeDirectory: string) {
