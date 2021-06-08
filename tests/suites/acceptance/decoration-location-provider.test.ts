@@ -28,7 +28,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         processForCmakeTarget: p.buildFakeFailingProcess(),
         globSearch: g.buildFakeGlobSearchForNoMatch(),
         fs: fs.buildFakeFailingFs(),
-        llvmCoverageInfoStreamBuilder: s.buildFakeStreamBuilder(s.buildEmptyReadableStream),
+        llvmCoverageInfoStreamFactoryBuilder: s.buildFakeStreamBuilder(s.buildEmptyReadableStream),
       });
     };
 
@@ -45,7 +45,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         processForCmakeTarget: p.buildFakeFailingProcess(),
         globSearch: g.buildFakeGlobSearchForNoMatch(),
         fs: fs.buildFakeFailingFs(),
-        llvmCoverageInfoStreamBuilder: s.buildFakeStreamBuilder(s.buildEmptyReadableStream),
+        llvmCoverageInfoStreamFactoryBuilder: s.buildFakeStreamBuilder(s.buildEmptyReadableStream),
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
@@ -63,7 +63,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         processForCmakeTarget: p.buildFakeFailingProcess(),
         globSearch: g.buildFakeGlobSearchForNoMatch(),
         fs: fs.buildFakeFailingFs(),
-        llvmCoverageInfoStreamBuilder: s.buildFakeStreamBuilder(s.buildEmptyReadableStream),
+        llvmCoverageInfoStreamFactoryBuilder: s.buildFakeStreamBuilder(s.buildEmptyReadableStream),
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
@@ -85,7 +85,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         processForCmakeTarget: p.buildFakeFailingProcess(),
         globSearch: g.buildFakeGlobSearchForNoMatch(),
         fs: fs.buildFakeFailingFs(),
-        llvmCoverageInfoStreamBuilder: s.buildFakeStreamBuilder(s.buildEmptyReadableStream),
+        llvmCoverageInfoStreamFactoryBuilder: s.buildFakeStreamBuilder(s.buildEmptyReadableStream),
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
@@ -103,7 +103,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         processForCmakeTarget: p.buildFakeSucceedingProcess(),
         globSearch: g.buildFakeGlobSearchForNoMatch(),
         fs: fs.buildFakeFailingFs(),
-        llvmCoverageInfoStreamBuilder: s.buildFakeStreamBuilder(s.buildEmptyReadableStream),
+        llvmCoverageInfoStreamFactoryBuilder: s.buildFakeStreamBuilder(s.buildEmptyReadableStream),
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
@@ -123,7 +123,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         processForCmakeTarget: p.buildFakeSucceedingProcess(),
         globSearch: g.buildFakeGlobSearchForSeveralMatch(),
         fs: fs.buildFakeFailingFs(),
-        llvmCoverageInfoStreamBuilder: s.buildFakeStreamBuilder(s.buildEmptyReadableStream),
+        llvmCoverageInfoStreamFactoryBuilder: s.buildFakeStreamBuilder(s.buildEmptyReadableStream),
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
@@ -143,7 +143,7 @@ describe('DecorationLocationProvider service behavior.', () => {
         processForCmakeTarget: p.buildFakeSucceedingProcess(),
         globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
         fs: fs.buildFakeSucceedingFs(),
-        llvmCoverageInfoStreamBuilder: s.buildFakeStreamBuilder(s.buildValidLlvmCoverageJsonObjectStream)
+        llvmCoverageInfoStreamFactoryBuilder: s.buildFakeStreamBuilder(s.buildValidLlvmCoverageJsonObjectStream)
       });
 
       const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions('/a/source/file.cpp');

@@ -1,4 +1,6 @@
 import * as definitions from '../../../definitions';
+import * as SettingsProvider from './settings-provider';
+import * as CoverageInfoFileResolver from './coverage-info-file-resolver';
 import { CoverageSummary } from '../../value-objects/coverage-summary';
 import { RawLLVMRegionCoverageInfo, RegionCoverageInfo } from '../../value-objects/region-coverage-info';
 
@@ -8,21 +10,28 @@ import { parser } from 'stream-json';
 import { pick } from 'stream-json/filters/Pick';
 import { streamArray } from 'stream-json/streamers/StreamArray';
 
-export type LLVMCoverageInfoStreamBuilder = {
-  makeLLVMCoverageInfoStream(): Readable;
-};
-
-export function make(llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder) {
-  return new CoverageInfoCollector(llvmCoverageInfoStreamBuilder);
+export function make(adapters: Adapters) {
+  return new CoverageInfoCollector(adapters);
 }
 
+export type LLVMCoverageInfoStreamFactoryBuilder = (path: string) => StreamFactory;
+
 class CoverageInfoCollector {
-  constructor(llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder) {
-    this.llvmCoverageInfoStreamBuilder = llvmCoverageInfoStreamBuilder;
+  constructor(adapters: Adapters) {
+    this.workspace = adapters.workspace;
+    this.globSearch = adapters.globSearch;
+    this.llvmCoverageInfoStreamFactory = adapters.llvmCoverageInfoStreamFactoryBuilder;
   }
 
-  collectFor(sourceFilePath: string): CoverageInfo {
-    return new CoverageInfo(this.llvmCoverageInfoStreamBuilder, sourceFilePath);
+  async collectFor(sourceFilePath: string) {
+    const coverageInfoFileResolver = CoverageInfoFileResolver.make({
+      workspace: this.workspace,
+      globSearch: this.globSearch
+    });
+
+    const path = await coverageInfoFileResolver.resolveCoverageInfoFileFullPath();
+
+    return new CoverageInfo(this.llvmCoverageInfoStreamFactory(path), sourceFilePath);
   }
 
   static readonly invalidInputReadableStreamMessage =
@@ -33,12 +42,22 @@ class CoverageInfoCollector {
     `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
     'settings are correctly set.';
 
-  private readonly llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder;
+  private readonly workspace: SettingsProvider.VscodeWorkspaceLike;
+  private readonly globSearch: CoverageInfoFileResolver.GlobSearchLike;
+  private readonly llvmCoverageInfoStreamFactory: LLVMCoverageInfoStreamFactoryBuilder;
 };
 
+type Adapters = {
+  workspace: SettingsProvider.VscodeWorkspaceLike,
+  globSearch: CoverageInfoFileResolver.GlobSearchLike,
+  llvmCoverageInfoStreamFactoryBuilder: LLVMCoverageInfoStreamFactoryBuilder
+};
+
+type StreamFactory = () => Readable;
+
 class CoverageInfo {
-  constructor(llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder, sourceFilePath: string) {
-    this.llvmCoverageInfoStreamBuilder = llvmCoverageInfoStreamBuilder;
+  constructor(llvmCoverageInfoStreamFactory: StreamFactory, sourceFilePath: string) {
+    this.llvmCoverageInfoStreamFactory = llvmCoverageInfoStreamFactory;
     this.sourceFilePath = sourceFilePath;
   }
 
@@ -104,7 +123,7 @@ class CoverageInfo {
 
   private extendBasicPipelineWith(fn: (dataItem: any) => any) {
     return chain([
-      this.llvmCoverageInfoStreamBuilder.makeLLVMCoverageInfoStream(),
+      this.llvmCoverageInfoStreamFactory(),
       parser({ streamValues: true }),
       pick({ filter: 'data' }),
       streamArray(),
@@ -112,7 +131,7 @@ class CoverageInfo {
     ]);
   }
 
-  private readonly llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder;
+  private readonly llvmCoverageInfoStreamFactory: StreamFactory;
   private readonly sourceFilePath: string;
 };
 

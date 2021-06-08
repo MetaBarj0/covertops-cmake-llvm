@@ -11,7 +11,7 @@ type Adapters = {
   processForCmakeTarget: BuildSystemGenerator.ProcessLike,
   globSearch: CoverageInfoFileResolver.GlobSearchLike,
   fs: BuildTreeDirectoryResolver.FsLike,
-  llvmCoverageInfoStreamBuilder: CoverageInfoCollector.LLVMCoverageInfoStreamBuilder
+  llvmCoverageInfoStreamFactoryBuilder: CoverageInfoCollector.LLVMCoverageInfoStreamFactoryBuilder
 };
 
 export class DecorationLocationsProvider {
@@ -22,7 +22,7 @@ export class DecorationLocationsProvider {
     this.processForCmakeTarget = adapters.processForCmakeTarget;
     this.globSearch = adapters.globSearch;
     this.fs = adapters.fs;
-    this.llvmCoverageInfoStreamBuilder = adapters.llvmCoverageInfoStreamBuilder;
+    this.llvmCoverageInfoStreamFactoryBuilder = adapters.llvmCoverageInfoStreamFactoryBuilder;
   }
 
   async getDecorationLocationsForUncoveredCodeRegions(sourceFilePath: string) {
@@ -49,7 +49,11 @@ export class DecorationLocationsProvider {
 
     await coverageInfoFileResolver.resolveCoverageInfoFileFullPath();
 
-    const collector = CoverageInfoCollector.make(this.llvmCoverageInfoStreamBuilder);
+    const collector = CoverageInfoCollector.make({
+      workspace: this.workspace,
+      globSearch: this.globSearch,
+      llvmCoverageInfoStreamFactoryBuilder: this.llvmCoverageInfoStreamFactoryBuilder
+    });
 
     return collector.collectFor(sourceFilePath);
   }
@@ -60,5 +64,5 @@ export class DecorationLocationsProvider {
   private readonly processForCmakeTarget: BuildSystemGenerator.ProcessLike;
   private readonly globSearch: CoverageInfoFileResolver.GlobSearchLike;
   private readonly fs: BuildTreeDirectoryResolver.FsLike;
-  private readonly llvmCoverageInfoStreamBuilder: CoverageInfoCollector.LLVMCoverageInfoStreamBuilder;
+  private readonly llvmCoverageInfoStreamFactoryBuilder: CoverageInfoCollector.LLVMCoverageInfoStreamFactoryBuilder;
 }

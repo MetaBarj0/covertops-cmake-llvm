@@ -187,11 +187,7 @@ export namespace stream {
   }
 
   export function buildFakeStreamBuilder(streamFactory: () => Readable) {
-    return new class implements CoverageInfoCollector.LLVMCoverageInfoStreamBuilder {
-      makeLLVMCoverageInfoStream() {
-        return streamFactory();
-      }
-    };
+    return (_path: string) => () => streamFactory();
   }
 }
 

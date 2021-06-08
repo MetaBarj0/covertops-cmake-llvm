@@ -48,6 +48,7 @@ class BuildTreeDirectoryResolver {
           });
       });
 
+    // TODO: refacto this value is never used outside of a test case
     return `${path.join(settings.rootDirectory, settings.buildTreeDirectory)}`;
   }
 

@@ -9,12 +9,15 @@ import * as SettingsProvider from '../../../src/domain/services/internal/setting
 import * as BuildTreeDirectoryResolver from '../../../src/domain/services/internal/build-tree-directory-resolver';
 import * as BuildSystemGenerator from '../../../src/domain/services/internal/build-system-generator';
 import * as definitions from '../../../src/definitions';
+import { RegionCoverageInfo } from '../../../src/domain/value-objects/region-coverage-info';
+import { DecorationLocationsProvider } from '../../../src/domain/services/decoration-locations-provider';
 
 import * as vscode from 'vscode';
 import { env } from 'process';
 import * as path from 'path';
 import * as cp from 'child_process';
-import { promises as fs } from 'fs';
+import { promises as fs, createReadStream } from 'fs';
+import * as globby from 'globby';
 
 describe('The internal services can be instantiated when vscode has an active workspace', () => {
   it('should not throw any exception when instantiating settings provider and settings should be set with default values', () => {
@@ -152,6 +155,53 @@ describe('The internal services can be instantiated when vscode has an active wo
 
       env['PATH'] = originalEnvPath;
     });
+  });
+});
+
+describe('The nominal case with real world adapters.', () => {
+  it('should report correct coverage information for a specific file', async () => {
+    const provider = new DecorationLocationsProvider({
+      workspace: vscode.workspace,
+      statFile: { stat: fs.stat },
+      processForCmakeCommand: { execFile: cp.execFile },
+      processForCmakeTarget: { execFile: cp.execFile },
+      globSearch: { search: globby },
+      fs: { mkdir: fs.mkdir },
+      llvmCoverageInfoStreamFactoryBuilder: (path: string) => () => createReadStream(path)
+    });
+
+    // TODO: refacto when cicd ok because contains platform specific stuff (drive letter uppercasing)
+    const relative = path.join('../../../workspace/src/fullyCovered/fullyCoveredLib.cpp');
+    const absolute = path.resolve(__dirname, relative);
+    const sourceFilePath = path.normalize(absolute);
+    const fixedSourceFilePath = `${sourceFilePath[0].toUpperCase()}${sourceFilePath.slice(1)}`;
+
+    const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions(fixedSourceFilePath);
+
+    const uncoveredRegions: Array<RegionCoverageInfo> = [];
+    for await (const region of decorations.uncoveredRegions())
+      uncoveredRegions.push(region);
+
+    const summary = await decorations.summary;
+
+    summary.should.be.deep.equal({
+      count: 2,
+      covered: 2,
+      notCovered: 0,
+      percent: 100
+    });
+
+    uncoveredRegions.length.should.be.equal(0);
+    //uncoveredRegions[0].range.should.be.deep.equal({
+    //  start: {
+    //    line: 6,
+    //    character: 53
+    //  },
+    //  end: {
+    //    line: 6,
+    //    character: 71
+    //  }
+    //});
   });
 });
 

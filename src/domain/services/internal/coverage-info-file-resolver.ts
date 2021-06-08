@@ -22,12 +22,11 @@ class CoverageInfoFileResolver {
     this.workspace = adapters.workspace;
   }
 
-  async resolveCoverageInfoFileFullPath(): Promise<void> {
+  async resolveCoverageInfoFileFullPath() {
     const searchResult = await this.globSearch.search(this.pattern);
 
     if (searchResult.length === 0)
-      return Promise.reject(
-        'Cannot resolve the coverage info file path in the build tree directory. ' +
+      throw new Error('Cannot resolve the coverage info file path in the build tree directory. ' +
         'Ensure that both ' +
         `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
         `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
@@ -40,6 +39,8 @@ class CoverageInfoFileResolver {
         `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
         `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
         'settings are correctly set.');
+
+    return searchResult[0];
   }
 
   private get pattern() {
