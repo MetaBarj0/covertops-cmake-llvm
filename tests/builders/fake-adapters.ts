@@ -176,7 +176,6 @@ export namespace stream {
                   0
                 ]
               ]
-
             }
           ]
         }

@@ -2,7 +2,12 @@ import * as definitions from '../../../definitions';
 import * as SettingsProvider from './settings-provider';
 import * as CoverageInfoFileResolver from './coverage-info-file-resolver';
 import { CoverageSummary } from '../../value-objects/coverage-summary';
-import { RawLLVMRegionCoverageInfo, RegionCoverageInfo } from '../../value-objects/region-coverage-info';
+import {
+  RawLLVMFunctionCoverageInfo,
+  RawLLVMRegionCoverageInfo,
+  RawLLVMRegionsCoverageInfo,
+  RegionCoverageInfo
+} from '../../value-objects/region-coverage-info';
 
 import { Readable } from 'stream';
 import { chain } from 'stream-chain';
@@ -110,8 +115,8 @@ class CoverageInfo {
 
       const functionsForSourceFilePath = functions.filter((f: { filenames: ReadonlyArray<string> }) => f.filenames[0] === self.sourceFilePath);
 
-      // TODO: find out a way to get rid of any?
-      const regionsForSourceFilePath = functionsForSourceFilePath.map((fn: any) => fn.regions);
+      const regionsForSourceFilePath =
+        functionsForSourceFilePath.map((fn: RawLLVMFunctionCoverageInfo) => <RawLLVMRegionsCoverageInfo>fn.regions);
 
       for (const region of regionsForSourceFilePath)
         yield region;

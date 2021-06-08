@@ -1,6 +1,11 @@
 export enum RegionKind { normal, other }
-
 export type RawLLVMRegionCoverageInfo = [number, number, number, number, number, number, number, number];
+export type RawLLVMRegionsCoverageInfo = ReadonlyArray<RawLLVMRegionCoverageInfo>;
+
+export type RawLLVMFunctionCoverageInfo = {
+  filenames: ReadonlyArray<string>,
+  regions: RawLLVMRegionsCoverageInfo
+};
 
 export class RegionCoverageInfo {
   constructor(rawLLVMRegionCoverageInfo: RawLLVMRegionCoverageInfo) {
