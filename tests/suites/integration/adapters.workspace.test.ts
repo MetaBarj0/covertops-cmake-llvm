@@ -150,46 +150,62 @@ describe('The internal services can be instantiated when vscode has an active wo
       return cmake.buildTarget().should.eventually.be.fulfilled;
     });
 
-    describe('Nominal cases with real world adapters.', () => {
-      it('should report correct coverage information for a specific file that is fully covered', async () => {
-        // TODO: factories for test entrypoints (and later applicative entry points)
-        const provider = new DecorationLocationsProvider({
-          workspace: vscode.workspace,
-          statFile: { stat: fs.stat },
-          processForCmakeCommand: { execFile: cp.execFile },
-          processForCmakeTarget: { execFile: cp.execFile },
-          globSearch: { search: globby },
-          fs: { mkdir: fs.mkdir },
-          llvmCoverageInfoStreamBuilder: { createStream: createReadStream }
-        });
-
-        const sourceFilePath = createAbsoluteSourceFilePathFrom('fullyCovered/fullyCoveredLib.cpp');
-
-        const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions(sourceFilePath);
-
-        // TODO refacto this in proper function exposing object with now awaitable stuff
-        const summary = await decorations.summary;
-
-        const uncoveredRegions: Array<RegionCoverageInfo> = [];
-        for await (const region of decorations.uncoveredRegions())
-          uncoveredRegions.push(region);
-
-        summary.should.be.deep.equal({
-          count: 2,
-          covered: 2,
-          notCovered: 0,
-          percent: 100
-        });
-
-        uncoveredRegions.length.should.be.equal(0);
-      });
-    });
-
     after('restoring additional cmake command options and PATH environment variable', async () => {
       await extensionConfiguration.update('additionalCmakeOptions', []);
 
       env['PATH'] = originalEnvPath;
     });
+  });
+});
+
+// TODO: really, reorganize test cases please
+describe('Nominal cases with real world adapters.', () => {
+  let originalEnvPath: string;
+  const extensionConfiguration = vscode.workspace.getConfiguration(definitions.extensionId);
+
+  before('Modifying additional cmake command options, PATH environment variable ', async () => {
+    await extensionConfiguration.update('additionalCmakeOptions', ['-DCMAKE_CXX_COMPILER=clang++', '-G', 'Ninja']);
+
+    originalEnvPath = prependLlvmBinDirToPathEnvironmentVariable();
+  });
+
+  it('should report correct coverage information for a specific file that is fully covered', async () => {
+    // TODO: factories for test entrypoints (and later applicative entry points)
+    const provider = new DecorationLocationsProvider({
+      workspace: vscode.workspace,
+      statFile: { stat: fs.stat },
+      processForCmakeCommand: { execFile: cp.execFile },
+      processForCmakeTarget: { execFile: cp.execFile },
+      globSearch: { search: globby },
+      fs: { mkdir: fs.mkdir },
+      llvmCoverageInfoStreamBuilder: { createStream: createReadStream }
+    });
+
+    const sourceFilePath = createAbsoluteSourceFilePathFrom('fullyCovered/fullyCoveredLib.cpp');
+
+    const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions(sourceFilePath);
+
+    // TODO refacto this in proper function exposing object with now awaitable stuff
+    const summary = await decorations.summary;
+
+    const uncoveredRegions: Array<RegionCoverageInfo> = [];
+    for await (const region of decorations.uncoveredRegions())
+      uncoveredRegions.push(region);
+
+    summary.should.be.deep.equal({
+      count: 2,
+      covered: 2,
+      notCovered: 0,
+      percent: 100
+    });
+
+    uncoveredRegions.length.should.be.equal(0);
+  });
+
+  after('restoring additional cmake command options and PATH environment variable', async () => {
+    await extensionConfiguration.update('additionalCmakeOptions', []);
+
+    env['PATH'] = originalEnvPath;
   });
 });
 
