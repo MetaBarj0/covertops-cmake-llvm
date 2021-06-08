@@ -7,6 +7,18 @@ export type RawLLVMFunctionCoverageInfo = {
   regions: RawLLVMRegionsCoverageInfo
 };
 
+export type RawLLVMFileCoverageInfo = {
+  filename: string;
+};
+
+export type RawLLVMStreamedDataItemCoverageInfo = {
+  key: number,
+  value: {
+    files: ReadonlyArray<RawLLVMFileCoverageInfo>,
+    functions: ReadonlyArray<RawLLVMFunctionCoverageInfo>
+  }
+};
+
 export class RegionCoverageInfo {
   constructor(rawLLVMRegionCoverageInfo: RawLLVMRegionCoverageInfo) {
     // https://github.com/llvm/llvm-project/blob/21c18d5a04316891110cecc2bf37ce51533decba/llvm/tools/llvm-cov/CoverageExporterJson.cpp#L87

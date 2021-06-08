@@ -12,7 +12,7 @@ import { Readable } from 'stream';
 
 export namespace workspace {
   type Overrides = {
-    -readonly [k in keyof Settings]?: any
+    -readonly [Property in keyof Settings]?: Settings[Property]
   };
 
   export function buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(overrides: Overrides = {}): SettingsProvider.VscodeWorkspaceLike {
@@ -34,9 +34,10 @@ export namespace workspace {
             this.overrides = overrides;
           }
 
+          // TODO: get rid of cast hell
           get<T>(section: keyof Settings): T | undefined {
             if (this.overrides[section] !== undefined)
-              return this.overrides[section];
+              return this.overrides[section] as unknown as T | undefined;
 
             switch (section) {
               case 'additionalCmakeOptions':
@@ -68,7 +69,7 @@ export namespace workspace {
 
       getConfiguration(_section?: string) {
         return new class implements SettingsProvider.VscodeWorkspaceConfigurationLike {
-          get(_section: string) { return undefined; }
+          get(_section: keyof Settings) { return undefined; }
         };
       };
     };

@@ -33,7 +33,7 @@ describe('the behavior of the cmake internal service used to build the target ' 
 
         const cmake = BuildSystemGenerator.make({ workspace, processForCommand, processForTarget });
 
-        const target = workspace.getConfiguration(definitions.extensionNameInSettings).get<string>('cmakeTarget');
+        const target = workspace.getConfiguration(definitions.extensionNameInSettings).get('cmakeTarget');
 
         return cmake.buildTarget().should.eventually.be.rejectedWith(
           `Error: Could not build the specified cmake target ${target}. ` +

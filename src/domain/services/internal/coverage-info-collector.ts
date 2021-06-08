@@ -2,7 +2,10 @@ import * as definitions from '../../../definitions';
 import * as SettingsProvider from './settings-provider';
 import * as CoverageInfoFileResolver from './coverage-info-file-resolver';
 import { CoverageSummary } from '../../value-objects/coverage-summary';
+
 import {
+  RawLLVMStreamedDataItemCoverageInfo,
+  RawLLVMFileCoverageInfo,
   RawLLVMFunctionCoverageInfo,
   RawLLVMRegionCoverageInfo,
   RawLLVMRegionsCoverageInfo,
@@ -132,12 +135,12 @@ class CoverageInfo {
 
       const files = dataItem.value.files;
 
-      // TODO: find out a way to get rid of any?
-      return files.find((file: any) => file.filename === this.sourceFilePath);
+      // TODO(WIP): find out a way to get rid of any?
+      return files.find((file: RawLLVMFileCoverageInfo) => file.filename === this.sourceFilePath);
     });
   }
 
-  private extendBasicPipelineWith(fn: (dataItem: any) => any) {
+  private extendBasicPipelineWith<T>(fn: (dataItem: RawLLVMStreamedDataItemCoverageInfo) => T) {
     return chain([
       this.llvmCoverageInfoStreamFactory(),
       parser({ streamValues: true }),
