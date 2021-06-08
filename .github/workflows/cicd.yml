@@ -30,15 +30,6 @@ jobs:
       - name: Install CMake
         uses: lukka/get-cmake@latest
 
-      - name: Setup vswhere
-        if: runner.os == 'Windows'
-        uses: warrenbuckley/Setup-VSWhere@v1
-
-      # TODO: try to delete this step, maybe not necessary
-      - name: Setup c++ development environment on Windows platform
-        if: runner.os == 'Windows'
-        run: vswhere -latest -find '**/vcvarsall.bat'
-
       - name: Checkout
         uses: actions/checkout@v2
         with:
