@@ -128,53 +128,6 @@ describe('The internal services can be instantiated when vscode has an active wo
       originalEnvPath = prependLlvmBinDirToPathEnvironmentVariable();
     });
 
-    describe('The nominal case with real world adapters.', () => {
-      it('should report correct coverage information for a specific file', async () => {
-        const provider = new DecorationLocationsProvider({
-          workspace: vscode.workspace,
-          statFile: { stat: fs.stat },
-          processForCmakeCommand: { execFile: cp.execFile },
-          processForCmakeTarget: { execFile: cp.execFile },
-          globSearch: { search: globby },
-          fs: { mkdir: fs.mkdir },
-          llvmCoverageInfoStreamFactoryBuilder: (path: string) => () => createReadStream(path)
-        });
-
-        // TODO: refacto when cicd ok because contains platform specific stuff (drive letter uppercasing)
-        const relative = path.join('../../../workspace/src/fullyCovered/fullyCoveredLib.cpp');
-        const absolute = path.resolve(__dirname, relative);
-        const sourceFilePath = path.normalize(absolute);
-        const fixedSourceFilePath = `${sourceFilePath[0].toUpperCase()}${sourceFilePath.slice(1)}`;
-
-        const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions(fixedSourceFilePath);
-
-        const uncoveredRegions: Array<RegionCoverageInfo> = [];
-        for await (const region of decorations.uncoveredRegions())
-          uncoveredRegions.push(region);
-
-        const summary = await decorations.summary;
-
-        summary.should.be.deep.equal({
-          count: 2,
-          covered: 2,
-          notCovered: 0,
-          percent: 100
-        });
-
-        uncoveredRegions.length.should.be.equal(0);
-        //uncoveredRegions[0].range.should.be.deep.equal({
-        //  start: {
-        //    line: 6,
-        //    character: 53
-        //  },
-        //  end: {
-        //    line: 6,
-        //    character: 71
-        //  }
-        //});
-      });
-    });
-
     it('should be possible to access the full path of the build tree directory using a ' +
       'build tree directory resolver instance.',
       () => {
@@ -197,6 +150,41 @@ describe('The internal services can be instantiated when vscode has an active wo
       return cmake.buildTarget().should.eventually.be.fulfilled;
     });
 
+    describe('Nominal cases with real world adapters.', () => {
+      it('should report correct coverage information for a specific file that is fully covered', async () => {
+        // TODO: factories for test entrypoints (and later applicative entry points)
+        const provider = new DecorationLocationsProvider({
+          workspace: vscode.workspace,
+          statFile: { stat: fs.stat },
+          processForCmakeCommand: { execFile: cp.execFile },
+          processForCmakeTarget: { execFile: cp.execFile },
+          globSearch: { search: globby },
+          fs: { mkdir: fs.mkdir },
+          llvmCoverageInfoStreamBuilder: { createStream: createReadStream }
+        });
+
+        const sourceFilePath = createAbsoluteSourceFilePathFrom('fullyCovered/fullyCoveredLib.cpp');
+
+        const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions(sourceFilePath);
+
+        // TODO refacto this in proper function exposing object with now awaitable stuff
+        const summary = await decorations.summary;
+
+        const uncoveredRegions: Array<RegionCoverageInfo> = [];
+        for await (const region of decorations.uncoveredRegions())
+          uncoveredRegions.push(region);
+
+        summary.should.be.deep.equal({
+          count: 2,
+          covered: 2,
+          notCovered: 0,
+          percent: 100
+        });
+
+        uncoveredRegions.length.should.be.equal(0);
+      });
+    });
+
     after('restoring additional cmake command options and PATH environment variable', async () => {
       await extensionConfiguration.update('additionalCmakeOptions', []);
 
@@ -215,4 +203,12 @@ function prependLlvmBinDirToPathEnvironmentVariable(): string {
   }
 
   return oldPath;
+}
+
+function createAbsoluteSourceFilePathFrom(workspacePath: string) {
+  const relative = path.join('..', '..', '..', 'workspace', 'src', workspacePath);
+  const absolute = path.resolve(__dirname, relative);
+  const sourceFilePath = path.normalize(absolute);
+
+  return `${sourceFilePath[0].toUpperCase()}${sourceFilePath.slice(1)}`;
 }

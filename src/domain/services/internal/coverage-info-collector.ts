@@ -14,13 +14,15 @@ export function make(adapters: Adapters) {
   return new CoverageInfoCollector(adapters);
 }
 
-export type LLVMCoverageInfoStreamFactoryBuilder = (path: string) => StreamFactory;
+export type LLVMCoverageInfoStreamBuilder = {
+  createStream: (path: string) => Readable;
+};
 
 class CoverageInfoCollector {
   constructor(adapters: Adapters) {
     this.workspace = adapters.workspace;
     this.globSearch = adapters.globSearch;
-    this.llvmCoverageInfoStreamFactory = adapters.llvmCoverageInfoStreamFactoryBuilder;
+    this.llvmCoverageInfoStreamBuilder = adapters.llvmCoverageInfoStreamBuilder;
   }
 
   async collectFor(sourceFilePath: string) {
@@ -31,7 +33,7 @@ class CoverageInfoCollector {
 
     const path = await coverageInfoFileResolver.resolveCoverageInfoFileFullPath();
 
-    return new CoverageInfo(this.llvmCoverageInfoStreamFactory(path), sourceFilePath);
+    return new CoverageInfo(() => this.llvmCoverageInfoStreamBuilder.createStream(path), sourceFilePath);
   }
 
   static readonly invalidInputReadableStreamMessage =
@@ -44,13 +46,13 @@ class CoverageInfoCollector {
 
   private readonly workspace: SettingsProvider.VscodeWorkspaceLike;
   private readonly globSearch: CoverageInfoFileResolver.GlobSearchLike;
-  private readonly llvmCoverageInfoStreamFactory: LLVMCoverageInfoStreamFactoryBuilder;
+  private readonly llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder;
 };
 
 type Adapters = {
   workspace: SettingsProvider.VscodeWorkspaceLike,
   globSearch: CoverageInfoFileResolver.GlobSearchLike,
-  llvmCoverageInfoStreamFactoryBuilder: LLVMCoverageInfoStreamFactoryBuilder
+  llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder
 };
 
 type StreamFactory = () => Readable;
