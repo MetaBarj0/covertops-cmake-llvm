@@ -10,7 +10,7 @@ export type VscodeWorkspaceFolderLike = {
 };
 
 export type VscodeWorkspaceConfigurationLike = {
-  get<T>(section: string): T | undefined;
+  get(section: keyof Settings): Settings[typeof section];
 };
 
 export type VscodeWorkspaceLike = {
@@ -40,8 +40,8 @@ class SettingsProvider {
       workspaceSettings.get('buildTreeDirectory') as string,
       workspaceSettings.get('cmakeTarget') as string,
       workspaceSettings.get('coverageInfoFileName') as string,
-      rootDirectory,
-      workspaceSettings.get('additionalCmakeOptions') as Array<string>
+      workspaceSettings.get('additionalCmakeOptions') as Array<string>,
+      rootDirectory
     );
   }
 

@@ -135,7 +135,6 @@ class CoverageInfo {
 
       const files = dataItem.value.files;
 
-      // TODO(WIP): find out a way to get rid of any?
       return files.find((file: RawLLVMFileCoverageInfo) => file.filename === this.sourceFilePath);
     });
   }

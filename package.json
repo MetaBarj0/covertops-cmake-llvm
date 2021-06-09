@@ -74,6 +74,7 @@
               "type": "string",
               "minLength": 1
             },
+            "default": [],
             "scope": "window",
             "description": "Additional options to pass to build system generator (cmake), for instance, variable definitions indicating which compiler / generator to use, preprocessor defines, etc."
           }
@@ -136,7 +137,8 @@
   },
   "scripts": {
     "package": "npm run compile && vsce package",
-    "compile": "tsc -p ./",
+    "precompile": "node ./package.json.ts.mjs",
+    "compile": "npm run precompile && tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",

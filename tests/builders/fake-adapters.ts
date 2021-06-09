@@ -2,7 +2,7 @@ import * as SettingsProvider from '../../src/domain/services/internal/settings-p
 
 import * as BuildSystemGenerator from '../../src/domain/services/internal/build-system-generator';
 import * as BuildTreeDirectoryResolver from '../../src/domain/services/internal/build-tree-directory-resolver';
-import { Settings } from '../../src/domain/value-objects/settings';
+import { defaultSetting, Settings } from '../../src/domain/value-objects/settings';
 import * as CoverageInfoFileResolver from '../../src/domain/services/internal/coverage-info-file-resolver';
 import * as CoverageInfoCollector from '../../src/domain/services/internal/coverage-info-collector';
 
@@ -34,25 +34,11 @@ export namespace workspace {
             this.overrides = overrides;
           }
 
-          // TODO: get rid of cast hell
-          get<T>(section: keyof Settings): T | undefined {
-            if (this.overrides[section] !== undefined)
-              return this.overrides[section] as unknown as T | undefined;
+          get(section: keyof Settings) {
+            if (this.overrides[section])
+              return <Settings[typeof section]>this.overrides[section];
 
-            switch (section) {
-              case 'additionalCmakeOptions':
-                return [] as unknown as T | undefined;
-              case 'buildTreeDirectory':
-                return 'build' as unknown as T | undefined;
-              case 'cmakeCommand':
-                return 'cmake' as unknown as T | undefined;
-              case 'cmakeTarget':
-                return 'coverage' as unknown as T | undefined;
-              case 'coverageInfoFileName':
-                return 'coverage.json' as unknown as T | undefined;
-              case 'rootDirectory':
-                return '.' as unknown as T | undefined;
-            }
+            return defaultSetting(section);
           }
 
           private overrides: Overrides;
@@ -69,7 +55,9 @@ export namespace workspace {
 
       getConfiguration(_section?: string) {
         return new class implements SettingsProvider.VscodeWorkspaceConfigurationLike {
-          get(_section: keyof Settings) { return undefined; }
+          get(section: keyof Settings) {
+            return defaultSetting(section);
+          }
         };
       };
     };
