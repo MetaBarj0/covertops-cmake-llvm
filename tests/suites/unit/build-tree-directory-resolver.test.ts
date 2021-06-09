@@ -7,9 +7,10 @@ chai.should();
 
 import * as definitions from '../../../src/definitions';
 import * as BuildTreeDirectoryResolver from '../../../src/domain/services/internal/build-tree-directory-resolver';
-import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
 
-import { statFile as sf, fs, workspace as w } from '../../builders/fake-adapters';
+import { fs } from '../../faked-adapters/fs';
+import { workspace as w } from '../../faked-adapters/vscode-workspace';
+import { statFile as sf } from '../../faked-adapters/stat-file';
 
 import path = require('path');
 

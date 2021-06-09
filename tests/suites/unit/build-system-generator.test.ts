@@ -8,7 +8,8 @@ chai.should();
 import * as definitions from '../../../src/definitions';
 import * as BuildSystemGenerator from '../../../src/domain/services/internal/build-system-generator';
 
-import { workspace as w, process as p } from '../../builders/fake-adapters';
+import { process as p } from '../../faked-adapters/process';
+import { workspace as w } from '../../faked-adapters/vscode-workspace';
 
 describe('the behavior of the cmake internal service used to build the target ' +
   'giving the file containing coverage info', () => {

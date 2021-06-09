@@ -204,6 +204,7 @@ describe('Nominal cases with real world adapters.', () => {
 
   it('should report correct coverage information for a specific cpp file that is partially covered', async () => {
     // TODO: factories for test entrypoints (and later applicative entry points)
+    // TODO: adapter in their own files even if small
     const provider = new DecorationLocationsProvider({
       workspace: vscode.workspace,
       statFile: { stat: fs.stat },

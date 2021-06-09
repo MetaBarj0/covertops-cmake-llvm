@@ -7,7 +7,7 @@ chai.should();
 
 import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
 
-import { workspace as w } from '../../builders/fake-adapters';
+import { workspace as w } from '../../faked-adapters/vscode-workspace';
 
 describe('how the settings provider works with a fake of vscode api for configuration', () => {
   it('should be instantiated correctly with a vscode workspace-like instance and provide ' +

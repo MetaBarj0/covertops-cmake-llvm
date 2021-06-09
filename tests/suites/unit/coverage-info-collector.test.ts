@@ -9,20 +9,22 @@ import * as CoverageInfoCollector from '../../../src/domain/services/internal/co
 import * as definitions from '../../../src/definitions';
 import { RegionCoverageInfo } from '../../../src/domain/value-objects/region-coverage-info';
 
-import { stream as s, glob as g, workspace as w } from '../../builders/fake-adapters';
+import { workspace as w } from '../../faked-adapters/vscode-workspace';
+import { inputStream as i } from '../../faked-adapters/input-stream';
+import { globbing as g } from '../../faked-adapters/globbing';
 
 // TODO: describe the current suite of test that is executed to easily find where something breaks
 describe('The collection of coverage summary and uncovered code regions with an invalid input readable stream', () => {
   [
-    s.buildEmptyReadableStream,
-    s.buildInvalidLlvmCoverageJsonObjectStream,
-    s.buildNotJsonStream
+    i.buildEmptyReadableStream,
+    i.buildInvalidLlvmCoverageJsonObjectStream,
+    i.buildNotJsonStream
   ].forEach(streamFactory => {
     it('should fail to access to coverage summary', async () => {
       const collector = CoverageInfoCollector.make({
         globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
         workspace: w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-        llvmCoverageInfoStreamBuilder: s.buildFakeStreamBuilder(streamFactory)
+        llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(streamFactory)
       });
 
       const coverageInfo = await collector.collectFor('');
@@ -38,16 +40,16 @@ describe('The collection of coverage summary and uncovered code regions with an 
   });
 
   [
-    s.buildEmptyReadableStream,
-    s.buildInvalidLlvmCoverageJsonObjectStream,
-    s.buildNotJsonStream
+    i.buildEmptyReadableStream,
+    i.buildInvalidLlvmCoverageJsonObjectStream,
+    i.buildNotJsonStream
   ].forEach(streamFactory => {
     it('should fail to access to uncovered regions', async () => {
       // TODO: refacto duplicated arrange sections
       const collector = CoverageInfoCollector.make({
         globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
         workspace: w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-        llvmCoverageInfoStreamBuilder: s.buildFakeStreamBuilder(streamFactory)
+        llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(streamFactory)
       });
 
       const coverageInfo = await collector.collectFor('');
@@ -69,7 +71,7 @@ describe('The collection of coverage summary and uncovered code regions with a v
     const collector = CoverageInfoCollector.make({
       globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
       workspace: w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-      llvmCoverageInfoStreamBuilder: s.buildFakeStreamBuilder(s.buildValidLlvmCoverageJsonObjectStream)
+      llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream)
     });
 
     const sourceFilePath = '/an/unhandled/source/file.cpp';
@@ -85,7 +87,7 @@ describe('The collection of coverage summary and uncovered code regions with a v
     const collector = CoverageInfoCollector.make({
       globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
       workspace: w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-      llvmCoverageInfoStreamBuilder: s.buildFakeStreamBuilder(s.buildValidLlvmCoverageJsonObjectStream)
+      llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream)
     });
 
     const coverageInfo = await collector.collectFor('/a/source/file.cpp');
@@ -102,7 +104,7 @@ describe('The collection of coverage summary and uncovered code regions with a v
     const collector = CoverageInfoCollector.make({
       globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
       workspace: w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-      llvmCoverageInfoStreamBuilder: s.buildFakeStreamBuilder(s.buildValidLlvmCoverageJsonObjectStream)
+      llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream)
     });
 
     const sourceFilePath = '/an/unhandled/source/file.cpp';
@@ -118,7 +120,7 @@ describe('The collection of coverage summary and uncovered code regions with a v
     const collector = CoverageInfoCollector.make({
       globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
       workspace: w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-      llvmCoverageInfoStreamBuilder: s.buildFakeStreamBuilder(s.buildValidLlvmCoverageJsonObjectStream)
+      llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream)
     });
 
     const coverageInfo = await collector.collectFor('/a/source/file.cpp');

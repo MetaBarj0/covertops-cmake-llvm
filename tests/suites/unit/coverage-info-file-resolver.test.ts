@@ -8,7 +8,8 @@ chai.should();
 import * as definitions from '../../../src/definitions';
 import * as CoverageInfoFileResolver from '../../../src/domain/services/internal/coverage-info-file-resolver';
 
-import { glob as g, workspace as w } from '../../builders/fake-adapters';
+import { workspace as w } from '../../faked-adapters/vscode-workspace';
+import { globbing as g } from '../../faked-adapters/globbing';
 
 describe('the behavior of the coverage info file resolving internal service', () => {
   it('should fail if the glob searched from the build tree directory does not find one file', () => {
