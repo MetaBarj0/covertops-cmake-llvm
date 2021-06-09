@@ -10,18 +10,35 @@ import { DecorationLocationsProvider } from '../../../src/domain/services/decora
 import { RegionCoverageInfo } from '../../../src/domain/value-objects/region-coverage-info';
 
 import { fs } from '../../faked-adapters/fs';
-import { workspace as w } from '../../faked-adapters/vscode-workspace';
+// TODO(WIP): rename fake workspace namespace to vscodeWorkspace
+import { vscodeWorkspace as v } from '../../faked-adapters/vscode-workspace';
 import { process as p } from '../../faked-adapters/process';
 import { inputStream as i } from '../../faked-adapters/input-stream';
 import { statFile as sf } from '../../faked-adapters/stat-file';
 import { globbing as g } from '../../faked-adapters/globbing';
 
-// TODO: reorganize tests
-describe('DecorationLocationProvider service behavior.', () => {
+// TODO(WIP): reorganize tests
+describe('acceptance suite of tests', () => {
+  describe('The decoration location provider service behavior', () => {
+    describe('The service being instantiated with faked adapters', instantiateService);
+    describe('The service failing with incorrect settings', () => {
+      describe('When issues arise with the build tree directory', failBecauseOfIssuesWithBuildTreeDirectorySetting);
+      describe('When issues arise with the cmake command', failBecauseOfIssuesWithCmakeCommandSetting);
+      describe('When issues arise with the cmake target', failBecauseOfIssuesWithCmakeTargetSetting);
+      describe('When issues arise with the coverage info file name', () => {
+        describe('When the coverage info file is not found', failBecauseCoverageInfoFileIsNotFound);
+        describe('When several coverage info file are found', failBecauseSeveralCoverageInfoFileAreFound);
+      });
+    });
+    describe('The service succeding with correct settings and fake adapters', succeedWithCorrectSettingsAndFakeAdapters);
+  });
+});
+
+function instantiateService() {
   it('should be correctly instantiated with faked adapters.', () => {
     const instantiation = () => {
       new DecorationLocationsProvider({
-        workspace: w.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(),
+        workspace: v.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(),
         statFile: sf.buildFakeFailingStatFile(),
         processForCmakeCommand: p.buildFakeFailingProcess(),
         processForCmakeTarget: p.buildFakeFailingProcess(),
@@ -33,12 +50,14 @@ describe('DecorationLocationProvider service behavior.', () => {
 
     instantiation.should.not.throw();
   });
+}
 
+function failBecauseOfIssuesWithBuildTreeDirectorySetting() {
   it('should not be able to provide any decoration for uncovered code regions ' +
     'when the build tree directory can not be found and / or created though cmake command ' +
     'is invocable', () => {
       const provider = new DecorationLocationsProvider({
-        workspace: w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
+        workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
         statFile: sf.buildFakeFailingStatFile(),
         processForCmakeCommand: p.buildFakeFailingProcess(),
         processForCmakeTarget: p.buildFakeFailingProcess(),
@@ -51,12 +70,13 @@ describe('DecorationLocationProvider service behavior.', () => {
         'Cannot find or create the build tree directory. Ensure the ' +
         `'${definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`);
     });
+}
 
+function failBecauseOfIssuesWithCmakeCommandSetting() {
   it('should not be able to provide any decoration for uncovered code regions ' +
-    'when the cmake command cannot be reached.',
-    () => {
+    'when the cmake command cannot be reached.', () => {
       const provider = new DecorationLocationsProvider({
-        workspace: w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ cmakeCommand: '' }),
+        workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ cmakeCommand: '' }),
         statFile: sf.buildFakeSucceedingStatFile(),
         processForCmakeCommand: p.buildFakeFailingProcess(),
         processForCmakeTarget: p.buildFakeFailingProcess(),
@@ -69,12 +89,14 @@ describe('DecorationLocationProvider service behavior.', () => {
         `Cannot find the cmake command. Ensure the '${definitions.extensionNameInSettings}: Cmake Command' ` +
         'setting is correctly set. Have you verified your PATH environment variable?');
     });
+}
 
+// TODO: work sentences of test cases
+function failBecauseOfIssuesWithCmakeTargetSetting() {
   it('should not be able to provide any decoration for uncovered code regions ' +
     'when the cmake target cannot be built by cmake though the cmake command is invocable and ' +
-    'the build tree directory exists.',
-    () => {
-      const workspace = w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ cmakeTarget: '' });
+    'the build tree directory exists.', () => {
+      const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ cmakeTarget: '' });
       const target = workspace.getConfiguration('cmake-llvm-workspace').get('cmakeTarget');
 
       const provider = new DecorationLocationsProvider({
@@ -91,12 +113,13 @@ describe('DecorationLocationProvider service behavior.', () => {
         `Error: Could not build the specified cmake target ${target}. ` +
         `Ensure '${definitions.extensionNameInSettings}: Cmake Target' setting is properly set.`);
     });
+}
 
+function failBecauseCoverageInfoFileIsNotFound() {
   it('should not be able to provide any decoration for uncovered code regions ' +
-    'when the coverage info file name does not target an existing file',
-    () => {
+    'when the coverage info file name does not target an existing file', () => {
       const provider = new DecorationLocationsProvider({
-        workspace: w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ coverageInfoFileName: 'baadf00d' }),
+        workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ coverageInfoFileName: 'baadf00d' }),
         statFile: sf.buildFakeSucceedingStatFile(),
         processForCmakeCommand: p.buildFakeSucceedingProcess(),
         processForCmakeTarget: p.buildFakeSucceedingProcess(),
@@ -112,11 +135,13 @@ describe('DecorationLocationProvider service behavior.', () => {
         `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
         'settings are correctly set.');
     });
+}
 
+function failBecauseSeveralCoverageInfoFileAreFound() {
   it('should not not able to provide any decoration for uncovered code regions ' +
     'when there are more than one generated coverage information file that are found', () => {
       const provider = new DecorationLocationsProvider({
-        workspace: w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
+        workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
         statFile: sf.buildFakeSucceedingStatFile(),
         processForCmakeCommand: p.buildFakeSucceedingProcess(),
         processForCmakeTarget: p.buildFakeSucceedingProcess(),
@@ -132,46 +157,45 @@ describe('DecorationLocationProvider service behavior.', () => {
         `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
         'settings are correctly set.');
     });
+}
 
-  describe('the behavior of the coverage info collection with valid minimal json document', () => {
-    it('should succed to collect coverage information for the requested file', async () => {
-      const provider = new DecorationLocationsProvider({
-        workspace: w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-        statFile: sf.buildFakeSucceedingStatFile(),
-        processForCmakeCommand: p.buildFakeSucceedingProcess(),
-        processForCmakeTarget: p.buildFakeSucceedingProcess(),
-        globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
-        fs: fs.buildFakeSucceedingFs(),
-        llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream)
-      });
+function succeedWithCorrectSettingsAndFakeAdapters() {
+  it('should succed to collect coverage information for the requested file', async () => {
+    const provider = new DecorationLocationsProvider({
+      workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
+      statFile: sf.buildFakeSucceedingStatFile(),
+      processForCmakeCommand: p.buildFakeSucceedingProcess(),
+      processForCmakeTarget: p.buildFakeSucceedingProcess(),
+      globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
+      fs: fs.buildFakeSucceedingFs(),
+      llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream)
+    });
 
-      const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions('/a/source/file.cpp');
+    const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions('/a/source/file.cpp');
 
-      const uncoveredRegions: Array<RegionCoverageInfo> = [];
-      for await (const region of decorations.uncoveredRegions())
-        uncoveredRegions.push(region);
+    const uncoveredRegions: Array<RegionCoverageInfo> = [];
+    for await (const region of decorations.uncoveredRegions())
+      uncoveredRegions.push(region);
 
-      const summary = await decorations.summary;
+    const summary = await decorations.summary;
 
-      summary.should.be.deep.equal({
-        count: 2,
-        covered: 2,
-        notCovered: 0,
-        percent: 100
-      });
+    summary.should.be.deep.equal({
+      count: 2,
+      covered: 2,
+      notCovered: 0,
+      percent: 100
+    });
 
-      uncoveredRegions.length.should.be.equal(1);
-      uncoveredRegions[0].range.should.be.deep.equal({
-        start: {
-          line: 6,
-          character: 53
-        },
-        end: {
-          line: 6,
-          character: 71
-        }
-      });
+    uncoveredRegions.length.should.be.equal(1);
+    uncoveredRegions[0].range.should.be.deep.equal({
+      start: {
+        line: 6,
+        character: 53
+      },
+      end: {
+        line: 6,
+        character: 71
+      }
     });
   });
-});
-
+}

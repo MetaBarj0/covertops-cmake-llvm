@@ -9,7 +9,7 @@ import * as definitions from '../../../src/definitions';
 import * as BuildSystemGenerator from '../../../src/domain/services/internal/build-system-generator';
 
 import { process as p } from '../../faked-adapters/process';
-import { workspace as w } from '../../faked-adapters/vscode-workspace';
+import { vscodeWorkspace as w } from '../../faked-adapters/vscode-workspace';
 
 describe('the behavior of the cmake internal service used to build the target ' +
   'giving the file containing coverage info', () => {

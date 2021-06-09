@@ -9,7 +9,7 @@ import * as CoverageInfoCollector from '../../../src/domain/services/internal/co
 import * as definitions from '../../../src/definitions';
 import { RegionCoverageInfo } from '../../../src/domain/value-objects/region-coverage-info';
 
-import { workspace as w } from '../../faked-adapters/vscode-workspace';
+import { vscodeWorkspace as w } from '../../faked-adapters/vscode-workspace';
 import { inputStream as i } from '../../faked-adapters/input-stream';
 import { globbing as g } from '../../faked-adapters/globbing';
 

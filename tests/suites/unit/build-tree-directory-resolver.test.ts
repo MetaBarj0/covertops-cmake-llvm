@@ -9,7 +9,7 @@ import * as definitions from '../../../src/definitions';
 import * as BuildTreeDirectoryResolver from '../../../src/domain/services/internal/build-tree-directory-resolver';
 
 import { fs } from '../../faked-adapters/fs';
-import { workspace as w } from '../../faked-adapters/vscode-workspace';
+import { vscodeWorkspace as w } from '../../faked-adapters/vscode-workspace';
 import { statFile as sf } from '../../faked-adapters/stat-file';
 
 import path = require('path');

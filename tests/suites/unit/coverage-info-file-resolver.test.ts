@@ -8,7 +8,7 @@ chai.should();
 import * as definitions from '../../../src/definitions';
 import * as CoverageInfoFileResolver from '../../../src/domain/services/internal/coverage-info-file-resolver';
 
-import { workspace as w } from '../../faked-adapters/vscode-workspace';
+import { vscodeWorkspace as w } from '../../faked-adapters/vscode-workspace';
 import { globbing as g } from '../../faked-adapters/globbing';
 
 describe('the behavior of the coverage info file resolving internal service', () => {

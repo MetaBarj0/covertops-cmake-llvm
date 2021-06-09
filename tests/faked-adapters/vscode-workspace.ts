@@ -2,7 +2,7 @@ import * as SettingsProvider from '../../src/domain/services/internal/settings-p
 import { defaultSetting, Settings } from '../../src/domain/value-objects/settings';
 import * as path from 'path';
 
-export namespace workspace {
+export namespace vscodeWorkspace {
   type Overrides = {
     -readonly [Property in keyof Settings]?: Settings[Property]
   };
