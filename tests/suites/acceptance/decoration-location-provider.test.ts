@@ -16,7 +16,6 @@ import { inputStream as i } from '../../faked-adapters/input-stream';
 import { statFile as sf } from '../../faked-adapters/stat-file';
 import { globbing as g } from '../../faked-adapters/globbing';
 
-// TODO(WIP): reorganize tests
 describe('acceptance suite of tests', () => {
   describe('The decoration location provider service behavior', () => {
     describe('The service being instantiated with faked adapters', instantiateService);

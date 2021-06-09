@@ -19,45 +19,29 @@ import * as cp from 'child_process';
 import { promises as fs, createReadStream } from 'fs';
 import * as globby from 'globby';
 
-describe('The internal services can be instantiated when vscode has an active workspace', () => {
-  it('should not throw any exception when instantiating settings provider and settings should be set with default values', () => {
-    const settings = SettingsProvider.make(vscode.workspace).settings;
-
-    settings.buildTreeDirectory.should.be.equal('build');
-    settings.cmakeCommand.should.be.equal('cmake');
-    settings.cmakeTarget.should.be.equal('coverage');
-    settings.coverageInfoFileName.should.be.equal('coverage.json');
-    settings.additionalCmakeOptions.should.be.empty;
-
-    const rootFolder = (vscode.workspace.workspaceFolders as Array<vscode.WorkspaceFolder>)[0].uri.fsPath;
-    settings.rootDirectory.should.be.equal(rootFolder);
-  });
-
-  const extensionConfiguration = vscode.workspace.getConfiguration(definitions.extensionId);
-
-  describe('with invalid relative path build tree directory setting', () => {
-    before('Modifying build tree directory setting', async () => {
-      await extensionConfiguration.update('buildTreeDirectory', '*<>buildz<>*\0');
-    });
-
-    it('should not be possible to access the full path of the build tree directory using a ' +
-      'build tree directory resolver instance set up with an invalid relative path build tree directory in settings.',
-      () => {
-        const resolver = BuildTreeDirectoryResolver.make({
-          workspace: vscode.workspace,
-          statFile: { stat: fs.stat },
-          fs: { mkdir: fs.mkdir }
-        });
-
-        return resolver.resolveAbsolutePath().should.eventually.be.rejectedWith(
-          'Cannot find or create the build tree directory. Ensure the ' +
-          `'${definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`);
+describe('integration test suite', () => {
+  describe('the behavior of internal services', () => {
+    describe('Instantiating the setting provider with a real vscode workspace', settingsProviderGivesDefaultSettings);
+    describe('with an initialized vscode workspace', () => {
+      fixture({
+        description: 'with invalid build tree directory setting',
+        setup: {
+          description: 'setting up a bad build tree directory setting',
+          action: setupBadBuildTreeDirectorySetting
+        },
+        cases: buildTreeDirectoryResolverShouldFails,
+        teardown: {
+          description: 'restoring default build tree directory setting',
+          action: restoreDefaultBuildTreeDirectorySetting
+        }
       });
-
-    after('restoring build tree directory setting', async () => {
-      await extensionConfiguration.update('buildTreeDirectory', 'build');
     });
   });
+});
+
+// TODO(WIP): reorganize tests
+describe('The internal services can be instantiated when vscode has an active workspace', () => {
+  const extensionConfiguration = vscode.workspace.getConfiguration(definitions.extensionId);
 
   describe('with invalid cmake command setting', () => {
     before('Modifying cmake command setting', async () => {
@@ -271,4 +255,76 @@ function createAbsoluteSourceFilePathFrom(workspacePath: string) {
   const sourceFilePath = path.normalize(absolute);
 
   return `${sourceFilePath[0].toUpperCase()}${sourceFilePath.slice(1)}`;
+}
+
+function settingsProviderGivesDefaultSettings() {
+  it('should not throw any exception when instantiating settings provider and settings should be set with default values', () => {
+    const settings = SettingsProvider.make(vscode.workspace).settings;
+
+    settings.buildTreeDirectory.should.be.equal('build');
+    settings.cmakeCommand.should.be.equal('cmake');
+    settings.cmakeTarget.should.be.equal('coverage');
+    settings.coverageInfoFileName.should.be.equal('coverage.json');
+    settings.additionalCmakeOptions.should.be.empty;
+
+    const rootFolder = (vscode.workspace.workspaceFolders as Array<vscode.WorkspaceFolder>)[0].uri.fsPath;
+    settings.rootDirectory.should.be.equal(rootFolder);
+  });
+}
+
+async function setupBadBuildTreeDirectorySetting() {
+  const extensionConfiguration = vscode.workspace.getConfiguration(definitions.extensionId);
+  await extensionConfiguration.update('buildTreeDirectory', '*<>buildz<>*\0');
+}
+
+function buildTreeDirectoryResolverShouldFails() {
+  it('should not be possible to access the full path of the build tree directory using a ' +
+    'build tree directory resolver instance set up with an invalid relative path build tree directory in settings.', () => {
+      const resolver = BuildTreeDirectoryResolver.make({
+        workspace: vscode.workspace,
+        statFile: { stat: fs.stat },
+        fs: { mkdir: fs.mkdir }
+      });
+
+      return resolver.resolveAbsolutePath().should.eventually.be.rejectedWith(
+        'Cannot find or create the build tree directory. Ensure the ' +
+        `'${definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`);
+    });
+}
+
+async function restoreDefaultBuildTreeDirectorySetting() {
+  const extensionConfiguration = vscode.workspace.getConfiguration(definitions.extensionId);
+  await extensionConfiguration.update('buildTreeDirectory', 'build');
+}
+
+// TODO: move that to test utils stuff
+type FixtureAction = (() => void) | (() => PromiseLike<void>);
+type FixtureActions = ReadonlyArray<FixtureAction> | FixtureAction;
+type FixtureSetupTeardown = {
+  description: string,
+  action: FixtureAction
+};
+
+type FixtureData = {
+  description: string,
+  setup: FixtureSetupTeardown,
+  cases: FixtureActions,
+  teardown: FixtureSetupTeardown
+};
+
+function thereAreSeveralTestCases(cases: FixtureActions): cases is ReadonlyArray<FixtureAction> {
+  return (cases as ReadonlyArray<FixtureAction>).forEach !== undefined;
+}
+
+function fixture(data: FixtureData) {
+  describe(data.description, () => {
+    before(data.setup.description, data.setup.action);
+
+    if (thereAreSeveralTestCases(data.cases))
+      data.cases.forEach(testCase => testCase());
+    else
+      data.cases();
+
+    after(data.teardown.description, data.teardown.action);
+  });
 }
