@@ -9,14 +9,14 @@ import * as definitions from '../../../src/definitions';
 import * as BuildTreeDirectoryResolver from '../../../src/domain/services/internal/build-tree-directory-resolver';
 
 import { fs } from '../../faked-adapters/fs';
-import { vscodeWorkspace as w } from '../../faked-adapters/vscode-workspace';
+import { vscodeWorkspace as v } from '../../faked-adapters/vscode-workspace';
 import { statFile as sf } from '../../faked-adapters/stat-file';
 
 import path = require('path');
 
 describe('the build tree directory resolver behavior regarding the build tree directory setting value', () => {
   it('should fail to resolve when the build tree directory setting look like an absolute path', () => {
-    const workspace = w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({
+    const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({
       buildTreeDirectory: path.normalize('/absolute/build')
     });
 
@@ -30,7 +30,7 @@ describe('the build tree directory resolver behavior regarding the build tree di
   });
 
   it('should fail to resolve if specified relative path target does not exist and cannot be created', () => {
-    const workspace = w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+    const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const statFile = sf.buildFakeFailingStatFile();
     const failingFs = fs.buildFakeFailingFs();
 
@@ -42,7 +42,7 @@ describe('the build tree directory resolver behavior regarding the build tree di
   });
 
   it('should resolve the full path of the build tree directory if the specified setting target an existing directory', () => {
-    const workspace = w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+    const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const statFile = sf.buildFakeSucceedingStatFile();
     const failingFs = fs.buildFakeFailingFs();
 
@@ -53,7 +53,7 @@ describe('the build tree directory resolver behavior regarding the build tree di
 
   it('should resolve the full path of the build tree directory if the specified setting target ' +
     'an unexisting directory that can be created', () => {
-      const workspace = w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+      const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
       const statFile = sf.buildFakeFailingStatFile();
       const succeedingFs = fs.buildFakeSucceedingFs();
 

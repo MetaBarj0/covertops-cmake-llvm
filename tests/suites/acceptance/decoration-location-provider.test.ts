@@ -10,7 +10,6 @@ import { DecorationLocationsProvider } from '../../../src/domain/services/decora
 import { RegionCoverageInfo } from '../../../src/domain/value-objects/region-coverage-info';
 
 import { fs } from '../../faked-adapters/fs';
-// TODO(WIP): rename fake workspace namespace to vscodeWorkspace
 import { vscodeWorkspace as v } from '../../faked-adapters/vscode-workspace';
 import { process as p } from '../../faked-adapters/process';
 import { inputStream as i } from '../../faked-adapters/input-stream';

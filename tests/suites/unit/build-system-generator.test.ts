@@ -9,13 +9,13 @@ import * as definitions from '../../../src/definitions';
 import * as BuildSystemGenerator from '../../../src/domain/services/internal/build-system-generator';
 
 import { process as p } from '../../faked-adapters/process';
-import { vscodeWorkspace as w } from '../../faked-adapters/vscode-workspace';
+import { vscodeWorkspace as v } from '../../faked-adapters/vscode-workspace';
 
 describe('the behavior of the cmake internal service used to build the target ' +
   'giving the file containing coverage info', () => {
     it('should be instantiated with correct dependencies for process for cmake target building and workspace ' +
       'but throw when asking for building a target with a wrong cmake command setting', () => {
-        const workspace = w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ 'cmakeCommand': '' });
+        const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ 'cmakeCommand': '' });
         const processForCommand = p.buildFakeFailingProcess();
         const processForTarget = p.buildFakeSucceedingProcess();
 
@@ -28,7 +28,7 @@ describe('the behavior of the cmake internal service used to build the target ' 
 
     it('should be instantiated with correct dependencies for process for cmake command invocation and workspace ' +
       'but throw when asking for building a target with a wrong cmake target setting', () => {
-        const workspace = w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ 'cmakeTarget': '' });
+        const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ 'cmakeTarget': '' });
         const processForCommand = p.buildFakeSucceedingProcess();
         const processForTarget = p.buildFakeFailingProcess();
 
@@ -43,7 +43,7 @@ describe('the behavior of the cmake internal service used to build the target ' 
 
     it('should be instantiated with correct dependencies for all processes and workspace ' +
       'and succeed when asking for building a target with good settings', () => {
-        const workspace = w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+        const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
         const processForCommand = p.buildFakeSucceedingProcess();
         const processForTarget = p.buildFakeSucceedingProcess();
 

@@ -7,12 +7,12 @@ chai.should();
 
 import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
 
-import { vscodeWorkspace as w } from '../../faked-adapters/vscode-workspace';
+import { vscodeWorkspace as v } from '../../faked-adapters/vscode-workspace';
 
 describe('how the settings provider works with a fake of vscode api for configuration', () => {
   it('should be instantiated correctly with a vscode workspace-like instance and provide ' +
     'settings with correct default values', () => {
-      const fakedWorkspace = w.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+      const fakedWorkspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
       const provider = SettingsProvider.make(fakedWorkspace);
       const settings = provider.settings;
 
@@ -28,7 +28,7 @@ describe('how the settings provider works with a fake of vscode api for configur
     });
 
   it('should be instantiated correctly but throw an exception when workspace folders are not set', () => {
-    const fakedWorkspace = w.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings();
+    const fakedWorkspace = v.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings();
     const provider = SettingsProvider.make(fakedWorkspace);
     (() => { provider.settings; }).should.throw(
       'A workspace must be loaded to get coverage information.');
