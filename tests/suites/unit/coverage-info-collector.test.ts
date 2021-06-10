@@ -13,7 +13,7 @@ import { vscodeWorkspace as v } from '../../faked-adapters/vscode-workspace';
 import { inputStream as i } from '../../faked-adapters/input-stream';
 import { globbing as g } from '../../faked-adapters/globbing';
 
-// TODO: describe the current suite of test that is executed to easily find where something breaks
+// TODO(WIP): enhance tests readability
 describe('The collection of coverage summary and uncovered code regions with an invalid input readable stream', () => {
   [
     i.buildEmptyReadableStream,

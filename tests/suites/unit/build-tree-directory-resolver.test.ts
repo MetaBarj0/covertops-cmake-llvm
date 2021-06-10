@@ -14,8 +14,17 @@ import { statFile as sf } from '../../faked-adapters/stat-file';
 
 import path = require('path');
 
-describe('the build tree directory resolver behavior regarding the build tree directory setting value', () => {
-  it('should fail to resolve when the build tree directory setting look like an absolute path', () => {
+describe('Unit test suite', () => {
+  describe('the build tree directory resolver behavior', () => {
+    describe('its failure to resolve a build tree directory as an absolute path', buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryIsAnAbsolutePath);
+    describe('its failure to resolve an inexisting build tree directory that cannot be created', buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryDoesNotExistAndCannotBeCreated);
+    describe('its success to resolve an existing build tree directory', buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryExists);
+    describe('its success to resolve an inexisting build tree directory that can be created', buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryDoesNotExistAndCanBeCreated);
+  });
+});
+
+function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryIsAnAbsolutePath() {
+  it('should fail to resolve when the build tree directory setting looks like an absolute path', () => {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({
       buildTreeDirectory: path.normalize('/absolute/build')
     });
@@ -28,7 +37,9 @@ describe('the build tree directory resolver behavior regarding the build tree di
     return resolver.resolveAbsolutePath().should.eventually.be.rejectedWith(
       `Incorrect absolute path specified in '${definitions.extensionNameInSettings}: Build Tree Directory'. It must be a relative path.`);
   });
+}
 
+function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryDoesNotExistAndCannotBeCreated() {
   it('should fail to resolve if specified relative path target does not exist and cannot be created', () => {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const statFile = sf.buildFakeFailingStatFile();
@@ -40,7 +51,9 @@ describe('the build tree directory resolver behavior regarding the build tree di
       'Cannot find or create the build tree directory. Ensure the ' +
       `'${definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`);
   });
+}
 
+function buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryExists() {
   it('should resolve the full path of the build tree directory if the specified setting target an existing directory', () => {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const statFile = sf.buildFakeSucceedingStatFile();
@@ -50,7 +63,9 @@ describe('the build tree directory resolver behavior regarding the build tree di
 
     return resolver.resolveAbsolutePath().should.eventually.be.fulfilled;
   });
+}
 
+function buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryDoesNotExistAndCanBeCreated() {
   it('should resolve the full path of the build tree directory if the specified setting target ' +
     'an unexisting directory that can be created', () => {
       const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
@@ -61,4 +76,4 @@ describe('the build tree directory resolver behavior regarding the build tree di
 
       return resolver.resolveAbsolutePath().should.eventually.be.fulfilled;
     });
-});
+}
