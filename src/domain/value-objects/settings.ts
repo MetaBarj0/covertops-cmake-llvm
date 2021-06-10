@@ -1,20 +1,5 @@
 import packageJSON from "../../package.json";
 
-export function defaultSetting(setting: DefaultSettingsKey | 'rootDirectory') {
-  return isRootDirectory(setting) ? '.' : (() => {
-    type Setting = typeof setting;
-    const name = packageJSON.name;
-    type Name = typeof name;
-    type Key = `${Name}.${Setting}`;
-
-    const key: Key = `${name}.${setting}`;
-
-    const v = packageJSON.contributes.configuration[0].properties[key].default;
-
-    return new DefaultSetting<Setting>(v).value;
-  })();
-}
-
 export class Settings {
   constructor(cmakeCommand: string,
     buildTreeDirectory: string,
@@ -37,6 +22,22 @@ export class Settings {
   readonly additionalCmakeOptions: ReadonlyArray<string>;
   readonly rootDirectory: string;
 };
+
+// TODO: stuff below is only used in test suites, not in prod code, move it consequently
+export function defaultSetting(setting: DefaultSettingsKey | 'rootDirectory') {
+  return isRootDirectory(setting) ? '.' : (() => {
+    type Setting = typeof setting;
+    const name = packageJSON.name;
+    type Name = typeof name;
+    type Key = `${Name}.${Setting}`;
+
+    const key: Key = `${name}.${setting}`;
+
+    const v = packageJSON.contributes.configuration[0].properties[key].default;
+
+    return new DefaultSetting<Setting>(v).value;
+  })();
+}
 
 const configuration = packageJSON.contributes.configuration[0].properties;
 

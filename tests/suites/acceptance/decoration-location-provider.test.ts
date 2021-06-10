@@ -33,7 +33,7 @@ describe('acceptance suite of tests', () => {
 });
 
 function instantiateService() {
-  it('should be correctly instantiated with faked adapters.', () => {
+  it('should not throw when instantiated with faked adapters.', () => {
     const instantiation = () => {
       new DecorationLocationsProvider({
         workspace: v.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(),
@@ -52,8 +52,7 @@ function instantiateService() {
 
 function failBecauseOfIssuesWithBuildTreeDirectorySetting() {
   it('should not be able to provide any decoration for uncovered code regions ' +
-    'when the build tree directory can not be found and / or created though cmake command ' +
-    'is invocable', () => {
+    'when the build tree directory can not be found and / or created', () => {
       const provider = new DecorationLocationsProvider({
         workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
         statFile: sf.buildFakeFailingStatFile(),
@@ -89,11 +88,9 @@ function failBecauseOfIssuesWithCmakeCommandSetting() {
     });
 }
 
-// TODO: work sentences of test cases
 function failBecauseOfIssuesWithCmakeTargetSetting() {
   it('should not be able to provide any decoration for uncovered code regions ' +
-    'when the cmake target cannot be built by cmake though the cmake command is invocable and ' +
-    'the build tree directory exists.', () => {
+    'when the cmake target cannot be built', () => {
       const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ cmakeTarget: '' });
       const target = workspace.getConfiguration('cmake-llvm-workspace').get('cmakeTarget');
 
@@ -115,7 +112,7 @@ function failBecauseOfIssuesWithCmakeTargetSetting() {
 
 function failBecauseCoverageInfoFileIsNotFound() {
   it('should not be able to provide any decoration for uncovered code regions ' +
-    'when the coverage info file name does not target an existing file', () => {
+    'when the coverage info file name cannot be found', () => {
       const provider = new DecorationLocationsProvider({
         workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ coverageInfoFileName: 'baadf00d' }),
         statFile: sf.buildFakeSucceedingStatFile(),
@@ -158,7 +155,7 @@ function failBecauseSeveralCoverageInfoFileAreFound() {
 }
 
 function succeedWithCorrectSettingsAndFakeAdapters() {
-  it('should succed to collect coverage information for the requested file', async () => {
+  it('should succed to collect correct coverage information for the requested file.', async () => {
     const provider = new DecorationLocationsProvider({
       workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
       statFile: sf.buildFakeSucceedingStatFile(),
