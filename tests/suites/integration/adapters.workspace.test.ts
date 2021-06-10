@@ -9,8 +9,6 @@ import * as SettingsProvider from '../../../src/domain/services/internal/setting
 import * as BuildTreeDirectoryResolver from '../../../src/domain/services/internal/build-tree-directory-resolver';
 import * as BuildSystemGenerator from '../../../src/domain/services/internal/build-system-generator';
 import * as definitions from '../../../src/definitions';
-import { RegionCoverageInfo } from '../../../src/domain/value-objects/region-coverage-info';
-import { DecorationLocationsProvider } from '../../../src/domain/services/decoration-locations-provider';
 // TODO: do not forget to move defautl setting feature in test utils
 import { defaultSetting } from '../../../src/domain/value-objects/settings';
 
@@ -18,8 +16,7 @@ import * as vscode from 'vscode';
 import { env } from 'process';
 import * as path from 'path';
 import * as cp from 'child_process';
-import { promises as fs, createReadStream } from 'fs';
-import * as globby from 'globby';
+import { promises as fs } from 'fs';
 
 describe('integration test suite', () => {
   describe('the behavior of internal services', () => {
@@ -38,101 +35,7 @@ describe('integration test suite', () => {
   });
 });
 
-// TODO(WIP): reorganize tests
-describe('Nominal cases with real world adapters.', () => {
-  let originalEnvPath: string;
-  const extensionConfiguration = vscode.workspace.getConfiguration(definitions.extensionId);
-
-  before('Modifying additional cmake command options, PATH environment variable ', async () => {
-    await extensionConfiguration.update('additionalCmakeOptions', ['-DCMAKE_CXX_COMPILER=clang++', '-G', 'Ninja']);
-
-    originalEnvPath = prependLlvmBinDirToPathEnvironmentVariable();
-  });
-
-  it('should report correct coverage information for a specific file that is fully covered', async () => {
-    // TODO: factories for test entrypoints (and later applicative entry points)
-    const provider = new DecorationLocationsProvider({
-      workspace: vscode.workspace,
-      statFile: { stat: fs.stat },
-      processForCmakeCommand: { execFile: cp.execFile },
-      processForCmakeTarget: { execFile: cp.execFile },
-      globSearch: { search: globby },
-      fs: { mkdir: fs.mkdir },
-      llvmCoverageInfoStreamBuilder: { createStream: createReadStream }
-    });
-
-    const sourceFilePath = createAbsoluteSourceFilePathFrom('fullyCovered/fullyCoveredLib.cpp');
-
-    const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions(sourceFilePath);
-
-    // TODO refacto this in proper function exposing object with now awaitable stuff
-    const summary = await decorations.summary;
-
-    const uncoveredRegions: Array<RegionCoverageInfo> = [];
-    for await (const region of decorations.uncoveredRegions())
-      uncoveredRegions.push(region);
-
-    summary.should.be.deep.equal({
-      count: 2,
-      covered: 2,
-      notCovered: 0,
-      percent: 100
-    });
-
-    uncoveredRegions.length.should.be.equal(0);
-  });
-
-  it('should report correct coverage information for a specific cpp file that is partially covered', async () => {
-    // TODO: factories for test entrypoints (and later applicative entry points)
-    // TODO: adapter in their own files even if small
-    const provider = new DecorationLocationsProvider({
-      workspace: vscode.workspace,
-      statFile: { stat: fs.stat },
-      processForCmakeCommand: { execFile: cp.execFile },
-      processForCmakeTarget: { execFile: cp.execFile },
-      globSearch: { search: globby },
-      fs: { mkdir: fs.mkdir },
-      llvmCoverageInfoStreamBuilder: { createStream: createReadStream }
-    });
-
-    const sourceFilePath = createAbsoluteSourceFilePathFrom('partiallyCovered/partiallyCoveredLib.cpp');
-
-    const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions(sourceFilePath);
-
-    // TODO refacto this in proper function exposing object with now awaitable stuff
-    const summary = await decorations.summary;
-
-    const uncoveredRegions: Array<RegionCoverageInfo> = [];
-    for await (const region of decorations.uncoveredRegions())
-      uncoveredRegions.push(region);
-
-    summary.should.be.deep.equal({
-      count: 2,
-      covered: 1,
-      notCovered: 1,
-      percent: 50
-    });
-
-    uncoveredRegions.length.should.be.equal(1);
-    uncoveredRegions[0].range.should.be.deep.equal({
-      start: {
-        line: 6,
-        character: 53
-      },
-      end: {
-        line: 6,
-        character: 71
-      }
-    });
-  });
-
-  after('restoring additional cmake command options and PATH environment variable', async () => {
-    await extensionConfiguration.update('additionalCmakeOptions', []);
-
-    env['PATH'] = originalEnvPath;
-  });
-});
-
+// TODO : duplicated in test suites
 function prependLlvmBinDirToPathEnvironmentVariable(): string {
   const oldPath = <string>env['PATH'];
 
@@ -143,14 +46,6 @@ function prependLlvmBinDirToPathEnvironmentVariable(): string {
   }
 
   return oldPath;
-}
-
-function createAbsoluteSourceFilePathFrom(workspacePath: string) {
-  const relative = path.join('..', '..', '..', 'workspace', 'src', workspacePath);
-  const absolute = path.resolve(__dirname, relative);
-  const sourceFilePath = path.normalize(absolute);
-
-  return `${sourceFilePath[0].toUpperCase()}${sourceFilePath.slice(1)}`;
 }
 
 function settingsProviderGivesDefaultSettings() {
