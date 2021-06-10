@@ -29,7 +29,6 @@ describe('integration test suite', () => {
   });
 });
 
-// TODO(WIP): reorganize tests
 function createAbsoluteSourceFilePathFrom(workspacePath: string) {
   const relative = path.join('..', '..', '..', 'workspace', 'src', workspacePath);
   const absolute = path.resolve(__dirname, relative);
