@@ -11,6 +11,8 @@ import * as BuildSystemGenerator from '../../../src/domain/services/internal/bui
 import * as definitions from '../../../src/definitions';
 import { RegionCoverageInfo } from '../../../src/domain/value-objects/region-coverage-info';
 import { DecorationLocationsProvider } from '../../../src/domain/services/decoration-locations-provider';
+// TODO: do not forget to move defautl setting feature in test utils
+import { defaultSetting } from '../../../src/domain/value-objects/settings';
 
 import * as vscode from 'vscode';
 import { env } from 'process';
@@ -21,128 +23,22 @@ import * as globby from 'globby';
 
 describe('integration test suite', () => {
   describe('the behavior of internal services', () => {
-    describe('Instantiating the setting provider with a real vscode workspace', settingsProviderGivesDefaultSettings);
+    describe('instantiating the setting provider with a real vscode workspace', settingsProviderGivesDefaultSettings);
     describe('with an initialized vscode workspace', () => {
-      fixture({
-        description: 'with invalid build tree directory setting',
-        setup: {
-          description: 'setting up a bad build tree directory setting',
-          action: setupBadBuildTreeDirectorySetting
-        },
-        cases: buildTreeDirectoryResolverShouldFails,
-        teardown: {
-          description: 'restoring default build tree directory setting',
-          action: restoreDefaultBuildTreeDirectorySetting
-        }
+      describe('the behavior of build tree directory resolver', () => {
+        describe('with an invalid build tree directory setting', buildTreeDirectoryResolverShouldFail);
+        describe('with a valid build tree directory setting', buildTreeDirectoryResolverShouldSucceed);
+      });
+      describe('the behavior of the build system generator', () => {
+        describe('with an invalid cmake command setting', buildSystemGeneratorInvocationShouldFail);
+        describe('with an invalid cmake target setting', buildSystemGeneratorTargetBuildingShouldFail);
+        describe('with valid cmake comand and cmake target settings', buildSystemGeneratorTargetBuildingShouldSucceed);
       });
     });
   });
 });
 
 // TODO(WIP): reorganize tests
-describe('The internal services can be instantiated when vscode has an active workspace', () => {
-  const extensionConfiguration = vscode.workspace.getConfiguration(definitions.extensionId);
-
-  describe('with invalid cmake command setting', () => {
-    before('Modifying cmake command setting', async () => {
-      await extensionConfiguration.update('cmakeCommand', 'cmakez');
-    });
-
-    it('should throw when attempting to build an assumed valid specified cmake target in settings ' +
-      'with an unreachable cmake command', () => {
-        const cmake = BuildSystemGenerator.make({
-          workspace: vscode.workspace,
-          processForCommand: { execFile: cp.execFile },
-          processForTarget: { execFile: cp.execFile }
-        });
-
-        return cmake.buildTarget().should.eventually.be.rejectedWith(
-          `Cannot find the cmake command. Ensure the '${definitions.extensionNameInSettings}: Cmake Command' ` +
-          'setting is correctly set. Have you verified your PATH environment variable?');
-      });
-
-    after('restoring cmake command setting', async () => {
-      await extensionConfiguration.update('cmakeCommand', 'cmake');
-    });
-  });
-
-  describe('with invalid cmake target setting and additional cmake options', () => {
-    let originalEnvPath: string;
-
-    before('Modifying cmake target and additional options settings and PATH environment variable', async () => {
-      await Promise.all([
-        extensionConfiguration.update('cmakeTarget', 'Oh my god! This is clearly an invalid cmake target'),
-        extensionConfiguration.update('additionalCmakeOptions', ['-DCMAKE_CXX_COMPILER=clang++', '-G', 'Ninja'])
-      ]);
-
-      originalEnvPath = prependLlvmBinDirToPathEnvironmentVariable();
-    });
-
-    it('should throw when attempting to build an invalid specified cmake target in settings ' +
-      'with a reachable cmake command', () => {
-        const settings = SettingsProvider.make(vscode.workspace).settings;
-
-        const cmake = BuildSystemGenerator.make({
-          workspace: vscode.workspace,
-          processForCommand: { execFile: cp.execFile },
-          processForTarget: { execFile: cp.execFile }
-        });
-
-        return cmake.buildTarget().should.eventually.be.rejectedWith(
-          `Error: Could not build the specified cmake target ${settings.cmakeTarget}. ` +
-          `Ensure '${definitions.extensionNameInSettings}: Cmake Target' setting is properly set.`);
-      });
-
-    after('restoring cmake target and additonal options settings and PATH environment variable', async () => {
-      await Promise.all([
-        extensionConfiguration.update('cmakeTarget', 'coverage'),
-        extensionConfiguration.update('additionalCmakeOptions', [])
-      ]);
-
-      env['PATH'] = originalEnvPath;
-    });
-  });
-
-  describe('with correct settings and additional cmake options', () => {
-    let originalEnvPath: string;
-
-    before('Modifying additional cmake command options, PATH environment variable ', async () => {
-      await extensionConfiguration.update('additionalCmakeOptions', ['-DCMAKE_CXX_COMPILER=clang++', '-G', 'Ninja']);
-
-      originalEnvPath = prependLlvmBinDirToPathEnvironmentVariable();
-    });
-
-    it('should be possible to access the full path of the build tree directory using a ' +
-      'build tree directory resolver instance.',
-      () => {
-        const resolver = BuildTreeDirectoryResolver.make({
-          workspace: vscode.workspace,
-          statFile: { stat: fs.stat },
-          fs: { mkdir: fs.mkdir }
-        });
-
-        return resolver.resolveAbsolutePath().should.eventually.be.fulfilled;
-      });
-
-    it('should not throw when attempting to build a valid cmake target specified in settings', () => {
-      const cmake = BuildSystemGenerator.make({
-        workspace: vscode.workspace,
-        processForCommand: { execFile: cp.execFile },
-        processForTarget: { execFile: cp.execFile }
-      });
-
-      return cmake.buildTarget().should.eventually.be.fulfilled;
-    });
-
-    after('restoring additional cmake command options and PATH environment variable', async () => {
-      await extensionConfiguration.update('additionalCmakeOptions', []);
-
-      env['PATH'] = originalEnvPath;
-    });
-  });
-});
-
-// TODO: really, reorganize test cases please, that one in its own suite of tests
 describe('Nominal cases with real world adapters.', () => {
   let originalEnvPath: string;
   const extensionConfiguration = vscode.workspace.getConfiguration(definitions.extensionId);
@@ -272,59 +168,125 @@ function settingsProviderGivesDefaultSettings() {
   });
 }
 
-async function setupBadBuildTreeDirectorySetting() {
+function buildTreeDirectoryResolverShouldFail() {
   const extensionConfiguration = vscode.workspace.getConfiguration(definitions.extensionId);
-  await extensionConfiguration.update('buildTreeDirectory', '*<>buildz<>*\0');
-}
 
-function buildTreeDirectoryResolverShouldFails() {
-  it('should not be possible to access the full path of the build tree directory using a ' +
-    'build tree directory resolver instance set up with an invalid relative path build tree directory in settings.', () => {
-      const resolver = BuildTreeDirectoryResolver.make({
-        workspace: vscode.workspace,
-        statFile: { stat: fs.stat },
-        fs: { mkdir: fs.mkdir }
-      });
+  before('setting up a bad build tree directory setting', async () =>
+    await extensionConfiguration.update('buildTreeDirectory', '*<>buildz<>*\0'));
 
-      return resolver.resolveAbsolutePath().should.eventually.be.rejectedWith(
-        'Cannot find or create the build tree directory. Ensure the ' +
-        `'${definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`);
+  it('should not be possible to find or create the build tree directory', () => {
+    const resolver = BuildTreeDirectoryResolver.make({
+      workspace: vscode.workspace,
+      statFile: { stat: fs.stat },
+      fs: { mkdir: fs.mkdir }
     });
+
+    return resolver.resolveAbsolutePath().should.eventually.be.rejectedWith(
+      'Cannot find or create the build tree directory. Ensure the ' +
+      `'${definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`);
+  });
+
+  after('restoring default build tree directory setting', async () =>
+    await extensionConfiguration.update('buildTreeDirectory', defaultSetting('buildTreeDirectory')));
 }
 
-async function restoreDefaultBuildTreeDirectorySetting() {
+function buildSystemGeneratorInvocationShouldFail() {
   const extensionConfiguration = vscode.workspace.getConfiguration(definitions.extensionId);
-  await extensionConfiguration.update('buildTreeDirectory', 'build');
+
+  before('Modifying cmake command setting', async () => {
+    await extensionConfiguration.update('cmakeCommand', 'cmakez');
+  });
+
+  it('should fail in attempting to invoke the build system generator', () => {
+    const cmake = BuildSystemGenerator.make({
+      workspace: vscode.workspace,
+      processForCommand: { execFile: cp.execFile },
+      processForTarget: { execFile: cp.execFile }
+    });
+
+    return cmake.buildTarget().should.eventually.be.rejectedWith(
+      `Cannot find the cmake command. Ensure the '${definitions.extensionNameInSettings}: Cmake Command' ` +
+      'setting is correctly set. Have you verified your PATH environment variable?');
+  });
+
+  after('restoring cmake command setting', async () => {
+    await extensionConfiguration.update('cmakeCommand', defaultSetting('cmakeCommand'));
+  });
 }
 
-// TODO: move that to test utils stuff
-type FixtureAction = (() => void) | (() => PromiseLike<void>);
-type FixtureActions = ReadonlyArray<FixtureAction> | FixtureAction;
-type FixtureSetupTeardown = {
-  description: string,
-  action: FixtureAction
-};
+function buildSystemGeneratorTargetBuildingShouldFail() {
+  const extensionConfiguration = vscode.workspace.getConfiguration(definitions.extensionId);
+  let originalEnvPath: string;
 
-type FixtureData = {
-  description: string,
-  setup: FixtureSetupTeardown,
-  cases: FixtureActions,
-  teardown: FixtureSetupTeardown
-};
+  before('Modifying cmake target and additional options settings and PATH environment variable', async () => {
+    await Promise.all([
+      extensionConfiguration.update('cmakeTarget', 'Oh my god! This is clearly an invalid cmake target'),
+      extensionConfiguration.update('additionalCmakeOptions', ['-DCMAKE_CXX_COMPILER=clang++', '-G', 'Ninja'])
+    ]);
 
-function thereAreSeveralTestCases(cases: FixtureActions): cases is ReadonlyArray<FixtureAction> {
-  return (cases as ReadonlyArray<FixtureAction>).forEach !== undefined;
+    originalEnvPath = prependLlvmBinDirToPathEnvironmentVariable();
+  });
+
+  it('should fail in attempting to build an invalid cmake target', () => {
+    const settings = SettingsProvider.make(vscode.workspace).settings;
+
+    const cmake = BuildSystemGenerator.make({
+      workspace: vscode.workspace,
+      processForCommand: { execFile: cp.execFile },
+      processForTarget: { execFile: cp.execFile }
+    });
+
+    return cmake.buildTarget().should.eventually.be.rejectedWith(
+      `Error: Could not build the specified cmake target ${settings.cmakeTarget}. ` +
+      `Ensure '${definitions.extensionNameInSettings}: Cmake Target' setting is properly set.`);
+  });
+
+  after('restoring cmake target and additonal options settings and PATH environment variable', async () => {
+    await Promise.all([
+      extensionConfiguration.update('cmakeTarget', defaultSetting('cmakeTarget')),
+      extensionConfiguration.update('additionalCmakeOptions', defaultSetting('additionalCmakeOptions'))
+    ]);
+
+    env['PATH'] = originalEnvPath;
+  });
 }
 
-function fixture(data: FixtureData) {
-  describe(data.description, () => {
-    before(data.setup.description, data.setup.action);
+function buildTreeDirectoryResolverShouldSucceed() {
+  it('should find the build tree directory', () => {
+    const resolver = BuildTreeDirectoryResolver.make({
+      workspace: vscode.workspace,
+      statFile: { stat: fs.stat },
+      fs: { mkdir: fs.mkdir }
+    });
 
-    if (thereAreSeveralTestCases(data.cases))
-      data.cases.forEach(testCase => testCase());
-    else
-      data.cases();
+    return resolver.resolveAbsolutePath().should.eventually.be.fulfilled;
+  });
+}
 
-    after(data.teardown.description, data.teardown.action);
+function buildSystemGeneratorTargetBuildingShouldSucceed() {
+  const extensionConfiguration = vscode.workspace.getConfiguration(definitions.extensionId);
+
+  let originalEnvPath: string;
+
+  before('Modifying additional cmake command options, PATH environment variable ', async () => {
+    await extensionConfiguration.update('additionalCmakeOptions', ['-DCMAKE_CXX_COMPILER=clang++', '-G', 'Ninja']);
+
+    originalEnvPath = prependLlvmBinDirToPathEnvironmentVariable();
+  });
+
+  it('should not throw when attempting to build a valid cmake target specified in settings', () => {
+    const cmake = BuildSystemGenerator.make({
+      workspace: vscode.workspace,
+      processForCommand: { execFile: cp.execFile },
+      processForTarget: { execFile: cp.execFile }
+    });
+
+    return cmake.buildTarget().should.eventually.be.fulfilled;
+  });
+
+  after('restoring additional cmake command options and PATH environment variable', async () => {
+    await extensionConfiguration.update('additionalCmakeOptions', []);
+
+    env['PATH'] = originalEnvPath;
   });
 }
