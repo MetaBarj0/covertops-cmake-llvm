@@ -5,12 +5,12 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
+import { defaultSetting } from '../../utils/settings';
+
 import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
 import * as BuildTreeDirectoryResolver from '../../../src/domain/services/internal/build-tree-directory-resolver';
 import * as BuildSystemGenerator from '../../../src/domain/services/internal/build-system-generator';
 import * as definitions from '../../../src/definitions';
-// TODO: do not forget to move defautl setting feature in test utils
-import { defaultSetting } from '../../../src/domain/value-objects/settings';
 
 import * as vscode from 'vscode';
 import { env } from 'process';

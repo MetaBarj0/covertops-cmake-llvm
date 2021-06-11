@@ -5,10 +5,11 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
+import { defaultSetting } from '../../utils/settings';
+
 import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
 
 import { vscodeWorkspace as v } from '../../faked-adapters/vscode-workspace';
-import { defaultSetting } from '../../../src/domain/value-objects/settings';
 
 describe('Unit test suite', () => {
   describe('The setting provider behavior', () => {
@@ -40,7 +41,6 @@ function shouldSucceedAndExposeDefaultSettings() {
       settings.coverageInfoFileName.should.be.equal(defaultSetting('coverageInfoFileName'));
 
       const workspaceFolders = fakedWorkspace.workspaceFolders as Array<SettingsProvider.VscodeWorkspaceFolderLike>;
-      const expectedRootDirectory = workspaceFolders[0].uri.fsPath;
       settings.rootDirectory.should.be.equal(defaultSetting('rootDirectory'));
     });
 }

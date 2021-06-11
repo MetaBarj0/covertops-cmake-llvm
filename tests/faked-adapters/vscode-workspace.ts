@@ -1,6 +1,7 @@
+import { defaultSetting } from '../utils/settings';
+
 import * as SettingsProvider from '../../src/domain/services/internal/settings-provider';
-import { defaultSetting, Settings } from '../../src/domain/value-objects/settings';
-import * as path from 'path';
+import { Settings } from '../../src/domain/value-objects/settings';
 
 export namespace vscodeWorkspace {
   type Overrides = {
