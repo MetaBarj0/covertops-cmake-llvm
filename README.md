@@ -9,16 +9,16 @@ This extension is pretty simple in its essence. It gives the ability to display
 precisely locations in your production code that are not covered by at least one
 test.
 
-To get this report, open an editor on a file that is actually handled by a build
-system generator (here `cmake`) and hit the button at the top right corner of
-the editor window.
+To get this report, open a vscode window on a file that is actually handled by a
+build system generator (here `cmake`) and hit the button at the top right corner
+of the editor window.
 
 The primary purpose of this extension is to help the developer to ensure
 she/he is following the Test Driven Development discipline correctly by
 reporting any region of the code that is not covered by a test.
 
-It's designed to be run very frequently, to get quick and precise feedback on
-code coverage.
+It's designed to be run very frequently (each tests run), to get quick and
+precise feedback on code coverage.
 
 `Insert gif here`
 
@@ -30,8 +30,8 @@ click!
 `insert image here`
 
 Shows both summary information with coverage percentage for the currently edited
-file (in the output window) and precise uncovered region of code for the current
-source code file using `vscode` decorations in a read-only editor window.
+file (in the output window) and precise uncovered regions of code reporting for
+the current source code file in a read-only editor window.
 
 `insert image here`
 
@@ -40,7 +40,7 @@ be perfectly suitable to your development environment.
 
 ## Requirement
 
-This extension utilizes source based coverage feature of Llvm and cmake
+This extension utilizes source based coverage feature of the Llvm and cmake
 capabilities. You will need :
 
 - A recent version of cmake installed on your system
@@ -50,8 +50,10 @@ capabilities. You will need :
 *Note*: Moreover, this first release need an existing target that creates coverage
 information in a json file. You'll find below a detailled how-to to help you in
 creating such a target.
+
 Future iterations may provide a wizard to help you configure the coverage target
-creation in a fluent manner.
+creation in a fluent manner. Multi root workspace support has also been thinking
+about (planned for a future iteration)
 
 ### Note for Visual Studio 2019 users on Windows
 
@@ -82,7 +84,8 @@ output of the build system generator.
 - `cov-cmake-llvm.cmakeTarget`: The target that generates coverage information
 in a json format file. This file may be generated in the build directory
 specified in the `Build Tree Directory` setting. The specified target must
-exist.
+exist. It may actually have to be created by your hand intially (guide to
+achieve that is below)
 - `cov-cmake-llvm.coverageInfoFileName`: The name of the json file containing
 coverage information. This file will be searched within the `buildTreeDirectory`
 hierarchy. This file must exist and be unique.
@@ -174,7 +177,7 @@ The purpose is to create this sub-directory that will contain a single
 `CMakeLists.txt` file. This file will expose a `coverage` target responsible for
 generating a `coverage.json` file, that will contain all coverage information
 for your code that is covered by one or several suites of tests (or not, though
-not recommended at all :) ).
+it's not the point of this extension :) ).
 
 Following is the content to put within the `CMakeLists.txt` file specifically
 suited for this project template. By your side, you may have to modify this
@@ -255,10 +258,28 @@ libraries (the production code) and 2 suites of tests demonstrating the creation
 of a single file containing all coverage information the extension need to
 report.
 
+*Reminder*: It is scheduled in a future iteration to expose a wizard for the
+`coverage` target creation task.
+
 ## Known Issues
 
 This extension has just been released. Issues are expected, please report
 them in its repository.
+
+## Contribution guideline and design information
+
+First and foremost, feel free to fork the repository by your side.
+That being said the philosophy of this extension is pretty simple and can be
+summarized as :
+
+- one click and easy to use once initialized
+- use it often to get fast feedback
+- help you to keep track on the way of TDD
+
+Contributing would be awesome. The code base has been developing using the ATDD
+methodology and adheres as much as possible to Domain Driven Design approach. It
+makes it easy to test at all layers (from unit to integration passing through
+acceptance tests), to read, understand and maintain.
 
 ## Release Notes
 
