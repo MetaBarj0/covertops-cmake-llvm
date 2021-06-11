@@ -10,7 +10,7 @@ type Adapters = {
   processForCmakeCommand: BuildSystemGenerator.ProcessLike,
   processForCmakeTarget: BuildSystemGenerator.ProcessLike,
   globSearch: CoverageInfoFileResolver.GlobSearchLike,
-  fs: BuildTreeDirectoryResolver.FsLike,
+  mkDir: BuildTreeDirectoryResolver.FsLike,
   llvmCoverageInfoStreamBuilder: CoverageInfoCollector.LLVMCoverageInfoStreamBuilder
 };
 
@@ -21,7 +21,7 @@ export class DecorationLocationsProvider {
     this.processForCmakeCommand = adapters.processForCmakeCommand;
     this.processForCmakeTarget = adapters.processForCmakeTarget;
     this.globSearch = adapters.globSearch;
-    this.fs = adapters.fs;
+    this.mkDir = adapters.mkDir;
     this.llvmCoverageInfoStreamBuilder = adapters.llvmCoverageInfoStreamBuilder;
   }
 
@@ -29,7 +29,7 @@ export class DecorationLocationsProvider {
     const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({
       workspace: this.workspace,
       statFile: this.statFile,
-      fs: this.fs
+      fs: this.mkDir
     });
 
     await buildTreeDirectoryResolver.resolveAbsolutePath();
@@ -63,6 +63,6 @@ export class DecorationLocationsProvider {
   private readonly processForCmakeCommand: BuildSystemGenerator.ProcessLike;
   private readonly processForCmakeTarget: BuildSystemGenerator.ProcessLike;
   private readonly globSearch: CoverageInfoFileResolver.GlobSearchLike;
-  private readonly fs: BuildTreeDirectoryResolver.FsLike;
+  private readonly mkDir: BuildTreeDirectoryResolver.FsLike;
   private readonly llvmCoverageInfoStreamBuilder: CoverageInfoCollector.LLVMCoverageInfoStreamBuilder;
 }

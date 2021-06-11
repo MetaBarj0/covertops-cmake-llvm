@@ -41,7 +41,7 @@ function instantiateService() {
         processForCmakeCommand: p.buildFakeFailingProcess(),
         processForCmakeTarget: p.buildFakeFailingProcess(),
         globSearch: g.buildFakeGlobSearchForNoMatch(),
-        fs: fs.buildFakeFailingFs(),
+        mkDir: fs.buildFakeFailingFs(),
         llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
       });
     };
@@ -59,7 +59,7 @@ function failBecauseOfIssuesWithBuildTreeDirectorySetting() {
         processForCmakeCommand: p.buildFakeFailingProcess(),
         processForCmakeTarget: p.buildFakeFailingProcess(),
         globSearch: g.buildFakeGlobSearchForNoMatch(),
-        fs: fs.buildFakeFailingFs(),
+        mkDir: fs.buildFakeFailingFs(),
         llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
       });
 
@@ -78,7 +78,7 @@ function failBecauseOfIssuesWithCmakeCommandSetting() {
         processForCmakeCommand: p.buildFakeFailingProcess(),
         processForCmakeTarget: p.buildFakeFailingProcess(),
         globSearch: g.buildFakeGlobSearchForNoMatch(),
-        fs: fs.buildFakeFailingFs(),
+        mkDir: fs.buildFakeFailingFs(),
         llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
       });
 
@@ -100,7 +100,7 @@ function failBecauseOfIssuesWithCmakeTargetSetting() {
         processForCmakeCommand: p.buildFakeSucceedingProcess(),
         processForCmakeTarget: p.buildFakeFailingProcess(),
         globSearch: g.buildFakeGlobSearchForNoMatch(),
-        fs: fs.buildFakeFailingFs(),
+        mkDir: fs.buildFakeFailingFs(),
         llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
       });
 
@@ -119,7 +119,7 @@ function failBecauseCoverageInfoFileIsNotFound() {
         processForCmakeCommand: p.buildFakeSucceedingProcess(),
         processForCmakeTarget: p.buildFakeSucceedingProcess(),
         globSearch: g.buildFakeGlobSearchForNoMatch(),
-        fs: fs.buildFakeFailingFs(),
+        mkDir: fs.buildFakeFailingFs(),
         llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
       });
 
@@ -141,7 +141,7 @@ function failBecauseSeveralCoverageInfoFileAreFound() {
         processForCmakeCommand: p.buildFakeSucceedingProcess(),
         processForCmakeTarget: p.buildFakeSucceedingProcess(),
         globSearch: g.buildFakeGlobSearchForSeveralMatch(),
-        fs: fs.buildFakeFailingFs(),
+        mkDir: fs.buildFakeFailingFs(),
         llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
       });
 
@@ -162,7 +162,7 @@ function succeedWithCorrectSettingsAndFakeAdapters() {
       processForCmakeCommand: p.buildFakeSucceedingProcess(),
       processForCmakeTarget: p.buildFakeSucceedingProcess(),
       globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
-      fs: fs.buildFakeSucceedingFs(),
+      mkDir: fs.buildFakeSucceedingFs(),
       llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream)
     });
 

@@ -9,12 +9,13 @@ import { RegionCoverageInfo } from '../../../src/domain/value-objects/region-cov
 import { DecorationLocationsProvider } from '../../../src/domain/services/decoration-locations-provider';
 import * as definitions from '../../../src/definitions';
 
+import { fileSystem } from '../../../src/adapters/file-system';
+import { childProcess } from '../../../src/adapters/child-process';
+import { inputStream } from '../../../src/adapters/input-stream';
+
 import * as vscode from 'vscode';
-import * as globby from 'globby';
 import { env } from 'process';
 import * as path from 'path';
-import * as cp from 'child_process';
-import { promises as fs, createReadStream } from 'fs';
 
 describe('integration test suite', () => {
   describe('The behavior of the decoration location provider using real world adapters', () => {
@@ -40,15 +41,14 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
 
   it('should report correct coverage information for a specific cpp file', async () => {
     // TODO: factories for test entrypoints (and later applicative entry points)
-    // TODO: adapter in their own files even if small
     const provider = new DecorationLocationsProvider({
       workspace: vscode.workspace,
-      statFile: { stat: fs.stat },
-      processForCmakeCommand: { execFile: cp.execFile },
-      processForCmakeTarget: { execFile: cp.execFile },
-      globSearch: { search: globby },
-      fs: { mkdir: fs.mkdir },
-      llvmCoverageInfoStreamBuilder: { createStream: createReadStream }
+      statFile: fileSystem.statFile,
+      processForCmakeCommand: childProcess.executeFile,
+      processForCmakeTarget: childProcess.executeFile,
+      globSearch: fileSystem.globSearch,
+      mkDir: fileSystem.makeDirectory,
+      llvmCoverageInfoStreamBuilder: inputStream.readableStream
     });
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('partiallyCovered/partiallyCoveredLib.cpp');
@@ -90,15 +90,14 @@ function collectSummaryCoverageInfoFromPartiallyCoveredFileShouldSucceed() {
 
   it('should report correct coverage information for a specific cpp file', async () => {
     // TODO: factories for test entrypoints (and later applicative entry points)
-    // TODO: adapter in their own files even if small
     const provider = new DecorationLocationsProvider({
       workspace: vscode.workspace,
-      statFile: { stat: fs.stat },
-      processForCmakeCommand: { execFile: cp.execFile },
-      processForCmakeTarget: { execFile: cp.execFile },
-      globSearch: { search: globby },
-      fs: { mkdir: fs.mkdir },
-      llvmCoverageInfoStreamBuilder: { createStream: createReadStream }
+      statFile: fileSystem.statFile,
+      processForCmakeCommand: childProcess.executeFile,
+      processForCmakeTarget: childProcess.executeFile,
+      globSearch: fileSystem.globSearch,
+      mkDir: fileSystem.makeDirectory,
+      llvmCoverageInfoStreamBuilder: inputStream.readableStream
     });
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('partiallyCovered/partiallyCoveredLib.cpp');
@@ -135,12 +134,12 @@ function collectSummaryCoverageInfoFromFullyCoveredFileShouldSucceed() {
     // TODO: factories for test entrypoints (and later applicative entry points)
     const provider = new DecorationLocationsProvider({
       workspace: vscode.workspace,
-      statFile: { stat: fs.stat },
-      processForCmakeCommand: { execFile: cp.execFile },
-      processForCmakeTarget: { execFile: cp.execFile },
-      globSearch: { search: globby },
-      fs: { mkdir: fs.mkdir },
-      llvmCoverageInfoStreamBuilder: { createStream: createReadStream }
+      statFile: fileSystem.statFile,
+      processForCmakeCommand: childProcess.executeFile,
+      processForCmakeTarget: childProcess.executeFile,
+      globSearch: fileSystem.globSearch,
+      mkDir: fileSystem.makeDirectory,
+      llvmCoverageInfoStreamBuilder: inputStream.readableStream
     });
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('fullyCovered/fullyCoveredLib.cpp');
@@ -177,12 +176,12 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
     // TODO: factories for test entrypoints (and later applicative entry points)
     const provider = new DecorationLocationsProvider({
       workspace: vscode.workspace,
-      statFile: { stat: fs.stat },
-      processForCmakeCommand: { execFile: cp.execFile },
-      processForCmakeTarget: { execFile: cp.execFile },
-      globSearch: { search: globby },
-      fs: { mkdir: fs.mkdir },
-      llvmCoverageInfoStreamBuilder: { createStream: createReadStream }
+      statFile: fileSystem.statFile,
+      processForCmakeCommand: childProcess.executeFile,
+      processForCmakeTarget: childProcess.executeFile,
+      globSearch: fileSystem.globSearch,
+      mkDir: fileSystem.makeDirectory,
+      llvmCoverageInfoStreamBuilder: inputStream.readableStream
     });
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('fullyCovered/fullyCoveredLib.cpp');
