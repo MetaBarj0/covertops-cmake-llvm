@@ -32,7 +32,7 @@ function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryIsAnAbsoluteP
     const statFile = sf.buildFakeFailingStatFile();
     const failingFs = fs.buildFakeFailingFs();
 
-    const resolver = BuildTreeDirectoryResolver.make({ workspace, statFile, fs: failingFs });
+    const resolver = BuildTreeDirectoryResolver.make({ workspace, statFile, mkDir: failingFs });
 
     return resolver.resolveAbsolutePath().should.eventually.be.rejectedWith(
       `Incorrect absolute path specified in '${definitions.extensionNameInSettings}: Build Tree Directory'. It must be a relative path.`);
@@ -45,7 +45,7 @@ function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryDoesNotExistA
     const statFile = sf.buildFakeFailingStatFile();
     const failingFs = fs.buildFakeFailingFs();
 
-    const resolver = BuildTreeDirectoryResolver.make({ workspace, statFile, fs: failingFs });
+    const resolver = BuildTreeDirectoryResolver.make({ workspace, statFile, mkDir: failingFs });
 
     return resolver.resolveAbsolutePath().should.eventually.be.rejectedWith(
       'Cannot find or create the build tree directory. Ensure the ' +
@@ -59,7 +59,7 @@ function buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryExists() {
     const statFile = sf.buildFakeSucceedingStatFile();
     const failingFs = fs.buildFakeFailingFs();
 
-    const resolver = BuildTreeDirectoryResolver.make({ workspace, statFile, fs: failingFs });
+    const resolver = BuildTreeDirectoryResolver.make({ workspace, statFile, mkDir: failingFs });
 
     return resolver.resolveAbsolutePath().should.eventually.be.fulfilled;
   });
@@ -72,7 +72,7 @@ function buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryDoesNotExi
       const statFile = sf.buildFakeFailingStatFile();
       const succeedingFs = fs.buildFakeSucceedingFs();
 
-      const resolver = BuildTreeDirectoryResolver.make({ workspace, statFile, fs: succeedingFs });
+      const resolver = BuildTreeDirectoryResolver.make({ workspace, statFile, mkDir: succeedingFs });
 
       return resolver.resolveAbsolutePath().should.eventually.be.fulfilled;
     });

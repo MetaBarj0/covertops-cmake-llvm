@@ -8,10 +8,6 @@ chai.should();
 import { RegionCoverageInfo } from '../../../src/domain/value-objects/region-coverage-info';
 import * as definitions from '../../../src/definitions';
 
-import { fileSystem } from '../../../src/adapters/file-system';
-import { childProcess } from '../../../src/adapters/child-process';
-import { inputStream } from '../../../src/adapters/input-stream';
-
 import * as DecorationLocationsProvider from '../../../src/extension/factories/decoration-location-provider';
 
 import * as vscode from 'vscode';

@@ -8,7 +8,7 @@ export type StatFileLike = {
   stat(path: PathLike, opts?: StatOptions): Promise<Stats | BigIntStats>
 };
 
-export type FsLike = {
+export type MkDirLike = {
   mkdir(path: PathLike, options: MakeDirectoryOptions & { recursive: true; }): Promise<string | undefined>
 };
 
@@ -16,13 +16,13 @@ export function make(adapters: Adapters) {
   return new BuildTreeDirectoryResolver(adapters);
 }
 
-type Adapters = { workspace: SettingsProvider.VscodeWorkspaceLike, statFile: StatFileLike, fs: FsLike };
+type Adapters = { workspace: SettingsProvider.VscodeWorkspaceLike, statFile: StatFileLike, mkDir: MkDirLike };
 
 class BuildTreeDirectoryResolver {
-  constructor(adapters: { workspace: SettingsProvider.VscodeWorkspaceLike, statFile: StatFileLike, fs: FsLike }) {
+  constructor(adapters: { workspace: SettingsProvider.VscodeWorkspaceLike, statFile: StatFileLike, mkDir: MkDirLike }) {
     this.workspace = adapters.workspace;
     this.statFile = adapters.statFile;
-    this.fs = adapters.fs;
+    this.mkDir = adapters.mkDir;
   }
 
   async resolveAbsolutePath() {
@@ -38,7 +38,7 @@ class BuildTreeDirectoryResolver {
   private async statAndCreateIfNeeded(buildTreeDirectory: string) {
     await this.stat(buildTreeDirectory)
       .catch(async _ => {
-        await this.fs.mkdir(buildTreeDirectory, { recursive: true })
+        await this.mkDir.mkdir(buildTreeDirectory, { recursive: true })
           .catch(_ => {
             return Promise.reject(
               'Cannot find or create the build tree directory. Ensure the ' +
@@ -53,5 +53,5 @@ class BuildTreeDirectoryResolver {
 
   private statFile: StatFileLike;
   private workspace: SettingsProvider.VscodeWorkspaceLike;
-  private fs: FsLike;
+  private mkDir: MkDirLike;
 };

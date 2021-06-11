@@ -10,7 +10,7 @@ type Adapters = {
   processForCmakeCommand: BuildSystemGenerator.ProcessLike,
   processForCmakeTarget: BuildSystemGenerator.ProcessLike,
   globSearch: CoverageInfoFileResolver.GlobSearchLike,
-  mkDir: BuildTreeDirectoryResolver.FsLike,
+  mkDir: BuildTreeDirectoryResolver.MkDirLike,
   llvmCoverageInfoStreamBuilder: CoverageInfoCollector.LLVMCoverageInfoStreamBuilder
 };
 
@@ -29,7 +29,7 @@ export class DecorationLocationsProvider {
     const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({
       workspace: this.workspace,
       statFile: this.statFile,
-      fs: this.mkDir
+      mkDir: this.mkDir
     });
 
     await buildTreeDirectoryResolver.resolveAbsolutePath();
@@ -63,6 +63,6 @@ export class DecorationLocationsProvider {
   private readonly processForCmakeCommand: BuildSystemGenerator.ProcessLike;
   private readonly processForCmakeTarget: BuildSystemGenerator.ProcessLike;
   private readonly globSearch: CoverageInfoFileResolver.GlobSearchLike;
-  private readonly mkDir: BuildTreeDirectoryResolver.FsLike;
+  private readonly mkDir: BuildTreeDirectoryResolver.MkDirLike;
   private readonly llvmCoverageInfoStreamBuilder: CoverageInfoCollector.LLVMCoverageInfoStreamBuilder;
 }

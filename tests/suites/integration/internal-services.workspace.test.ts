@@ -15,8 +15,8 @@ import * as definitions from '../../../src/definitions';
 import * as vscode from 'vscode';
 import { env } from 'process';
 import * as path from 'path';
-import * as cp from 'child_process';
-import { promises as fs } from 'fs';
+import { fileSystem } from '../../../src/adapters/file-system';
+import { childProcess } from '../../../src/adapters/child-process';
 
 describe('integration test suite', () => {
   describe('the behavior of internal services', () => {
@@ -152,12 +152,12 @@ const extensionConfiguration = vscode.workspace.getConfiguration(definitions.ext
 
 const cmake = BuildSystemGenerator.make({
   workspace: vscode.workspace,
-  processForCommand: { execFile: cp.execFile },
-  processForTarget: { execFile: cp.execFile }
+  processForCommand: childProcess.executeFile,
+  processForTarget: childProcess.executeFile
 });
 
 const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({
   workspace: vscode.workspace,
-  statFile: { stat: fs.stat },
-  fs: { mkdir: fs.mkdir }
+  statFile: fileSystem.statFile,
+  mkDir: fileSystem.makeDirectory
 });
