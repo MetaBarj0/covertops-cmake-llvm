@@ -11,8 +11,17 @@ import * as CoverageInfoFileResolver from '../../../src/domain/services/internal
 import { vscodeWorkspace as v } from '../../faked-adapters/vscode-workspace';
 import { globbing as g } from '../../faked-adapters/globbing';
 
-describe('the behavior of the coverage info file resolving internal service', () => {
-  it('should fail if the glob searched from the build tree directory does not find one file', () => {
+describe('Unit test suite', () => {
+  describe('the behavior of the coverage info file resolver', () => {
+    describe('failing if the resolver does not find any file', shouldFailWhenNoFileIsFound);
+    describe('failing if the resolver finds more than one file', shouldFailWhenMoreThanOneFileAreFound);
+    describe('succeeding if the resolver finds exactly one file', shouldSucceedWhenExactlyOneFileIsFound);
+  });
+});
+
+// TODO(WIP): enhance tests readability
+function shouldFailWhenNoFileIsFound() {
+  it('should fail if the recursive search from the build tree directory does not find one file', () => {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const globSearch = g.buildFakeGlobSearchForNoMatch();
 
@@ -25,22 +34,26 @@ describe('the behavior of the coverage info file resolving internal service', ()
       `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
       'settings are correctly set.');
   });
+}
 
-  it('should fail if the glob searched from the build tree directory finds more than one file', () => {
+function shouldFailWhenMoreThanOneFileAreFound() {
+  it('should fail if the recursive search from the build tree directory does not find one file', () => {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
-    const globSearch = g.buildFakeGlobSearchForSeveralMatch();
+    const globSearch = g.buildFakeGlobSearchForNoMatch();
 
     const resolver = CoverageInfoFileResolver.make({ workspace, globSearch });
 
     return resolver.resolveCoverageInfoFileFullPath().should.eventually.be.rejectedWith(
-      'More than one coverage information file have been found in the build tree directory. ' +
+      'Cannot resolve the coverage info file path in the build tree directory. ' +
       'Ensure that both ' +
       `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
       `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
       'settings are correctly set.');
   });
+}
 
-  it('should resolve correctly if the glob searched from the build tree directory find exactly one file.', () => {
+function shouldSucceedWhenExactlyOneFileIsFound() {
+  it('should resolve correctly if the recursive search from the build tree directory find exactly one file.', () => {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const globSearch = g.buildFakeGlobSearchForExactlyOneMatch();
 
@@ -48,4 +61,4 @@ describe('the behavior of the coverage info file resolving internal service', ()
 
     return resolver.resolveCoverageInfoFileFullPath().should.eventually.be.fulfilled;
   });
-});
+}

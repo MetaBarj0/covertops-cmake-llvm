@@ -32,7 +32,6 @@ describe('Unit test suite', () => {
   });
 });
 
-// TODO(WIP): enhance tests readability
 function shouldFailToCollectCoverageInfoSummaryBecauseOfInvalidStream() {
   [
     i.buildEmptyReadableStream,
