@@ -6,12 +6,13 @@ chai.use(chaiAsPromised);
 chai.should();
 
 import { RegionCoverageInfo } from '../../../src/domain/value-objects/region-coverage-info';
-import { DecorationLocationsProvider } from '../../../src/domain/services/decoration-locations-provider';
 import * as definitions from '../../../src/definitions';
 
 import { fileSystem } from '../../../src/adapters/file-system';
 import { childProcess } from '../../../src/adapters/child-process';
 import { inputStream } from '../../../src/adapters/input-stream';
+
+import * as DecorationLocationsProvider from '../../../src/extension/factories/decoration-location-provider';
 
 import * as vscode from 'vscode';
 import { env } from 'process';
@@ -40,16 +41,7 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
   });
 
   it('should report correct coverage information for a specific cpp file', async () => {
-    // TODO: factories for test entrypoints (and later applicative entry points)
-    const provider = new DecorationLocationsProvider({
-      workspace: vscode.workspace,
-      statFile: fileSystem.statFile,
-      processForCmakeCommand: childProcess.executeFile,
-      processForCmakeTarget: childProcess.executeFile,
-      globSearch: fileSystem.globSearch,
-      mkDir: fileSystem.makeDirectory,
-      llvmCoverageInfoStreamBuilder: inputStream.readableStream
-    });
+    const provider = DecorationLocationsProvider.make();
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('partiallyCovered/partiallyCoveredLib.cpp');
 
@@ -89,16 +81,7 @@ function collectSummaryCoverageInfoFromPartiallyCoveredFileShouldSucceed() {
   });
 
   it('should report correct coverage information for a specific cpp file', async () => {
-    // TODO: factories for test entrypoints (and later applicative entry points)
-    const provider = new DecorationLocationsProvider({
-      workspace: vscode.workspace,
-      statFile: fileSystem.statFile,
-      processForCmakeCommand: childProcess.executeFile,
-      processForCmakeTarget: childProcess.executeFile,
-      globSearch: fileSystem.globSearch,
-      mkDir: fileSystem.makeDirectory,
-      llvmCoverageInfoStreamBuilder: inputStream.readableStream
-    });
+    const provider = DecorationLocationsProvider.make();
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('partiallyCovered/partiallyCoveredLib.cpp');
 
@@ -131,16 +114,7 @@ function collectSummaryCoverageInfoFromFullyCoveredFileShouldSucceed() {
   });
 
   it('should report correct coverage information for a specific file', async () => {
-    // TODO: factories for test entrypoints (and later applicative entry points)
-    const provider = new DecorationLocationsProvider({
-      workspace: vscode.workspace,
-      statFile: fileSystem.statFile,
-      processForCmakeCommand: childProcess.executeFile,
-      processForCmakeTarget: childProcess.executeFile,
-      globSearch: fileSystem.globSearch,
-      mkDir: fileSystem.makeDirectory,
-      llvmCoverageInfoStreamBuilder: inputStream.readableStream
-    });
+    const provider = DecorationLocationsProvider.make();
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('fullyCovered/fullyCoveredLib.cpp');
 
@@ -173,16 +147,7 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
   });
 
   it('should report correct coverage information for a specific file', async () => {
-    // TODO: factories for test entrypoints (and later applicative entry points)
-    const provider = new DecorationLocationsProvider({
-      workspace: vscode.workspace,
-      statFile: fileSystem.statFile,
-      processForCmakeCommand: childProcess.executeFile,
-      processForCmakeTarget: childProcess.executeFile,
-      globSearch: fileSystem.globSearch,
-      mkDir: fileSystem.makeDirectory,
-      llvmCoverageInfoStreamBuilder: inputStream.readableStream
-    });
+    const provider = DecorationLocationsProvider.make();
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('fullyCovered/fullyCoveredLib.cpp');
 
