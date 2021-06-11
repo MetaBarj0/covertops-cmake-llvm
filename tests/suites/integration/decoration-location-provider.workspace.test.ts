@@ -29,30 +29,9 @@ describe('integration test suite', () => {
   });
 });
 
-function createAbsoluteSourceFilePathFrom(workspacePath: string) {
-  const relative = path.join('..', '..', '..', 'workspace', 'src', workspacePath);
-  const absolute = path.resolve(__dirname, relative);
-  const sourceFilePath = path.normalize(absolute);
-
-  return `${sourceFilePath[0].toUpperCase()}${sourceFilePath.slice(1)}`;
-}
-
-// TODO: general duplication issues in test suites
-function prependLlvmBinDirToPathEnvironmentVariable(): string {
-  const oldPath = <string>env['PATH'];
-
-  if (env['LLVM_DIR']) {
-    const binDir = path.join(env['LLVM_DIR'], 'bin');
-    const currentPath = <string>env['PATH'];
-    env['PATH'] = `${binDir}${path.delimiter}${currentPath}`;
-  }
-
-  return oldPath;
-}
-
+// TODO(wip): general duplication issues in test suites
 function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced() {
   let originalEnvPath: string;
-  const extensionConfiguration = vscode.workspace.getConfiguration(definitions.extensionId);
 
   before('Modifying additional cmake command options, PATH environment variable ', async () => {
     await extensionConfiguration.update('additionalCmakeOptions', ['-DCMAKE_CXX_COMPILER=clang++', '-G', 'Ninja']);
@@ -103,7 +82,6 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
 
 function collectSummaryCoverageInfoFromPartiallyCoveredFileShouldSucceed() {
   let originalEnvPath: string;
-  const extensionConfiguration = vscode.workspace.getConfiguration(definitions.extensionId);
 
   before('Modifying additional cmake command options, PATH environment variable ', async () => {
     await extensionConfiguration.update('additionalCmakeOptions', ['-DCMAKE_CXX_COMPILER=clang++', '-G', 'Ninja']);
@@ -147,7 +125,6 @@ function collectSummaryCoverageInfoFromPartiallyCoveredFileShouldSucceed() {
 
 function collectSummaryCoverageInfoFromFullyCoveredFileShouldSucceed() {
   let originalEnvPath: string;
-  const extensionConfiguration = vscode.workspace.getConfiguration(definitions.extensionId);
 
   before('Modifying additional cmake command options, PATH environment variable ', async () => {
     await extensionConfiguration.update('additionalCmakeOptions', ['-DCMAKE_CXX_COMPILER=clang++', '-G', 'Ninja']);
@@ -171,7 +148,6 @@ function collectSummaryCoverageInfoFromFullyCoveredFileShouldSucceed() {
 
     const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions(sourceFilePath);
 
-    // TODO refacto this in proper function exposing object with now awaitable stuff
     const summary = await decorations.summary;
 
     summary.should.be.deep.equal({
@@ -191,7 +167,6 @@ function collectSummaryCoverageInfoFromFullyCoveredFileShouldSucceed() {
 
 function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
   let originalEnvPath: string;
-  const extensionConfiguration = vscode.workspace.getConfiguration(definitions.extensionId);
 
   before('Modifying additional cmake command options, PATH environment variable ', async () => {
     await extensionConfiguration.update('additionalCmakeOptions', ['-DCMAKE_CXX_COMPILER=clang++', '-G', 'Ninja']);
@@ -228,3 +203,25 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
     env['PATH'] = originalEnvPath;
   });
 }
+
+function createAbsoluteSourceFilePathFrom(workspacePath: string) {
+  const relative = path.join('..', '..', '..', 'workspace', 'src', workspacePath);
+  const absolute = path.resolve(__dirname, relative);
+  const sourceFilePath = path.normalize(absolute);
+
+  return `${sourceFilePath[0].toUpperCase()}${sourceFilePath.slice(1)}`;
+}
+
+function prependLlvmBinDirToPathEnvironmentVariable(): string {
+  const oldPath = <string>env['PATH'];
+
+  if (env['LLVM_DIR']) {
+    const binDir = path.join(env['LLVM_DIR'], 'bin');
+    const currentPath = <string>env['PATH'];
+    env['PATH'] = `${binDir}${path.delimiter}${currentPath}`;
+  }
+
+  return oldPath;
+}
+
+const extensionConfiguration = vscode.workspace.getConfiguration(definitions.extensionId);
