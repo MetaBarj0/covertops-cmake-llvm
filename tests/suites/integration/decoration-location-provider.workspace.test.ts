@@ -29,7 +29,6 @@ describe('integration test suite', () => {
   });
 });
 
-// TODO(wip): general duplication issues in test suites
 function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced() {
   let originalEnvPath: string;
 
@@ -57,7 +56,7 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
     const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions(sourceFilePath);
 
     const uncoveredRegions: Array<RegionCoverageInfo> = [];
-    for await (const region of decorations.uncoveredRegions())
+    for await (const region of decorations.uncoveredRegions)
       uncoveredRegions.push(region);
 
     uncoveredRegions.length.should.be.equal(1);
@@ -191,7 +190,7 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
     const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions(sourceFilePath);
 
     const uncoveredRegions: Array<RegionCoverageInfo> = [];
-    for await (const region of decorations.uncoveredRegions())
+    for await (const region of decorations.uncoveredRegions)
       uncoveredRegions.push(region);
 
     uncoveredRegions.length.should.be.equal(0);

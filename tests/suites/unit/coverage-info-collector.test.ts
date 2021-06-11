@@ -32,7 +32,6 @@ describe('Unit test suite', () => {
   });
 });
 
-// TODO(WIP) : duplicated in test suites
 function shouldFailToCollectCoverageInfoSummaryBecauseOfInvalidStream() {
   collectorsSetupWithInvalidStreams().forEach(async collector => {
     const coverageInfo = await collector.collectFor('');
@@ -51,8 +50,7 @@ function shouldFailToCollectUncoveredRegionsBecauseOfInvalidStream() {
   collectorsSetupWithInvalidStreams().forEach(async collector => {
     it('should fail to access to uncovered regions', async () => {
       const coverageInfo = await collector.collectFor('');
-      // TODO: uncoveredRegion as property?
-      const iterateOnUncoveredRegions = async () => { for await (const _region of coverageInfo.uncoveredRegions()); };
+      const iterateOnUncoveredRegions = async () => { for await (const _region of coverageInfo.uncoveredRegions); };
 
       return iterateOnUncoveredRegions()
         .should.eventually.be.rejectedWith('Invalid coverage information file have been found in the build tree directory. ' +
@@ -85,7 +83,7 @@ function shouldFailToCollectUncoveredRegionsBecauseOfUnhandledSourceFile() {
 
     const sourceFilePath = '/an/unhandled/source/file.cpp';
     const coverageInfo = await collector.collectFor(sourceFilePath);
-    const iterateOnUncoveredRegions = async () => { for await (const _region of coverageInfo.uncoveredRegions()); };
+    const iterateOnUncoveredRegions = async () => { for await (const _region of coverageInfo.uncoveredRegions); };
 
     return iterateOnUncoveredRegions()
       .should.eventually.be.rejectedWith('Cannot find any uncovered code regions for the file ' +
@@ -113,7 +111,7 @@ function shouldSucceedToCollectUncoveredRegions() {
     const collector = collectorSetupWithValidStream;
 
     const coverageInfo = await collector.collectFor('/a/source/file.cpp');
-    const regions = coverageInfo.uncoveredRegions();
+    const regions = coverageInfo.uncoveredRegions;
 
     const uncoveredRegions: Array<RegionCoverageInfo> = [];
 

@@ -169,7 +169,7 @@ function succeedWithCorrectSettingsAndFakeAdapters() {
     const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions('/a/source/file.cpp');
 
     const uncoveredRegions: Array<RegionCoverageInfo> = [];
-    for await (const region of decorations.uncoveredRegions())
+    for await (const region of decorations.uncoveredRegions)
       uncoveredRegions.push(region);
 
     const summary = await decorations.summary;

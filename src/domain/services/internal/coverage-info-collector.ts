@@ -92,7 +92,11 @@ class CoverageInfo {
     });
   };
 
-  async *uncoveredRegions() {
+  get uncoveredRegions() {
+    return this._uncoveredRegions();
+  }
+
+  private async *_uncoveredRegions() {
     for await (const rawRegionCoverageInfo of this.allRawRegionsCoverageInfoIn()) {
       const regionCoverageInfo = new RegionCoverageInfo(<RawLLVMRegionCoverageInfo>rawRegionCoverageInfo);
 
