@@ -35,7 +35,6 @@ describe('integration test suite', () => {
   });
 });
 
-// TODO : duplicated in test suites
 function prependLlvmBinDirToPathEnvironmentVariable(): string {
   const oldPath = <string>env['PATH'];
 

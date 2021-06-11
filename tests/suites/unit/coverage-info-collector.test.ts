@@ -32,48 +32,26 @@ describe('Unit test suite', () => {
   });
 });
 
+// TODO(WIP) : duplicated in test suites
 function shouldFailToCollectCoverageInfoSummaryBecauseOfInvalidStream() {
-  [
-    i.buildEmptyReadableStream,
-    i.buildInvalidLlvmCoverageJsonObjectStream,
-    i.buildNotJsonStream
-  ].forEach(streamFactory => {
-    it('should fail to access to coverage summary', async () => {
-      const collector = CoverageInfoCollector.make({
-        globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
-        workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-        llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(streamFactory)
-      });
+  collectorsSetupWithInvalidStreams().forEach(async collector => {
+    const coverageInfo = await collector.collectFor('');
 
-      const coverageInfo = await collector.collectFor('');
-
-      return coverageInfo.summary
-        .should.eventually.be.rejectedWith('Invalid coverage information file have been found in the build tree directory. ' +
-          'Coverage information file must contain llvm coverage report in json format. ' +
-          'Ensure that both ' +
-          `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
-          `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
-          'settings are correctly set.');
-    });
+    return coverageInfo.summary
+      .should.eventually.be.rejectedWith('Invalid coverage information file have been found in the build tree directory. ' +
+        'Coverage information file must contain llvm coverage report in json format. ' +
+        'Ensure that both ' +
+        `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+        `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
+        'settings are correctly set.');
   });
 }
 
 function shouldFailToCollectUncoveredRegionsBecauseOfInvalidStream() {
-  // TODO: duplication of the array
-  [
-    i.buildEmptyReadableStream,
-    i.buildInvalidLlvmCoverageJsonObjectStream,
-    i.buildNotJsonStream
-  ].forEach(streamFactory => {
+  collectorsSetupWithInvalidStreams().forEach(async collector => {
     it('should fail to access to uncovered regions', async () => {
-      // TODO: refacto duplicated arrange sections
-      const collector = CoverageInfoCollector.make({
-        globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
-        workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-        llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(streamFactory)
-      });
-
       const coverageInfo = await collector.collectFor('');
+      // TODO: uncoveredRegion as property?
       const iterateOnUncoveredRegions = async () => { for await (const _region of coverageInfo.uncoveredRegions()); };
 
       return iterateOnUncoveredRegions()
@@ -89,11 +67,7 @@ function shouldFailToCollectUncoveredRegionsBecauseOfInvalidStream() {
 
 function shouldFailToCollectCoverageInfoSummaryBecauseOfUnhandledSourceFile() {
   it('should fail to provide coverage summary for an unhandled source file', async () => {
-    const collector = CoverageInfoCollector.make({
-      globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
-      workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-      llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream)
-    });
+    const collector = collectorSetupWithValidStream;
 
     const sourceFilePath = '/an/unhandled/source/file.cpp';
 
@@ -107,12 +81,7 @@ function shouldFailToCollectCoverageInfoSummaryBecauseOfUnhandledSourceFile() {
 
 function shouldFailToCollectUncoveredRegionsBecauseOfUnhandledSourceFile() {
   it('should fail to provide uncovered code regions for an unhandled source file', async () => {
-    // TODO: duplication in arrange
-    const collector = CoverageInfoCollector.make({
-      globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
-      workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-      llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream)
-    });
+    const collector = collectorSetupWithValidStream;
 
     const sourceFilePath = '/an/unhandled/source/file.cpp';
     const coverageInfo = await collector.collectFor(sourceFilePath);
@@ -126,11 +95,7 @@ function shouldFailToCollectUncoveredRegionsBecauseOfUnhandledSourceFile() {
 
 function shouldSucceedToCollectCoverageInfoSummary() {
   it('should succeed in provided summary coverage info for handled source file', async () => {
-    const collector = CoverageInfoCollector.make({
-      globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
-      workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-      llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream)
-    });
+    const collector = collectorSetupWithValidStream;
 
     const coverageInfo = await collector.collectFor('/a/source/file.cpp');
 
@@ -145,11 +110,7 @@ function shouldSucceedToCollectCoverageInfoSummary() {
 
 function shouldSucceedToCollectUncoveredRegions() {
   it('should succeed to provide uncovered regions for a handled source file', async () => {
-    const collector = CoverageInfoCollector.make({
-      globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
-      workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-      llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream)
-    });
+    const collector = collectorSetupWithValidStream;
 
     const coverageInfo = await collector.collectFor('/a/source/file.cpp');
     const regions = coverageInfo.uncoveredRegions();
@@ -175,3 +136,27 @@ function shouldSucceedToCollectUncoveredRegions() {
     });
   });
 }
+
+function collectorsSetupWithInvalidStreams() {
+  const collectors: Array<ReturnType<typeof CoverageInfoCollector.make>> = [];
+
+  [
+    i.buildEmptyReadableStream,
+    i.buildInvalidLlvmCoverageJsonObjectStream,
+    i.buildNotJsonStream
+  ].forEach(streamFactory => {
+    collectors.push(CoverageInfoCollector.make({
+      globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
+      workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
+      llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(streamFactory)
+    }));
+  });
+
+  return collectors;
+};
+
+const collectorSetupWithValidStream = CoverageInfoCollector.make({
+  globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
+  workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
+  llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream)
+});
