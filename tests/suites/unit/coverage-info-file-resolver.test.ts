@@ -19,7 +19,6 @@ describe('Unit test suite', () => {
   });
 });
 
-// TODO(WIP): enhance tests readability
 function shouldFailWhenNoFileIsFound() {
   it('should fail if the recursive search from the build tree directory does not find one file', () => {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();

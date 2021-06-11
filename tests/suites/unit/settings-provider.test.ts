@@ -8,8 +8,25 @@ chai.should();
 import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
 
 import { vscodeWorkspace as v } from '../../faked-adapters/vscode-workspace';
+import { defaultSetting } from '../../../src/domain/value-objects/settings';
 
-describe('how the settings provider works with a fake of vscode api for configuration', () => {
+describe('Unit test suite', () => {
+  describe('The setting provider behavior', () => {
+    describe('With a workspace that is not loaded, that is, no root folder', shouldFailBecauseOfNoRootFolderOpened);
+    describe('With a loaded workspace, having a loaded root folder', shouldSucceedAndExposeDefaultSettings);
+  });
+});
+
+function shouldFailBecauseOfNoRootFolderOpened() {
+  it('should be instantiated correctly but throw an exception when workspace folders are not set', () => {
+    const fakedWorkspace = v.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings();
+    const provider = SettingsProvider.make(fakedWorkspace);
+    (() => { provider.settings; }).should.throw(
+      'A workspace must be loaded to get coverage information.');
+  });
+}
+
+function shouldSucceedAndExposeDefaultSettings() {
   it('should be instantiated correctly with a vscode workspace-like instance and provide ' +
     'settings with correct default values', () => {
       const fakedWorkspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
@@ -17,20 +34,13 @@ describe('how the settings provider works with a fake of vscode api for configur
       const settings = provider.settings;
 
       settings.additionalCmakeOptions.should.be.empty;
-      settings.buildTreeDirectory.should.be.equal('build');
-      settings.cmakeCommand.should.be.equal('cmake');
-      settings.cmakeTarget.should.be.equal('coverage');
-      settings.coverageInfoFileName.should.be.equal('coverage.json');
+      settings.buildTreeDirectory.should.be.equal(defaultSetting('buildTreeDirectory'));
+      settings.cmakeCommand.should.be.equal(defaultSetting('cmakeCommand'));
+      settings.cmakeTarget.should.be.equal(defaultSetting('cmakeTarget'));
+      settings.coverageInfoFileName.should.be.equal(defaultSetting('coverageInfoFileName'));
 
       const workspaceFolders = fakedWorkspace.workspaceFolders as Array<SettingsProvider.VscodeWorkspaceFolderLike>;
       const expectedRootDirectory = workspaceFolders[0].uri.fsPath;
-      settings.rootDirectory.should.be.equal(expectedRootDirectory);
+      settings.rootDirectory.should.be.equal(defaultSetting('rootDirectory'));
     });
-
-  it('should be instantiated correctly but throw an exception when workspace folders are not set', () => {
-    const fakedWorkspace = v.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings();
-    const provider = SettingsProvider.make(fakedWorkspace);
-    (() => { provider.settings; }).should.throw(
-      'A workspace must be loaded to get coverage information.');
-  });
-});
+}

@@ -16,7 +16,7 @@ export namespace vscodeWorkspace {
       workspaceFolders = [
         new class implements SettingsProvider.VscodeWorkspaceFolderLike {
           uri = new class implements SettingsProvider.VscodeUriLike {
-            fsPath = path.resolve('.');
+            fsPath = defaultSetting('rootDirectory').toString();
           };
         }];
 
