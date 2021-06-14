@@ -18,7 +18,7 @@
       "preLaunchTask": "npm: package"
     },
     {
-      "name": "Extension Acceptance Tests",
+      "name": "Acceptance Tests",
       "type": "extensionHost",
       "request": "launch",
       "args": [
@@ -32,7 +32,7 @@
       "preLaunchTask": "npm: test-compile"
     },
     {
-      "name": "Extension Unit Tests",
+      "name": "Unit Tests",
       "type": "extensionHost",
       "request": "launch",
       "args": [
@@ -41,12 +41,12 @@
         "--extensionTestsPath=${workspaceFolder}/out/tests/suites/unit/index"
       ],
       "outFiles": [
-        "${workspaceFolder}/out/tests/acceptance/**/*.js"
+        "${workspaceFolder}/out/tests/unit/**/*.js"
       ],
       "preLaunchTask": "npm: test-compile"
     },
     {
-      "name": "Extension no workspace Integration Tests",
+      "name": "No Workspace Integration Tests",
       "type": "extensionHost",
       "request": "launch",
       "args": [
@@ -60,7 +60,7 @@
       "preLaunchTask": "npm: test-compile"
     },
     {
-      "name": "Extension workspace Integration Tests",
+      "name": "Workspace Integration Tests",
       "type": "extensionHost",
       "request": "launch",
       "args": [
@@ -71,6 +71,20 @@
       ],
       "outFiles": [
         "${workspaceFolder}/out/tests/integration/**/*.js"
+      ],
+      "preLaunchTask": "npm: test-compile"
+    },
+    {
+      "name": "Extension Tests",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--disable-extensions",
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "--extensionTestsPath=${workspaceFolder}/out/tests/suites/extension/index"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/out/tests/extension/**/*.js"
       ],
       "preLaunchTask": "npm: test-compile"
     }
