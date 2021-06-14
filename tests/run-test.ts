@@ -11,6 +11,7 @@ import { runTests } from 'vscode-test';
     await runUnitTests(extensionDevelopmentPath);
     await runIntegrationTestsWithoutWorkspace(extensionDevelopmentPath);
     await runIntegrationTestsWithWorkspace(extensionDevelopmentPath);
+    await runExtensionTests(extensionDevelopmentPath);
   } catch (error) {
     console.error('Failed to run tests\n' + error);
     process.exit(1);
@@ -35,12 +36,6 @@ function runIntegrationTestsWithoutWorkspace(extensionDevelopmentPath: string) {
   return runTests({ extensionDevelopmentPath, extensionTestsPath });
 }
 
-function createCmakeProject() {
-  const src = path.resolve(__dirname, '../../tests/suites/integration/data/workspace');
-  const dst = path.resolve(__dirname, '../workspace');
-  return fs.copy(src, dst, { recursive: true, overwrite: true });
-}
-
 async function runIntegrationTestsWithWorkspace(extensionDevelopmentPath: string) {
   const extensionTestsPath = path.resolve(__dirname, './suites/integration/index.workspace');
   const workspaceDirectory = path.resolve(__dirname, '../workspace');
@@ -48,4 +43,16 @@ async function runIntegrationTestsWithWorkspace(extensionDevelopmentPath: string
   await createCmakeProject();
 
   return runTests({ extensionDevelopmentPath, extensionTestsPath, launchArgs: [workspaceDirectory] });
+}
+
+function createCmakeProject() {
+  const src = path.resolve(__dirname, '../../tests/suites/integration/data/workspace');
+  const dst = path.resolve(__dirname, '../workspace');
+  return fs.copy(src, dst, { recursive: true, overwrite: true });
+}
+
+function runExtensionTests(extensionDevelopmentPath: string) {
+  const extensionTestsPath = path.resolve(__dirname, './suites/extension/index');
+
+  return runTests({ extensionDevelopmentPath, extensionTestsPath });
 }
