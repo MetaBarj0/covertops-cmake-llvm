@@ -4,12 +4,16 @@ import { DecorationLocationsProvider } from '../../domain/services/decoration-lo
 import { Disposable } from "vscode";
 
 export function make() {
-  return Disposable.from(new Cov());
+  return new Cov();
 }
 
 class Cov {
   constructor() {
     this.decorationLocationProvider = DecorationLocationsProviderFactory.make();
+  }
+
+  get asDisposable() {
+    return Disposable.from(this);
   }
 
   dispose() { }

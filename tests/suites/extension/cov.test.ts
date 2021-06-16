@@ -17,8 +17,7 @@ describe('Extension test suite', () => {
 function instantiateCovAsDisposableShouldSucceed() {
   it('should succeed when instantiating the extension as a vscode disposable', () => {
     const cov = CovFactory.make();
-    const assertion = ((cov: any): cov is Disposable => (cov as Disposable).dispose !== undefined)(cov);
 
-    assertion.should.be.equal(true);
+    cov.asDisposable.should.be.an.instanceOf(Disposable);
   });
 }
