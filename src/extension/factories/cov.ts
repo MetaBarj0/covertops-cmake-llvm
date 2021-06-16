@@ -1,7 +1,8 @@
 import * as DecorationLocationsProviderFactory from './decoration-location-provider';
 import { DecorationLocationsProvider } from '../../domain/services/decoration-locations-provider';
 
-import { Disposable } from "vscode";
+import { Disposable, OutputChannel, window } from "vscode";
+import { extensionId } from '../../definitions';
 
 export function make() {
   return new Cov();
@@ -9,14 +10,20 @@ export function make() {
 
 class Cov {
   constructor() {
-    this.decorationLocationProvider = DecorationLocationsProviderFactory.make();
+    this.outputChannel_ = window.createOutputChannel(extensionId);
   }
 
   get asDisposable() {
     return Disposable.from(this);
   }
 
-  dispose() { }
+  get outputChannel() {
+    return this.outputChannel_;
+  }
 
-  private readonly decorationLocationProvider: DecorationLocationsProvider;
+  dispose() {
+    this.outputChannel_.dispose();
+  }
+
+  private readonly outputChannel_: OutputChannel;
 }
