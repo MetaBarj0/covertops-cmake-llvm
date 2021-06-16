@@ -1,8 +1,5 @@
-import * as DecorationLocationsProviderFactory from './decoration-location-provider';
-import { DecorationLocationsProvider } from '../../domain/services/decoration-locations-provider';
-
-import { Disposable, OutputChannel, window } from "vscode";
-import { extensionId } from '../../definitions';
+import { commands, Disposable, OutputChannel, window } from 'vscode';
+import { extensionId, extensionDisplayName } from '../../definitions';
 
 export function make() {
   return new Cov();
@@ -10,7 +7,9 @@ export function make() {
 
 class Cov {
   constructor() {
-    this.outputChannel_ = window.createOutputChannel(extensionId);
+    this.output = window.createOutputChannel(extensionId);
+
+    this.command = commands.registerCommand(`${extensionId}.reportUncoveredCodeRegionsInFile`, this.runDecorationLocationsProvider, this);
   }
 
   get asDisposable() {
@@ -18,12 +17,22 @@ class Cov {
   }
 
   get outputChannel() {
-    return this.outputChannel_;
+    return this.output;
   }
 
   dispose() {
-    this.outputChannel_.dispose();
+    [
+      this.output,
+      this.command
+    ].forEach(disposable => disposable.dispose());
   }
 
-  private readonly outputChannel_: OutputChannel;
+  private runDecorationLocationsProvider() {
+    this.output.show(false);
+    this.output.clear();
+    this.output.appendLine(`starting ${extensionDisplayName}`);
+  }
+
+  private readonly output: OutputChannel;
+  private readonly command: Disposable;
 }
