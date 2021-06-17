@@ -147,7 +147,7 @@
     "vscode:prepublish": "webpack --mode production",
     "webpack": "webpack --mode development",
     "webpack-dev": "webpack --mode development --watch",
-    "test-compile": "tsc -p ./"
+    "test-compile": "npm run compile"
   },
   "devDependencies": {
     "@types/chai": "^4.2.18",

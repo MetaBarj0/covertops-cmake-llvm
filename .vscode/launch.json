@@ -27,7 +27,7 @@
         "--extensionTestsPath=${workspaceFolder}/out/tests/suites/acceptance/index"
       ],
       "outFiles": [
-        "${workspaceFolder}/out/tests/acceptance/**/*.js"
+        "${workspaceFolder}/out/tests/suites/acceptance/**/*.js"
       ],
       "preLaunchTask": "npm: test-compile"
     },
@@ -41,7 +41,7 @@
         "--extensionTestsPath=${workspaceFolder}/out/tests/suites/unit/index"
       ],
       "outFiles": [
-        "${workspaceFolder}/out/tests/unit/**/*.js"
+        "${workspaceFolder}/out/tests/suites/unit/**/*.js"
       ],
       "preLaunchTask": "npm: test-compile"
     },
@@ -55,7 +55,7 @@
         "--extensionTestsPath=${workspaceFolder}/out/tests/suites/integration/index.noworkspace"
       ],
       "outFiles": [
-        "${workspaceFolder}/out/tests/integration/**/*.js"
+        "${workspaceFolder}/out/tests/suites/integration/**/*.noworkspace.test.js"
       ],
       "preLaunchTask": "npm: test-compile"
     },
@@ -70,7 +70,7 @@
         "${workspaceFolder}/out/workspace"
       ],
       "outFiles": [
-        "${workspaceFolder}/out/tests/integration/**/*.js"
+        "${workspaceFolder}/out/tests/suites/integration/**/*.workspace.test.js"
       ],
       "preLaunchTask": "npm: test-compile"
     },
@@ -84,7 +84,7 @@
         "--extensionTestsPath=${workspaceFolder}/out/tests/suites/extension/index"
       ],
       "outFiles": [
-        "${workspaceFolder}/out/tests/extension/**/*.js"
+        "${workspaceFolder}/out/tests/suites/extension/**/*.js"
       ],
       "preLaunchTask": "npm: test-compile"
     }

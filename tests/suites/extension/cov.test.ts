@@ -1,11 +1,12 @@
 import * as chai from 'chai';
-import { describe, it } from 'mocha';
+import { describe, it, before, after } from 'mocha';
 import * as chaiAsPromised from 'chai-as-promised';
 
 chai.use(chaiAsPromised);
 chai.should();
 
-import * as CovFactory from '../../../src/extension/factories/cov';
+import * as Cov from '../../../src/extension/factories/cov';
+
 import { Disposable, OutputChannel } from 'vscode';
 
 describe('Extension test suite', () => {
@@ -16,16 +17,29 @@ describe('Extension test suite', () => {
 });
 
 function instantiateCovAsDisposableShouldSucceed() {
-  it('should succeed when instantiating the extension as a vscode disposable', () => {
-    const cov = CovFactory.make();
+  let cov: ReturnType<typeof Cov.make>;
 
+  before('Instantiating Cov', () => {
+    cov = Cov.make();
+  });
+
+  it('should succeed when instantiating the extension as a vscode disposable', () => {
     cov.asDisposable.should.be.an.instanceOf(Disposable);
+  });
+
+  after('Disposing of cov instance', () => {
+    cov.dispose();
   });
 }
 
 function covInstanceHasAnOutputChannel() {
+  let cov: ReturnType<typeof Cov.make>;
+
+  before('Instantiating Cov', () => {
+    cov = Cov.make();
+  });
+
   it('should expose a vscode output channel', () => {
-    const cov = CovFactory.make();
     const covExposesAVscodeOutputChannel = ((outputChannel: OutputChannel): outputChannel is OutputChannel => {
       return outputChannel.append !== undefined &&
         outputChannel.appendLine !== undefined &&
@@ -37,5 +51,9 @@ function covInstanceHasAnOutputChannel() {
     })(cov.outputChannel);
 
     covExposesAVscodeOutputChannel.should.be.equal(true);
+  });
+
+  after('Disposing of cov instance', () => {
+    cov.dispose();
   });
 }
