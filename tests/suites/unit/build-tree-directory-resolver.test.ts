@@ -67,11 +67,12 @@ function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryDoesNotExistA
 }
 
 function buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryExists() {
-  it('should resolve the full path of the build tree directory if the specified setting target an existing directory', () => {
+  it('should resolve the full path of the build tree directory if the specified setting target an existing directory', async () => {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const statFile = sf.buildFakeSucceedingStatFile();
     const mkDir = md.buildFakeFailingMkDir();
-    const progressReporter = pr.buildFakeProgressReporter();
+    const spy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());
+    const progressReporter = spy.object;
 
     const resolver = BuildTreeDirectoryResolver.make({
       workspace,
@@ -80,17 +81,20 @@ function buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryExists() {
       progressReporter
     });
 
-    return resolver.resolveAbsolutePath().should.eventually.be.fulfilled;
+    await resolver.resolveAbsolutePath();
+
+    spy.countFor('report').should.be.equal(1);
   });
 }
 
 function buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryDoesNotExistAndCanBeCreated() {
   it('should resolve the full path of the build tree directory if the specified setting target ' +
-    'an unexisting directory that can be created', () => {
+    'an unexisting directory that can be created', async () => {
       const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
       const statFile = sf.buildFakeFailingStatFile();
       const mkDir = md.buildFakeSucceedingMkDir();
-      const progressReporter = pr.buildFakeProgressReporter();
+      const spy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());
+      const progressReporter = spy.object;
 
       const resolver = BuildTreeDirectoryResolver.make({
         workspace,
@@ -99,6 +103,8 @@ function buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryDoesNotExi
         progressReporter
       });
 
-      return resolver.resolveAbsolutePath().should.eventually.be.fulfilled;
+      await resolver.resolveAbsolutePath();
+
+      spy.countFor('report').should.be.equal(1);
     });
 }

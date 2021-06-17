@@ -22,6 +22,7 @@ class CoverageInfoFileResolver {
   constructor(adapters: Adapters) {
     this.globSearch = adapters.globSearch;
     this.workspace = adapters.workspace;
+    this.progressReporter = adapters.progressReporter;
   }
 
   async resolveCoverageInfoFileFullPath() {
@@ -35,12 +36,14 @@ class CoverageInfoFileResolver {
         'settings are correctly set.');
 
     if (searchResult.length > 1)
-      return Promise.reject(
+      throw new Error(
         'More than one coverage information file have been found in the build tree directory. ' +
         'Ensure that both ' +
         `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
         `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
         'settings are correctly set.');
+
+    this.progressReporter.report({});
 
     return searchResult[0];
   }
@@ -54,4 +57,5 @@ class CoverageInfoFileResolver {
 
   private readonly globSearch: GlobSearchLike;
   private readonly workspace: SettingsProvider.VscodeWorkspaceLike;
+  private readonly progressReporter: ProgressReporter.ProgressLike;
 };

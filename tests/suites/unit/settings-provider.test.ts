@@ -40,7 +40,6 @@ function shouldSucceedAndExposeDefaultSettings() {
       settings.cmakeTarget.should.be.equal(defaultSetting('cmakeTarget'));
       settings.coverageInfoFileName.should.be.equal(defaultSetting('coverageInfoFileName'));
 
-      const workspaceFolders = fakedWorkspace.workspaceFolders as Array<SettingsProvider.VscodeWorkspaceFolderLike>;
       settings.rootDirectory.should.be.equal(defaultSetting('rootDirectory'));
     });
 }

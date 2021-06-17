@@ -36,10 +36,12 @@ class BuildTreeDirectoryResolver {
     const buildTreeDirectory = SettingsProvider.make(this.workspace).settings.buildTreeDirectory;
 
     if (path.isAbsolute(buildTreeDirectory))
-      return Promise.reject(
-        `Incorrect absolute path specified in '${definitions.extensionNameInSettings}: Build Tree Directory'. It must be a relative path.`);
+      throw new Error(`Incorrect absolute path specified in '${definitions.extensionNameInSettings}: ` +
+        "Build Tree Directory'. It must be a relative path.");
 
-    return await this.statAndCreateIfNeeded(buildTreeDirectory);
+    await this.statAndCreateIfNeeded(buildTreeDirectory);
+
+    this.progressReporter.report({});
   }
 
   private async statAndCreateIfNeeded(buildTreeDirectory: string) {

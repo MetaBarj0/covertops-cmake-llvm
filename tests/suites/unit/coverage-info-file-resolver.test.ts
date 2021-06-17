@@ -55,13 +55,16 @@ function shouldFailWhenMoreThanOneFileAreFound() {
 }
 
 function shouldSucceedWhenExactlyOneFileIsFound() {
-  it('should resolve correctly if the recursive search from the build tree directory find exactly one file.', () => {
+  it('should resolve correctly if the recursive search from the build tree directory find exactly one file in one discrete step.', async () => {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const globSearch = g.buildFakeGlobSearchForExactlyOneMatch();
-    const progressReporter = pr.buildFakeProgressReporter();
+    const spy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());
+    const progressReporter = spy.object;
 
     const resolver = CoverageInfoFileResolver.make({ workspace, globSearch, progressReporter });
 
-    return resolver.resolveCoverageInfoFileFullPath().should.eventually.be.fulfilled;
+    await resolver.resolveCoverageInfoFileFullPath();
+
+    spy.countFor('report').should.be.equal(1);
   });
 }

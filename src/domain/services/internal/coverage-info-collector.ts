@@ -44,6 +44,8 @@ class CoverageInfoCollector {
 
     const path = await coverageInfoFileResolver.resolveCoverageInfoFileFullPath();
 
+    this.progressReporter.report({});
+
     return new CoverageInfo(() => this.llvmCoverageInfoStreamBuilder.createStream(path), sourceFilePath);
   }
 
