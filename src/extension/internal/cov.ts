@@ -1,5 +1,7 @@
-import { commands, Disposable, OutputChannel, window } from 'vscode';
 import { extensionId, extensionDisplayName } from '../../definitions';
+import * as DecorationLocationProvider from '../../../src/extension/factories/decoration-location-provider';
+
+import { commands, Disposable, OutputChannel, ProgressLocation, window } from 'vscode';
 
 export class Cov {
   constructor() {
@@ -21,6 +23,18 @@ export class Cov {
       this.output,
       this.command
     ].forEach(disposable => disposable.dispose());
+  }
+
+  run() {
+    return window.withProgress({
+      location: ProgressLocation.Notification,
+      title: 'Computing uncovered code region locations',
+      cancellable: false
+    }, async progress => {
+      const provider = DecorationLocationProvider.make({ progressReporter: progress });
+
+      await provider.getDecorationLocationsForUncoveredCodeRegions('');
+    });
   }
 
   private runDecorationLocationsProvider() {

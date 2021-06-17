@@ -2,8 +2,8 @@ import * as BuildTreeDirectoryResolver from '../../src/domain/services/internal/
 
 import { MakeDirectoryOptions, PathLike } from 'fs';
 
-export namespace fs {
-  export function buildFakeFailingFs() {
+export namespace mkDir {
+  export function buildFakeFailingMkDir() {
     return new class implements BuildTreeDirectoryResolver.MkDirLike {
       mkdir(_path: PathLike, _options: MakeDirectoryOptions & { recursive: true; }): Promise<string | undefined> {
         return Promise.reject();
@@ -11,7 +11,7 @@ export namespace fs {
     };
   }
 
-  export function buildFakeSucceedingFs() {
+  export function buildFakeSucceedingMkDir() {
     return new class implements BuildTreeDirectoryResolver.MkDirLike {
       mkdir(_path: PathLike, _options: MakeDirectoryOptions & { recursive: true; }): Promise<string | undefined> {
         return Promise.resolve('/build/tree/directory');

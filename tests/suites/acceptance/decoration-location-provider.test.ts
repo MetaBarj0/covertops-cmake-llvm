@@ -9,12 +9,13 @@ import * as definitions from '../../../src/definitions';
 import { DecorationLocationsProvider } from '../../../src/domain/services/decoration-locations-provider';
 import { RegionCoverageInfo } from '../../../src/domain/value-objects/region-coverage-info';
 
-import { fs } from '../../faked-adapters/fs';
+import { mkDir } from '../../faked-adapters/mk-dir';
 import { vscodeWorkspace as v } from '../../faked-adapters/vscode-workspace';
 import { process as p } from '../../faked-adapters/process';
 import { inputStream as i } from '../../faked-adapters/input-stream';
 import { statFile as sf } from '../../faked-adapters/stat-file';
 import { globbing as g } from '../../faked-adapters/globbing';
+import { progressReporter as pr } from '../../faked-adapters/progress-reporter';
 
 describe('acceptance suite of tests', () => {
   describe('The decoration location provider service behavior', () => {
@@ -41,8 +42,9 @@ function instantiateService() {
         processForCmakeCommand: p.buildFakeFailingProcess(),
         processForCmakeTarget: p.buildFakeFailingProcess(),
         globSearch: g.buildFakeGlobSearchForNoMatch(),
-        mkDir: fs.buildFakeFailingFs(),
+        mkDir: mkDir.buildFakeFailingMkDir(),
         llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
+        progressReporter: pr.buildFakeProgressReporter()
       });
     };
 
@@ -59,8 +61,9 @@ function failBecauseOfIssuesWithBuildTreeDirectorySetting() {
         processForCmakeCommand: p.buildFakeFailingProcess(),
         processForCmakeTarget: p.buildFakeFailingProcess(),
         globSearch: g.buildFakeGlobSearchForNoMatch(),
-        mkDir: fs.buildFakeFailingFs(),
+        mkDir: mkDir.buildFakeFailingMkDir(),
         llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
+        progressReporter: pr.buildFakeProgressReporter()
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
@@ -78,8 +81,9 @@ function failBecauseOfIssuesWithCmakeCommandSetting() {
         processForCmakeCommand: p.buildFakeFailingProcess(),
         processForCmakeTarget: p.buildFakeFailingProcess(),
         globSearch: g.buildFakeGlobSearchForNoMatch(),
-        mkDir: fs.buildFakeFailingFs(),
+        mkDir: mkDir.buildFakeFailingMkDir(),
         llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
+        progressReporter: pr.buildFakeProgressReporter()
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
@@ -100,8 +104,9 @@ function failBecauseOfIssuesWithCmakeTargetSetting() {
         processForCmakeCommand: p.buildFakeSucceedingProcess(),
         processForCmakeTarget: p.buildFakeFailingProcess(),
         globSearch: g.buildFakeGlobSearchForNoMatch(),
-        mkDir: fs.buildFakeFailingFs(),
+        mkDir: mkDir.buildFakeFailingMkDir(),
         llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
+        progressReporter: pr.buildFakeProgressReporter()
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
@@ -119,8 +124,9 @@ function failBecauseCoverageInfoFileIsNotFound() {
         processForCmakeCommand: p.buildFakeSucceedingProcess(),
         processForCmakeTarget: p.buildFakeSucceedingProcess(),
         globSearch: g.buildFakeGlobSearchForNoMatch(),
-        mkDir: fs.buildFakeFailingFs(),
+        mkDir: mkDir.buildFakeFailingMkDir(),
         llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
+        progressReporter: pr.buildFakeProgressReporter()
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
@@ -141,8 +147,9 @@ function failBecauseSeveralCoverageInfoFileAreFound() {
         processForCmakeCommand: p.buildFakeSucceedingProcess(),
         processForCmakeTarget: p.buildFakeSucceedingProcess(),
         globSearch: g.buildFakeGlobSearchForSeveralMatch(),
-        mkDir: fs.buildFakeFailingFs(),
+        mkDir: mkDir.buildFakeFailingMkDir(),
         llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
+        progressReporter: pr.buildFakeProgressReporter()
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
@@ -162,8 +169,9 @@ function succeedWithCorrectSettingsAndFakeAdapters() {
       processForCmakeCommand: p.buildFakeSucceedingProcess(),
       processForCmakeTarget: p.buildFakeSucceedingProcess(),
       globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
-      mkDir: fs.buildFakeSucceedingFs(),
-      llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream)
+      mkDir: mkDir.buildFakeSucceedingMkDir(),
+      llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream),
+      progressReporter: pr.buildFakeProgressReporter()
     });
 
     const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions('/a/source/file.cpp');

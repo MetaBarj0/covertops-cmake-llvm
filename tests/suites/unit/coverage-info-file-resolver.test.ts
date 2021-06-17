@@ -10,6 +10,7 @@ import * as CoverageInfoFileResolver from '../../../src/domain/services/internal
 
 import { vscodeWorkspace as v } from '../../faked-adapters/vscode-workspace';
 import { globbing as g } from '../../faked-adapters/globbing';
+import { progressReporter as pr } from '../../faked-adapters/progress-reporter';
 
 describe('Unit test suite', () => {
   describe('the behavior of the coverage info file resolver', () => {
@@ -23,8 +24,9 @@ function shouldFailWhenNoFileIsFound() {
   it('should fail if the recursive search from the build tree directory does not find one file', () => {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const globSearch = g.buildFakeGlobSearchForNoMatch();
+    const progressReporter = pr.buildFakeProgressReporter();
 
-    const resolver = CoverageInfoFileResolver.make({ workspace, globSearch });
+    const resolver = CoverageInfoFileResolver.make({ workspace, globSearch, progressReporter });
 
     return resolver.resolveCoverageInfoFileFullPath().should.eventually.be.rejectedWith(
       'Cannot resolve the coverage info file path in the build tree directory. ' +
@@ -39,8 +41,9 @@ function shouldFailWhenMoreThanOneFileAreFound() {
   it('should fail if the recursive search from the build tree directory does not find one file', () => {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const globSearch = g.buildFakeGlobSearchForNoMatch();
+    const progressReporter = pr.buildFakeProgressReporter();
 
-    const resolver = CoverageInfoFileResolver.make({ workspace, globSearch });
+    const resolver = CoverageInfoFileResolver.make({ workspace, globSearch, progressReporter });
 
     return resolver.resolveCoverageInfoFileFullPath().should.eventually.be.rejectedWith(
       'Cannot resolve the coverage info file path in the build tree directory. ' +
@@ -55,8 +58,9 @@ function shouldSucceedWhenExactlyOneFileIsFound() {
   it('should resolve correctly if the recursive search from the build tree directory find exactly one file.', () => {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const globSearch = g.buildFakeGlobSearchForExactlyOneMatch();
+    const progressReporter = pr.buildFakeProgressReporter();
 
-    const resolver = CoverageInfoFileResolver.make({ workspace, globSearch });
+    const resolver = CoverageInfoFileResolver.make({ workspace, globSearch, progressReporter });
 
     return resolver.resolveCoverageInfoFileFullPath().should.eventually.be.fulfilled;
   });

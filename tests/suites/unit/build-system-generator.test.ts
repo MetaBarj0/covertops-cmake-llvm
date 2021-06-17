@@ -10,6 +10,7 @@ import * as BuildSystemGenerator from '../../../src/domain/services/internal/bui
 
 import { process as p } from '../../faked-adapters/process';
 import { vscodeWorkspace as v } from '../../faked-adapters/vscode-workspace';
+import { progressReporter as pr } from '../../faked-adapters/progress-reporter';
 
 describe('Unit test suite', () => {
   describe('the build system generator behavior', () => {
@@ -24,8 +25,14 @@ function buildSystemGeneratorShouldFailWithWrongCmakeCommandSetting() {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ 'cmakeCommand': '' });
     const processForCommand = p.buildFakeFailingProcess();
     const processForTarget = p.buildFakeSucceedingProcess();
+    const progressReporter = pr.buildFakeProgressReporter();
 
-    const cmake = BuildSystemGenerator.make({ workspace, processForCommand, processForTarget });
+    const cmake = BuildSystemGenerator.make({
+      workspace,
+      processForCommand,
+      processForTarget,
+      progressReporter
+    });
 
     return cmake.buildTarget().should.eventually.be.rejectedWith(
       `Cannot find the cmake command. Ensure the '${definitions.extensionNameInSettings}: Cmake Command' ` +
@@ -38,8 +45,14 @@ function buildSystemGeneratorShouldFailWithWrongCmakeTargetSetting() {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ 'cmakeTarget': '' });
     const processForCommand = p.buildFakeSucceedingProcess();
     const processForTarget = p.buildFakeFailingProcess();
+    const progressReporter = pr.buildFakeProgressReporter();
 
-    const cmake = BuildSystemGenerator.make({ workspace, processForCommand, processForTarget });
+    const cmake = BuildSystemGenerator.make({
+      workspace,
+      processForCommand,
+      processForTarget,
+      progressReporter
+    });
 
     const target = workspace.getConfiguration(definitions.extensionNameInSettings).get('cmakeTarget');
 
@@ -54,8 +67,14 @@ function buildSystemGeneratorShouldSucceedWithCorrectSettings() {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const processForCommand = p.buildFakeSucceedingProcess();
     const processForTarget = p.buildFakeSucceedingProcess();
+    const progressReporter = pr.buildFakeProgressReporter();
 
-    const cmake = BuildSystemGenerator.make({ workspace, processForCommand, processForTarget });
+    const cmake = BuildSystemGenerator.make({
+      workspace,
+      processForCommand,
+      processForTarget,
+      progressReporter
+    });
 
     return cmake.buildTarget().should.eventually.be.fulfilled;
   });

@@ -8,9 +8,10 @@ chai.should();
 import * as definitions from '../../../src/definitions';
 import * as BuildTreeDirectoryResolver from '../../../src/domain/services/internal/build-tree-directory-resolver';
 
-import { fs } from '../../faked-adapters/fs';
+import { mkDir as md } from '../../faked-adapters/mk-dir';
 import { vscodeWorkspace as v } from '../../faked-adapters/vscode-workspace';
 import { statFile as sf } from '../../faked-adapters/stat-file';
+import { progressReporter as pr } from '../../faked-adapters/progress-reporter';
 
 import path = require('path');
 
@@ -30,9 +31,15 @@ function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryIsAnAbsoluteP
     });
 
     const statFile = sf.buildFakeFailingStatFile();
-    const failingFs = fs.buildFakeFailingFs();
+    const mkDir = md.buildFakeFailingMkDir();
+    const progressReporter = pr.buildFakeProgressReporter();
 
-    const resolver = BuildTreeDirectoryResolver.make({ workspace, statFile, mkDir: failingFs });
+    const resolver = BuildTreeDirectoryResolver.make({
+      workspace,
+      statFile,
+      mkDir,
+      progressReporter
+    });
 
     return resolver.resolveAbsolutePath().should.eventually.be.rejectedWith(
       `Incorrect absolute path specified in '${definitions.extensionNameInSettings}: Build Tree Directory'. It must be a relative path.`);
@@ -43,9 +50,15 @@ function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryDoesNotExistA
   it('should fail to resolve if specified relative path target does not exist and cannot be created', () => {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const statFile = sf.buildFakeFailingStatFile();
-    const failingFs = fs.buildFakeFailingFs();
+    const mkDir = md.buildFakeFailingMkDir();
+    const progressReporter = pr.buildFakeProgressReporter();
 
-    const resolver = BuildTreeDirectoryResolver.make({ workspace, statFile, mkDir: failingFs });
+    const resolver = BuildTreeDirectoryResolver.make({
+      workspace,
+      statFile,
+      mkDir,
+      progressReporter
+    });
 
     return resolver.resolveAbsolutePath().should.eventually.be.rejectedWith(
       'Cannot find or create the build tree directory. Ensure the ' +
@@ -57,9 +70,15 @@ function buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryExists() {
   it('should resolve the full path of the build tree directory if the specified setting target an existing directory', () => {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const statFile = sf.buildFakeSucceedingStatFile();
-    const failingFs = fs.buildFakeFailingFs();
+    const mkDir = md.buildFakeFailingMkDir();
+    const progressReporter = pr.buildFakeProgressReporter();
 
-    const resolver = BuildTreeDirectoryResolver.make({ workspace, statFile, mkDir: failingFs });
+    const resolver = BuildTreeDirectoryResolver.make({
+      workspace,
+      statFile,
+      mkDir,
+      progressReporter
+    });
 
     return resolver.resolveAbsolutePath().should.eventually.be.fulfilled;
   });
@@ -70,9 +89,15 @@ function buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryDoesNotExi
     'an unexisting directory that can be created', () => {
       const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
       const statFile = sf.buildFakeFailingStatFile();
-      const succeedingFs = fs.buildFakeSucceedingFs();
+      const mkDir = md.buildFakeSucceedingMkDir();
+      const progressReporter = pr.buildFakeProgressReporter();
 
-      const resolver = BuildTreeDirectoryResolver.make({ workspace, statFile, mkDir: succeedingFs });
+      const resolver = BuildTreeDirectoryResolver.make({
+        workspace,
+        statFile,
+        mkDir,
+        progressReporter
+      });
 
       return resolver.resolveAbsolutePath().should.eventually.be.fulfilled;
     });

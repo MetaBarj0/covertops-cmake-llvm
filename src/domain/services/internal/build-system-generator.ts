@@ -1,5 +1,6 @@
 import * as definitions from '../../../definitions';
 import * as SettingsProvider from './settings-provider';
+import * as ProgressReporter from './progress-reporter';
 
 export type ExecFileExceptionLike = {
   message: string;
@@ -24,7 +25,8 @@ export type ProcessLike = {
 type Adapters = {
   workspace: SettingsProvider.VscodeWorkspaceLike,
   processForCommand: ProcessLike,
-  processForTarget: ProcessLike
+  processForTarget: ProcessLike,
+  progressReporter: ProgressReporter.ProgressLike
 };
 
 export function make(adapters: Adapters) {

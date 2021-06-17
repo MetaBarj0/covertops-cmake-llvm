@@ -12,6 +12,8 @@ import * as BuildTreeDirectoryResolver from '../../../src/domain/services/intern
 import * as BuildSystemGenerator from '../../../src/domain/services/internal/build-system-generator';
 import * as definitions from '../../../src/definitions';
 
+import { progressReporter as pr } from '../../faked-adapters/progress-reporter';
+
 import * as vscode from 'vscode';
 import { env } from 'process';
 import * as path from 'path';
@@ -153,11 +155,13 @@ const extensionConfiguration = vscode.workspace.getConfiguration(definitions.ext
 const cmake = BuildSystemGenerator.make({
   workspace: vscode.workspace,
   processForCommand: childProcess.executeFile,
-  processForTarget: childProcess.executeFile
+  processForTarget: childProcess.executeFile,
+  progressReporter: pr.buildFakeProgressReporter()
 });
 
 const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({
   workspace: vscode.workspace,
   statFile: fileSystem.statFile,
-  mkDir: fileSystem.makeDirectory
+  mkDir: fileSystem.makeDirectory,
+  progressReporter: pr.buildFakeProgressReporter()
 });

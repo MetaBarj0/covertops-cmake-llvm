@@ -1,6 +1,7 @@
 import * as definitions from '../../../definitions';
 import * as SettingsProvider from './settings-provider';
 import * as CoverageInfoFileResolver from './coverage-info-file-resolver';
+import * as ProgressReporter from './progress-reporter';
 import { CoverageSummary } from '../../value-objects/coverage-summary';
 
 import {
@@ -31,12 +32,14 @@ class CoverageInfoCollector {
     this.workspace = adapters.workspace;
     this.globSearch = adapters.globSearch;
     this.llvmCoverageInfoStreamBuilder = adapters.llvmCoverageInfoStreamBuilder;
+    this.progressReporter = adapters.progressReporter;
   }
 
   async collectFor(sourceFilePath: string) {
     const coverageInfoFileResolver = CoverageInfoFileResolver.make({
       workspace: this.workspace,
-      globSearch: this.globSearch
+      globSearch: this.globSearch,
+      progressReporter: this.progressReporter
     });
 
     const path = await coverageInfoFileResolver.resolveCoverageInfoFileFullPath();
@@ -55,12 +58,14 @@ class CoverageInfoCollector {
   private readonly workspace: SettingsProvider.VscodeWorkspaceLike;
   private readonly globSearch: CoverageInfoFileResolver.GlobSearchLike;
   private readonly llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder;
+  private readonly progressReporter: ProgressReporter.ProgressLike;
 };
 
 type Adapters = {
   workspace: SettingsProvider.VscodeWorkspaceLike,
   globSearch: CoverageInfoFileResolver.GlobSearchLike,
-  llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder
+  llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder,
+  progressReporter: ProgressReporter.ProgressLike
 };
 
 type StreamFactory = () => Readable;

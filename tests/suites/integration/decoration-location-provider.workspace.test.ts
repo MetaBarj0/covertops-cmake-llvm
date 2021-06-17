@@ -10,6 +10,8 @@ import * as definitions from '../../../src/definitions';
 
 import * as DecorationLocationsProvider from '../../../src/extension/factories/decoration-location-provider';
 
+import { progressReporter as pr } from '../../faked-adapters/progress-reporter';
+
 import * as vscode from 'vscode';
 import { env } from 'process';
 import * as path from 'path';
@@ -37,7 +39,9 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
   });
 
   it('should report correct coverage information for a specific cpp file', async () => {
-    const provider = DecorationLocationsProvider.make();
+    const provider = DecorationLocationsProvider.make({
+      progressReporter: pr.buildFakeProgressReporter()
+    });
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('partiallyCovered/partiallyCoveredLib.cpp');
 
@@ -77,7 +81,9 @@ function collectSummaryCoverageInfoFromPartiallyCoveredFileShouldSucceed() {
   });
 
   it('should report correct coverage information for a specific cpp file', async () => {
-    const provider = DecorationLocationsProvider.make();
+    const provider = DecorationLocationsProvider.make({
+      progressReporter: pr.buildFakeProgressReporter()
+    });
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('partiallyCovered/partiallyCoveredLib.cpp');
 
@@ -110,7 +116,9 @@ function collectSummaryCoverageInfoFromFullyCoveredFileShouldSucceed() {
   });
 
   it('should report correct coverage information for a specific file', async () => {
-    const provider = DecorationLocationsProvider.make();
+    const provider = DecorationLocationsProvider.make({
+      progressReporter: pr.buildFakeProgressReporter()
+    });
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('fullyCovered/fullyCoveredLib.cpp');
 
@@ -143,7 +151,9 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
   });
 
   it('should report correct coverage information for a specific file', async () => {
-    const provider = DecorationLocationsProvider.make();
+    const provider = DecorationLocationsProvider.make({
+      progressReporter: pr.buildFakeProgressReporter()
+    });
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('fullyCovered/fullyCoveredLib.cpp');
 

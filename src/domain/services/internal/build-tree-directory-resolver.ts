@@ -1,5 +1,6 @@
 import * as definitions from '../../../definitions';
 import * as SettingsProvider from './settings-provider';
+import * as ProgressReporter from './progress-reporter';
 
 import { BigIntStats, MakeDirectoryOptions, PathLike, StatOptions, Stats } from 'fs';
 import * as path from 'path';
@@ -16,13 +17,19 @@ export function make(adapters: Adapters) {
   return new BuildTreeDirectoryResolver(adapters);
 }
 
-type Adapters = { workspace: SettingsProvider.VscodeWorkspaceLike, statFile: StatFileLike, mkDir: MkDirLike };
+type Adapters = {
+  workspace: SettingsProvider.VscodeWorkspaceLike,
+  statFile: StatFileLike,
+  mkDir: MkDirLike,
+  progressReporter: ProgressReporter.ProgressLike
+};
 
 class BuildTreeDirectoryResolver {
-  constructor(adapters: { workspace: SettingsProvider.VscodeWorkspaceLike, statFile: StatFileLike, mkDir: MkDirLike }) {
+  constructor(adapters: Adapters) {
     this.workspace = adapters.workspace;
     this.statFile = adapters.statFile;
     this.mkDir = adapters.mkDir;
+    this.progressReporter = adapters.progressReporter;
   }
 
   async resolveAbsolutePath() {
@@ -51,7 +58,8 @@ class BuildTreeDirectoryResolver {
     await this.statFile.stat(buildTreeDirectory);
   }
 
-  private statFile: StatFileLike;
-  private workspace: SettingsProvider.VscodeWorkspaceLike;
-  private mkDir: MkDirLike;
+  private readonly statFile: StatFileLike;
+  private readonly workspace: SettingsProvider.VscodeWorkspaceLike;
+  private readonly mkDir: MkDirLike;
+  private readonly progressReporter: ProgressReporter.ProgressLike;
 };

@@ -12,6 +12,7 @@ import { RegionCoverageInfo } from '../../../src/domain/value-objects/region-cov
 import { vscodeWorkspace as v } from '../../faked-adapters/vscode-workspace';
 import { inputStream as i } from '../../faked-adapters/input-stream';
 import { globbing as g } from '../../faked-adapters/globbing';
+import { progressReporter as pr } from '../../faked-adapters/progress-reporter';
 
 describe('Unit test suite', () => {
   describe('the coverage info collector behavior', () => {
@@ -33,7 +34,7 @@ describe('Unit test suite', () => {
 });
 
 function shouldFailToCollectCoverageInfoSummaryBecauseOfInvalidStream() {
-  collectorsSetupWithInvalidStreams().forEach(async collector => {
+  setupCollectorsWithInvalidStreams().forEach(async collector => {
     const coverageInfo = await collector.collectFor('');
 
     return coverageInfo.summary
@@ -47,7 +48,7 @@ function shouldFailToCollectCoverageInfoSummaryBecauseOfInvalidStream() {
 }
 
 function shouldFailToCollectUncoveredRegionsBecauseOfInvalidStream() {
-  collectorsSetupWithInvalidStreams().forEach(async collector => {
+  setupCollectorsWithInvalidStreams().forEach(async collector => {
     it('should fail to access to uncovered regions', async () => {
       const coverageInfo = await collector.collectFor('');
       const iterateOnUncoveredRegions = async () => { for await (const _region of coverageInfo.uncoveredRegions); };
@@ -65,11 +66,11 @@ function shouldFailToCollectUncoveredRegionsBecauseOfInvalidStream() {
 
 function shouldFailToCollectCoverageInfoSummaryBecauseOfUnhandledSourceFile() {
   it('should fail to provide coverage summary for an unhandled source file', async () => {
-    const collector = collectorSetupWithValidStream;
+    const collector = setupCollectorWithValidStream;
 
     const sourceFilePath = '/an/unhandled/source/file.cpp';
 
-    const coverageInfo = await collector.collectFor(sourceFilePath);
+    const coverageInfo = await collector().collectFor(sourceFilePath);
 
     return coverageInfo.summary
       .should.eventually.be.rejectedWith('Cannot find any summary coverage info for the file ' +
@@ -79,10 +80,10 @@ function shouldFailToCollectCoverageInfoSummaryBecauseOfUnhandledSourceFile() {
 
 function shouldFailToCollectUncoveredRegionsBecauseOfUnhandledSourceFile() {
   it('should fail to provide uncovered code regions for an unhandled source file', async () => {
-    const collector = collectorSetupWithValidStream;
+    const collector = setupCollectorWithValidStream;
 
     const sourceFilePath = '/an/unhandled/source/file.cpp';
-    const coverageInfo = await collector.collectFor(sourceFilePath);
+    const coverageInfo = await collector().collectFor(sourceFilePath);
     const iterateOnUncoveredRegions = async () => { for await (const _region of coverageInfo.uncoveredRegions); };
 
     return iterateOnUncoveredRegions()
@@ -93,9 +94,9 @@ function shouldFailToCollectUncoveredRegionsBecauseOfUnhandledSourceFile() {
 
 function shouldSucceedToCollectCoverageInfoSummary() {
   it('should succeed in provided summary coverage info for handled source file', async () => {
-    const collector = collectorSetupWithValidStream;
+    const collector = setupCollectorWithValidStream;
 
-    const coverageInfo = await collector.collectFor('/a/source/file.cpp');
+    const coverageInfo = await collector().collectFor('/a/source/file.cpp');
 
     const summary = await coverageInfo.summary;
 
@@ -108,9 +109,9 @@ function shouldSucceedToCollectCoverageInfoSummary() {
 
 function shouldSucceedToCollectUncoveredRegions() {
   it('should succeed to provide uncovered regions for a handled source file', async () => {
-    const collector = collectorSetupWithValidStream;
+    const collector = setupCollectorWithValidStream;
 
-    const coverageInfo = await collector.collectFor('/a/source/file.cpp');
+    const coverageInfo = await collector().collectFor('/a/source/file.cpp');
     const regions = coverageInfo.uncoveredRegions;
 
     const uncoveredRegions: Array<RegionCoverageInfo> = [];
@@ -135,7 +136,7 @@ function shouldSucceedToCollectUncoveredRegions() {
   });
 }
 
-function collectorsSetupWithInvalidStreams() {
+function setupCollectorsWithInvalidStreams() {
   const collectors: Array<ReturnType<typeof CoverageInfoCollector.make>> = [];
 
   [
@@ -146,15 +147,19 @@ function collectorsSetupWithInvalidStreams() {
     collectors.push(CoverageInfoCollector.make({
       globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
       workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-      llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(streamFactory)
+      llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(streamFactory),
+      progressReporter: pr.buildFakeProgressReporter()
     }));
   });
 
   return collectors;
 };
 
-const collectorSetupWithValidStream = CoverageInfoCollector.make({
-  globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
-  workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-  llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream)
-});
+function setupCollectorWithValidStream() {
+  return CoverageInfoCollector.make({
+    globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
+    workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
+    llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream),
+    progressReporter: pr.buildFakeProgressReporter()
+  });
+}

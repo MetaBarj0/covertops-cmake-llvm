@@ -1,5 +1,6 @@
 import * as definitions from '../../../definitions';
 import * as SettingsProvider from './settings-provider';
+import * as ProgressReporter from './progress-reporter';
 
 import path = require('path');
 
@@ -13,7 +14,8 @@ export function make(adapters: Adapters) {
 
 type Adapters = {
   workspace: SettingsProvider.VscodeWorkspaceLike,
-  globSearch: GlobSearchLike
+  globSearch: GlobSearchLike,
+  progressReporter: ProgressReporter.ProgressLike
 };
 
 class CoverageInfoFileResolver {

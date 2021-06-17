@@ -12,7 +12,8 @@ import { Disposable, OutputChannel } from 'vscode';
 describe('Extension test suite', () => {
   describe('The cov extension behavior', () => {
     describe('The instantiation of the extension as a vscode disposable', instantiateCovAsDisposableShouldSucceed);
-    describe('cov has a working vscode window output channel', covInstanceHasAnOutputChannel);
+    describe('The extension has a working vscode window output channel', covInstanceHasAnOutputChannel);
+    describe('The extension can leverage vscode progress infrastructure', extensionCanShowProgress);
   });
 });
 
@@ -51,6 +52,22 @@ function covInstanceHasAnOutputChannel() {
     })(cov.outputChannel);
 
     covExposesAVscodeOutputChannel.should.be.equal(true);
+  });
+
+  after('Disposing of cov instance', () => {
+    cov.dispose();
+  });
+}
+
+function extensionCanShowProgress() {
+  let cov: ReturnType<typeof Cov.make>;
+
+  before('Instantiating Cov', () => {
+    cov = Cov.make();
+  });
+
+  it('should show progress when used', () => {
+    cov.run().should.eventually.be.fulfilled;
   });
 
   after('Disposing of cov instance', () => {
