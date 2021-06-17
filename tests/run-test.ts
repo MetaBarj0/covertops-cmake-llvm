@@ -51,8 +51,11 @@ function createCmakeProject() {
   return fs.copy(src, dst, { recursive: true, overwrite: true });
 }
 
-function runExtensionTests(extensionDevelopmentPath: string) {
+async function runExtensionTests(extensionDevelopmentPath: string) {
   const extensionTestsPath = path.resolve(__dirname, './suites/extension/index');
+  const workspaceDirectory = path.resolve(__dirname, '../workspace');
 
-  return runTests({ extensionDevelopmentPath, extensionTestsPath });
+  await createCmakeProject();
+
+  return runTests({ extensionDevelopmentPath, extensionTestsPath, launchArgs: [workspaceDirectory] });
 }

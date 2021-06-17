@@ -1,5 +1,5 @@
 import { configureAndRun } from '../configure-and-run';
 
 export function run() {
-  return configureAndRun('./extension/**/**.test.js');
+  return configureAndRun('./extension/**/**.test.js', { timeout: '120s' });
 }

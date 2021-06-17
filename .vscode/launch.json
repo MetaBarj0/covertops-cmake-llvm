@@ -81,7 +81,8 @@
       "args": [
         "--disable-extensions",
         "--extensionDevelopmentPath=${workspaceFolder}",
-        "--extensionTestsPath=${workspaceFolder}/out/tests/suites/extension/index"
+        "--extensionTestsPath=${workspaceFolder}/out/tests/suites/extension/index",
+        "${workspaceFolder}/out/workspace"
       ],
       "outFiles": [
         "${workspaceFolder}/out/tests/suites/extension/**/*.js"

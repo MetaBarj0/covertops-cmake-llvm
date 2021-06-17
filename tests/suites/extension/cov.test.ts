@@ -66,7 +66,7 @@ function extensionCanShowProgress() {
     cov = Cov.make();
   });
 
-  it('should show progress when used', () => {
+  it('should run successfully', () => {
     return cov.run().should.eventually.be.fulfilled;
   });
 
