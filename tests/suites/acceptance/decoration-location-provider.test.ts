@@ -162,7 +162,9 @@ function failBecauseSeveralCoverageInfoFileAreFound() {
 }
 
 function succeedWithCorrectSettingsAndFakeAdapters() {
-  it('should succed to collect correct coverage information for the requested file.', async () => {
+  it('should succed to collect correct coverage information for the requested file in x discrete steps.', async () => {
+    const progressReporterSpy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());
+
     const provider = new DecorationLocationsProvider({
       workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
       statFile: sf.buildFakeSucceedingStatFile(),
@@ -171,7 +173,7 @@ function succeedWithCorrectSettingsAndFakeAdapters() {
       globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
       mkDir: mkDir.buildFakeSucceedingMkDir(),
       llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream),
-      progressReporter: pr.buildFakeProgressReporter()
+      progressReporter: progressReporterSpy.object
     });
 
     const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions('/a/source/file.cpp');
@@ -200,5 +202,7 @@ function succeedWithCorrectSettingsAndFakeAdapters() {
         character: 71
       }
     });
+
+    progressReporterSpy.countFor('report').should.be.equal(7);
   });
 }
