@@ -37,7 +37,13 @@ export class Cov {
     });
   }
 
-  private runDecorationLocationsProvider() {
+  private async runDecorationLocationsProvider() {
+    this.reportStartInOutputChannel();
+
+    await this.run();
+  }
+
+  private reportStartInOutputChannel() {
     this.output.show(false);
     this.output.clear();
     this.output.appendLine(`starting ${extensionDisplayName}`);

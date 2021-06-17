@@ -67,7 +67,7 @@ function extensionCanShowProgress() {
   });
 
   it('should show progress when used', () => {
-    cov.run().should.eventually.be.fulfilled;
+    return cov.run().should.eventually.be.fulfilled;
   });
 
   after('Disposing of cov instance', () => {
