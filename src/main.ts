@@ -6,5 +6,4 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(CovFactory.make().asDisposable);
 }
 
-export function deactivate() {
-}
+export function deactivate() { }

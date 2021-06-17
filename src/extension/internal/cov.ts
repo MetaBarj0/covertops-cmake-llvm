@@ -6,8 +6,7 @@ import { commands, Disposable, OutputChannel, ProgressLocation, window } from 'v
 export class Cov {
   constructor() {
     this.output = window.createOutputChannel(extensionId);
-
-    this.command = commands.registerCommand(`${extensionId}.reportUncoveredCodeRegionsInFile`, this.runDecorationLocationsProvider, this);
+    this.command = commands.registerCommand(`${extensionId}.reportUncoveredCodeRegionsInFile`, this.run, this);
   }
 
   get asDisposable() {
@@ -31,16 +30,12 @@ export class Cov {
       title: 'Computing uncovered code region locations',
       cancellable: false
     }, async progress => {
+      this.reportStartInOutputChannel();
+
       const provider = DecorationLocationProvider.make({ progressReporter: progress });
 
       await provider.getDecorationLocationsForUncoveredCodeRegions('');
     });
-  }
-
-  private async runDecorationLocationsProvider() {
-    this.reportStartInOutputChannel();
-
-    await this.run();
   }
 
   private reportStartInOutputChannel() {

@@ -36,14 +36,6 @@ export class DecorationLocationsProvider {
 
     await cmake.buildTarget();
 
-    const coverageInfoFileResolver = CoverageInfoFileResolver.make({
-      workspace: this.workspace,
-      globSearch: this.globSearch,
-      progressReporter: this.progressReporter
-    });
-
-    await coverageInfoFileResolver.resolveCoverageInfoFileFullPath();
-
     const collector = CoverageInfoCollector.make({
       workspace: this.workspace,
       globSearch: this.globSearch,

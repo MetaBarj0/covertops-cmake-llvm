@@ -43,7 +43,10 @@ class CoverageInfoFileResolver {
         `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
         'settings are correctly set.');
 
-    this.progressReporter.report({});
+    this.progressReporter.report({
+      message: 'Resolved the LLVM coverage information file path.',
+      increment: 100 / 6 * 5
+    });
 
     return searchResult[0];
   }

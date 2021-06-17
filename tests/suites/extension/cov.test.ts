@@ -6,8 +6,9 @@ chai.use(chaiAsPromised);
 chai.should();
 
 import * as Cov from '../../../src/extension/factories/cov';
+import { extensionId } from '../../../src/definitions';
 
-import { Disposable, OutputChannel } from 'vscode';
+import { Disposable, OutputChannel, commands } from 'vscode';
 
 describe('Extension test suite', () => {
   describe('The cov extension behavior', () => {
@@ -67,7 +68,7 @@ function extensionCanShowProgress() {
   });
 
   it('should run successfully', () => {
-    return cov.run().should.eventually.be.fulfilled;
+    return commands.executeCommand(`${extensionId}.reportUncoveredCodeRegionsInFile`).should.eventually.be.fulfilled;
   });
 
   after('Disposing of cov instance', () => {

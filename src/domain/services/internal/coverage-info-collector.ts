@@ -44,7 +44,10 @@ class CoverageInfoCollector {
 
     const path = await coverageInfoFileResolver.resolveCoverageInfoFileFullPath();
 
-    this.progressReporter.report({});
+    this.progressReporter.report({
+      message: 'Prepared summary and uncovered region of code information.',
+      increment: 100 / 6 * 6
+    });
 
     return new CoverageInfo(() => this.llvmCoverageInfoStreamBuilder.createStream(path), sourceFilePath);
   }

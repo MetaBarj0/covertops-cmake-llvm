@@ -43,13 +43,22 @@ class BuildSystemGenerator {
 
   async buildTarget() {
     await this.ensureCommandIsReachable();
-    this.progressReporter.report({});
+    this.progressReporter.report({
+      message: 'Found an invocable cmake command.',
+      increment: 100 / 6 * 2
+    });
 
     await this.generate();
-    this.progressReporter.report({});
+    this.progressReporter.report({
+      message: 'Generated the cmake project.',
+      increment: 100 / 6 * 3
+    });
 
     await this.build();
-    this.progressReporter.report({});
+    this.progressReporter.report({
+      message: 'Built the target.',
+      increment: 100 / 6 * 4
+    });
   }
 
   private ensureCommandIsReachable() {

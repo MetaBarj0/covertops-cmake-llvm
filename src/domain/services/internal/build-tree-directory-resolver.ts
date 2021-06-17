@@ -41,7 +41,10 @@ class BuildTreeDirectoryResolver {
 
     await this.statAndCreateIfNeeded(buildTreeDirectory);
 
-    this.progressReporter.report({});
+    this.progressReporter.report({
+      message: 'Resolved build tree directory path.',
+      increment: 100 / 6 * 1
+    });
   }
 
   private async statAndCreateIfNeeded(buildTreeDirectory: string) {

@@ -203,6 +203,6 @@ function succeedWithCorrectSettingsAndFakeAdapters() {
       }
     });
 
-    progressReporterSpy.countFor('report').should.be.equal(7);
+    progressReporterSpy.countFor('report').should.be.equal(6);
   });
 }
