@@ -63,11 +63,12 @@ function buildSystemGeneratorShouldFailWithWrongCmakeTargetSetting() {
 }
 
 function buildSystemGeneratorShouldSucceedWithCorrectSettings() {
-  it('should be instantiated and succeed when asking for building a target', () => {
+  it('should be instantiated and succeed when asking for building a target in three discrete steps', async () => {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const processForCommand = p.buildFakeSucceedingProcess();
     const processForTarget = p.buildFakeSucceedingProcess();
-    const progressReporter = pr.buildFakeProgressReporter();
+    const spy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());
+    const progressReporter = spy.object;
 
     const cmake = BuildSystemGenerator.make({
       workspace,
@@ -76,6 +77,8 @@ function buildSystemGeneratorShouldSucceedWithCorrectSettings() {
       progressReporter
     });
 
-    return cmake.buildTarget().should.eventually.be.fulfilled;
+    await cmake.buildTarget();
+
+    spy.countFor('report').should.be.equal(3);
   });
 }

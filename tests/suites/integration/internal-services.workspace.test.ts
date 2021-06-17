@@ -138,7 +138,7 @@ function buildSystemGeneratorTargetBuildingShouldSucceed() {
   });
 }
 
-function prependLlvmBinDirToPathEnvironmentVariable(): string {
+function prependLlvmBinDirToPathEnvironmentVariable() {
   const oldPath = <string>env['PATH'];
 
   if (env['LLVM_DIR']) {

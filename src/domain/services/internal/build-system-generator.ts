@@ -38,16 +38,21 @@ class BuildSystemGenerator {
     this.workspace = adapters.workspace;
     this.processForCommand = adapters.processForCommand;
     this.processForTarget = adapters.processForTarget;
+    this.progressReporter = adapters.progressReporter;
   }
 
-  async buildTarget(): Promise<void> {
+  async buildTarget() {
     await this.ensureCommandIsReachable();
-    await this.generate();
+    this.progressReporter.report({});
 
-    return this.build();
+    await this.generate();
+    this.progressReporter.report({});
+
+    await this.build();
+    this.progressReporter.report({});
   }
 
-  private ensureCommandIsReachable(): Promise<void> {
+  private ensureCommandIsReachable() {
     return this.executeCommandWith({
       process: this.processForCommand,
       arguments: ['--version'],
@@ -57,7 +62,7 @@ class BuildSystemGenerator {
     });
   }
 
-  private generate(): Promise<void> {
+  private generate() {
     const settings = SettingsProvider.make(this.workspace).settings;
     const build = settings.buildTreeDirectory;
     const source = settings.rootDirectory;
@@ -71,7 +76,7 @@ class BuildSystemGenerator {
     });
   }
 
-  private build(): Promise<void> {
+  private build() {
     const settings = SettingsProvider.make(this.workspace).settings;
     const build = settings.buildTreeDirectory;
     const target = settings.cmakeTarget;
@@ -85,8 +90,8 @@ class BuildSystemGenerator {
     });
   }
 
-  private executeCommandWith(options: { process: ProcessLike, arguments: ReadonlyArray<string>, potentialErrorMessage: string }): Promise<void> {
-    return new Promise((resolve, reject) => {
+  private executeCommandWith(options: { process: ProcessLike, arguments: ReadonlyArray<string>, potentialErrorMessage: string }) {
+    return new Promise<void>((resolve, reject) => {
       const settings = SettingsProvider.make(this.workspace).settings;
       const cmakeCommand = settings.cmakeCommand;
 
@@ -109,4 +114,5 @@ class BuildSystemGenerator {
   private readonly processForCommand: ProcessLike;
   private readonly processForTarget: ProcessLike;
   private readonly workspace: SettingsProvider.VscodeWorkspaceLike;
+  private readonly progressReporter: ProgressReporter.ProgressLike;
 };

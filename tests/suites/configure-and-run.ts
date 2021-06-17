@@ -2,8 +2,8 @@ import * as path from 'path';
 import * as Mocha from 'mocha';
 import * as glob from 'glob';
 
-export function configureAndRun(testsGlob: string, options: Mocha.MochaOptions = {}): Promise<void> {
-  return new Promise((resolve, reject) => {
+export function configureAndRun(testsGlob: string, options: Mocha.MochaOptions = {}) {
+  return new Promise<void>((resolve, reject) => {
     // Create the mocha test
     const mocha = new Mocha({
       ui: 'tdd',

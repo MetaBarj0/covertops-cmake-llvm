@@ -181,7 +181,7 @@ function createAbsoluteSourceFilePathFrom(workspacePath: string) {
   return `${sourceFilePath[0].toUpperCase()}${sourceFilePath.slice(1)}`;
 }
 
-function prependLlvmBinDirToPathEnvironmentVariable(): string {
+function prependLlvmBinDirToPathEnvironmentVariable() {
   const oldPath = <string>env['PATH'];
 
   if (env['LLVM_DIR']) {

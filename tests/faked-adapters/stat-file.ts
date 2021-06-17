@@ -2,17 +2,17 @@ import * as BuildTreeDirectoryResolver from '../../src/domain/services/internal/
 import { BigIntStats, PathLike, StatOptions, Stats } from 'fs';
 
 export namespace statFile {
-  export function buildFakeFailingStatFile() {
+  export function buildFakeFailingStatFile(): BuildTreeDirectoryResolver.StatFileLike {
     return new class implements BuildTreeDirectoryResolver.StatFileLike {
-      stat(_path: PathLike, _opts?: StatOptions): Promise<Stats | BigIntStats> {
+      stat(_path: PathLike, _opts?: StatOptions) {
         return Promise.reject();
       }
     };
   }
 
-  export function buildFakeSucceedingStatFile() {
+  export function buildFakeSucceedingStatFile(): BuildTreeDirectoryResolver.StatFileLike {
     return new class implements BuildTreeDirectoryResolver.StatFileLike {
-      stat(_path: PathLike, _opts?: StatOptions): Promise<Stats | BigIntStats> {
+      stat(_path: PathLike, _opts?: StatOptions) {
         return Promise.resolve(new Stats());
       }
     };

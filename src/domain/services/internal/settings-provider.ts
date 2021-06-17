@@ -27,7 +27,7 @@ class SettingsProvider {
     this.workspace = workspace;
   }
 
-  get settings(): Settings {
+  get settings() {
     if (!this.workspace.workspaceFolders)
       throw new Error('A workspace must be loaded to get coverage information.');
 

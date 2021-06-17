@@ -2,13 +2,13 @@ import * as CoverageInfoCollector from '../../src/domain/services/internal/cover
 import { Readable } from 'stream';
 
 export namespace inputStream {
-  export function buildEmptyReadableStream(): Readable {
+  export function buildEmptyReadableStream() {
     const empty = (function* () { })();
 
     return Readable.from(empty);
   }
 
-  export function buildNotJsonStream(): Readable {
+  export function buildNotJsonStream() {
     return Readable.from('foo');
   }
 
