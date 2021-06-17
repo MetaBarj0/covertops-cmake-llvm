@@ -108,9 +108,9 @@
         "id": "covCmakeLlvm.uncoveredCodeRegionBackground",
         "description": "Background decoration for an uncovered code region",
         "defaults": {
-          "dark": "#FF000055",
+          "dark": "#ff7a7a",
           "light": "#FF000055",
-          "highContrast": "#FF000055"
+          "highContrast": "#ff0000"
         }
       }
     ],

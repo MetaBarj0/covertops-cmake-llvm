@@ -8,7 +8,9 @@ chai.should();
 import * as Cov from '../../../src/extension/factories/cov';
 import { extensionId } from '../../../src/definitions';
 
-import { Disposable, OutputChannel, commands } from 'vscode';
+import { Disposable, OutputChannel, commands, window, Uri, workspace } from 'vscode';
+
+import * as path from 'path';
 
 describe('Extension test suite', () => {
   describe('The cov extension behavior', () => {
@@ -63,8 +65,14 @@ function covInstanceHasAnOutputChannel() {
 function extensionCanShowProgress() {
   let cov: ReturnType<typeof Cov.make>;
 
-  before('Instantiating Cov', () => {
+  before('Instantiating Cov', async () => {
     cov = Cov.make();
+
+    const workspaceRootFolder = workspace.workspaceFolders?.[0].uri.fsPath;
+
+    const cppFilePath = path.join(<string>workspaceRootFolder, 'src', 'partiallyCovered', 'partiallyCoveredLib.cpp');
+
+    await window.showTextDocument(Uri.file(cppFilePath), { preserveFocus: false });
   });
 
   it('should run successfully', () => {
