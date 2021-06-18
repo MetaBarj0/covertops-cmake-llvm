@@ -1,6 +1,7 @@
 import * as definitions from '../../../definitions';
 import * as SettingsProvider from './settings-provider';
 import * as ProgressReporter from './progress-reporter';
+import * as ErrorChannel from './error-channel';
 
 export type ExecFileExceptionLike = {
   message: string;
@@ -26,7 +27,8 @@ type Adapters = {
   workspace: SettingsProvider.VscodeWorkspaceLike,
   processForCommand: ProcessLike,
   processForTarget: ProcessLike,
-  progressReporter: ProgressReporter.ProgressLike
+  progressReporter: ProgressReporter.ProgressLike,
+  errorChannel: ErrorChannel.OutputChannelLike
 };
 
 export function make(adapters: Adapters) {
@@ -39,6 +41,7 @@ class BuildSystemGenerator {
     this.processForCommand = adapters.processForCommand;
     this.processForTarget = adapters.processForTarget;
     this.progressReporter = adapters.progressReporter;
+    this.errorChannel = adapters.errorChannel;
   }
 
   async buildTarget() {
@@ -111,11 +114,14 @@ class BuildSystemGenerator {
           env: process.env
         },
         (error, stdout, stderr) => {
-          if (error)
-            return reject(new Error(
-              `${options.potentialErrorMessage}\n${error.message}\n${stderr}\n${stdout}`));
+          if (!error)
+            return resolve();
 
-          resolve();
+          const errorMessage = `${options.potentialErrorMessage}\n${error.message}\n${stderr}\n${stdout}`;
+
+          this.errorChannel.appendLine(errorMessage);
+
+          return reject(new Error(errorMessage));
         });
     });
   }
@@ -124,4 +130,5 @@ class BuildSystemGenerator {
   private readonly processForTarget: ProcessLike;
   private readonly workspace: SettingsProvider.VscodeWorkspaceLike;
   private readonly progressReporter: ProgressReporter.ProgressLike;
+  private readonly errorChannel: ErrorChannel.OutputChannelLike;
 };

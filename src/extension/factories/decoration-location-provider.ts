@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 
 import { DecorationLocationsProvider } from '../../domain/services/decoration-locations-provider';
+import * as ErrorChannel from '../../domain/services/internal/error-channel';
 
 import { fileSystem } from '../../adapters/file-system';
 import { childProcess } from '../../adapters/child-process';
@@ -15,10 +16,12 @@ export function make(adapters: Adapters) {
     globSearch: fileSystem.globSearch,
     mkDir: fileSystem.makeDirectory,
     llvmCoverageInfoStreamBuilder: inputStream.readableStream,
-    progressReporter: adapters.progressReporter
+    progressReporter: adapters.progressReporter,
+    errorChannel: adapters.errorChannel
   });
 }
 
 type Adapters = {
-  progressReporter: vscode.Progress<{ message?: string, increment?: number }>
+  progressReporter: vscode.Progress<{ message?: string, increment?: number }>,
+  errorChannel: ErrorChannel.OutputChannelLike
 };

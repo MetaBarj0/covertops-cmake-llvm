@@ -11,6 +11,7 @@ import * as BuildSystemGenerator from '../../../src/domain/services/internal/bui
 import { process as p } from '../../faked-adapters/process';
 import { vscodeWorkspace as v } from '../../faked-adapters/vscode-workspace';
 import { progressReporter as pr } from '../../faked-adapters/progress-reporter';
+import { errorChannel as e } from '../../faked-adapters/error-channel';
 
 describe('Unit test suite', () => {
   describe('the build system generator behavior', () => {
@@ -26,17 +27,25 @@ function buildSystemGeneratorShouldFailWithWrongCmakeCommandSetting() {
     const processForCommand = p.buildFakeFailingProcess();
     const processForTarget = p.buildFakeSucceedingProcess();
     const progressReporter = pr.buildFakeProgressReporter();
+    const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
+    const errorChannel = errorChannelSpy.object;
 
     const cmake = BuildSystemGenerator.make({
       workspace,
       processForCommand,
       processForTarget,
-      progressReporter
+      progressReporter,
+      errorChannel
     });
 
-    return cmake.buildTarget().should.eventually.be.rejectedWith(
-      `Cannot find the cmake command. Ensure the '${definitions.extensionNameInSettings}: Cmake Command' ` +
-      'setting is correctly set. Have you verified your PATH environment variable?');
+    return cmake.buildTarget()
+      .catch((error: Error) => {
+        error.message.should.contain(
+          `Cannot find the cmake command. Ensure the '${definitions.extensionNameInSettings}: Cmake Command' ` +
+          'setting is correctly set. Have you verified your PATH environment variable?');
+
+        errorChannelSpy.countFor('appendLine').should.be.equal(1);
+      });
   });
 }
 
@@ -46,12 +55,15 @@ function buildSystemGeneratorShouldFailWithWrongCmakeTargetSetting() {
     const processForCommand = p.buildFakeSucceedingProcess();
     const processForTarget = p.buildFakeFailingProcess();
     const progressReporter = pr.buildFakeProgressReporter();
+    const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
+    const errorChannel = errorChannelSpy.object;
 
     const cmake = BuildSystemGenerator.make({
       workspace,
       processForCommand,
       processForTarget,
-      progressReporter
+      progressReporter,
+      errorChannel
     });
 
     const target = workspace.getConfiguration(definitions.extensionNameInSettings).get('cmakeTarget');
@@ -67,18 +79,21 @@ function buildSystemGeneratorShouldSucceedWithCorrectSettings() {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const processForCommand = p.buildFakeSucceedingProcess();
     const processForTarget = p.buildFakeSucceedingProcess();
-    const spy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());
-    const progressReporter = spy.object;
+    const progressReporterSpy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());
+    const progressReporter = progressReporterSpy.object;
+    const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
+    const errorChannel = errorChannelSpy.object;
 
     const cmake = BuildSystemGenerator.make({
       workspace,
       processForCommand,
       processForTarget,
-      progressReporter
+      progressReporter,
+      errorChannel
     });
 
     await cmake.buildTarget();
 
-    spy.countFor('report').should.be.equal(3);
+    progressReporterSpy.countFor('report').should.be.equal(3);
   });
 }

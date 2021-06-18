@@ -4,6 +4,7 @@ import * as  BuildSystemGenerator from './internal/build-system-generator';
 import * as CoverageInfoFileResolver from './internal/coverage-info-file-resolver';
 import * as CoverageInfoCollector from './internal/coverage-info-collector';
 import * as ProgressReporter from './internal/progress-reporter';
+import * as ErrorChannel from './internal/error-channel';
 
 export class DecorationLocationsProvider {
   constructor(adapters: Adapters) {
@@ -15,6 +16,7 @@ export class DecorationLocationsProvider {
     this.mkDir = adapters.mkDir;
     this.llvmCoverageInfoStreamBuilder = adapters.llvmCoverageInfoStreamBuilder;
     this.progressReporter = adapters.progressReporter;
+    this.errorChannel = adapters.errorChannel;
   }
 
   async getDecorationLocationsForUncoveredCodeRegions(sourceFilePath: string) {
@@ -31,7 +33,8 @@ export class DecorationLocationsProvider {
       workspace: this.workspace,
       processForCommand: this.processForCmakeCommand,
       processForTarget: this.processForCmakeTarget,
-      progressReporter: this.progressReporter
+      progressReporter: this.progressReporter,
+      errorChannel: this.errorChannel
     });
 
     await cmake.buildTarget();
@@ -54,6 +57,7 @@ export class DecorationLocationsProvider {
   private readonly mkDir: BuildTreeDirectoryResolver.MkDirLike;
   private readonly llvmCoverageInfoStreamBuilder: CoverageInfoCollector.LLVMCoverageInfoStreamBuilder;
   private readonly progressReporter: ProgressReporter.ProgressLike;
+  private readonly errorChannel: ErrorChannel.OutputChannelLike;
 }
 
 type Adapters = {
@@ -64,5 +68,6 @@ type Adapters = {
   globSearch: CoverageInfoFileResolver.GlobSearchLike,
   mkDir: BuildTreeDirectoryResolver.MkDirLike,
   llvmCoverageInfoStreamBuilder: CoverageInfoCollector.LLVMCoverageInfoStreamBuilder,
-  progressReporter: ProgressReporter.ProgressLike
+  progressReporter: ProgressReporter.ProgressLike,
+  errorChannel: ErrorChannel.OutputChannelLike
 };

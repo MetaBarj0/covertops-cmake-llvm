@@ -11,6 +11,7 @@ import * as definitions from '../../../src/definitions';
 import * as DecorationLocationsProvider from '../../../src/extension/factories/decoration-location-provider';
 
 import { progressReporter as pr } from '../../faked-adapters/progress-reporter';
+import { errorChannel as e } from '../../faked-adapters/error-channel';
 
 import * as vscode from 'vscode';
 import { env } from 'process';
@@ -40,7 +41,8 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
 
   it('should report correct coverage information for a specific cpp file', async () => {
     const provider = DecorationLocationsProvider.make({
-      progressReporter: pr.buildFakeProgressReporter()
+      progressReporter: pr.buildFakeProgressReporter(),
+      errorChannel: e.buildFakeErrorChannel()
     });
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('partiallyCovered/partiallyCoveredLib.cpp');
@@ -82,7 +84,8 @@ function collectSummaryCoverageInfoFromPartiallyCoveredFileShouldSucceed() {
 
   it('should report correct coverage information for a specific cpp file', async () => {
     const provider = DecorationLocationsProvider.make({
-      progressReporter: pr.buildFakeProgressReporter()
+      progressReporter: pr.buildFakeProgressReporter(),
+      errorChannel: e.buildFakeErrorChannel()
     });
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('partiallyCovered/partiallyCoveredLib.cpp');
@@ -117,7 +120,8 @@ function collectSummaryCoverageInfoFromFullyCoveredFileShouldSucceed() {
 
   it('should report correct coverage information for a specific file', async () => {
     const provider = DecorationLocationsProvider.make({
-      progressReporter: pr.buildFakeProgressReporter()
+      progressReporter: pr.buildFakeProgressReporter(),
+      errorChannel: e.buildFakeErrorChannel()
     });
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('fullyCovered/fullyCoveredLib.cpp');
@@ -152,7 +156,8 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
 
   it('should report correct coverage information for a specific file', async () => {
     const provider = DecorationLocationsProvider.make({
-      progressReporter: pr.buildFakeProgressReporter()
+      progressReporter: pr.buildFakeProgressReporter(),
+      errorChannel: e.buildFakeErrorChannel()
     });
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('fullyCovered/fullyCoveredLib.cpp');

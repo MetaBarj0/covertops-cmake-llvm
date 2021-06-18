@@ -13,6 +13,7 @@ import * as BuildSystemGenerator from '../../../src/domain/services/internal/bui
 import * as definitions from '../../../src/definitions';
 
 import { progressReporter as pr } from '../../faked-adapters/progress-reporter';
+import { errorChannel as e } from '../../faked-adapters/error-channel';
 
 import * as vscode from 'vscode';
 import { env } from 'process';
@@ -57,7 +58,7 @@ function buildTreeDirectoryResolverShouldFail() {
     await extensionConfiguration.update('buildTreeDirectory', '*<>buildz<>*\0'));
 
   it('should not be possible to find or create the build tree directory', () => {
-    return buildTreeDirectoryResolver.resolveAbsolutePath().should.eventually.be.rejectedWith(
+    return makeBuildTreeDirectoryResolver().resolveAbsolutePath().should.eventually.be.rejectedWith(
       'Cannot find or create the build tree directory. Ensure the ' +
       `'${definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`);
   });
@@ -72,7 +73,7 @@ function buildSystemGeneratorInvocationShouldFail() {
   });
 
   it('should fail in attempting to invoke the build system generator', () => {
-    return cmake.buildTarget().should.eventually.be.rejectedWith(
+    return makeCmake().buildTarget().should.eventually.be.rejectedWith(
       `Cannot find the cmake command. Ensure the '${definitions.extensionNameInSettings}: Cmake Command' ` +
       'setting is correctly set. Have you verified your PATH environment variable?');
   });
@@ -97,7 +98,7 @@ function buildSystemGeneratorTargetBuildingShouldFail() {
   it('should fail in attempting to build an invalid cmake target', () => {
     const settings = SettingsProvider.make(vscode.workspace).settings;
 
-    return cmake.buildTarget().should.eventually.be.rejectedWith(
+    return makeCmake().buildTarget().should.eventually.be.rejectedWith(
       `Error: Could not build the specified cmake target ${settings.cmakeTarget}. ` +
       `Ensure '${definitions.extensionNameInSettings}: Cmake Target' setting is properly set.`);
   });
@@ -114,7 +115,7 @@ function buildSystemGeneratorTargetBuildingShouldFail() {
 
 function buildTreeDirectoryResolverShouldSucceed() {
   it('should find the build tree directory', () => {
-    return buildTreeDirectoryResolver.resolveAbsolutePath().should.eventually.be.fulfilled;
+    return makeBuildTreeDirectoryResolver().resolveAbsolutePath().should.eventually.be.fulfilled;
   });
 }
 
@@ -128,7 +129,7 @@ function buildSystemGeneratorTargetBuildingShouldSucceed() {
   });
 
   it('should not throw when attempting to build a valid cmake target specified in settings', () => {
-    return cmake.buildTarget().should.eventually.be.fulfilled;
+    return makeCmake().buildTarget().should.eventually.be.fulfilled;
   });
 
   after('restoring additional cmake command options and PATH environment variable', async () => {
@@ -152,16 +153,22 @@ function prependLlvmBinDirToPathEnvironmentVariable() {
 
 const extensionConfiguration = vscode.workspace.getConfiguration(definitions.extensionId);
 
-const cmake = BuildSystemGenerator.make({
-  workspace: vscode.workspace,
-  processForCommand: childProcess.executeFile,
-  processForTarget: childProcess.executeFile,
-  progressReporter: pr.buildFakeProgressReporter()
-});
+// TODO: function instead of constants
+function makeCmake() {
+  return BuildSystemGenerator.make({
+    workspace: vscode.workspace,
+    processForCommand: childProcess.executeFile,
+    processForTarget: childProcess.executeFile,
+    progressReporter: pr.buildFakeProgressReporter(),
+    errorChannel: e.buildFakeErrorChannel()
+  });
+}
 
-const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({
-  workspace: vscode.workspace,
-  statFile: fileSystem.statFile,
-  mkDir: fileSystem.makeDirectory,
-  progressReporter: pr.buildFakeProgressReporter()
-});
+function makeBuildTreeDirectoryResolver() {
+  return BuildTreeDirectoryResolver.make({
+    workspace: vscode.workspace,
+    statFile: fileSystem.statFile,
+    mkDir: fileSystem.makeDirectory,
+    progressReporter: pr.buildFakeProgressReporter()
+  });
+}

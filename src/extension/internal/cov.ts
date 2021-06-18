@@ -32,7 +32,10 @@ export class Cov {
     }, async progress => {
       this.reportStartInOutputChannel();
 
-      const provider = DecorationLocationProvider.make({ progressReporter: progress });
+      const provider = DecorationLocationProvider.make({
+        progressReporter: progress,
+        errorChannel: this.output
+      });
 
       await provider.getDecorationLocationsForUncoveredCodeRegions('');
     });

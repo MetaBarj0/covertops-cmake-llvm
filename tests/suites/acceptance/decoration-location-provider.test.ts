@@ -16,6 +16,7 @@ import { inputStream as i } from '../../faked-adapters/input-stream';
 import { statFile as sf } from '../../faked-adapters/stat-file';
 import { globbing as g } from '../../faked-adapters/globbing';
 import { progressReporter as pr } from '../../faked-adapters/progress-reporter';
+import { errorChannel as e } from '../../faked-adapters/error-channel';
 
 describe('acceptance suite of tests', () => {
   describe('The decoration location provider service behavior', () => {
@@ -44,7 +45,8 @@ function instantiateService() {
         globSearch: g.buildFakeGlobSearchForNoMatch(),
         mkDir: mkDir.buildFakeFailingMkDir(),
         llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
-        progressReporter: pr.buildFakeProgressReporter()
+        progressReporter: pr.buildFakeProgressReporter(),
+        errorChannel: e.buildFakeErrorChannel()
       });
     };
 
@@ -63,7 +65,8 @@ function failBecauseOfIssuesWithBuildTreeDirectorySetting() {
         globSearch: g.buildFakeGlobSearchForNoMatch(),
         mkDir: mkDir.buildFakeFailingMkDir(),
         llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
-        progressReporter: pr.buildFakeProgressReporter()
+        progressReporter: pr.buildFakeProgressReporter(),
+        errorChannel: e.buildFakeErrorChannel()
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
@@ -83,7 +86,8 @@ function failBecauseOfIssuesWithCmakeCommandSetting() {
         globSearch: g.buildFakeGlobSearchForNoMatch(),
         mkDir: mkDir.buildFakeFailingMkDir(),
         llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
-        progressReporter: pr.buildFakeProgressReporter()
+        progressReporter: pr.buildFakeProgressReporter(),
+        errorChannel: e.buildFakeErrorChannel()
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
@@ -106,7 +110,8 @@ function failBecauseOfIssuesWithCmakeTargetSetting() {
         globSearch: g.buildFakeGlobSearchForNoMatch(),
         mkDir: mkDir.buildFakeFailingMkDir(),
         llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
-        progressReporter: pr.buildFakeProgressReporter()
+        progressReporter: pr.buildFakeProgressReporter(),
+        errorChannel: e.buildFakeErrorChannel()
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
@@ -126,7 +131,8 @@ function failBecauseCoverageInfoFileIsNotFound() {
         globSearch: g.buildFakeGlobSearchForNoMatch(),
         mkDir: mkDir.buildFakeFailingMkDir(),
         llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
-        progressReporter: pr.buildFakeProgressReporter()
+        progressReporter: pr.buildFakeProgressReporter(),
+        errorChannel: e.buildFakeErrorChannel()
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
@@ -149,7 +155,8 @@ function failBecauseSeveralCoverageInfoFileAreFound() {
         globSearch: g.buildFakeGlobSearchForSeveralMatch(),
         mkDir: mkDir.buildFakeFailingMkDir(),
         llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
-        progressReporter: pr.buildFakeProgressReporter()
+        progressReporter: pr.buildFakeProgressReporter(),
+        errorChannel: e.buildFakeErrorChannel()
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
@@ -173,7 +180,8 @@ function succeedWithCorrectSettingsAndFakeAdapters() {
       globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
       mkDir: mkDir.buildFakeSucceedingMkDir(),
       llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream),
-      progressReporter: progressReporterSpy.object
+      progressReporter: progressReporterSpy.object,
+      errorChannel: e.buildFakeErrorChannel()
     });
 
     const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions('/a/source/file.cpp');

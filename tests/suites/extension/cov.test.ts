@@ -16,7 +16,7 @@ describe('Extension test suite', () => {
   describe('The cov extension behavior', () => {
     describe('The instantiation of the extension as a vscode disposable', instantiateCovAsDisposableShouldSucceed);
     describe('The extension has a working vscode window output channel', covInstanceHasAnOutputChannel);
-    describe('The extension can leverage vscode progress infrastructure', extensionCanShowProgress);
+    describe('The extension can leverage vscode api adapters when executing the reportUncoveredRegionsInFile command', extensionCanExecuteCommand);
   });
 });
 
@@ -62,7 +62,7 @@ function covInstanceHasAnOutputChannel() {
   });
 }
 
-function extensionCanShowProgress() {
+function extensionCanExecuteCommand() {
   let cov: ReturnType<typeof Cov.make>;
 
   before('Instantiating Cov', async () => {
