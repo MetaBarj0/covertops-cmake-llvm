@@ -11,6 +11,7 @@ import * as CoverageInfoFileResolver from '../../../src/domain/services/internal
 import { vscodeWorkspace as v } from '../../faked-adapters/vscode-workspace';
 import { globbing as g } from '../../faked-adapters/globbing';
 import { progressReporter as pr } from '../../faked-adapters/progress-reporter';
+import { errorChannel as e } from '../../faked-adapters/error-channel';
 
 describe('Unit test suite', () => {
   describe('the behavior of the coverage info file resolver', () => {
@@ -21,19 +22,26 @@ describe('Unit test suite', () => {
 });
 
 function shouldFailWhenNoFileIsFound() {
-  it('should fail if the recursive search from the build tree directory does not find one file', () => {
+  it('should fail and report in error channel if the recursive search from the build tree directory does not find one file', () => {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const globSearch = g.buildFakeGlobSearchForNoMatch();
     const progressReporter = pr.buildFakeProgressReporter();
+    const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
+    const errorChannel = errorChannelSpy.object;
 
-    const resolver = CoverageInfoFileResolver.make({ workspace, globSearch, progressReporter });
+    const resolver = CoverageInfoFileResolver.make({ workspace, globSearch, progressReporter, errorChannel });
 
-    return resolver.resolveCoverageInfoFileFullPath().should.eventually.be.rejectedWith(
-      'Cannot resolve the coverage info file path in the build tree directory. ' +
-      'Ensure that both ' +
-      `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
-      `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
-      'settings are correctly set.');
+    return resolver.resolveCoverageInfoFileFullPath()
+      .catch((error: Error) => {
+        const errorMessage = 'Cannot resolve the coverage info file path in the build tree directory. ' +
+          'Ensure that both ' +
+          `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+          `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
+          'settings are correctly set.';
+
+        error.message.should.contain(errorMessage);
+        errorChannelSpy.countFor('appendLine').should.be.equal(1);
+      });
   });
 }
 
@@ -42,15 +50,22 @@ function shouldFailWhenMoreThanOneFileAreFound() {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const globSearch = g.buildFakeGlobSearchForNoMatch();
     const progressReporter = pr.buildFakeProgressReporter();
+    const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
+    const errorChannel = errorChannelSpy.object;
 
-    const resolver = CoverageInfoFileResolver.make({ workspace, globSearch, progressReporter });
+    const resolver = CoverageInfoFileResolver.make({ workspace, globSearch, progressReporter, errorChannel });
 
-    return resolver.resolveCoverageInfoFileFullPath().should.eventually.be.rejectedWith(
-      'Cannot resolve the coverage info file path in the build tree directory. ' +
-      'Ensure that both ' +
-      `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
-      `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
-      'settings are correctly set.');
+    return resolver.resolveCoverageInfoFileFullPath()
+      .catch((error: Error) => {
+        const errorMessage = 'Cannot resolve the coverage info file path in the build tree directory. ' +
+          'Ensure that both ' +
+          `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+          `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
+          'settings are correctly set.';
+
+        error.message.should.contain(errorMessage);
+        errorChannelSpy.countFor('appendLine').should.be.equal(1);
+      });
   });
 }
 
@@ -60,8 +75,9 @@ function shouldSucceedWhenExactlyOneFileIsFound() {
     const globSearch = g.buildFakeGlobSearchForExactlyOneMatch();
     const spy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());
     const progressReporter = spy.object;
+    const errorChannel = e.buildFakeErrorChannel();
 
-    const resolver = CoverageInfoFileResolver.make({ workspace, globSearch, progressReporter });
+    const resolver = CoverageInfoFileResolver.make({ workspace, globSearch, progressReporter, errorChannel });
 
     await resolver.resolveCoverageInfoFileFullPath();
 

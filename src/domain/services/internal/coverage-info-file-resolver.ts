@@ -1,6 +1,7 @@
 import * as definitions from '../../../definitions';
 import * as SettingsProvider from './settings-provider';
 import * as ProgressReporter from './progress-reporter';
+import * as ErrorChannel from './error-channel';
 
 import path = require('path');
 
@@ -15,7 +16,8 @@ export function make(adapters: Adapters) {
 type Adapters = {
   workspace: SettingsProvider.VscodeWorkspaceLike,
   globSearch: GlobSearchLike,
-  progressReporter: ProgressReporter.ProgressLike
+  progressReporter: ProgressReporter.ProgressLike,
+  errorChannel: ErrorChannel.OutputChannelLike
 };
 
 class CoverageInfoFileResolver {
@@ -23,25 +25,14 @@ class CoverageInfoFileResolver {
     this.globSearch = adapters.globSearch;
     this.workspace = adapters.workspace;
     this.progressReporter = adapters.progressReporter;
+    this.errorChannel = adapters.errorChannel;
   }
 
   async resolveCoverageInfoFileFullPath() {
     const searchResult = await this.globSearch.search(this.pattern);
 
-    if (searchResult.length === 0)
-      throw new Error('Cannot resolve the coverage info file path in the build tree directory. ' +
-        'Ensure that both ' +
-        `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
-        `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
-        'settings are correctly set.');
-
-    if (searchResult.length > 1)
-      throw new Error(
-        'More than one coverage information file have been found in the build tree directory. ' +
-        'Ensure that both ' +
-        `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
-        `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
-        'settings are correctly set.');
+    this.failsIfNoFileIsFound(searchResult);
+    this.failsIfManyFilesAreFound(searchResult);
 
     this.progressReporter.report({
       message: 'Resolved the LLVM coverage information file path.',
@@ -49,6 +40,36 @@ class CoverageInfoFileResolver {
     });
 
     return searchResult[0];
+  }
+
+  private failsIfManyFilesAreFound(searchResult: readonly string[]) {
+    if (searchResult.length === 1)
+      return;
+
+    const errorMessage = 'More than one coverage information file have been found in the build tree directory. ' +
+      'Ensure that both ' +
+      `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+      `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
+      'settings are correctly set.';
+
+    this.errorChannel.appendLine(errorMessage);
+
+    throw new Error(errorMessage);
+  }
+
+  private failsIfNoFileIsFound(searchResult: readonly string[]) {
+    if (searchResult.length !== 0)
+      return;
+
+    const errorMessage = 'Cannot resolve the coverage info file path in the build tree directory. ' +
+      'Ensure that both ' +
+      `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+      `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
+      'settings are correctly set.';
+
+    this.errorChannel.appendLine(errorMessage);
+
+    throw new Error(errorMessage);
   }
 
   private get pattern() {
@@ -61,4 +82,5 @@ class CoverageInfoFileResolver {
   private readonly globSearch: GlobSearchLike;
   private readonly workspace: SettingsProvider.VscodeWorkspaceLike;
   private readonly progressReporter: ProgressReporter.ProgressLike;
+  private readonly errorChannel: ErrorChannel.OutputChannelLike;
 };

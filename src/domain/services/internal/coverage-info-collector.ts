@@ -41,7 +41,8 @@ class CoverageInfoCollector {
     const coverageInfoFileResolver = CoverageInfoFileResolver.make({
       workspace: this.workspace,
       globSearch: this.globSearch,
-      progressReporter: this.progressReporter
+      progressReporter: this.progressReporter,
+      errorChannel: this.errorChannel
     });
 
     const path = await coverageInfoFileResolver.resolveCoverageInfoFileFullPath();
