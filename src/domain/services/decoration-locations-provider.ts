@@ -44,7 +44,8 @@ export class DecorationLocationsProvider {
       workspace: this.workspace,
       globSearch: this.globSearch,
       llvmCoverageInfoStreamBuilder: this.llvmCoverageInfoStreamBuilder,
-      progressReporter: this.progressReporter
+      progressReporter: this.progressReporter,
+      errorChannel: this.errorChannel
     });
 
     return collector.collectFor(sourceFilePath);

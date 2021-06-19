@@ -2,6 +2,7 @@ import * as definitions from '../../../definitions';
 import * as SettingsProvider from './settings-provider';
 import * as CoverageInfoFileResolver from './coverage-info-file-resolver';
 import * as ProgressReporter from './progress-reporter';
+import * as ErrorChannel from './error-channel';
 import { CoverageSummary } from '../../value-objects/coverage-summary';
 
 import {
@@ -33,6 +34,7 @@ class CoverageInfoCollector {
     this.globSearch = adapters.globSearch;
     this.llvmCoverageInfoStreamBuilder = adapters.llvmCoverageInfoStreamBuilder;
     this.progressReporter = adapters.progressReporter;
+    this.errorChannel = adapters.errorChannel;
   }
 
   async collectFor(sourceFilePath: string) {
@@ -44,12 +46,13 @@ class CoverageInfoCollector {
 
     const path = await coverageInfoFileResolver.resolveCoverageInfoFileFullPath();
 
+    // TODO: find a way to report progress...better
     this.progressReporter.report({
       message: 'Prepared summary and uncovered region of code information.',
       increment: 100 / 6 * 6
     });
 
-    return new CoverageInfo(() => this.llvmCoverageInfoStreamBuilder.createStream(path), sourceFilePath);
+    return new CoverageInfo(() => this.llvmCoverageInfoStreamBuilder.createStream(path), sourceFilePath, this.errorChannel);
   }
 
   static readonly invalidInputReadableStreamMessage =
@@ -64,21 +67,24 @@ class CoverageInfoCollector {
   private readonly globSearch: CoverageInfoFileResolver.GlobSearchLike;
   private readonly llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder;
   private readonly progressReporter: ProgressReporter.ProgressLike;
+  private readonly errorChannel: ErrorChannel.OutputChannelLike;
 };
 
 type Adapters = {
   workspace: SettingsProvider.VscodeWorkspaceLike,
   globSearch: CoverageInfoFileResolver.GlobSearchLike,
   llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder,
-  progressReporter: ProgressReporter.ProgressLike
+  progressReporter: ProgressReporter.ProgressLike,
+  errorChannel: ErrorChannel.OutputChannelLike
 };
 
 type StreamFactory = () => Readable;
 
 class CoverageInfo {
-  constructor(llvmCoverageInfoStreamFactory: StreamFactory, sourceFilePath: string) {
+  constructor(llvmCoverageInfoStreamFactory: StreamFactory, sourceFilePath: string, errorChannel: ErrorChannel.OutputChannelLike) {
     this.llvmCoverageInfoStreamFactory = llvmCoverageInfoStreamFactory;
     this.sourceFilePath = sourceFilePath;
+    this.errorChannel = errorChannel;
   }
 
   get summary() {
@@ -91,13 +97,20 @@ class CoverageInfo {
         .once('data', chunk => { s = <RawLLVMCoverageSummary>chunk.summary.regions; })
         .once('end', () => {
           if (s)
-            resolve(new CoverageSummary(s.count, s.covered, s.notcovered, s.percent));
-          else
-            reject(new Error('Cannot find any summary coverage info for the file ' +
-              `${this.sourceFilePath}. Ensure this source file is covered by a test in your project.`));
+            return resolve(new CoverageSummary(s.count, s.covered, s.notcovered, s.percent));
+
+          const errorMessage = 'Cannot find any summary coverage info for the file ' +
+            `${this.sourceFilePath}. Ensure this source file is covered by a test in your project.`;
+
+          this.errorChannel.appendLine(errorMessage);
+
+          reject(new Error(errorMessage));
         })
         .once('error', err => {
-          reject(new Error(CoverageInfoCollector.invalidInputReadableStreamMessage + err.message));
+          const errorMessage = CoverageInfoCollector.invalidInputReadableStreamMessage + err.message;
+
+          this.errorChannel.appendLine(errorMessage);
+          reject(new Error(errorMessage));
         });
     });
   };
@@ -118,7 +131,7 @@ class CoverageInfo {
   private allRawRegionsCoverageInfoIn() {
     const pipeline = this.preparePipelineForRegionCoverageInfo();
 
-    return new RegionCoverageInfoAsyncIterable(pipeline, this.sourceFilePath);
+    return new RegionCoverageInfoAsyncIterable(pipeline, this.sourceFilePath, this.errorChannel);
   }
 
   private preparePipelineForRegionCoverageInfo() {
@@ -165,6 +178,7 @@ class CoverageInfo {
 
   private readonly llvmCoverageInfoStreamFactory: StreamFactory;
   private readonly sourceFilePath: string;
+  private readonly errorChannel: ErrorChannel.OutputChannelLike;
 };
 
 class RawLLVMCoverageSummary {
@@ -192,43 +206,61 @@ class RegionCoverageInfoIterator {
 };
 
 class RegionCoverageInfoAsyncIteratorContract {
-  constructor(pipeline: Readable, sourceFilePath: string) {
+  constructor(pipeline: Readable, sourceFilePath: string, errorChannel: ErrorChannel.OutputChannelLike) {
     this.pipeline = pipeline;
     this.sourceFilePath = sourceFilePath;
+    this.errorChannel = errorChannel;
   }
 
   async next() {
-    await new Promise<void>((resolve, reject) => {
-      this.pipeline
-        .once('readable', () => { resolve(); })
-        .once('end', () => { resolve(); })
-        .once('error', err => {
-          reject(new Error(CoverageInfoCollector.invalidInputReadableStreamMessage + err.message));
-        });
-    });
+    await this.ensureInputReadableStreaIsValid();
 
     const regionCoverageInfo = <RawLLVMRegionCoverageInfo>this.pipeline.read(1);
 
     if (regionCoverageInfo === null)
-      if (this.last)
-        return new RegionCoverageInfoIterator({ done: true });
-      else
-        throw (new Error('Cannot find any uncovered code regions for the file ' +
-          `${this.sourceFilePath}. Ensure this source file is covered by a test in your project.`));
+      return this.terminateIteration();
 
     this.last = regionCoverageInfo;
 
     return new RegionCoverageInfoIterator({ done: false, value: regionCoverageInfo });
   }
 
+  private async ensureInputReadableStreaIsValid() {
+    await new Promise<void>((resolve, reject) => {
+      this.pipeline
+        .once('readable', () => { resolve(); })
+        .once('end', () => { resolve(); })
+        .once('error', err => {
+          const errorMessage = CoverageInfoCollector.invalidInputReadableStreamMessage + err.message;
+
+          this.errorChannel.appendLine(errorMessage);
+
+          reject(new Error(errorMessage));
+        });
+    });
+  }
+
+  private terminateIteration() {
+    if (this.last)
+      return new RegionCoverageInfoIterator({ done: true });
+
+    const errorMessage = 'Cannot find any uncovered code regions for the file ' +
+      `${this.sourceFilePath}. Ensure this source file is covered by a test in your project.`;
+
+    this.errorChannel.appendLine(errorMessage);
+
+    throw new Error(errorMessage);
+  }
+
   private readonly pipeline: Readable;
   private readonly sourceFilePath: string;
   private last: RawLLVMRegionCoverageInfo | undefined = undefined;
+  private readonly errorChannel: ErrorChannel.OutputChannelLike;
 };
 
 class RegionCoverageInfoAsyncIterable {
-  constructor(pipeline: Readable, sourceFilePath: string) {
-    this.iterator = new RegionCoverageInfoAsyncIteratorContract(pipeline, sourceFilePath);
+  constructor(pipeline: Readable, sourceFilePath: string, errorChannel: ErrorChannel.OutputChannelLike) {
+    this.iterator = new RegionCoverageInfoAsyncIteratorContract(pipeline, sourceFilePath, errorChannel);
   }
 
   [Symbol.asyncIterator]() {
