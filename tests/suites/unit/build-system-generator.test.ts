@@ -22,7 +22,7 @@ describe('Unit test suite', () => {
 });
 
 function buildSystemGeneratorShouldFailWithWrongCmakeCommandSetting() {
-  it('should be instantiated but fails when asking for building a target', () => {
+  it('should be instantiated but fails when asking for building a target and reports to error channel', () => {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ 'cmakeCommand': '' });
     const processForCommand = p.buildFakeFailingProcess();
     const processForTarget = p.buildFakeSucceedingProcess();
@@ -50,7 +50,7 @@ function buildSystemGeneratorShouldFailWithWrongCmakeCommandSetting() {
 }
 
 function buildSystemGeneratorShouldFailWithWrongCmakeTargetSetting() {
-  it('should be instantiated but throw when asking for building a target', () => {
+  it('should be instantiated but throw when asking for building a target and reports in error channel', () => {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ 'cmakeTarget': '' });
     const processForCommand = p.buildFakeSucceedingProcess();
     const processForTarget = p.buildFakeFailingProcess();
@@ -68,9 +68,15 @@ function buildSystemGeneratorShouldFailWithWrongCmakeTargetSetting() {
 
     const target = workspace.getConfiguration(definitions.extensionNameInSettings).get('cmakeTarget');
 
-    return cmake.buildTarget().should.eventually.be.rejectedWith(
-      `Error: Could not build the specified cmake target ${target}. ` +
-      `Ensure '${definitions.extensionNameInSettings}: Cmake Target' setting is properly set.`);
+    return cmake.buildTarget()
+      .catch((error: Error) => {
+        error.message.should.contain(
+          `Error: Could not build the specified cmake target ${target}. ` +
+          `Ensure '${definitions.extensionNameInSettings}: Cmake Target' setting is properly set.`);
+
+        errorChannelSpy.countFor('appendLine').should.be.equal(1);
+      });
+    ;
   });
 }
 
@@ -81,8 +87,7 @@ function buildSystemGeneratorShouldSucceedWithCorrectSettings() {
     const processForTarget = p.buildFakeSucceedingProcess();
     const progressReporterSpy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());
     const progressReporter = progressReporterSpy.object;
-    const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
-    const errorChannel = errorChannelSpy.object;
+    const errorChannel = e.buildFakeErrorChannel();
 
     const cmake = BuildSystemGenerator.make({
       workspace,
