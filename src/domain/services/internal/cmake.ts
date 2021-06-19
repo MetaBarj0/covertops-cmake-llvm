@@ -2,6 +2,7 @@ import * as definitions from '../../../definitions';
 import * as SettingsProvider from './settings-provider';
 import * as ProgressReporter from './progress-reporter';
 import * as ErrorChannel from './error-channel';
+import { Settings } from '../../value-objects/settings';
 
 export type ExecFileExceptionLike = {
   message: string;
@@ -37,11 +38,12 @@ export function make(adapters: Adapters) {
 
 class Cmake {
   constructor(adapters: Adapters) {
-    this.workspace = adapters.workspace;
     this.processForCommand = adapters.processForCommand;
     this.processForTarget = adapters.processForTarget;
     this.progressReporter = adapters.progressReporter;
     this.errorChannel = adapters.errorChannel;
+
+    this.settings = SettingsProvider.make({ workspace: adapters.workspace, errorChannel: adapters.errorChannel }).settings;
   }
 
   async buildTarget() {
@@ -75,42 +77,39 @@ class Cmake {
   }
 
   private generate() {
-    const settings = SettingsProvider.make(this.workspace).settings;
-    const build = settings.buildTreeDirectory;
-    const source = settings.rootDirectory;
+    const build = this.settings.buildTreeDirectory;
+    const source = this.settings.rootDirectory;
 
     return this.executeCommandWith({
       process: this.processForTarget,
-      arguments: ['-B', build, '-S', source, ...settings.additionalCmakeOptions],
+      arguments: ['-B', build, '-S', source, ...this.settings.additionalCmakeOptions],
       potentialErrorMessage:
-        `Error: Could not build the specified cmake target ${settings.cmakeTarget}. ` +
+        `Error: Could not build the specified cmake target ${this.settings.cmakeTarget}. ` +
         `Ensure '${definitions.extensionNameInSettings}: Cmake Target' setting is properly set.`
     });
   }
 
   private build() {
-    const settings = SettingsProvider.make(this.workspace).settings;
-    const build = settings.buildTreeDirectory;
-    const target = settings.cmakeTarget;
+    const build = this.settings.buildTreeDirectory;
+    const target = this.settings.cmakeTarget;
 
     return this.executeCommandWith({
       process: this.processForTarget,
       arguments: ['--build', build, '--target', target],
       potentialErrorMessage:
-        `Error: Could not build the specified cmake target ${settings.cmakeTarget}. ` +
+        `Error: Could not build the specified cmake target ${this.settings.cmakeTarget}. ` +
         `Ensure '${definitions.extensionNameInSettings}: Cmake Target' setting is properly set.`
     });
   }
 
   private executeCommandWith(options: { process: ProcessLike, arguments: ReadonlyArray<string>, potentialErrorMessage: string }) {
     return new Promise<void>((resolve, reject) => {
-      const settings = SettingsProvider.make(this.workspace).settings;
-      const cmakeCommand = settings.cmakeCommand;
+      const cmakeCommand = this.settings.cmakeCommand;
 
       options.process.execFile(
         cmakeCommand, options.arguments,
         {
-          cwd: settings.rootDirectory,
+          cwd: this.settings.rootDirectory,
           env: process.env
         },
         (error, stdout, stderr) => {
@@ -128,7 +127,7 @@ class Cmake {
 
   private readonly processForCommand: ProcessLike;
   private readonly processForTarget: ProcessLike;
-  private readonly workspace: SettingsProvider.VscodeWorkspaceLike;
   private readonly progressReporter: ProgressReporter.ProgressLike;
   private readonly errorChannel: ErrorChannel.OutputChannelLike;
+  private readonly settings: Settings;
 };

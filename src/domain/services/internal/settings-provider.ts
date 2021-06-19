@@ -1,4 +1,5 @@
 import * as definitions from '../../../definitions';
+import * as ErrorChannel from './error-channel';
 import { Settings } from '../../value-objects/settings';
 
 export type VscodeUriLike = {
@@ -18,18 +19,23 @@ export type VscodeWorkspaceLike = {
   readonly getConfiguration: (section?: string | undefined) => VscodeWorkspaceConfigurationLike;
 };
 
-export function make(workspace: VscodeWorkspaceLike) {
-  return new SettingsProvider(workspace);
+export function make(adapters: Adapters) {
+  return new SettingsProvider(adapters);
 }
 
+type Adapters = {
+  workspace: VscodeWorkspaceLike,
+  errorChannel: ErrorChannel.OutputChannelLike
+};
+
 class SettingsProvider {
-  constructor(workspace: VscodeWorkspaceLike) {
-    this.workspace = workspace;
+  constructor(adapters: Adapters) {
+    this.workspace = adapters.workspace;
+    this.errorChannel = adapters.errorChannel;
   }
 
   get settings() {
-    if (!this.workspace.workspaceFolders)
-      throw new Error('A workspace must be loaded to get coverage information.');
+    this.ensureWorkspaceIsLoaded();
 
     const workspaceSettings = this.workspace.getConfiguration(definitions.extensionId);
     const workspaceFolders = this.workspace.workspaceFolders as Array<VscodeWorkspaceFolderLike>;
@@ -45,5 +51,17 @@ class SettingsProvider {
     );
   }
 
+  private ensureWorkspaceIsLoaded() {
+    if (this.workspace.workspaceFolders)
+      return;
+
+    const errorMessage = 'A workspace must be loaded to get coverage information.';
+
+    this.errorChannel.appendLine(errorMessage);
+
+    throw new Error(errorMessage);
+  }
+
   private readonly workspace: VscodeWorkspaceLike;
+  private readonly errorChannel: ErrorChannel.OutputChannelLike;
 }

@@ -10,6 +10,7 @@ import { defaultSetting } from '../../utils/settings';
 import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
 
 import { vscodeWorkspace as v } from '../../faked-adapters/vscode-workspace';
+import { errorChannel as e } from '../../faked-adapters/error-channel';
 
 describe('Unit test suite', () => {
   describe('The setting provider behavior', () => {
@@ -19,19 +20,28 @@ describe('Unit test suite', () => {
 });
 
 function shouldFailBecauseOfNoRootFolderOpened() {
-  it('should be instantiated correctly but throw an exception when workspace folders are not set', () => {
-    const fakedWorkspace = v.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings();
-    const provider = SettingsProvider.make(fakedWorkspace);
-    (() => { provider.settings; }).should.throw(
-      'A workspace must be loaded to get coverage information.');
+  it('should be instantiated correctly but throw an exception and report in error channel when workspace folders are not set', () => {
+    const workspace = v.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings();
+    const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
+    const errorChannel = errorChannelSpy.object;
+
+    const provider = SettingsProvider.make({ workspace, errorChannel });
+
+    const errorMessage = 'A workspace must be loaded to get coverage information.';
+
+    (() => { provider.settings; }).should.throw(errorMessage);
+
+    errorChannelSpy.countFor('appendLine').should.be.equal(1);
   });
 }
 
 function shouldSucceedAndExposeDefaultSettings() {
   it('should be instantiated correctly with a vscode workspace-like instance and provide ' +
     'settings with correct default values', () => {
-      const fakedWorkspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
-      const provider = SettingsProvider.make(fakedWorkspace);
+      const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+      const errorChannel = e.buildFakeErrorChannel();
+
+      const provider = SettingsProvider.make({ workspace, errorChannel });
       const settings = provider.settings;
 
       settings.additionalCmakeOptions.should.be.empty;

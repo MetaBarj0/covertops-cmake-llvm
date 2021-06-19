@@ -36,7 +36,7 @@ class BuildTreeDirectoryResolver {
   }
 
   async resolveAbsolutePath() {
-    const buildTreeDirectory = SettingsProvider.make(this.workspace).settings.buildTreeDirectory;
+    const buildTreeDirectory = SettingsProvider.make({ workspace: this.workspace, errorChannel: this.errorChannel }).settings.buildTreeDirectory;
 
     this.ensurePathIsNotAbsolute(buildTreeDirectory);
 

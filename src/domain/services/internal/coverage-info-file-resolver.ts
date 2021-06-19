@@ -73,7 +73,7 @@ class CoverageInfoFileResolver {
   }
 
   private get pattern() {
-    const settings = SettingsProvider.make(this.workspace).settings;
+    const settings = SettingsProvider.make({ workspace: this.workspace, errorChannel: this.errorChannel }).settings;
     const posixRootPath = settings.rootDirectory.split(path.sep).join(path.posix.sep);
 
     return `${posixRootPath}${path.posix.sep}**${path.posix.sep}${settings.coverageInfoFileName}`;

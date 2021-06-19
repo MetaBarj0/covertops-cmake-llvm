@@ -14,10 +14,10 @@ import { progressReporter as pr } from '../../faked-adapters/progress-reporter';
 import { errorChannel as e } from '../../faked-adapters/error-channel';
 
 describe('Unit test suite', () => {
-  describe('the build system generator behavior', () => {
-    describe('the build system failing in building a target with a wrong cmake command setting', cmakeShouldFailWithWrongCmakeCommandSetting);
-    describe('the build system failing in building a target with a wrong cmake target setting', cmakeShouldFailWithWrongCmakeTargetSetting);
-    describe('the build system succeeding in building a target with correct settings', cmakeShouldSucceedWithCorrectSettings);
+  describe('cmake behavior', () => {
+    describe('cmake failing in building a target with a wrong cmake command setting', cmakeShouldFailWithWrongCmakeCommandSetting);
+    describe('cmake failing in building a target with a wrong cmake target setting', cmakeShouldFailWithWrongCmakeTargetSetting);
+    describe('cmake succeeding in building a target with correct settings', cmakeShouldSucceedWithCorrectSettings);
   });
 });
 

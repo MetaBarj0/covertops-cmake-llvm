@@ -29,7 +29,7 @@ describe('integration test suite', () => {
         describe('with an invalid build tree directory setting', buildTreeDirectoryResolverShouldFail);
         describe('with a valid build tree directory setting', buildTreeDirectoryResolverShouldSucceed);
       });
-      describe('the behavior of the build system generator', () => {
+      describe('the behavior of cmake', () => {
         describe('with an invalid cmake command setting', cmakeInvocationShouldFail);
         describe('with an invalid cmake target setting', cmakeTargetBuildingShouldFail);
         describe('with valid cmake comand and cmake target settings', cmakeTargetBuildingShouldSucceed);
@@ -40,7 +40,7 @@ describe('integration test suite', () => {
 
 function settingsProviderGivesDefaultSettings() {
   it('should not throw any exception when instantiating settings provider and settings should be set with default values', () => {
-    const settings = SettingsProvider.make(vscode.workspace).settings;
+    const settings = SettingsProvider.make({ workspace: vscode.workspace, errorChannel: e.buildFakeErrorChannel() }).settings;
 
     settings.buildTreeDirectory.should.be.equal('build');
     settings.cmakeCommand.should.be.equal('cmake');
@@ -72,7 +72,7 @@ function cmakeInvocationShouldFail() {
     await extensionConfiguration.update('cmakeCommand', 'cmakez');
   });
 
-  it('should fail in attempting to invoke the build system generator', () => {
+  it('should fail in attempting to invoke cmake', () => {
     return makeCmake().buildTarget().should.eventually.be.rejectedWith(
       `Cannot find the cmake command. Ensure the '${definitions.extensionNameInSettings}: Cmake Command' ` +
       'setting is correctly set. Have you verified your PATH environment variable?');
@@ -96,7 +96,7 @@ function cmakeTargetBuildingShouldFail() {
   });
 
   it('should fail in attempting to build an invalid cmake target', () => {
-    const settings = SettingsProvider.make(vscode.workspace).settings;
+    const settings = SettingsProvider.make({ workspace: vscode.workspace, errorChannel: e.buildFakeErrorChannel() }).settings;
 
     return makeCmake().buildTarget().should.eventually.be.rejectedWith(
       `Error: Could not build the specified cmake target ${settings.cmakeTarget}. ` +
