@@ -12,6 +12,7 @@ import { mkDir as md } from '../../faked-adapters/mk-dir';
 import { vscodeWorkspace as v } from '../../faked-adapters/vscode-workspace';
 import { statFile as sf } from '../../faked-adapters/stat-file';
 import { progressReporter as pr } from '../../faked-adapters/progress-reporter';
+import { errorChannel as e } from '../../faked-adapters/error-channel';
 
 import path = require('path');
 
@@ -25,7 +26,7 @@ describe('Unit test suite', () => {
 });
 
 function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryIsAnAbsolutePath() {
-  it('should fail to resolve when the build tree directory setting looks like an absolute path', () => {
+  it('should fail to resolve and report to error channel when the build tree directory setting looks like an absolute path', () => {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({
       buildTreeDirectory: path.normalize('/absolute/build')
     });
@@ -33,36 +34,52 @@ function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryIsAnAbsoluteP
     const statFile = sf.buildFakeFailingStatFile();
     const mkDir = md.buildFakeFailingMkDir();
     const progressReporter = pr.buildFakeProgressReporter();
+    const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
+    const errorChannel = errorChannelSpy.object;
 
     const resolver = BuildTreeDirectoryResolver.make({
       workspace,
       statFile,
       mkDir,
-      progressReporter
+      progressReporter,
+      errorChannel
     });
 
-    return resolver.resolveAbsolutePath().should.eventually.be.rejectedWith(
-      `Incorrect absolute path specified in '${definitions.extensionNameInSettings}: Build Tree Directory'. It must be a relative path.`);
+    return resolver.resolveAbsolutePath()
+      .catch((error: Error) => {
+        error.message.should.contain(
+          `Incorrect absolute path specified in '${definitions.extensionNameInSettings}: Build Tree Directory'. It must be a relative path.`);
+
+        errorChannelSpy.countFor('appendLine').should.be.equal(1);
+      });
   });
 }
 
 function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryDoesNotExistAndCannotBeCreated() {
-  it('should fail to resolve if specified relative path target does not exist and cannot be created', () => {
+  it('should fail to resolve and report in error channel if specified relative path target does not exist and cannot be created', () => {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const statFile = sf.buildFakeFailingStatFile();
     const mkDir = md.buildFakeFailingMkDir();
     const progressReporter = pr.buildFakeProgressReporter();
+    const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
+    const errorChannel = errorChannelSpy.object;
 
     const resolver = BuildTreeDirectoryResolver.make({
       workspace,
       statFile,
       mkDir,
-      progressReporter
+      progressReporter,
+      errorChannel
     });
 
-    return resolver.resolveAbsolutePath().should.eventually.be.rejectedWith(
-      'Cannot find or create the build tree directory. Ensure the ' +
-      `'${definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`);
+    return resolver.resolveAbsolutePath()
+      .catch((error: Error) => {
+        error.message.should.contain(
+          'Cannot find or create the build tree directory. Ensure the ' +
+          `'${definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`);
+
+        errorChannelSpy.countFor('appendLine').should.be.equal(1);
+      });
   });
 }
 
@@ -71,19 +88,21 @@ function buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryExists() {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const statFile = sf.buildFakeSucceedingStatFile();
     const mkDir = md.buildFakeFailingMkDir();
-    const spy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());
-    const progressReporter = spy.object;
+    const progressReporterSpy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());
+    const progressReporter = progressReporterSpy.object;
+    const errorChannel = e.buildFakeErrorChannel();
 
     const resolver = BuildTreeDirectoryResolver.make({
       workspace,
       statFile,
       mkDir,
-      progressReporter
+      progressReporter,
+      errorChannel
     });
 
     await resolver.resolveAbsolutePath();
 
-    spy.countFor('report').should.be.equal(1);
+    progressReporterSpy.countFor('report').should.be.equal(1);
   });
 }
 
@@ -93,18 +112,20 @@ function buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryDoesNotExi
       const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
       const statFile = sf.buildFakeFailingStatFile();
       const mkDir = md.buildFakeSucceedingMkDir();
-      const spy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());
-      const progressReporter = spy.object;
+      const progressReporterSpy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());
+      const progressReporter = progressReporterSpy.object;
+      const errorChannel = e.buildFakeErrorChannel();
 
       const resolver = BuildTreeDirectoryResolver.make({
         workspace,
         statFile,
         mkDir,
-        progressReporter
+        progressReporter,
+        errorChannel
       });
 
       await resolver.resolveAbsolutePath();
 
-      spy.countFor('report').should.be.equal(1);
+      progressReporterSpy.countFor('report').should.be.equal(1);
     });
 }

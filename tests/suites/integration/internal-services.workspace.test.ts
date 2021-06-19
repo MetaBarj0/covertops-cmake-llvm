@@ -153,7 +153,6 @@ function prependLlvmBinDirToPathEnvironmentVariable() {
 
 const extensionConfiguration = vscode.workspace.getConfiguration(definitions.extensionId);
 
-// TODO: function instead of constants
 function makeCmake() {
   return BuildSystemGenerator.make({
     workspace: vscode.workspace,
@@ -169,6 +168,7 @@ function makeBuildTreeDirectoryResolver() {
     workspace: vscode.workspace,
     statFile: fileSystem.statFile,
     mkDir: fileSystem.makeDirectory,
-    progressReporter: pr.buildFakeProgressReporter()
+    progressReporter: pr.buildFakeProgressReporter(),
+    errorChannel: e.buildFakeErrorChannel()
   });
 }

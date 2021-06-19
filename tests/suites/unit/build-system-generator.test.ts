@@ -21,6 +21,7 @@ describe('Unit test suite', () => {
   });
 });
 
+// TODO: refacto name from build system generator to cmake
 function buildSystemGeneratorShouldFailWithWrongCmakeCommandSetting() {
   it('should be instantiated but fails when asking for building a target and reports to error channel', () => {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ 'cmakeCommand': '' });

@@ -1,6 +1,7 @@
 import * as definitions from '../../../definitions';
 import * as SettingsProvider from './settings-provider';
 import * as ProgressReporter from './progress-reporter';
+import * as ErrorChannel from './error-channel';
 
 import { BigIntStats, MakeDirectoryOptions, PathLike, StatOptions, Stats } from 'fs';
 import * as path from 'path';
@@ -21,7 +22,8 @@ type Adapters = {
   workspace: SettingsProvider.VscodeWorkspaceLike,
   statFile: StatFileLike,
   mkDir: MkDirLike,
-  progressReporter: ProgressReporter.ProgressLike
+  progressReporter: ProgressReporter.ProgressLike,
+  errorChannel: ErrorChannel.OutputChannelLike
 };
 
 class BuildTreeDirectoryResolver {
@@ -30,14 +32,21 @@ class BuildTreeDirectoryResolver {
     this.statFile = adapters.statFile;
     this.mkDir = adapters.mkDir;
     this.progressReporter = adapters.progressReporter;
+    this.errorChannel = adapters.errorChannel;
   }
 
   async resolveAbsolutePath() {
     const buildTreeDirectory = SettingsProvider.make(this.workspace).settings.buildTreeDirectory;
 
-    if (path.isAbsolute(buildTreeDirectory))
-      throw new Error(`Incorrect absolute path specified in '${definitions.extensionNameInSettings}: ` +
-        "Build Tree Directory'. It must be a relative path.");
+    // TODO: refacto private method
+    if (path.isAbsolute(buildTreeDirectory)) {
+      const errorMessage = `Incorrect absolute path specified in '${definitions.extensionNameInSettings}: ` +
+        "Build Tree Directory'. It must be a relative path.";
+
+      this.errorChannel.appendLine(errorMessage);
+
+      throw new Error(errorMessage);
+    }
 
     await this.statAndCreateIfNeeded(buildTreeDirectory);
 
@@ -52,9 +61,12 @@ class BuildTreeDirectoryResolver {
       .catch(async _ => {
         await this.mkDir.mkdir(buildTreeDirectory, { recursive: true })
           .catch(_ => {
-            return Promise.reject(
-              'Cannot find or create the build tree directory. Ensure the ' +
-              `'${definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`);
+            const errorMessage = 'Cannot find or create the build tree directory. Ensure the ' +
+              `'${definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`;
+
+            this.errorChannel.appendLine(errorMessage);
+
+            return Promise.reject(new Error(errorMessage));
           });
       });
   }
@@ -67,4 +79,5 @@ class BuildTreeDirectoryResolver {
   private readonly workspace: SettingsProvider.VscodeWorkspaceLike;
   private readonly mkDir: MkDirLike;
   private readonly progressReporter: ProgressReporter.ProgressLike;
+  private readonly errorChannel: ErrorChannel.OutputChannelLike;
 };

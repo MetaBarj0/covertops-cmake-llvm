@@ -24,7 +24,8 @@ export class DecorationLocationsProvider {
       workspace: this.workspace,
       statFile: this.statFile,
       mkDir: this.mkDir,
-      progressReporter: this.progressReporter
+      progressReporter: this.progressReporter,
+      errorChannel: this.errorChannel
     });
 
     await buildTreeDirectoryResolver.resolveAbsolutePath();
