@@ -1,6 +1,6 @@
 import * as SettingsProvider from './internal/settings-provider';
 import * as BuildTreeDirectoryResolver from './internal/build-tree-directory-resolver';
-import * as  BuildSystemGenerator from './internal/build-system-generator';
+import * as Cmake from './internal/cmake';
 import * as CoverageInfoFileResolver from './internal/coverage-info-file-resolver';
 import * as CoverageInfoCollector from './internal/coverage-info-collector';
 import * as ProgressReporter from './internal/progress-reporter';
@@ -30,7 +30,7 @@ export class DecorationLocationsProvider {
 
     await buildTreeDirectoryResolver.resolveAbsolutePath();
 
-    const cmake = BuildSystemGenerator.make({
+    const cmake = Cmake.make({
       workspace: this.workspace,
       processForCommand: this.processForCmakeCommand,
       processForTarget: this.processForCmakeTarget,
@@ -52,8 +52,8 @@ export class DecorationLocationsProvider {
 
   private readonly workspace: SettingsProvider.VscodeWorkspaceLike;
   private readonly statFile: BuildTreeDirectoryResolver.StatFileLike;
-  private readonly processForCmakeCommand: BuildSystemGenerator.ProcessLike;
-  private readonly processForCmakeTarget: BuildSystemGenerator.ProcessLike;
+  private readonly processForCmakeCommand: Cmake.ProcessLike;
+  private readonly processForCmakeTarget: Cmake.ProcessLike;
   private readonly globSearch: CoverageInfoFileResolver.GlobSearchLike;
   private readonly mkDir: BuildTreeDirectoryResolver.MkDirLike;
   private readonly llvmCoverageInfoStreamBuilder: CoverageInfoCollector.LLVMCoverageInfoStreamBuilder;
@@ -64,8 +64,8 @@ export class DecorationLocationsProvider {
 type Adapters = {
   workspace: SettingsProvider.VscodeWorkspaceLike,
   statFile: BuildTreeDirectoryResolver.StatFileLike,
-  processForCmakeCommand: BuildSystemGenerator.ProcessLike,
-  processForCmakeTarget: BuildSystemGenerator.ProcessLike,
+  processForCmakeCommand: Cmake.ProcessLike,
+  processForCmakeTarget: Cmake.ProcessLike,
   globSearch: CoverageInfoFileResolver.GlobSearchLike,
   mkDir: BuildTreeDirectoryResolver.MkDirLike,
   llvmCoverageInfoStreamBuilder: CoverageInfoCollector.LLVMCoverageInfoStreamBuilder,

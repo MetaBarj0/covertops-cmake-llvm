@@ -32,10 +32,10 @@ type Adapters = {
 };
 
 export function make(adapters: Adapters) {
-  return new BuildSystemGenerator(adapters);
+  return new Cmake(adapters);
 }
 
-class BuildSystemGenerator {
+class Cmake {
   constructor(adapters: Adapters) {
     this.workspace = adapters.workspace;
     this.processForCommand = adapters.processForCommand;

@@ -9,7 +9,7 @@ import { defaultSetting } from '../../utils/settings';
 
 import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
 import * as BuildTreeDirectoryResolver from '../../../src/domain/services/internal/build-tree-directory-resolver';
-import * as BuildSystemGenerator from '../../../src/domain/services/internal/build-system-generator';
+import * as Cmake from '../../../src/domain/services/internal/cmake';
 import * as definitions from '../../../src/definitions';
 
 import { progressReporter as pr } from '../../faked-adapters/progress-reporter';
@@ -30,9 +30,9 @@ describe('integration test suite', () => {
         describe('with a valid build tree directory setting', buildTreeDirectoryResolverShouldSucceed);
       });
       describe('the behavior of the build system generator', () => {
-        describe('with an invalid cmake command setting', buildSystemGeneratorInvocationShouldFail);
-        describe('with an invalid cmake target setting', buildSystemGeneratorTargetBuildingShouldFail);
-        describe('with valid cmake comand and cmake target settings', buildSystemGeneratorTargetBuildingShouldSucceed);
+        describe('with an invalid cmake command setting', cmakeInvocationShouldFail);
+        describe('with an invalid cmake target setting', cmakeTargetBuildingShouldFail);
+        describe('with valid cmake comand and cmake target settings', cmakeTargetBuildingShouldSucceed);
       });
     });
   });
@@ -67,7 +67,7 @@ function buildTreeDirectoryResolverShouldFail() {
     await extensionConfiguration.update('buildTreeDirectory', defaultSetting('buildTreeDirectory')));
 }
 
-function buildSystemGeneratorInvocationShouldFail() {
+function cmakeInvocationShouldFail() {
   before('Modifying cmake command setting', async () => {
     await extensionConfiguration.update('cmakeCommand', 'cmakez');
   });
@@ -83,7 +83,7 @@ function buildSystemGeneratorInvocationShouldFail() {
   });
 }
 
-function buildSystemGeneratorTargetBuildingShouldFail() {
+function cmakeTargetBuildingShouldFail() {
   let originalEnvPath: string;
 
   before('Modifying cmake target and additional options settings and PATH environment variable', async () => {
@@ -119,7 +119,7 @@ function buildTreeDirectoryResolverShouldSucceed() {
   });
 }
 
-function buildSystemGeneratorTargetBuildingShouldSucceed() {
+function cmakeTargetBuildingShouldSucceed() {
   let originalEnvPath: string;
 
   before('Modifying additional cmake command options, PATH environment variable ', async () => {
@@ -154,7 +154,7 @@ function prependLlvmBinDirToPathEnvironmentVariable() {
 const extensionConfiguration = vscode.workspace.getConfiguration(definitions.extensionId);
 
 function makeCmake() {
-  return BuildSystemGenerator.make({
+  return Cmake.make({
     workspace: vscode.workspace,
     processForCommand: childProcess.executeFile,
     processForTarget: childProcess.executeFile,

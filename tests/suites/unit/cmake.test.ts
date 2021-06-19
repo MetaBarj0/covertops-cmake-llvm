@@ -6,7 +6,7 @@ chai.use(chaiAsPromised);
 chai.should();
 
 import * as definitions from '../../../src/definitions';
-import * as BuildSystemGenerator from '../../../src/domain/services/internal/build-system-generator';
+import * as Cmake from '../../../src/domain/services/internal/cmake';
 
 import { process as p } from '../../faked-adapters/process';
 import { vscodeWorkspace as v } from '../../faked-adapters/vscode-workspace';
@@ -15,14 +15,13 @@ import { errorChannel as e } from '../../faked-adapters/error-channel';
 
 describe('Unit test suite', () => {
   describe('the build system generator behavior', () => {
-    describe('the build system failing in building a target with a wrong cmake command setting', buildSystemGeneratorShouldFailWithWrongCmakeCommandSetting);
-    describe('the build system failing in building a target with a wrong cmake target setting', buildSystemGeneratorShouldFailWithWrongCmakeTargetSetting);
-    describe('the build system succeeding in building a target with correct settings', buildSystemGeneratorShouldSucceedWithCorrectSettings);
+    describe('the build system failing in building a target with a wrong cmake command setting', cmakeShouldFailWithWrongCmakeCommandSetting);
+    describe('the build system failing in building a target with a wrong cmake target setting', cmakeShouldFailWithWrongCmakeTargetSetting);
+    describe('the build system succeeding in building a target with correct settings', cmakeShouldSucceedWithCorrectSettings);
   });
 });
 
-// TODO: refacto name from build system generator to cmake
-function buildSystemGeneratorShouldFailWithWrongCmakeCommandSetting() {
+function cmakeShouldFailWithWrongCmakeCommandSetting() {
   it('should be instantiated but fails when asking for building a target and reports to error channel', () => {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ 'cmakeCommand': '' });
     const processForCommand = p.buildFakeFailingProcess();
@@ -31,7 +30,7 @@ function buildSystemGeneratorShouldFailWithWrongCmakeCommandSetting() {
     const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
     const errorChannel = errorChannelSpy.object;
 
-    const cmake = BuildSystemGenerator.make({
+    const cmake = Cmake.make({
       workspace,
       processForCommand,
       processForTarget,
@@ -50,7 +49,7 @@ function buildSystemGeneratorShouldFailWithWrongCmakeCommandSetting() {
   });
 }
 
-function buildSystemGeneratorShouldFailWithWrongCmakeTargetSetting() {
+function cmakeShouldFailWithWrongCmakeTargetSetting() {
   it('should be instantiated but throw when asking for building a target and reports in error channel', () => {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ 'cmakeTarget': '' });
     const processForCommand = p.buildFakeSucceedingProcess();
@@ -59,7 +58,7 @@ function buildSystemGeneratorShouldFailWithWrongCmakeTargetSetting() {
     const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
     const errorChannel = errorChannelSpy.object;
 
-    const cmake = BuildSystemGenerator.make({
+    const cmake = Cmake.make({
       workspace,
       processForCommand,
       processForTarget,
@@ -81,7 +80,7 @@ function buildSystemGeneratorShouldFailWithWrongCmakeTargetSetting() {
   });
 }
 
-function buildSystemGeneratorShouldSucceedWithCorrectSettings() {
+function cmakeShouldSucceedWithCorrectSettings() {
   it('should be instantiated and succeed when asking for building a target in three discrete steps', async () => {
     const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const processForCommand = p.buildFakeSucceedingProcess();
@@ -90,7 +89,7 @@ function buildSystemGeneratorShouldSucceedWithCorrectSettings() {
     const progressReporter = progressReporterSpy.object;
     const errorChannel = e.buildFakeErrorChannel();
 
-    const cmake = BuildSystemGenerator.make({
+    const cmake = Cmake.make({
       workspace,
       processForCommand,
       processForTarget,
