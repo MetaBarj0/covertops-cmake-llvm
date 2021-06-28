@@ -44,6 +44,7 @@ export class CoverageInfo {
           reject(new Error(errorMessage));
         })
         .once('error', err => {
+          // TODO: refacto string
           const errorMessage = CoverageInfo.invalidInputReadableStreamMessage + err.message;
 
           this.errorChannel.appendLine(errorMessage);

@@ -5,8 +5,9 @@ import * as CoverageInfoFileResolver from './internal/coverage-info-file-resolve
 import * as CoverageInfoCollector from './internal/coverage-info-collector';
 import * as ProgressReporter from './internal/progress-reporter';
 import * as ErrorChannel from './internal/error-channel';
+import { DecorationLocationsProviderContract } from '../interfaces/decoration-locations-provider-contract';
 
-export class DecorationLocationsProvider {
+export class DecorationLocationsProvider implements DecorationLocationsProviderContract {
   constructor(adapters: Adapters) {
     this.workspace = adapters.workspace;
     this.statFile = adapters.statFile;
