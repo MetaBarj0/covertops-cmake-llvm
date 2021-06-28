@@ -1,4 +1,6 @@
-export class Settings {
+import { SettingsContract } from "../interfaces/settings-contract";
+
+export class Settings implements SettingsContract {
   constructor(cmakeCommand: string,
     buildTreeDirectory: string,
     cmakeTarget: string,

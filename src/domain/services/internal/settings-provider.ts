@@ -1,5 +1,6 @@
 import * as definitions from '../../../definitions';
 import * as ErrorChannel from './error-channel';
+import { SettingsContract } from '../../interfaces/settings-contract';
 import { Settings } from '../../value-objects/settings';
 
 export type VscodeUriLike = {
@@ -11,7 +12,7 @@ export type VscodeWorkspaceFolderLike = {
 };
 
 export type VscodeWorkspaceConfigurationLike = {
-  get(section: keyof Settings): Settings[typeof section];
+  get(section: keyof SettingsContract): SettingsContract[typeof section];
 };
 
 export type VscodeWorkspaceLike = {
@@ -34,7 +35,7 @@ class SettingsProvider {
     this.errorChannel = adapters.errorChannel;
   }
 
-  get settings() {
+  get settings(): SettingsContract {
     this.ensureWorkspaceIsLoaded();
 
     const workspaceSettings = this.workspace.getConfiguration(definitions.extensionId);

@@ -1,11 +1,11 @@
 import { defaultSetting } from '../utils/settings';
 
 import * as SettingsProvider from '../../src/domain/services/internal/settings-provider';
-import { Settings } from '../../src/domain/value-objects/settings';
+import { SettingsContract } from '../../src/domain/interfaces/settings-contract';
 
 export namespace vscodeWorkspace {
   type Overrides = {
-    -readonly [Property in keyof Settings]?: Settings[Property]
+    -readonly [Property in keyof SettingsContract]?: SettingsContract[Property]
   };
 
   export function buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(overrides: Overrides = {}): SettingsProvider.VscodeWorkspaceLike {
@@ -27,9 +27,9 @@ export namespace vscodeWorkspace {
             this.overrides = overrides;
           }
 
-          get(section: keyof Settings) {
+          get(section: keyof SettingsContract) {
             if (this.overrides[section])
-              return <Settings[typeof section]>this.overrides[section];
+              return <SettingsContract[typeof section]>this.overrides[section];
 
             return defaultSetting(section);
           }
@@ -48,7 +48,7 @@ export namespace vscodeWorkspace {
 
       getConfiguration(_section?: string) {
         return new class implements SettingsProvider.VscodeWorkspaceConfigurationLike {
-          get(section: keyof Settings) {
+          get(section: keyof SettingsContract) {
             return defaultSetting(section);
           }
         };

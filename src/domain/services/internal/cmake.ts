@@ -2,7 +2,7 @@ import * as definitions from '../../../definitions';
 import * as SettingsProvider from './settings-provider';
 import * as ProgressReporter from './progress-reporter';
 import * as ErrorChannel from './error-channel';
-import { Settings } from '../../value-objects/settings';
+import { SettingsContract } from '../../interfaces/settings-contract';
 
 export type ExecFileExceptionLike = {
   message: string;
@@ -129,5 +129,5 @@ class Cmake {
   private readonly processForTarget: ProcessLike;
   private readonly progressReporter: ProgressReporter.ProgressLike;
   private readonly errorChannel: ErrorChannel.OutputChannelLike;
-  private readonly settings: Settings;
+  private readonly settings: SettingsContract;
 };
