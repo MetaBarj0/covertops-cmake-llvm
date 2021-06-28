@@ -23,7 +23,7 @@ export class DecorationLocationsProvider implements DecorationLocationsProviderC
   async getDecorationLocationsForUncoveredCodeRegions(sourceFilePath: string) {
     const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({
       workspace: this.workspace,
-      statFile: this.statFile,
+      stat: this.statFile,
       mkDir: this.mkDir,
       progressReporter: this.progressReporter,
       errorChannel: this.errorChannel
@@ -53,7 +53,7 @@ export class DecorationLocationsProvider implements DecorationLocationsProviderC
   }
 
   private readonly workspace: SettingsProvider.VscodeWorkspaceLike;
-  private readonly statFile: BuildTreeDirectoryResolver.StatFileLike;
+  private readonly statFile: BuildTreeDirectoryResolver.StatFileCallable;
   private readonly processForCmakeCommand: Cmake.ProcessLike;
   private readonly processForCmakeTarget: Cmake.ProcessLike;
   private readonly globSearch: CoverageInfoFileResolver.GlobSearchLike;
@@ -65,7 +65,7 @@ export class DecorationLocationsProvider implements DecorationLocationsProviderC
 
 type Adapters = {
   workspace: SettingsProvider.VscodeWorkspaceLike,
-  statFile: BuildTreeDirectoryResolver.StatFileLike,
+  statFile: BuildTreeDirectoryResolver.StatFileCallable,
   processForCmakeCommand: Cmake.ProcessLike,
   processForCmakeTarget: Cmake.ProcessLike,
   globSearch: CoverageInfoFileResolver.GlobSearchLike,

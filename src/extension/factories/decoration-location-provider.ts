@@ -11,7 +11,7 @@ import { inputStream } from '../../adapters/input-stream';
 export function make(adapters: Adapters): DecorationLocationsProviderContract {
   return new DecorationLocationsProvider({
     workspace: vscode.workspace,
-    statFile: fileSystem.statFile,
+    statFile: fileSystem.stat,
     processForCmakeCommand: childProcess.executeFile,
     processForCmakeTarget: childProcess.executeFile,
     globSearch: fileSystem.globSearch,

@@ -39,7 +39,7 @@ function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryIsAnAbsoluteP
 
     const resolver = BuildTreeDirectoryResolver.make({
       workspace,
-      statFile,
+      stat: statFile,
       mkDir,
       progressReporter,
       errorChannel
@@ -66,7 +66,7 @@ function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryDoesNotExistA
 
     const resolver = BuildTreeDirectoryResolver.make({
       workspace,
-      statFile,
+      stat: statFile,
       mkDir,
       progressReporter,
       errorChannel
@@ -94,7 +94,7 @@ function buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryExists() {
 
     const resolver = BuildTreeDirectoryResolver.make({
       workspace,
-      statFile,
+      stat: statFile,
       mkDir,
       progressReporter,
       errorChannel
@@ -118,7 +118,7 @@ function buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryDoesNotExi
 
       const resolver = BuildTreeDirectoryResolver.make({
         workspace,
-        statFile,
+        stat: statFile,
         mkDir,
         progressReporter,
         errorChannel
