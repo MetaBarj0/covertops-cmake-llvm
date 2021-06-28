@@ -2,11 +2,10 @@ import * as definitions from '../../../definitions';
 import * as SettingsProvider from './settings-provider';
 import * as ProgressReporter from './progress-reporter';
 import * as ErrorChannel from './error-channel';
+import { StatFileCallable } from '../../../adapters/interfaces/stat-file-callable';
 
-import { BigIntStats, MakeDirectoryOptions, PathLike, StatOptions, Stats } from 'fs';
+import { MakeDirectoryOptions, PathLike, } from 'fs';
 import * as path from 'path';
-
-export type StatFileCallable = (path: PathLike, opts?: StatOptions) => Promise<Stats | BigIntStats>;
 
 export type MkDirLike = {
   mkdir(path: PathLike, options: MakeDirectoryOptions & { recursive: true; }): Promise<string | undefined>
@@ -18,7 +17,7 @@ export function make(adapters: Adapters) {
 
 type Adapters = {
   workspace: SettingsProvider.VscodeWorkspaceLike,
-  stat: StatFileCallable,
+  statFile: StatFileCallable,
   mkDir: MkDirLike,
   progressReporter: ProgressReporter.ProgressLike,
   errorChannel: ErrorChannel.OutputChannelLike
@@ -27,7 +26,7 @@ type Adapters = {
 class BuildTreeDirectoryResolver {
   constructor(adapters: Adapters) {
     this.workspace = adapters.workspace;
-    this.stat = adapters.stat;
+    this.stat = adapters.statFile;
     this.mkDir = adapters.mkDir;
     this.progressReporter = adapters.progressReporter;
     this.errorChannel = adapters.errorChannel;

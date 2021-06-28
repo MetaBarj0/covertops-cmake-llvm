@@ -6,6 +6,7 @@ import * as CoverageInfoCollector from './internal/coverage-info-collector';
 import * as ProgressReporter from './internal/progress-reporter';
 import * as ErrorChannel from './internal/error-channel';
 import { DecorationLocationsProviderContract } from '../interfaces/decoration-locations-provider-contract';
+import { StatFileCallable } from '../../adapters/interfaces/stat-file-callable';
 
 export class DecorationLocationsProvider implements DecorationLocationsProviderContract {
   constructor(adapters: Adapters) {
@@ -23,7 +24,7 @@ export class DecorationLocationsProvider implements DecorationLocationsProviderC
   async getDecorationLocationsForUncoveredCodeRegions(sourceFilePath: string) {
     const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({
       workspace: this.workspace,
-      stat: this.statFile,
+      statFile: this.statFile,
       mkDir: this.mkDir,
       progressReporter: this.progressReporter,
       errorChannel: this.errorChannel
@@ -53,7 +54,7 @@ export class DecorationLocationsProvider implements DecorationLocationsProviderC
   }
 
   private readonly workspace: SettingsProvider.VscodeWorkspaceLike;
-  private readonly statFile: BuildTreeDirectoryResolver.StatFileCallable;
+  private readonly statFile: StatFileCallable;
   private readonly processForCmakeCommand: Cmake.ProcessLike;
   private readonly processForCmakeTarget: Cmake.ProcessLike;
   private readonly globSearch: CoverageInfoFileResolver.GlobSearchLike;
@@ -65,7 +66,7 @@ export class DecorationLocationsProvider implements DecorationLocationsProviderC
 
 type Adapters = {
   workspace: SettingsProvider.VscodeWorkspaceLike,
-  statFile: BuildTreeDirectoryResolver.StatFileCallable,
+  statFile: StatFileCallable,
   processForCmakeCommand: Cmake.ProcessLike,
   processForCmakeTarget: Cmake.ProcessLike,
   globSearch: CoverageInfoFileResolver.GlobSearchLike,
