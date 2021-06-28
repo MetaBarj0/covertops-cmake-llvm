@@ -2,6 +2,8 @@ import * as definitions from '../../../definitions';
 import * as SettingsProvider from './settings-provider';
 import * as ProgressReporter from './progress-reporter';
 import * as ErrorChannel from './error-channel';
+// TODO: use module import syntax
+import { VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace-like';
 
 import path = require('path');
 
@@ -14,7 +16,7 @@ export function make(adapters: Adapters) {
 }
 
 type Adapters = {
-  workspace: SettingsProvider.VscodeWorkspaceLike,
+  workspace: VscodeWorkspaceLike,
   globSearch: GlobSearchLike,
   progressReporter: ProgressReporter.ProgressLike,
   errorChannel: ErrorChannel.OutputChannelLike
@@ -80,7 +82,7 @@ class CoverageInfoFileResolver {
   }
 
   private readonly globSearch: GlobSearchLike;
-  private readonly workspace: SettingsProvider.VscodeWorkspaceLike;
+  private readonly workspace: VscodeWorkspaceLike;
   private readonly progressReporter: ProgressReporter.ProgressLike;
   private readonly errorChannel: ErrorChannel.OutputChannelLike;
 };

@@ -3,6 +3,7 @@ import * as SettingsProvider from './settings-provider';
 import * as ProgressReporter from './progress-reporter';
 import * as ErrorChannel from './error-channel';
 import { SettingsContract } from '../../interfaces/settings-contract';
+import { VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace-like';
 
 export type ExecFileExceptionLike = {
   message: string;
@@ -25,7 +26,7 @@ export type ProcessLike = {
 };
 
 type Adapters = {
-  workspace: SettingsProvider.VscodeWorkspaceLike,
+  workspace: VscodeWorkspaceLike,
   processForCommand: ProcessLike,
   processForTarget: ProcessLike,
   progressReporter: ProgressReporter.ProgressLike,

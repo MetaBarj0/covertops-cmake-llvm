@@ -1,4 +1,3 @@
-import * as SettingsProvider from './internal/settings-provider';
 import * as BuildTreeDirectoryResolver from './internal/build-tree-directory-resolver';
 import * as Cmake from './internal/cmake';
 import * as CoverageInfoFileResolver from './internal/coverage-info-file-resolver';
@@ -7,6 +6,7 @@ import * as ProgressReporter from './internal/progress-reporter';
 import * as ErrorChannel from './internal/error-channel';
 import { DecorationLocationsProviderContract } from '../interfaces/decoration-locations-provider-contract';
 import { StatFileCallable } from '../../adapters/interfaces/stat-file-callable';
+import { VscodeWorkspaceLike } from '../../adapters/interfaces/vscode-workspace-like';
 
 export class DecorationLocationsProvider implements DecorationLocationsProviderContract {
   constructor(adapters: Adapters) {
@@ -53,7 +53,7 @@ export class DecorationLocationsProvider implements DecorationLocationsProviderC
     return collector.collectFor(sourceFilePath);
   }
 
-  private readonly workspace: SettingsProvider.VscodeWorkspaceLike;
+  private readonly workspace: VscodeWorkspaceLike;
   private readonly statFile: StatFileCallable;
   private readonly processForCmakeCommand: Cmake.ProcessLike;
   private readonly processForCmakeTarget: Cmake.ProcessLike;
@@ -65,13 +65,13 @@ export class DecorationLocationsProvider implements DecorationLocationsProviderC
 }
 
 type Adapters = {
-  workspace: SettingsProvider.VscodeWorkspaceLike,
+  workspace: VscodeWorkspaceLike,
+  progressReporter: ProgressReporter.ProgressLike,
+  errorChannel: ErrorChannel.OutputChannelLike
   statFile: StatFileCallable,
   processForCmakeCommand: Cmake.ProcessLike,
   processForCmakeTarget: Cmake.ProcessLike,
   globSearch: CoverageInfoFileResolver.GlobSearchLike,
   mkDir: BuildTreeDirectoryResolver.MkDirLike,
   llvmCoverageInfoStreamBuilder: CoverageInfoCollector.LLVMCoverageInfoStreamBuilder,
-  progressReporter: ProgressReporter.ProgressLike,
-  errorChannel: ErrorChannel.OutputChannelLike
 };

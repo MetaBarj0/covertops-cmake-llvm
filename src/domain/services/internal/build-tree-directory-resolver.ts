@@ -3,6 +3,7 @@ import * as SettingsProvider from './settings-provider';
 import * as ProgressReporter from './progress-reporter';
 import * as ErrorChannel from './error-channel';
 import { StatFileCallable } from '../../../adapters/interfaces/stat-file-callable';
+import { VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace-like';
 
 import { MakeDirectoryOptions, PathLike, } from 'fs';
 import * as path from 'path';
@@ -16,7 +17,7 @@ export function make(adapters: Adapters) {
 }
 
 type Adapters = {
-  workspace: SettingsProvider.VscodeWorkspaceLike,
+  workspace: VscodeWorkspaceLike,
   statFile: StatFileCallable,
   mkDir: MkDirLike,
   progressReporter: ProgressReporter.ProgressLike,
@@ -72,7 +73,7 @@ class BuildTreeDirectoryResolver {
   }
 
   private readonly stat: StatFileCallable;
-  private readonly workspace: SettingsProvider.VscodeWorkspaceLike;
+  private readonly workspace: VscodeWorkspaceLike;
   private readonly mkDir: MkDirLike;
   private readonly progressReporter: ProgressReporter.ProgressLike;
   private readonly errorChannel: ErrorChannel.OutputChannelLike;

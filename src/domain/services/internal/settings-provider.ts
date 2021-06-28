@@ -2,23 +2,7 @@ import * as definitions from '../../../definitions';
 import * as ErrorChannel from './error-channel';
 import { SettingsContract } from '../../interfaces/settings-contract';
 import { Settings } from '../../value-objects/settings';
-
-export type VscodeUriLike = {
-  readonly fsPath: string;
-};
-
-export type VscodeWorkspaceFolderLike = {
-  readonly uri: VscodeUriLike;
-};
-
-export type VscodeWorkspaceConfigurationLike = {
-  get(section: keyof SettingsContract): SettingsContract[typeof section];
-};
-
-export type VscodeWorkspaceLike = {
-  readonly workspaceFolders: ReadonlyArray<VscodeWorkspaceFolderLike> | undefined;
-  readonly getConfiguration: (section?: string | undefined) => VscodeWorkspaceConfigurationLike;
-};
+import { VscodeWorkspaceFolderLike, VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace-like';
 
 export function make(adapters: Adapters) {
   return new SettingsProvider(adapters);

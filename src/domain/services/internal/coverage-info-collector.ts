@@ -1,24 +1,11 @@
-import * as definitions from '../../../definitions';
 import * as SettingsProvider from './settings-provider';
 import * as CoverageInfoFileResolver from './coverage-info-file-resolver';
 import * as ProgressReporter from './progress-reporter';
 import * as ErrorChannel from './error-channel';
 import { CoverageInfoCollectorContract } from '../../interfaces/coverage-info-collector-contract';
-
-import {
-  RawLLVMStreamedDataItemCoverageInfo,
-  RawLLVMFileCoverageInfo,
-  RawLLVMFunctionCoverageInfo,
-  RawLLVMRegionCoverageInfo,
-  RawLLVMRegionsCoverageInfo,
-  RegionCoverageInfo
-} from '../../value-objects/region-coverage-info';
+import { VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace-like';
 
 import { Readable } from 'stream';
-import { chain } from 'stream-chain';
-import { parser } from 'stream-json';
-import { pick } from 'stream-json/filters/Pick';
-import { streamArray } from 'stream-json/streamers/StreamArray';
 import { CoverageInfo } from '../../value-objects/coverage-info';
 
 export function make(adapters: Adapters): CoverageInfoCollectorContract {
@@ -57,7 +44,7 @@ class CoverageInfoCollector implements CoverageInfoCollectorContract {
     return new CoverageInfo(() => this.llvmCoverageInfoStreamBuilder.createStream(path), sourceFilePath, this.errorChannel);
   }
 
-  private readonly workspace: SettingsProvider.VscodeWorkspaceLike;
+  private readonly workspace: VscodeWorkspaceLike;
   private readonly globSearch: CoverageInfoFileResolver.GlobSearchLike;
   private readonly llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder;
   private readonly progressReporter: ProgressReporter.ProgressLike;
@@ -65,7 +52,7 @@ class CoverageInfoCollector implements CoverageInfoCollectorContract {
 };
 
 type Adapters = {
-  workspace: SettingsProvider.VscodeWorkspaceLike,
+  workspace: VscodeWorkspaceLike,
   globSearch: CoverageInfoFileResolver.GlobSearchLike,
   llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder,
   progressReporter: ProgressReporter.ProgressLike,

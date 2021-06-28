@@ -1,28 +1,32 @@
 import { defaultSetting } from '../utils/settings';
 
-import * as SettingsProvider from '../../src/domain/services/internal/settings-provider';
 import { SettingsContract } from '../../src/domain/interfaces/settings-contract';
+import {
+  VscodeUriLike,
+  VscodeWorkspaceConfigurationLike,
+  VscodeWorkspaceFolderLike, VscodeWorkspaceLike
+} from '../../src/adapters/interfaces/vscode-workspace-like';
 
 export namespace vscodeWorkspace {
   type Overrides = {
     -readonly [Property in keyof SettingsContract]?: SettingsContract[Property]
   };
 
-  export function buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(overrides: Overrides = {}): SettingsProvider.VscodeWorkspaceLike {
-    return new class implements SettingsProvider.VscodeWorkspaceLike {
+  export function buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(overrides: Overrides = {}): VscodeWorkspaceLike {
+    return new class implements VscodeWorkspaceLike {
       constructor(overrides: Overrides) {
         this.overrides = overrides;
       }
 
       workspaceFolders = [
-        new class implements SettingsProvider.VscodeWorkspaceFolderLike {
-          uri = new class implements SettingsProvider.VscodeUriLike {
+        new class implements VscodeWorkspaceFolderLike {
+          uri = new class implements VscodeUriLike {
             fsPath = defaultSetting('rootDirectory').toString();
           };
         }];
 
       getConfiguration(_section?: string) {
-        return new class implements SettingsProvider.VscodeWorkspaceConfigurationLike {
+        return new class implements VscodeWorkspaceConfigurationLike {
           constructor(overrides: Overrides) {
             this.overrides = overrides;
           }
@@ -42,12 +46,12 @@ export namespace vscodeWorkspace {
     }(overrides);
   }
 
-  export function buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(): SettingsProvider.VscodeWorkspaceLike {
-    return new class implements SettingsProvider.VscodeWorkspaceLike {
+  export function buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(): VscodeWorkspaceLike {
+    return new class implements VscodeWorkspaceLike {
       workspaceFolders = undefined;
 
       getConfiguration(_section?: string) {
-        return new class implements SettingsProvider.VscodeWorkspaceConfigurationLike {
+        return new class implements VscodeWorkspaceConfigurationLike {
           get(section: keyof SettingsContract) {
             return defaultSetting(section);
           }
