@@ -35,11 +35,15 @@ export class DecorationLocationsProvider implements DecorationLocationsProviderC
     await buildTreeDirectoryResolver.resolveAbsolutePath();
 
     const cmake = Cmake.make({
-      workspace: this.workspace,
-      execFileForCommand: this.execFileForCmakeCommand,
-      execFileForTarget: this.execFileForCmakeTarget,
-      progressReporter: this.progressReporter,
-      errorChannel: this.errorChannel
+      processControl: {
+        execFileForCommand: this.execFileForCmakeCommand,
+        execFileForTarget: this.execFileForCmakeTarget,
+      },
+      vscode: {
+        workspace: this.workspace,
+        progressReporter: this.progressReporter,
+        errorChannel: this.errorChannel
+      }
     });
 
     await cmake.buildTarget();

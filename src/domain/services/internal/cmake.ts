@@ -3,17 +3,21 @@ import * as SettingsProvider from './settings-provider';
 import * as ProgressReporter from './progress-reporter';
 import * as ErrorChannel from './error-channel';
 import { BasicCmake } from '../../value-objects/basic-cmake';
-// TODO: import module syntax
+// TODO: import module syntax???
 import { SettingsContract } from '../../interfaces/settings-contract';
 import { VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace-like';
 import { ExecFileCallable } from '../../../adapters/interfaces/exec-file-callable';
 
 type Adapters = {
-  workspace: VscodeWorkspaceLike,
-  execFileForCommand: ExecFileCallable,
-  execFileForTarget: ExecFileCallable,
-  progressReporter: ProgressReporter.ProgressLike,
-  errorChannel: ErrorChannel.OutputChannelLike
+  vscode: {
+    workspace: VscodeWorkspaceLike,
+    progressReporter: ProgressReporter.ProgressLike,
+    errorChannel: ErrorChannel.OutputChannelLike,
+  },
+  processControl: {
+    execFileForCommand: ExecFileCallable,
+    execFileForTarget: ExecFileCallable,
+  }
 };
 
 export function make(adapters: Adapters) {
@@ -22,13 +26,13 @@ export function make(adapters: Adapters) {
 
 class Cmake extends BasicCmake {
   constructor(adapters: Adapters) {
-    super(adapters.progressReporter);
+    super(adapters.vscode.progressReporter);
 
-    this.execFileForCommand = adapters.execFileForCommand;
-    this.execFileForTarget = adapters.execFileForTarget;
-    this.errorChannel = adapters.errorChannel;
+    this.execFileForCommand = adapters.processControl.execFileForCommand;
+    this.execFileForTarget = adapters.processControl.execFileForTarget;
+    this.errorChannel = adapters.vscode.errorChannel;
 
-    this.settings = SettingsProvider.make({ workspace: adapters.workspace, errorChannel: adapters.errorChannel }).settings;
+    this.settings = SettingsProvider.make({ workspace: adapters.vscode.workspace, errorChannel: adapters.vscode.errorChannel }).settings;
   }
 
   protected reachCommand() {

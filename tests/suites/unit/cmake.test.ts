@@ -31,11 +31,15 @@ function cmakeShouldFailWithWrongCmakeCommandSetting() {
     const errorChannel = errorChannelSpy.object;
 
     const cmake = Cmake.make({
-      workspace,
-      execFileForCommand: processForCommand,
-      execFileForTarget: processForTarget,
-      progressReporter,
-      errorChannel
+      processControl: {
+        execFileForCommand: processForCommand,
+        execFileForTarget: processForTarget,
+      },
+      vscode: {
+        workspace,
+        progressReporter,
+        errorChannel
+      }
     });
 
     return cmake.buildTarget()
@@ -59,11 +63,15 @@ function cmakeShouldFailWithWrongCmakeTargetSetting() {
     const errorChannel = errorChannelSpy.object;
 
     const cmake = Cmake.make({
-      workspace,
-      execFileForCommand: processForCommand,
-      execFileForTarget: processForTarget,
-      progressReporter,
-      errorChannel
+      processControl: {
+        execFileForCommand: processForCommand,
+        execFileForTarget: processForTarget,
+      },
+      vscode: {
+        workspace,
+        progressReporter,
+        errorChannel
+      }
     });
 
     const target = workspace.getConfiguration(definitions.extensionNameInSettings).get('cmakeTarget');
@@ -90,11 +98,15 @@ function cmakeShouldSucceedWithCorrectSettings() {
     const errorChannel = e.buildFakeErrorChannel();
 
     const cmake = Cmake.make({
-      workspace,
-      execFileForCommand: processForCommand,
-      execFileForTarget: processForTarget,
-      progressReporter,
-      errorChannel
+      vscode: {
+        workspace,
+        progressReporter,
+        errorChannel
+      },
+      processControl: {
+        execFileForCommand: processForCommand,
+        execFileForTarget: processForTarget,
+      }
     });
 
     await cmake.buildTarget();
