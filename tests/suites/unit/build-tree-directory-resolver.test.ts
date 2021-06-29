@@ -7,6 +7,7 @@ chai.should();
 
 import * as definitions from '../../../src/definitions';
 import * as BuildTreeDirectoryResolver from '../../../src/domain/services/internal/build-tree-directory-resolver';
+import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
 
 import { mkDir as md } from '../../fakes/adapters/mk-dir';
 import *  as vscode from '../../fakes/adapters/vscode';
@@ -30,15 +31,15 @@ function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryIsAnAbsoluteP
     const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({
       buildTreeDirectory: path.normalize('/absolute/build')
     });
-
+    const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
+    const errorChannel = errorChannelSpy.object;
+    const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
     const statFile = sf.buildFakeFailingStatFile();
     const mkDir = md.buildFakeFailingMkDir();
     const progressReporter = pr.buildFakeProgressReporter();
-    const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
-    const errorChannel = errorChannelSpy.object;
 
     const resolver = BuildTreeDirectoryResolver.make({
-      workspace,
+      settings,
       stat: statFile,
       mkDir,
       progressReporter,
@@ -58,14 +59,15 @@ function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryIsAnAbsoluteP
 function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryDoesNotExistAndCannotBeCreated() {
   it('should fail to resolve and report in error channel if specified relative path target does not exist and cannot be created', () => {
     const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+    const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
+    const errorChannel = errorChannelSpy.object;
+    const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
     const statFile = sf.buildFakeFailingStatFile();
     const mkDir = md.buildFakeFailingMkDir();
     const progressReporter = pr.buildFakeProgressReporter();
-    const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
-    const errorChannel = errorChannelSpy.object;
 
     const resolver = BuildTreeDirectoryResolver.make({
-      workspace,
+      settings,
       stat: statFile,
       mkDir,
       progressReporter,
@@ -86,14 +88,15 @@ function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryDoesNotExistA
 function buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryExists() {
   it('should resolve the full path of the build tree directory if the specified setting target an existing directory', async () => {
     const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+    const errorChannel = e.buildFakeErrorChannel();
+    const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
     const statFile = sf.buildFakeSucceedingStatFile();
     const mkDir = md.buildFakeFailingMkDir();
     const progressReporterSpy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());
     const progressReporter = progressReporterSpy.object;
-    const errorChannel = e.buildFakeErrorChannel();
 
     const resolver = BuildTreeDirectoryResolver.make({
-      workspace,
+      settings,
       stat: statFile,
       mkDir,
       progressReporter,
@@ -110,14 +113,15 @@ function buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryDoesNotExi
   it('should resolve the full path of the build tree directory if the specified setting target ' +
     'an unexisting directory that can be created', async () => {
       const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+      const errorChannel = e.buildFakeErrorChannel();
+      const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
       const statFile = sf.buildFakeFailingStatFile();
       const mkDir = md.buildFakeSucceedingMkDir();
       const progressReporterSpy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());
       const progressReporter = progressReporterSpy.object;
-      const errorChannel = e.buildFakeErrorChannel();
 
       const resolver = BuildTreeDirectoryResolver.make({
-        workspace,
+        settings,
         stat: statFile,
         mkDir,
         progressReporter,

@@ -1,5 +1,4 @@
 import * as definitions from '../../../definitions';
-import * as SettingsProvider from './settings-provider';
 import { BasicCmake } from '../../value-objects/basic-cmake';
 // TODO: import module syntax???
 import { SettingsContract } from '../../interfaces/settings-contract';
@@ -7,8 +6,8 @@ import { OutputChannelLike, ProgressLike, VscodeWorkspaceLike } from '../../../a
 import { ExecFileCallable } from '../../../adapters/interfaces/process-control';
 
 type Adapters = {
+  settings: SettingsContract,
   vscode: {
-    workspace: VscodeWorkspaceLike,
     progressReporter: ProgressLike,
     errorChannel: OutputChannelLike,
   },
@@ -30,7 +29,7 @@ class Cmake extends BasicCmake {
     this.execFileForTarget = adapters.processControl.execFileForTarget;
     this.errorChannel = adapters.vscode.errorChannel;
 
-    this.settings = SettingsProvider.make({ workspace: adapters.vscode.workspace, errorChannel: adapters.vscode.errorChannel }).settings;
+    this.settings = adapters.settings;
   }
 
   protected reachCommand() {

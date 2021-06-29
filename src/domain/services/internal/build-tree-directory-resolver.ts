@@ -1,7 +1,6 @@
 import * as definitions from '../../../definitions';
-import * as SettingsProvider from './settings-provider';
-// TODO: progress reporter is part of vscode adapter
 import { MkdirCallable, StatCallable } from '../../../adapters/interfaces/file-system';
+import { SettingsContract } from '../../interfaces/settings-contract';
 import { OutputChannelLike, ProgressLike, VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode';
 
 import * as path from 'path';
@@ -11,7 +10,7 @@ export function make(adapters: Adapters) {
 }
 
 type Adapters = {
-  workspace: VscodeWorkspaceLike,
+  settings: SettingsContract,
   stat: StatCallable,
   mkDir: MkdirCallable,
   progressReporter: ProgressLike,
@@ -20,7 +19,7 @@ type Adapters = {
 
 class BuildTreeDirectoryResolver {
   constructor(adapters: Adapters) {
-    this.workspace = adapters.workspace;
+    this.settings = adapters.settings;
     this.stat = adapters.stat;
     this.mkdir = adapters.mkDir;
     this.progressReporter = adapters.progressReporter;
@@ -28,7 +27,7 @@ class BuildTreeDirectoryResolver {
   }
 
   async resolveAbsolutePath() {
-    const buildTreeDirectory = SettingsProvider.make({ workspace: this.workspace, errorChannel: this.errorChannel }).settings.buildTreeDirectory;
+    const buildTreeDirectory = this.settings.buildTreeDirectory;
 
     this.ensurePathIsNotAbsolute(buildTreeDirectory);
 
@@ -67,7 +66,7 @@ class BuildTreeDirectoryResolver {
   }
 
   private readonly stat: StatCallable;
-  private readonly workspace: VscodeWorkspaceLike;
+  private readonly settings: SettingsContract;
   private readonly mkdir: MkdirCallable;
   private readonly progressReporter: ProgressLike;
   private readonly errorChannel: OutputChannelLike;

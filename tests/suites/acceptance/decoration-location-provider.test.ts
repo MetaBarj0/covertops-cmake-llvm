@@ -5,8 +5,9 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
-import * as definitions from '../../../src/definitions';
+import * as Definitions from '../../../src/definitions';
 import * as DecorationLocationsProvider from '../../../src/domain/services/decoration-locations-provider';
+import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
 import { RegionCoverageInfo } from '../../../src/domain/value-objects/region-coverage-info';
 
 import { mkDir } from '../../fakes/adapters/mk-dir';
@@ -36,8 +37,13 @@ describe('acceptance suite of tests', () => {
 
 function instantiateService() {
   it('should not throw when instantiated with faked adapters.', () => {
+    const errorChannel = e.buildFakeErrorChannel();
+    const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+    const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
+
     const instantiation = () => {
       DecorationLocationsProvider.make({
+        settings,
         fileSystem: {
           stat: sf.buildFakeFailingStatFile(),
           globSearch: g.buildFakeGlobSearchForNoMatch(),
@@ -49,9 +55,9 @@ function instantiateService() {
           execFileForTarget: p.buildFakeFailingProcess(),
         },
         vscode: {
-          workspace: vscode.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(),
+          workspace,
           progressReporter: pr.buildFakeProgressReporter(),
-          errorChannel: e.buildFakeErrorChannel()
+          errorChannel
         }
       });
     };
@@ -63,7 +69,12 @@ function instantiateService() {
 function failBecauseOfIssuesWithBuildTreeDirectorySetting() {
   it('should not be able to provide any decoration for uncovered code regions ' +
     'when the build tree directory can not be found and / or created', () => {
+      const errorChannel = e.buildFakeErrorChannel();
+      const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+      const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
+
       const provider = DecorationLocationsProvider.make({
+        settings,
         fileSystem: {
           stat: sf.buildFakeFailingStatFile(),
           globSearch: g.buildFakeGlobSearchForNoMatch(),
@@ -75,22 +86,27 @@ function failBecauseOfIssuesWithBuildTreeDirectorySetting() {
           execFileForTarget: p.buildFakeFailingProcess(),
         },
         vscode: {
-          workspace: vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
+          workspace,
           progressReporter: pr.buildFakeProgressReporter(),
-          errorChannel: e.buildFakeErrorChannel()
+          errorChannel
         }
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
         'Cannot find or create the build tree directory. Ensure the ' +
-        `'${definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`);
+        `'${Definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`);
     });
 }
 
 function failBecauseOfIssuesWithCmakeCommandSetting() {
   it('should not be able to provide any decoration for uncovered code regions ' +
     'when the cmake command cannot be reached.', () => {
+      const errorChannel = e.buildFakeErrorChannel();
+      const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ cmakeCommand: '' });
+      const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
+
       const provider = DecorationLocationsProvider.make({
+        settings,
         fileSystem: {
           stat: sf.buildFakeSucceedingStatFile(),
           globSearch: g.buildFakeGlobSearchForNoMatch(),
@@ -102,14 +118,14 @@ function failBecauseOfIssuesWithCmakeCommandSetting() {
           execFileForTarget: p.buildFakeFailingProcess(),
         },
         vscode: {
-          workspace: vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ cmakeCommand: '' }),
+          workspace,
           progressReporter: pr.buildFakeProgressReporter(),
-          errorChannel: e.buildFakeErrorChannel()
+          errorChannel
         }
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
-        `Cannot find the cmake command. Ensure the '${definitions.extensionNameInSettings}: Cmake Command' ` +
+        `Cannot find the cmake command. Ensure the '${Definitions.extensionNameInSettings}: Cmake Command' ` +
         'setting is correctly set. Have you verified your PATH environment variable?');
     });
 }
@@ -118,9 +134,12 @@ function failBecauseOfIssuesWithCmakeTargetSetting() {
   it('should not be able to provide any decoration for uncovered code regions ' +
     'when the cmake target cannot be built', () => {
       const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ cmakeTarget: '' });
-      const target = workspace.getConfiguration('cmake-llvm-workspace').get('cmakeTarget');
+      const errorChannel = e.buildFakeErrorChannel();
+      const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
+      const target = workspace.getConfiguration(Definitions.extensionId).get('cmakeTarget');
 
       const provider = DecorationLocationsProvider.make({
+        settings,
         fileSystem: {
           stat: sf.buildFakeSucceedingStatFile(),
           globSearch: g.buildFakeGlobSearchForNoMatch(),
@@ -134,20 +153,25 @@ function failBecauseOfIssuesWithCmakeTargetSetting() {
         vscode: {
           workspace,
           progressReporter: pr.buildFakeProgressReporter(),
-          errorChannel: e.buildFakeErrorChannel()
+          errorChannel
         }
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
         `Error: Could not build the specified cmake target ${target}. ` +
-        `Ensure '${definitions.extensionNameInSettings}: Cmake Target' setting is properly set.`);
+        `Ensure '${Definitions.extensionNameInSettings}: Cmake Target' setting is properly set.`);
     });
 }
 
 function failBecauseCoverageInfoFileIsNotFound() {
   it('should not be able to provide any decoration for uncovered code regions ' +
     'when the coverage info file name cannot be found', () => {
+      const errorChannel = e.buildFakeErrorChannel();
+      const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ coverageInfoFileName: 'baadf00d' });
+      const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
+
       const provider = DecorationLocationsProvider.make({
+        settings,
         fileSystem: {
           stat: sf.buildFakeSucceedingStatFile(),
           globSearch: g.buildFakeGlobSearchForNoMatch(),
@@ -159,17 +183,17 @@ function failBecauseCoverageInfoFileIsNotFound() {
           execFileForTarget: p.buildFakeSucceedingProcess(),
         },
         vscode: {
-          workspace: vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ coverageInfoFileName: 'baadf00d' }),
+          workspace,
           progressReporter: pr.buildFakeProgressReporter(),
-          errorChannel: e.buildFakeErrorChannel()
+          errorChannel
         }
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
         'Cannot resolve the coverage info file path in the build tree directory. ' +
         'Ensure that both ' +
-        `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
-        `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
+        `'${Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+        `'${Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
         'settings are correctly set.');
     });
 }
@@ -177,7 +201,12 @@ function failBecauseCoverageInfoFileIsNotFound() {
 function failBecauseSeveralCoverageInfoFileAreFound() {
   it('should not not able to provide any decoration for uncovered code regions ' +
     'when there are more than one generated coverage information file that are found', () => {
+      const errorChannel = e.buildFakeErrorChannel();
+      const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+      const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
+
       const provider = DecorationLocationsProvider.make({
+        settings,
         fileSystem: {
           stat: sf.buildFakeSucceedingStatFile(),
           globSearch: g.buildFakeGlobSearchForSeveralMatch(),
@@ -189,17 +218,17 @@ function failBecauseSeveralCoverageInfoFileAreFound() {
           execFileForTarget: p.buildFakeSucceedingProcess(),
         },
         vscode: {
-          workspace: vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
+          workspace,
           progressReporter: pr.buildFakeProgressReporter(),
-          errorChannel: e.buildFakeErrorChannel()
+          errorChannel
         }
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
         'More than one coverage information file have been found in the build tree directory. ' +
         'Ensure that both ' +
-        `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
-        `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
+        `'${Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+        `'${Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
         'settings are correctly set.');
     });
 }
@@ -207,8 +236,12 @@ function failBecauseSeveralCoverageInfoFileAreFound() {
 function succeedWithCorrectSettingsAndFakeAdapters() {
   it('should succed to collect correct coverage information for the requested file in x discrete steps.', async () => {
     const progressReporterSpy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());
+    const errorChannel = e.buildFakeErrorChannel();
+    const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+    const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
 
     const provider = DecorationLocationsProvider.make({
+      settings,
       fileSystem: {
         stat: sf.buildFakeSucceedingStatFile(),
         globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
@@ -220,9 +253,9 @@ function succeedWithCorrectSettingsAndFakeAdapters() {
         execFileForTarget: p.buildFakeSucceedingProcess(),
       },
       vscode: {
-        workspace: vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
+        workspace,
         progressReporter: progressReporterSpy.object,
-        errorChannel: e.buildFakeErrorChannel()
+        errorChannel
       }
     });
 

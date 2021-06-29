@@ -154,13 +154,15 @@ function prependLlvmBinDirToPathEnvironmentVariable() {
 const extensionConfiguration = vscode.workspace.getConfiguration(definitions.extensionId);
 
 function makeCmake() {
+  const settings = SettingsProvider.make({ errorChannel: e.buildFakeErrorChannel(), workspace: vscode.workspace }).settings;
+
   return Cmake.make({
+    settings,
     processControl: {
       execFileForCommand: pc.execFile,
       execFileForTarget: pc.execFile,
     },
     vscode: {
-      workspace: vscode.workspace,
       progressReporter: pr.buildFakeProgressReporter(),
       errorChannel: e.buildFakeErrorChannel()
     }
@@ -168,11 +170,15 @@ function makeCmake() {
 }
 
 function makeBuildTreeDirectoryResolver() {
+  const errorChannel = e.buildFakeErrorChannel();
+  const workspace = vscode.workspace;
+  const settings = SettingsProvider.make({ workspace, errorChannel }).settings;
+
   return BuildTreeDirectoryResolver.make({
-    workspace: vscode.workspace,
+    settings,
     stat: fs.stat,
     mkDir: fs.mkdir,
     progressReporter: pr.buildFakeProgressReporter(),
-    errorChannel: e.buildFakeErrorChannel()
+    errorChannel
   });
 }

@@ -1,5 +1,6 @@
 import { extensionId, extensionDisplayName } from '../../definitions';
 import * as DecorationLocationProvider from '../../../src/domain/services/decoration-locations-provider';
+import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
 
 import { commands, Disposable, OutputChannel, ProgressLocation, window } from 'vscode';
 import * as pc from '../../adapters/process-control';
@@ -35,7 +36,10 @@ export class Cov {
     }, async progress => {
       this.reportStartInOutputChannel();
 
+      const settings = SettingsProvider.make({ workspace: vscode.workspace, errorChannel: this.output }).settings;
+
       const provider = DecorationLocationProvider.make({
+        settings,
         vscode: {
           progressReporter: progress,
           errorChannel: this.output,

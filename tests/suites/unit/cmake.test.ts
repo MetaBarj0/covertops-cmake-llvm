@@ -7,6 +7,7 @@ chai.should();
 
 import * as definitions from '../../../src/definitions';
 import * as Cmake from '../../../src/domain/services/internal/cmake';
+import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
 
 import { process as p } from '../../fakes/adapters/process';
 import * as vscode from '../../fakes/adapters/vscode';
@@ -24,19 +25,20 @@ describe('Unit test suite', () => {
 function cmakeShouldFailWithWrongCmakeCommandSetting() {
   it('should be instantiated but fails when asking for building a target and reports to error channel', () => {
     const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ 'cmakeCommand': '' });
+    const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
+    const errorChannel = errorChannelSpy.object;
+    const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
     const processForCommand = p.buildFakeFailingProcess();
     const processForTarget = p.buildFakeSucceedingProcess();
     const progressReporter = pr.buildFakeProgressReporter();
-    const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
-    const errorChannel = errorChannelSpy.object;
 
     const cmake = Cmake.make({
+      settings,
       processControl: {
         execFileForCommand: processForCommand,
         execFileForTarget: processForTarget,
       },
       vscode: {
-        workspace,
         progressReporter,
         errorChannel
       }
@@ -56,19 +58,20 @@ function cmakeShouldFailWithWrongCmakeCommandSetting() {
 function cmakeShouldFailWithWrongCmakeTargetSetting() {
   it('should be instantiated but throw when asking for building a target and reports in error channel', () => {
     const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ 'cmakeTarget': '' });
+    const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
+    const errorChannel = errorChannelSpy.object;
+    const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
     const processForCommand = p.buildFakeSucceedingProcess();
     const processForTarget = p.buildFakeFailingProcess();
     const progressReporter = pr.buildFakeProgressReporter();
-    const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
-    const errorChannel = errorChannelSpy.object;
 
     const cmake = Cmake.make({
+      settings,
       processControl: {
         execFileForCommand: processForCommand,
         execFileForTarget: processForTarget,
       },
       vscode: {
-        workspace,
         progressReporter,
         errorChannel
       }
@@ -91,15 +94,16 @@ function cmakeShouldFailWithWrongCmakeTargetSetting() {
 function cmakeShouldSucceedWithCorrectSettings() {
   it('should be instantiated and succeed when asking for building a target in three discrete steps', async () => {
     const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+    const errorChannel = e.buildFakeErrorChannel();
+    const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
     const processForCommand = p.buildFakeSucceedingProcess();
     const processForTarget = p.buildFakeSucceedingProcess();
     const progressReporterSpy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());
     const progressReporter = progressReporterSpy.object;
-    const errorChannel = e.buildFakeErrorChannel();
 
     const cmake = Cmake.make({
+      settings,
       vscode: {
-        workspace,
         progressReporter,
         errorChannel
       },

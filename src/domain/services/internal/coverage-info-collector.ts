@@ -1,7 +1,8 @@
 import * as CoverageInfoFileResolver from './coverage-info-file-resolver';
 import { CoverageInfoCollectorContract } from '../../interfaces/coverage-info-collector-contract';
-import { OutputChannelLike, ProgressLike, VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode';
+import { OutputChannelLike, ProgressLike } from '../../../adapters/interfaces/vscode';
 import { CreateReadStreamCallable, GlobSearchCallable } from '../../../adapters/interfaces/file-system';
+import { SettingsContract } from '../../interfaces/settings-contract';
 
 import { Readable } from 'stream';
 import { CoverageInfo } from '../../value-objects/coverage-info';
@@ -16,7 +17,7 @@ export type LLVMCoverageInfoStreamBuilder = {
 
 class CoverageInfoCollector implements CoverageInfoCollectorContract {
   constructor(adapters: Adapters) {
-    this.workspace = adapters.workspace;
+    this.settings = adapters.settings;
     this.globSearch = adapters.globSearch;
     this.createReadStream = adapters.createReadStream;
     this.progressReporter = adapters.progressReporter;
@@ -25,7 +26,7 @@ class CoverageInfoCollector implements CoverageInfoCollectorContract {
 
   async collectFor(sourceFilePath: string) {
     const coverageInfoFileResolver = CoverageInfoFileResolver.make({
-      workspace: this.workspace,
+      settings: this.settings,
       globSearch: this.globSearch,
       progressReporter: this.progressReporter,
       errorChannel: this.errorChannel
@@ -42,7 +43,7 @@ class CoverageInfoCollector implements CoverageInfoCollectorContract {
     return new CoverageInfo(() => this.createReadStream(path), sourceFilePath, this.errorChannel);
   }
 
-  private readonly workspace: VscodeWorkspaceLike;
+  private readonly settings: SettingsContract;
   private readonly globSearch: GlobSearchCallable;
   private readonly createReadStream: CreateReadStreamCallable;
   private readonly progressReporter: ProgressLike;
@@ -50,7 +51,7 @@ class CoverageInfoCollector implements CoverageInfoCollectorContract {
 };
 
 type Adapters = {
-  workspace: VscodeWorkspaceLike,
+  settings: SettingsContract,
   globSearch: GlobSearchCallable,
   createReadStream: CreateReadStreamCallable,
   progressReporter: ProgressLike,

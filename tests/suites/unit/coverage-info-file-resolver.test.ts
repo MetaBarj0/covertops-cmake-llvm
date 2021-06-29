@@ -5,8 +5,9 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
-import * as definitions from '../../../src/definitions';
+import * as Definitions from '../../../src/definitions';
 import * as CoverageInfoFileResolver from '../../../src/domain/services/internal/coverage-info-file-resolver';
+import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
 
 import * as vscode from '../../fakes/adapters/vscode';
 import { globbing as g } from '../../fakes/adapters/globbing';
@@ -24,19 +25,20 @@ describe('Unit test suite', () => {
 function shouldFailWhenNoFileIsFound() {
   it('should fail and report in error channel if the recursive search from the build tree directory does not find one file', () => {
     const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
-    const globSearch = g.buildFakeGlobSearchForNoMatch();
-    const progressReporter = pr.buildFakeProgressReporter();
     const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
     const errorChannel = errorChannelSpy.object;
+    const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
+    const globSearch = g.buildFakeGlobSearchForNoMatch();
+    const progressReporter = pr.buildFakeProgressReporter();
 
-    const resolver = CoverageInfoFileResolver.make({ workspace, globSearch, progressReporter, errorChannel });
+    const resolver = CoverageInfoFileResolver.make({ settings, globSearch, progressReporter, errorChannel });
 
     return resolver.resolveCoverageInfoFileFullPath()
       .catch((error: Error) => {
         const errorMessage = 'Cannot resolve the coverage info file path in the build tree directory. ' +
           'Ensure that both ' +
-          `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
-          `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
+          `'${Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+          `'${Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
           'settings are correctly set.';
 
         error.message.should.contain(errorMessage);
@@ -48,19 +50,20 @@ function shouldFailWhenNoFileIsFound() {
 function shouldFailWhenMoreThanOneFileAreFound() {
   it('should fail if the recursive search from the build tree directory does not find one file', () => {
     const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
-    const globSearch = g.buildFakeGlobSearchForNoMatch();
-    const progressReporter = pr.buildFakeProgressReporter();
     const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
     const errorChannel = errorChannelSpy.object;
+    const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
+    const globSearch = g.buildFakeGlobSearchForNoMatch();
+    const progressReporter = pr.buildFakeProgressReporter();
 
-    const resolver = CoverageInfoFileResolver.make({ workspace, globSearch, progressReporter, errorChannel });
+    const resolver = CoverageInfoFileResolver.make({ settings, globSearch, progressReporter, errorChannel });
 
     return resolver.resolveCoverageInfoFileFullPath()
       .catch((error: Error) => {
         const errorMessage = 'Cannot resolve the coverage info file path in the build tree directory. ' +
           'Ensure that both ' +
-          `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
-          `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
+          `'${Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+          `'${Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
           'settings are correctly set.';
 
         error.message.should.contain(errorMessage);
@@ -72,15 +75,16 @@ function shouldFailWhenMoreThanOneFileAreFound() {
 function shouldSucceedWhenExactlyOneFileIsFound() {
   it('should resolve correctly if the recursive search from the build tree directory find exactly one file in one discrete step.', async () => {
     const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
-    const globSearch = g.buildFakeGlobSearchForExactlyOneMatch();
-    const spy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());
-    const progressReporter = spy.object;
     const errorChannel = e.buildFakeErrorChannel();
+    const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
+    const globSearch = g.buildFakeGlobSearchForExactlyOneMatch();
+    const progressReporterSpy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());
+    const progressReporter = progressReporterSpy.object;
 
-    const resolver = CoverageInfoFileResolver.make({ workspace, globSearch, progressReporter, errorChannel });
+    const resolver = CoverageInfoFileResolver.make({ settings, globSearch, progressReporter, errorChannel });
 
     await resolver.resolveCoverageInfoFileFullPath();
 
-    spy.countFor('report').should.be.equal(1);
+    progressReporterSpy.countFor('report').should.be.equal(1);
   });
 }

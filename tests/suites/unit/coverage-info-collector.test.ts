@@ -6,7 +6,8 @@ chai.use(chaiAsPromised);
 chai.should();
 
 import * as CoverageInfoCollector from '../../../src/domain/services/internal/coverage-info-collector';
-import * as definitions from '../../../src/definitions';
+import * as Definitions from '../../../src/definitions';
+import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
 import { RegionCoverageInfo } from '../../../src/domain/value-objects/region-coverage-info';
 
 import * as vscode from '../../fakes/adapters/vscode';
@@ -55,8 +56,8 @@ function shouldFailToCollectCoverageInfoSummaryBecauseOfInvalidStream() {
           error.message.should.contain('Invalid coverage information file have been found in the build tree directory. ' +
             'Coverage information file must contain llvm coverage report in json format. ' +
             'Ensure that both ' +
-            `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
-            `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
+            `'${Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+            `'${Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
             'settings are correctly set.');
 
           errorChannelSpy.countFor('appendLine').should.be.equal(1);
@@ -85,8 +86,8 @@ function shouldFailToCollectUncoveredRegionsBecauseOfInvalidStream() {
           error.message.should.contain('Invalid coverage information file have been found in the build tree directory. ' +
             'Coverage information file must contain llvm coverage report in json format. ' +
             'Ensure that both ' +
-            `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
-            `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
+            `'${Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+            `'${Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
             'settings are correctly set.');
 
           errorChannelSpy.countFor('appendLine').should.be.equal(1);
@@ -192,13 +193,16 @@ function shouldSucceedToCollectUncoveredRegions() {
 function buildCoverageInfoCollectorAndSpiesForProgressReportAndErrorChannel() {
   const progressReporterSpy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());
   const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
+  const errorChannel = errorChannelSpy.object;
+  const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+  const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
 
   const coverageInfoCollector = CoverageInfoCollector.make({
     globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
-    workspace: vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
+    settings,
     createReadStream: i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream),
     progressReporter: progressReporterSpy.object,
-    errorChannel: errorChannelSpy.object
+    errorChannel
   });
 
   return {
@@ -211,10 +215,13 @@ function buildCoverageInfoCollectorAndSpiesForProgressReportAndErrorChannel() {
 function buildCoverageInfoCollectorsAndErrorChannelSpiesUsingStreamFactories(streamFactories: ReadonlyArray<StreamFactory>) {
   return streamFactories.map(streamFfactory => {
     const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
+    const errorChannel = errorChannelSpy.object;
+    const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+    const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
 
     const coverageInfoCollector = CoverageInfoCollector.make({
       globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
-      workspace: vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
+      settings,
       createReadStream: i.buildFakeStreamBuilder(streamFfactory),
       progressReporter: pr.buildFakeProgressReporter(),
       errorChannel: errorChannelSpy.object

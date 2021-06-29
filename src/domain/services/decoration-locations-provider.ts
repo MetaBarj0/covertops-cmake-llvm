@@ -6,22 +6,24 @@ import { DecorationLocationsProviderContract } from '../interfaces/decoration-lo
 import { CreateReadStreamCallable, GlobSearchCallable, MkdirCallable, StatCallable } from '../../adapters/interfaces/file-system';
 import { OutputChannelLike, ProgressLike, VscodeWorkspaceLike } from '../../adapters/interfaces/vscode';
 import { ExecFileCallable } from '../../adapters/interfaces/process-control';
+import { SettingsContract } from '../interfaces/settings-contract';
 
-export function make(adapters: Adapters): DecorationLocationsProviderContract {
+export function make(context: Context): DecorationLocationsProviderContract {
   return new DecorationLocationsProvider({
-    workspace: adapters.vscode.workspace,
-    stat: adapters.fileSystem.stat,
-    execFileForCmakeCommand: adapters.processControl.execFileForCommand,
-    execFileForCmakeTarget: adapters.processControl.execFileForTarget,
-    globSearch: adapters.fileSystem.globSearch,
-    mkdir: adapters.fileSystem.mkdir,
-    createReadStream: adapters.fileSystem.createReadStream,
-    progressReporter: adapters.vscode.progressReporter,
-    errorChannel: adapters.vscode.errorChannel
+    settings: context.settings,
+    stat: context.fileSystem.stat,
+    execFileForCmakeCommand: context.processControl.execFileForCommand,
+    execFileForCmakeTarget: context.processControl.execFileForTarget,
+    globSearch: context.fileSystem.globSearch,
+    mkdir: context.fileSystem.mkdir,
+    createReadStream: context.fileSystem.createReadStream,
+    progressReporter: context.vscode.progressReporter,
+    errorChannel: context.vscode.errorChannel
   });
 }
 
-type Adapters = {
+type Context = {
+  settings: SettingsContract,
   vscode: {
     progressReporter: ProgressLike,
     errorChannel: OutputChannelLike,
@@ -40,21 +42,21 @@ type Adapters = {
 };
 
 class DecorationLocationsProvider implements DecorationLocationsProviderContract {
-  constructor(adapters: AdaptersToBeRefacto) {
-    this.workspace = adapters.workspace;
-    this.stat = adapters.stat;
-    this.execFileForCmakeCommand = adapters.execFileForCmakeCommand;
-    this.execFileForCmakeTarget = adapters.execFileForCmakeTarget;
-    this.globSearch = adapters.globSearch;
-    this.mkdir = adapters.mkdir;
-    this.createReadStream = adapters.createReadStream;
-    this.progressReporter = adapters.progressReporter;
-    this.errorChannel = adapters.errorChannel;
+  constructor(context: ContextToBeRefacto) {
+    this.settings = context.settings;
+    this.stat = context.stat;
+    this.execFileForCmakeCommand = context.execFileForCmakeCommand;
+    this.execFileForCmakeTarget = context.execFileForCmakeTarget;
+    this.globSearch = context.globSearch;
+    this.mkdir = context.mkdir;
+    this.createReadStream = context.createReadStream;
+    this.progressReporter = context.progressReporter;
+    this.errorChannel = context.errorChannel;
   }
 
   async getDecorationLocationsForUncoveredCodeRegions(sourceFilePath: string) {
     const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({
-      workspace: this.workspace,
+      settings: this.settings,
       stat: this.stat,
       mkDir: this.mkdir,
       progressReporter: this.progressReporter,
@@ -64,12 +66,12 @@ class DecorationLocationsProvider implements DecorationLocationsProviderContract
     await buildTreeDirectoryResolver.resolveAbsolutePath();
 
     const cmake = Cmake.make({
+      settings: this.settings,
       processControl: {
         execFileForCommand: this.execFileForCmakeCommand,
         execFileForTarget: this.execFileForCmakeTarget,
       },
       vscode: {
-        workspace: this.workspace,
         progressReporter: this.progressReporter,
         errorChannel: this.errorChannel
       }
@@ -78,7 +80,7 @@ class DecorationLocationsProvider implements DecorationLocationsProviderContract
     await cmake.buildTarget();
 
     const collector = CoverageInfoCollector.make({
-      workspace: this.workspace,
+      settings: this.settings,
       globSearch: this.globSearch,
       createReadStream: this.createReadStream,
       progressReporter: this.progressReporter,
@@ -88,7 +90,7 @@ class DecorationLocationsProvider implements DecorationLocationsProviderContract
     return collector.collectFor(sourceFilePath);
   }
 
-  private readonly workspace: VscodeWorkspaceLike;
+  private readonly settings: SettingsContract;
   private readonly stat: StatCallable;
   private readonly execFileForCmakeCommand: ExecFileCallable;
   private readonly execFileForCmakeTarget: ExecFileCallable;
@@ -99,8 +101,8 @@ class DecorationLocationsProvider implements DecorationLocationsProviderContract
   private readonly errorChannel: OutputChannelLike;
 }
 
-type AdaptersToBeRefacto = {
-  workspace: VscodeWorkspaceLike,
+type ContextToBeRefacto = {
+  settings: SettingsContract,
   progressReporter: ProgressLike,
   errorChannel: OutputChannelLike
   stat: StatCallable,

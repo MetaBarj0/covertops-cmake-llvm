@@ -1,5 +1,6 @@
 import * as definitions from '../../../definitions';
 import * as SettingsProvider from './settings-provider';
+import { SettingsContract } from '../../interfaces/settings-contract';
 // TODO: use module import syntax???
 import { OutputChannelLike, ProgressLike, VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode';
 import { GlobSearchCallable } from '../../../adapters/interfaces/file-system';
@@ -11,7 +12,7 @@ export function make(adapters: Adapters) {
 }
 
 type Adapters = {
-  workspace: VscodeWorkspaceLike,
+  settings: SettingsContract,
   globSearch: GlobSearchCallable,
   progressReporter: ProgressLike,
   errorChannel: OutputChannelLike
@@ -20,7 +21,7 @@ type Adapters = {
 class CoverageInfoFileResolver {
   constructor(adapters: Adapters) {
     this.globSearch = adapters.globSearch;
-    this.workspace = adapters.workspace;
+    this.settings = adapters.settings;
     this.progressReporter = adapters.progressReporter;
     this.errorChannel = adapters.errorChannel;
   }
@@ -70,14 +71,13 @@ class CoverageInfoFileResolver {
   }
 
   private get pattern() {
-    const settings = SettingsProvider.make({ workspace: this.workspace, errorChannel: this.errorChannel }).settings;
-    const posixRootPath = settings.rootDirectory.split(path.sep).join(path.posix.sep);
+    const posixRootPath = this.settings.rootDirectory.split(path.sep).join(path.posix.sep);
 
-    return `${posixRootPath}${path.posix.sep}**${path.posix.sep}${settings.coverageInfoFileName}`;
+    return `${posixRootPath}${path.posix.sep}**${path.posix.sep}${this.settings.coverageInfoFileName}`;
   }
 
   private readonly globSearch: GlobSearchCallable;
-  private readonly workspace: VscodeWorkspaceLike;
+  private readonly settings: SettingsContract;
   private readonly progressReporter: ProgressLike;
   private readonly errorChannel: OutputChannelLike;
 };

@@ -9,6 +9,7 @@ import { RegionCoverageInfo } from '../../../src/domain/value-objects/region-cov
 import * as definitions from '../../../src/definitions';
 
 import * as DecorationLocationsProvider from '../../../src/domain/services/decoration-locations-provider';
+import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
 
 import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';
 import { errorChannel as e } from '../../fakes/adapters/error-channel';
@@ -43,10 +44,14 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
   });
 
   it('should report correct coverage information for a specific cpp file', async () => {
+    const errorChannel = e.buildFakeErrorChannel();
+    const settings = SettingsProvider.make({ workspace: vscode.workspace, errorChannel }).settings;
+
     const provider = DecorationLocationsProvider.make({
+      settings,
       vscode: {
         progressReporter: pr.buildFakeProgressReporter(),
-        errorChannel: e.buildFakeErrorChannel(),
+        errorChannel,
         workspace: vscode.workspace
       },
       processControl: {
@@ -99,10 +104,14 @@ function collectSummaryCoverageInfoFromPartiallyCoveredFileShouldSucceed() {
   });
 
   it('should report correct coverage information for a specific cpp file', async () => {
+    const errorChannel = e.buildFakeErrorChannel();
+    const settings = SettingsProvider.make({ workspace: vscode.workspace, errorChannel }).settings;
+
     const provider = DecorationLocationsProvider.make({
+      settings,
       vscode: {
         progressReporter: pr.buildFakeProgressReporter(),
-        errorChannel: e.buildFakeErrorChannel(),
+        errorChannel,
         workspace: vscode.workspace
       },
       processControl: {
@@ -148,10 +157,14 @@ function collectSummaryCoverageInfoFromFullyCoveredFileShouldSucceed() {
   });
 
   it('should report correct coverage information for a specific file', async () => {
+    const errorChannel = e.buildFakeErrorChannel();
+    const settings = SettingsProvider.make({ workspace: vscode.workspace, errorChannel }).settings;
+
     const provider = DecorationLocationsProvider.make({
+      settings,
       vscode: {
         progressReporter: pr.buildFakeProgressReporter(),
-        errorChannel: e.buildFakeErrorChannel(),
+        errorChannel,
         workspace: vscode.workspace
       },
       processControl: {
@@ -197,10 +210,14 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
   });
 
   it('should report correct coverage information for a specific file', async () => {
+    const errorChannel = e.buildFakeErrorChannel();
+    const settings = SettingsProvider.make({ workspace: vscode.workspace, errorChannel }).settings;
+
     const provider = DecorationLocationsProvider.make({
+      settings,
       vscode: {
         progressReporter: pr.buildFakeProgressReporter(),
-        errorChannel: e.buildFakeErrorChannel(),
+        errorChannel,
         workspace: vscode.workspace
       },
       processControl: {
