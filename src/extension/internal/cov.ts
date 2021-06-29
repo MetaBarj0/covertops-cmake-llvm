@@ -1,9 +1,10 @@
 import { extensionId, extensionDisplayName } from '../../definitions';
-import * as DecorationLocationProvider from '../../../src/extension/factories/decoration-location-provider';
+import * as DecorationLocationProvider from '../../../src/domain/services/decoration-locations-provider';
 
-import { commands, Disposable, OutputChannel, ProgressLocation, window, workspace } from 'vscode';
+import { commands, Disposable, OutputChannel, ProgressLocation, window } from 'vscode';
 import * as pc from '../../adapters/process-control';
 import * as fs from '../../adapters/file-system';
+import * as vscode from '../../adapters/vscode';
 
 export class Cov {
   constructor() {
@@ -38,7 +39,7 @@ export class Cov {
         vscode: {
           progressReporter: progress,
           errorChannel: this.output,
-          workspace
+          workspace: vscode.workspace
         },
         processControl: {
           execFileForCommand: pc.execFile,

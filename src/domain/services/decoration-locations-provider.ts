@@ -7,8 +7,40 @@ import { CreateReadStreamCallable, GlobSearchCallable, MkdirCallable, StatCallab
 import { OutputChannelLike, ProgressLike, VscodeWorkspaceLike } from '../../adapters/interfaces/vscode';
 import { ExecFileCallable } from '../../adapters/interfaces/process-control';
 
-export class DecorationLocationsProvider implements DecorationLocationsProviderContract {
-  constructor(adapters: Adapters) {
+export function make(adapters: Adapters): DecorationLocationsProviderContract {
+  return new DecorationLocationsProvider({
+    workspace: adapters.vscode.workspace,
+    stat: adapters.fileSystem.stat,
+    execFileForCmakeCommand: adapters.processControl.execFileForCommand,
+    execFileForCmakeTarget: adapters.processControl.execFileForTarget,
+    globSearch: adapters.fileSystem.globSearch,
+    mkdir: adapters.fileSystem.mkdir,
+    createReadStream: adapters.fileSystem.createReadStream,
+    progressReporter: adapters.vscode.progressReporter,
+    errorChannel: adapters.vscode.errorChannel
+  });
+}
+
+type Adapters = {
+  vscode: {
+    progressReporter: ProgressLike,
+    errorChannel: OutputChannelLike,
+    workspace: VscodeWorkspaceLike
+  },
+  processControl: {
+    execFileForCommand: ExecFileCallable,
+    execFileForTarget: ExecFileCallable,
+  },
+  fileSystem: {
+    stat: StatCallable,
+    mkdir: MkdirCallable,
+    globSearch: GlobSearchCallable,
+    createReadStream: CreateReadStreamCallable
+  }
+};
+
+class DecorationLocationsProvider implements DecorationLocationsProviderContract {
+  constructor(adapters: AdaptersToBeRefacto) {
     this.workspace = adapters.workspace;
     this.stat = adapters.stat;
     this.execFileForCmakeCommand = adapters.execFileForCmakeCommand;
@@ -67,7 +99,7 @@ export class DecorationLocationsProvider implements DecorationLocationsProviderC
   private readonly errorChannel: OutputChannelLike;
 }
 
-type Adapters = {
+type AdaptersToBeRefacto = {
   workspace: VscodeWorkspaceLike,
   progressReporter: ProgressLike,
   errorChannel: OutputChannelLike

@@ -8,7 +8,7 @@ chai.should();
 import { RegionCoverageInfo } from '../../../src/domain/value-objects/region-coverage-info';
 import * as definitions from '../../../src/definitions';
 
-import * as DecorationLocationsProvider from '../../../src/extension/factories/decoration-location-provider';
+import * as DecorationLocationsProvider from '../../../src/domain/services/decoration-locations-provider';
 
 import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';
 import { errorChannel as e } from '../../fakes/adapters/error-channel';
