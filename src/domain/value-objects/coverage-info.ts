@@ -1,4 +1,3 @@
-import * as ErrorChannel from '../services/internal/error-channel';
 import { CoverageSummary } from './coverage-summary';
 import {
   RawLLVMStreamedDataItemCoverageInfo,
@@ -9,6 +8,8 @@ import {
   RegionCoverageInfo
 } from './region-coverage-info';
 
+import { OutputChannelLike } from '../../adapters/interfaces/vscode';
+
 import * as Definitions from '../../definitions';
 
 import { Readable } from 'stream';
@@ -18,7 +19,7 @@ import { pick } from 'stream-json/filters/Pick';
 import { streamArray } from 'stream-json/streamers/StreamArray';
 
 export class CoverageInfo {
-  constructor(llvmCoverageInfoStreamFactory: StreamFactory, sourceFilePath: string, errorChannel: ErrorChannel.OutputChannelLike) {
+  constructor(llvmCoverageInfoStreamFactory: StreamFactory, sourceFilePath: string, errorChannel: OutputChannelLike) {
     this.llvmCoverageInfoStreamFactory = llvmCoverageInfoStreamFactory;
     this.sourceFilePath = sourceFilePath;
     this.errorChannel = errorChannel;
@@ -116,7 +117,7 @@ export class CoverageInfo {
 
   private readonly llvmCoverageInfoStreamFactory: StreamFactory;
   private readonly sourceFilePath: string;
-  private readonly errorChannel: ErrorChannel.OutputChannelLike;
+  private readonly errorChannel: OutputChannelLike;
 
   static get invalidInputReadableStreamMessage() {
     return 'Invalid coverage information file have been found in the build tree directory. ' +
@@ -145,7 +146,7 @@ class RawLLVMCoverageSummary {
 };
 
 class RegionCoverageInfoAsyncIterable {
-  constructor(pipeline: Readable, sourceFilePath: string, errorChannel: ErrorChannel.OutputChannelLike) {
+  constructor(pipeline: Readable, sourceFilePath: string, errorChannel: OutputChannelLike) {
     this.iterator = new RegionCoverageInfoAsyncIteratorContract(pipeline, sourceFilePath, errorChannel);
   }
 
@@ -157,7 +158,7 @@ class RegionCoverageInfoAsyncIterable {
 };
 
 class RegionCoverageInfoAsyncIteratorContract {
-  constructor(pipeline: Readable, sourceFilePath: string, errorChannel: ErrorChannel.OutputChannelLike) {
+  constructor(pipeline: Readable, sourceFilePath: string, errorChannel: OutputChannelLike) {
     this.pipeline = pipeline;
     this.sourceFilePath = sourceFilePath;
     this.errorChannel = errorChannel;
@@ -206,7 +207,7 @@ class RegionCoverageInfoAsyncIteratorContract {
   private readonly pipeline: Readable;
   private readonly sourceFilePath: string;
   private last: RawLLVMRegionCoverageInfo | undefined = undefined;
-  private readonly errorChannel: ErrorChannel.OutputChannelLike;
+  private readonly errorChannel: OutputChannelLike;
 };
 
 class RegionCoverageInfoIterator {

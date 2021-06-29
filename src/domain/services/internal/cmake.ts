@@ -1,18 +1,17 @@
 import * as definitions from '../../../definitions';
 import * as SettingsProvider from './settings-provider';
 import * as ProgressReporter from './progress-reporter';
-import * as ErrorChannel from './error-channel';
 import { BasicCmake } from '../../value-objects/basic-cmake';
 // TODO: import module syntax???
 import { SettingsContract } from '../../interfaces/settings-contract';
-import { VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace';
+import { OutputChannelLike, VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode';
 import { ExecFileCallable } from '../../../adapters/interfaces/process-control';
 
 type Adapters = {
   vscode: {
     workspace: VscodeWorkspaceLike,
     progressReporter: ProgressReporter.ProgressLike,
-    errorChannel: ErrorChannel.OutputChannelLike,
+    errorChannel: OutputChannelLike,
   },
   processControl: {
     execFileForCommand: ExecFileCallable,
@@ -96,6 +95,6 @@ class Cmake extends BasicCmake {
 
   private readonly execFileForCommand: ExecFileCallable;
   private readonly execFileForTarget: ExecFileCallable;
-  private readonly errorChannel: ErrorChannel.OutputChannelLike;
+  private readonly errorChannel: OutputChannelLike;
   private readonly settings: SettingsContract;
 };

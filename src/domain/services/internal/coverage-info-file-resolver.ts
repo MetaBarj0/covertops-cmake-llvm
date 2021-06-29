@@ -1,9 +1,8 @@
 import * as definitions from '../../../definitions';
 import * as SettingsProvider from './settings-provider';
 import * as ProgressReporter from './progress-reporter';
-import * as ErrorChannel from './error-channel';
 // TODO: use module import syntax???
-import { VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace';
+import { OutputChannelLike, VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode';
 import { GlobSearchCallable } from '../../../adapters/interfaces/file-system';
 
 import * as path from 'path';
@@ -16,7 +15,7 @@ type Adapters = {
   workspace: VscodeWorkspaceLike,
   globSearch: GlobSearchCallable,
   progressReporter: ProgressReporter.ProgressLike,
-  errorChannel: ErrorChannel.OutputChannelLike
+  errorChannel: OutputChannelLike
 };
 
 class CoverageInfoFileResolver {
@@ -81,5 +80,5 @@ class CoverageInfoFileResolver {
   private readonly globSearch: GlobSearchCallable;
   private readonly workspace: VscodeWorkspaceLike;
   private readonly progressReporter: ProgressReporter.ProgressLike;
-  private readonly errorChannel: ErrorChannel.OutputChannelLike;
+  private readonly errorChannel: OutputChannelLike;
 };

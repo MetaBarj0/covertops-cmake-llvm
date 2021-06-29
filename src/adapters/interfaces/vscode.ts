@@ -17,3 +17,7 @@ export type VscodeWorkspaceConfigurationLike = {
 export type VscodeUriLike = {
     readonly fsPath: string;
 };
+
+export type OutputChannelLike = {
+    appendLine(line: string): void;
+};

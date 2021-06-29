@@ -1,8 +1,7 @@
 import * as definitions from '../../../definitions';
-import * as ErrorChannel from './error-channel';
 import { SettingsContract } from '../../interfaces/settings-contract';
 import { Settings } from '../../value-objects/settings';
-import { VscodeWorkspaceFolderLike, VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace';
+import { OutputChannelLike, VscodeWorkspaceFolderLike, VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode';
 
 export function make(adapters: Adapters) {
   return new SettingsProvider(adapters);
@@ -10,7 +9,7 @@ export function make(adapters: Adapters) {
 
 type Adapters = {
   workspace: VscodeWorkspaceLike,
-  errorChannel: ErrorChannel.OutputChannelLike
+  errorChannel: OutputChannelLike
 };
 
 class SettingsProvider {
@@ -48,5 +47,5 @@ class SettingsProvider {
   }
 
   private readonly workspace: VscodeWorkspaceLike;
-  private readonly errorChannel: ErrorChannel.OutputChannelLike;
+  private readonly errorChannel: OutputChannelLike;
 }

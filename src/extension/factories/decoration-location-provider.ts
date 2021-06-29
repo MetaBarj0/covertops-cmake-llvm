@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 
 import { DecorationLocationsProviderContract } from '../../domain/interfaces/decoration-locations-provider-contract';
 import { DecorationLocationsProvider } from '../../domain/services/decoration-locations-provider';
-import * as ErrorChannel from '../../domain/services/internal/error-channel';
+import { OutputChannelLike } from '../../adapters/interfaces/vscode';
 
 import { ExecFileCallable } from '../../adapters/interfaces/process-control';
 import { CreateReadStreamCallable, GlobSearchCallable, MkdirCallable, StatCallable } from '../../adapters/interfaces/file-system';
@@ -24,7 +24,7 @@ export function make(adapters: Adapters): DecorationLocationsProviderContract {
 type Adapters = {
   vscode: {
     progressReporter: vscode.Progress<{ message?: string, increment?: number }>,
-    errorChannel: ErrorChannel.OutputChannelLike
+    errorChannel: OutputChannelLike
   },
   processControl: {
     execFileForCommand: ExecFileCallable,

@@ -2,11 +2,10 @@ import * as BuildTreeDirectoryResolver from './internal/build-tree-directory-res
 import * as Cmake from './internal/cmake';
 import * as CoverageInfoCollector from './internal/coverage-info-collector';
 import * as ProgressReporter from './internal/progress-reporter';
-import * as ErrorChannel from './internal/error-channel';
 // TODO: module import syntax???
 import { DecorationLocationsProviderContract } from '../interfaces/decoration-locations-provider-contract';
 import { CreateReadStreamCallable, GlobSearchCallable, MkdirCallable, StatCallable } from '../../adapters/interfaces/file-system';
-import { VscodeWorkspaceLike } from '../../adapters/interfaces/vscode-workspace';
+import { OutputChannelLike, VscodeWorkspaceLike } from '../../adapters/interfaces/vscode';
 import { ExecFileCallable } from '../../adapters/interfaces/process-control';
 
 export class DecorationLocationsProvider implements DecorationLocationsProviderContract {
@@ -66,13 +65,13 @@ export class DecorationLocationsProvider implements DecorationLocationsProviderC
   private readonly mkdir: MkdirCallable;
   private readonly createReadStream: CreateReadStreamCallable;
   private readonly progressReporter: ProgressReporter.ProgressLike;
-  private readonly errorChannel: ErrorChannel.OutputChannelLike;
+  private readonly errorChannel: OutputChannelLike;
 }
 
 type Adapters = {
   workspace: VscodeWorkspaceLike,
   progressReporter: ProgressReporter.ProgressLike,
-  errorChannel: ErrorChannel.OutputChannelLike
+  errorChannel: OutputChannelLike
   stat: StatCallable,
   execFileForCmakeCommand: ExecFileCallable,
   execFileForCmakeTarget: ExecFileCallable,

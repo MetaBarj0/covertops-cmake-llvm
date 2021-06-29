@@ -1,9 +1,9 @@
 import * as definitions from '../../../definitions';
 import * as SettingsProvider from './settings-provider';
+// TODO: progress reporter is part of vscode adapter
 import * as ProgressReporter from './progress-reporter';
-import * as ErrorChannel from './error-channel';
 import { MkdirCallable, StatCallable } from '../../../adapters/interfaces/file-system';
-import { VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace';
+import { OutputChannelLike, VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode';
 
 import * as path from 'path';
 
@@ -16,7 +16,7 @@ type Adapters = {
   stat: StatCallable,
   mkDir: MkdirCallable,
   progressReporter: ProgressReporter.ProgressLike,
-  errorChannel: ErrorChannel.OutputChannelLike
+  errorChannel: OutputChannelLike
 };
 
 class BuildTreeDirectoryResolver {
@@ -71,5 +71,5 @@ class BuildTreeDirectoryResolver {
   private readonly workspace: VscodeWorkspaceLike;
   private readonly mkdir: MkdirCallable;
   private readonly progressReporter: ProgressReporter.ProgressLike;
-  private readonly errorChannel: ErrorChannel.OutputChannelLike;
+  private readonly errorChannel: OutputChannelLike;
 };

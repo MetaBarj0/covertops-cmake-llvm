@@ -1,8 +1,7 @@
 import * as CoverageInfoFileResolver from './coverage-info-file-resolver';
 import * as ProgressReporter from './progress-reporter';
-import * as ErrorChannel from './error-channel';
 import { CoverageInfoCollectorContract } from '../../interfaces/coverage-info-collector-contract';
-import { VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace';
+import { OutputChannelLike, VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode';
 import { CreateReadStreamCallable, GlobSearchCallable } from '../../../adapters/interfaces/file-system';
 
 import { Readable } from 'stream';
@@ -48,7 +47,7 @@ class CoverageInfoCollector implements CoverageInfoCollectorContract {
   private readonly globSearch: GlobSearchCallable;
   private readonly createReadStream: CreateReadStreamCallable;
   private readonly progressReporter: ProgressReporter.ProgressLike;
-  private readonly errorChannel: ErrorChannel.OutputChannelLike;
+  private readonly errorChannel: OutputChannelLike;
 };
 
 type Adapters = {
@@ -56,5 +55,5 @@ type Adapters = {
   globSearch: GlobSearchCallable,
   createReadStream: CreateReadStreamCallable,
   progressReporter: ProgressReporter.ProgressLike,
-  errorChannel: ErrorChannel.OutputChannelLike
+  errorChannel: OutputChannelLike
 };

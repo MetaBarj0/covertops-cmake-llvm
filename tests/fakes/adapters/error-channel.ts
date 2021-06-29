@@ -1,4 +1,4 @@
-import { OutputChannelLike } from "../../../src/domain/services/internal/error-channel";
+import { OutputChannelLike } from '../../../src/adapters/interfaces/vscode';
 
 import { Spy } from "../../utils/spy";
 
