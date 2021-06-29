@@ -1,29 +1,30 @@
-import * as definitions from '../../../definitions';
-import * as SettingsProvider from './settings-provider';
-import { SettingsContract } from '../../interfaces/settings-contract';
+import * as Definitions from '../../../definitions';
+import { SettingsContract } from '../../../domain/interfaces/settings-contract';
 // TODO: use module import syntax???
 import { OutputChannelLike, ProgressLike, VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode';
 import { GlobSearchCallable } from '../../../adapters/interfaces/file-system';
+import * as Interface from '../../../modules/coverage-info-file-resolver/interfaces/domain/coverage-info-file-resolver';
 
 import * as path from 'path';
 
-export function make(adapters: Adapters) {
-  return new CoverageInfoFileResolver(adapters);
+
+export function make(context: Context): Interface.CoverageInfoFileResolver {
+  return new CoverageInfoFileResolver(context);
 }
 
-type Adapters = {
+type Context = {
   settings: SettingsContract,
   globSearch: GlobSearchCallable,
   progressReporter: ProgressLike,
   errorChannel: OutputChannelLike
 };
 
-class CoverageInfoFileResolver {
-  constructor(adapters: Adapters) {
-    this.globSearch = adapters.globSearch;
-    this.settings = adapters.settings;
-    this.progressReporter = adapters.progressReporter;
-    this.errorChannel = adapters.errorChannel;
+class CoverageInfoFileResolver implements Interface.CoverageInfoFileResolver {
+  constructor(context: Context) {
+    this.globSearch = context.globSearch;
+    this.settings = context.settings;
+    this.progressReporter = context.progressReporter;
+    this.errorChannel = context.errorChannel;
   }
 
   async resolveCoverageInfoFileFullPath() {
@@ -46,8 +47,8 @@ class CoverageInfoFileResolver {
 
     const errorMessage = 'More than one coverage information file have been found in the build tree directory. ' +
       'Ensure that both ' +
-      `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
-      `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
+      `'${Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+      `'${Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
       'settings are correctly set.';
 
     this.errorChannel.appendLine(errorMessage);
@@ -61,8 +62,8 @@ class CoverageInfoFileResolver {
 
     const errorMessage = 'Cannot resolve the coverage info file path in the build tree directory. ' +
       'Ensure that both ' +
-      `'${definitions.extensionNameInSettings}: Build Tree Directory' and ` +
-      `'${definitions.extensionNameInSettings}: Coverage Info File Name' ` +
+      `'${Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+      `'${Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
       'settings are correctly set.';
 
     this.errorChannel.appendLine(errorMessage);

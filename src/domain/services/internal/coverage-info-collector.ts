@@ -1,4 +1,4 @@
-import * as CoverageInfoFileResolver from './coverage-info-file-resolver';
+import * as CoverageInfoFileResolver from '../../../modules/coverage-info-file-resolver/domain/coverage-info-file-resolver';
 import { CoverageInfoCollectorContract } from '../../interfaces/coverage-info-collector-contract';
 import { OutputChannelLike, ProgressLike } from '../../../adapters/interfaces/vscode';
 import { CreateReadStreamCallable, GlobSearchCallable } from '../../../adapters/interfaces/file-system';
