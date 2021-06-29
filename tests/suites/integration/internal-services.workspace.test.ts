@@ -18,8 +18,8 @@ import { errorChannel as e } from '../../fakes/adapters/error-channel';
 import * as vscode from 'vscode';
 import { env } from 'process';
 import * as path from 'path';
-import { fileSystem } from '../../../src/adapters/file-system';
-import { childProcess } from '../../../src/adapters/child-process';
+import * as fs from '../../../src/adapters/file-system';
+import * as pc from '../../../src/adapters/process-control';
 
 describe('integration test suite', () => {
   describe('the behavior of internal services', () => {
@@ -156,8 +156,8 @@ const extensionConfiguration = vscode.workspace.getConfiguration(definitions.ext
 function makeCmake() {
   return Cmake.make({
     processControl: {
-      execFileForCommand: childProcess.execFile,
-      execFileForTarget: childProcess.execFile,
+      execFileForCommand: pc.execFile,
+      execFileForTarget: pc.execFile,
     },
     vscode: {
       workspace: vscode.workspace,
@@ -170,8 +170,8 @@ function makeCmake() {
 function makeBuildTreeDirectoryResolver() {
   return BuildTreeDirectoryResolver.make({
     workspace: vscode.workspace,
-    statFile: fileSystem.stat,
-    mkDir: fileSystem.mkdir,
+    statFile: fs.stat,
+    mkDir: fs.mkdir,
     progressReporter: pr.buildFakeProgressReporter(),
     errorChannel: e.buildFakeErrorChannel()
   });

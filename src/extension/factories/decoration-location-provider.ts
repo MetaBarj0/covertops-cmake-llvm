@@ -4,18 +4,18 @@ import { DecorationLocationsProviderContract } from '../../domain/interfaces/dec
 import { DecorationLocationsProvider } from '../../domain/services/decoration-locations-provider';
 import * as ErrorChannel from '../../domain/services/internal/error-channel';
 
-import { fileSystem } from '../../adapters/file-system';
+import * as fs from '../../adapters/file-system';
 import { inputStream } from '../../adapters/input-stream';
 import { ExecFileCallable } from '../../adapters/interfaces/process-control';
 
 export function make(adapters: Adapters): DecorationLocationsProviderContract {
   return new DecorationLocationsProvider({
     workspace: vscode.workspace,
-    statFile: fileSystem.stat,
+    statFile: fs.stat,
     execFileForCmakeCommand: adapters.processControl.execFileForCommand,
     execFileForCmakeTarget: adapters.processControl.execFileForTarget,
-    globSearch: fileSystem.globSearch,
-    mkdir: fileSystem.mkdir,
+    globSearch: fs.globSearch,
+    mkdir: fs.mkdir,
     llvmCoverageInfoStreamBuilder: inputStream.readableStream,
     progressReporter: adapters.vscode.progressReporter,
     errorChannel: adapters.vscode.errorChannel
