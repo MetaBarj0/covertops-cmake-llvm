@@ -2,6 +2,8 @@ import * as definitions from '../../../definitions';
 import * as SettingsProvider from './settings-provider';
 import * as ProgressReporter from './progress-reporter';
 import * as ErrorChannel from './error-channel';
+import { BasicCmake } from '../../value-objects/basic-cmake';
+// TODO: import module syntax
 import { SettingsContract } from '../../interfaces/settings-contract';
 import { VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace-like';
 import { ExecFileCallable } from '../../../adapters/interfaces/exec-file-callable';
@@ -18,37 +20,18 @@ export function make(adapters: Adapters) {
   return new Cmake(adapters);
 }
 
-class Cmake {
+class Cmake extends BasicCmake {
   constructor(adapters: Adapters) {
+    super(adapters.progressReporter);
+
     this.execFileForCommand = adapters.execFileForCommand;
     this.execFileForTarget = adapters.execFileForTarget;
-    this.progressReporter = adapters.progressReporter;
     this.errorChannel = adapters.errorChannel;
 
     this.settings = SettingsProvider.make({ workspace: adapters.workspace, errorChannel: adapters.errorChannel }).settings;
   }
 
-  async buildTarget() {
-    await this.ensureCommandIsReachable();
-    this.progressReporter.report({
-      message: 'Found an invocable cmake command.',
-      increment: 100 / 6 * 2
-    });
-
-    await this.generate();
-    this.progressReporter.report({
-      message: 'Generated the cmake project.',
-      increment: 100 / 6 * 3
-    });
-
-    await this.build();
-    this.progressReporter.report({
-      message: 'Built the target.',
-      increment: 100 / 6 * 4
-    });
-  }
-
-  private ensureCommandIsReachable() {
+  protected reachCommand() {
     return this.executeCommandWith({
       execFile: this.execFileForCommand,
       arguments: ['--version'],
@@ -58,7 +41,7 @@ class Cmake {
     });
   }
 
-  private generate() {
+  protected override generateProject() {
     const build = this.settings.buildTreeDirectory;
     const source = this.settings.rootDirectory;
 
@@ -71,7 +54,7 @@ class Cmake {
     });
   }
 
-  private build() {
+  protected override build() {
     const build = this.settings.buildTreeDirectory;
     const target = this.settings.cmakeTarget;
 
@@ -109,7 +92,6 @@ class Cmake {
 
   private readonly execFileForCommand: ExecFileCallable;
   private readonly execFileForTarget: ExecFileCallable;
-  private readonly progressReporter: ProgressReporter.ProgressLike;
   private readonly errorChannel: ErrorChannel.OutputChannelLike;
   private readonly settings: SettingsContract;
 };
