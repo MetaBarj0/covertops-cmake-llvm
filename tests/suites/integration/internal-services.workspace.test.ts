@@ -170,7 +170,7 @@ function makeCmake() {
 function makeBuildTreeDirectoryResolver() {
   return BuildTreeDirectoryResolver.make({
     workspace: vscode.workspace,
-    statFile: fs.stat,
+    stat: fs.stat,
     mkDir: fs.mkdir,
     progressReporter: pr.buildFakeProgressReporter(),
     errorChannel: e.buildFakeErrorChannel()

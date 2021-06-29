@@ -2,7 +2,7 @@ import * as definitions from '../../../definitions';
 import * as SettingsProvider from './settings-provider';
 import * as ProgressReporter from './progress-reporter';
 import * as ErrorChannel from './error-channel';
-import { MkdirCallable, StatFileCallable } from '../../../adapters/interfaces/file-system';
+import { MkdirCallable, StatCallable } from '../../../adapters/interfaces/file-system';
 import { VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace';
 
 import * as path from 'path';
@@ -13,7 +13,7 @@ export function make(adapters: Adapters) {
 
 type Adapters = {
   workspace: VscodeWorkspaceLike,
-  statFile: StatFileCallable,
+  stat: StatCallable,
   mkDir: MkdirCallable,
   progressReporter: ProgressReporter.ProgressLike,
   errorChannel: ErrorChannel.OutputChannelLike
@@ -22,7 +22,7 @@ type Adapters = {
 class BuildTreeDirectoryResolver {
   constructor(adapters: Adapters) {
     this.workspace = adapters.workspace;
-    this.stat = adapters.statFile;
+    this.stat = adapters.stat;
     this.mkdir = adapters.mkDir;
     this.progressReporter = adapters.progressReporter;
     this.errorChannel = adapters.errorChannel;
@@ -67,7 +67,7 @@ class BuildTreeDirectoryResolver {
       });
   }
 
-  private readonly stat: StatFileCallable;
+  private readonly stat: StatCallable;
   private readonly workspace: VscodeWorkspaceLike;
   private readonly mkdir: MkdirCallable;
   private readonly progressReporter: ProgressReporter.ProgressLike;

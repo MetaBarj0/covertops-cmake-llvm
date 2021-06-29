@@ -14,6 +14,7 @@ import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';
 import { errorChannel as e } from '../../fakes/adapters/error-channel';
 
 import * as pc from '../../../src/adapters/process-control';
+import * as fs from '../../../src/adapters/file-system';
 
 import * as vscode from 'vscode';
 import { env } from 'process';
@@ -50,6 +51,12 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
       processControl: {
         execFileForCommand: pc.execFile,
         execFileForTarget: pc.execFile
+      },
+      fileSystem: {
+        createReadStream: fs.createReadStream,
+        globSearch: fs.globSearch,
+        mkdir: fs.mkdir,
+        stat: fs.stat
       }
     });
 
@@ -99,6 +106,12 @@ function collectSummaryCoverageInfoFromPartiallyCoveredFileShouldSucceed() {
       processControl: {
         execFileForCommand: pc.execFile,
         execFileForTarget: pc.execFile
+      },
+      fileSystem: {
+        createReadStream: fs.createReadStream,
+        globSearch: fs.globSearch,
+        mkdir: fs.mkdir,
+        stat: fs.stat
       }
     });
 
@@ -141,6 +154,12 @@ function collectSummaryCoverageInfoFromFullyCoveredFileShouldSucceed() {
       processControl: {
         execFileForCommand: pc.execFile,
         execFileForTarget: pc.execFile
+      },
+      fileSystem: {
+        createReadStream: fs.createReadStream,
+        globSearch: fs.globSearch,
+        mkdir: fs.mkdir,
+        stat: fs.stat
       }
     });
 
@@ -183,6 +202,12 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
       processControl: {
         execFileForCommand: pc.execFile,
         execFileForTarget: pc.execFile
+      },
+      fileSystem: {
+        createReadStream: fs.createReadStream,
+        globSearch: fs.globSearch,
+        mkdir: fs.mkdir,
+        stat: fs.stat
       }
     });
 

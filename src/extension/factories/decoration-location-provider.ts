@@ -4,18 +4,18 @@ import { DecorationLocationsProviderContract } from '../../domain/interfaces/dec
 import { DecorationLocationsProvider } from '../../domain/services/decoration-locations-provider';
 import * as ErrorChannel from '../../domain/services/internal/error-channel';
 
-import * as fs from '../../adapters/file-system';
 import { ExecFileCallable } from '../../adapters/interfaces/process-control';
+import { CreateReadStreamCallable, GlobSearchCallable, MkdirCallable, StatCallable } from '../../adapters/interfaces/file-system';
 
 export function make(adapters: Adapters): DecorationLocationsProviderContract {
   return new DecorationLocationsProvider({
     workspace: vscode.workspace,
-    statFile: fs.stat,
+    stat: adapters.fileSystem.stat,
     execFileForCmakeCommand: adapters.processControl.execFileForCommand,
     execFileForCmakeTarget: adapters.processControl.execFileForTarget,
-    globSearch: fs.globSearch,
-    mkdir: fs.mkdir,
-    createReadStream: fs.readableStream,
+    globSearch: adapters.fileSystem.globSearch,
+    mkdir: adapters.fileSystem.mkdir,
+    createReadStream: adapters.fileSystem.createReadStream,
     progressReporter: adapters.vscode.progressReporter,
     errorChannel: adapters.vscode.errorChannel
   });
@@ -29,5 +29,11 @@ type Adapters = {
   processControl: {
     execFileForCommand: ExecFileCallable,
     execFileForTarget: ExecFileCallable,
+  },
+  fileSystem: {
+    stat: StatCallable,
+    mkdir: MkdirCallable,
+    globSearch: GlobSearchCallable,
+    createReadStream: CreateReadStreamCallable
   }
 };

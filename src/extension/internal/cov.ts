@@ -3,6 +3,7 @@ import * as DecorationLocationProvider from '../../../src/extension/factories/de
 
 import { commands, Disposable, OutputChannel, ProgressLocation, window } from 'vscode';
 import * as pc from '../../adapters/process-control';
+import * as fs from '../../adapters/file-system';
 
 export class Cov {
   constructor() {
@@ -41,6 +42,12 @@ export class Cov {
         processControl: {
           execFileForCommand: pc.execFile,
           execFileForTarget: pc.execFile
+        },
+        fileSystem: {
+          createReadStream: fs.createReadStream,
+          globSearch: fs.globSearch,
+          mkdir: fs.mkdir,
+          stat: fs.stat
         }
       });
 

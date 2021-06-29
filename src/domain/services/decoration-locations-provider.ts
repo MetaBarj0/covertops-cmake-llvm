@@ -5,14 +5,14 @@ import * as ProgressReporter from './internal/progress-reporter';
 import * as ErrorChannel from './internal/error-channel';
 // TODO: module import syntax???
 import { DecorationLocationsProviderContract } from '../interfaces/decoration-locations-provider-contract';
-import { CreateReadStreamCallable, GlobSearchCallable, MkdirCallable, StatFileCallable } from '../../adapters/interfaces/file-system';
+import { CreateReadStreamCallable, GlobSearchCallable, MkdirCallable, StatCallable } from '../../adapters/interfaces/file-system';
 import { VscodeWorkspaceLike } from '../../adapters/interfaces/vscode-workspace';
 import { ExecFileCallable } from '../../adapters/interfaces/process-control';
 
 export class DecorationLocationsProvider implements DecorationLocationsProviderContract {
   constructor(adapters: Adapters) {
     this.workspace = adapters.workspace;
-    this.statFile = adapters.statFile;
+    this.stat = adapters.stat;
     this.execFileForCmakeCommand = adapters.execFileForCmakeCommand;
     this.execFileForCmakeTarget = adapters.execFileForCmakeTarget;
     this.globSearch = adapters.globSearch;
@@ -25,7 +25,7 @@ export class DecorationLocationsProvider implements DecorationLocationsProviderC
   async getDecorationLocationsForUncoveredCodeRegions(sourceFilePath: string) {
     const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({
       workspace: this.workspace,
-      statFile: this.statFile,
+      stat: this.stat,
       mkDir: this.mkdir,
       progressReporter: this.progressReporter,
       errorChannel: this.errorChannel
@@ -59,7 +59,7 @@ export class DecorationLocationsProvider implements DecorationLocationsProviderC
   }
 
   private readonly workspace: VscodeWorkspaceLike;
-  private readonly statFile: StatFileCallable;
+  private readonly stat: StatCallable;
   private readonly execFileForCmakeCommand: ExecFileCallable;
   private readonly execFileForCmakeTarget: ExecFileCallable;
   private readonly globSearch: GlobSearchCallable;
@@ -73,7 +73,7 @@ type Adapters = {
   workspace: VscodeWorkspaceLike,
   progressReporter: ProgressReporter.ProgressLike,
   errorChannel: ErrorChannel.OutputChannelLike
-  statFile: StatFileCallable,
+  stat: StatCallable,
   execFileForCmakeCommand: ExecFileCallable,
   execFileForCmakeTarget: ExecFileCallable,
   globSearch: GlobSearchCallable,

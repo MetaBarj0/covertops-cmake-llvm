@@ -39,7 +39,7 @@ function instantiateService() {
     const instantiation = () => {
       new DecorationLocationsProvider({
         workspace: v.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(),
-        statFile: sf.buildFakeFailingStatFile(),
+        stat: sf.buildFakeFailingStatFile(),
         execFileForCmakeCommand: p.buildFakeFailingProcess(),
         execFileForCmakeTarget: p.buildFakeFailingProcess(),
         globSearch: g.buildFakeGlobSearchForNoMatch(),
@@ -59,7 +59,7 @@ function failBecauseOfIssuesWithBuildTreeDirectorySetting() {
     'when the build tree directory can not be found and / or created', () => {
       const provider = new DecorationLocationsProvider({
         workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-        statFile: sf.buildFakeFailingStatFile(),
+        stat: sf.buildFakeFailingStatFile(),
         execFileForCmakeCommand: p.buildFakeFailingProcess(),
         execFileForCmakeTarget: p.buildFakeFailingProcess(),
         globSearch: g.buildFakeGlobSearchForNoMatch(),
@@ -80,7 +80,7 @@ function failBecauseOfIssuesWithCmakeCommandSetting() {
     'when the cmake command cannot be reached.', () => {
       const provider = new DecorationLocationsProvider({
         workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ cmakeCommand: '' }),
-        statFile: sf.buildFakeSucceedingStatFile(),
+        stat: sf.buildFakeSucceedingStatFile(),
         execFileForCmakeCommand: p.buildFakeFailingProcess(),
         execFileForCmakeTarget: p.buildFakeFailingProcess(),
         globSearch: g.buildFakeGlobSearchForNoMatch(),
@@ -104,7 +104,7 @@ function failBecauseOfIssuesWithCmakeTargetSetting() {
 
       const provider = new DecorationLocationsProvider({
         workspace,
-        statFile: sf.buildFakeSucceedingStatFile(),
+        stat: sf.buildFakeSucceedingStatFile(),
         execFileForCmakeCommand: p.buildFakeSucceedingProcess(),
         execFileForCmakeTarget: p.buildFakeFailingProcess(),
         globSearch: g.buildFakeGlobSearchForNoMatch(),
@@ -125,7 +125,7 @@ function failBecauseCoverageInfoFileIsNotFound() {
     'when the coverage info file name cannot be found', () => {
       const provider = new DecorationLocationsProvider({
         workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ coverageInfoFileName: 'baadf00d' }),
-        statFile: sf.buildFakeSucceedingStatFile(),
+        stat: sf.buildFakeSucceedingStatFile(),
         execFileForCmakeCommand: p.buildFakeSucceedingProcess(),
         execFileForCmakeTarget: p.buildFakeSucceedingProcess(),
         globSearch: g.buildFakeGlobSearchForNoMatch(),
@@ -149,7 +149,7 @@ function failBecauseSeveralCoverageInfoFileAreFound() {
     'when there are more than one generated coverage information file that are found', () => {
       const provider = new DecorationLocationsProvider({
         workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-        statFile: sf.buildFakeSucceedingStatFile(),
+        stat: sf.buildFakeSucceedingStatFile(),
         execFileForCmakeCommand: p.buildFakeSucceedingProcess(),
         execFileForCmakeTarget: p.buildFakeSucceedingProcess(),
         globSearch: g.buildFakeGlobSearchForSeveralMatch(),
@@ -174,7 +174,7 @@ function succeedWithCorrectSettingsAndFakeAdapters() {
 
     const provider = new DecorationLocationsProvider({
       workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-      statFile: sf.buildFakeSucceedingStatFile(),
+      stat: sf.buildFakeSucceedingStatFile(),
       execFileForCmakeCommand: p.buildFakeSucceedingProcess(),
       execFileForCmakeTarget: p.buildFakeSucceedingProcess(),
       globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
