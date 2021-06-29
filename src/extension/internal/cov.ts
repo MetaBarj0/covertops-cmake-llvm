@@ -33,8 +33,10 @@ export class Cov {
       this.reportStartInOutputChannel();
 
       const provider = DecorationLocationProvider.make({
-        progressReporter: progress,
-        errorChannel: this.output
+        vscode: {
+          progressReporter: progress,
+          errorChannel: this.output
+        }
       });
 
       await provider.getDecorationLocationsForUncoveredCodeRegions('');

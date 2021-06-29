@@ -17,12 +17,14 @@ export function make(adapters: Adapters): DecorationLocationsProviderContract {
     globSearch: fileSystem.globSearch,
     mkDir: fileSystem.makeDirectory,
     llvmCoverageInfoStreamBuilder: inputStream.readableStream,
-    progressReporter: adapters.progressReporter,
-    errorChannel: adapters.errorChannel
+    progressReporter: adapters.vscode.progressReporter,
+    errorChannel: adapters.vscode.errorChannel
   });
 }
 
 type Adapters = {
-  progressReporter: vscode.Progress<{ message?: string, increment?: number }>,
-  errorChannel: ErrorChannel.OutputChannelLike
+  vscode: {
+    progressReporter: vscode.Progress<{ message?: string, increment?: number }>,
+    errorChannel: ErrorChannel.OutputChannelLike
+  }
 };

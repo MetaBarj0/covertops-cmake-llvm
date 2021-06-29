@@ -41,8 +41,10 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
 
   it('should report correct coverage information for a specific cpp file', async () => {
     const provider = DecorationLocationsProvider.make({
-      progressReporter: pr.buildFakeProgressReporter(),
-      errorChannel: e.buildFakeErrorChannel()
+      vscode: {
+        progressReporter: pr.buildFakeProgressReporter(),
+        errorChannel: e.buildFakeErrorChannel()
+      }
     });
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('partiallyCovered/partiallyCoveredLib.cpp');
@@ -84,8 +86,10 @@ function collectSummaryCoverageInfoFromPartiallyCoveredFileShouldSucceed() {
 
   it('should report correct coverage information for a specific cpp file', async () => {
     const provider = DecorationLocationsProvider.make({
-      progressReporter: pr.buildFakeProgressReporter(),
-      errorChannel: e.buildFakeErrorChannel()
+      vscode: {
+        progressReporter: pr.buildFakeProgressReporter(),
+        errorChannel: e.buildFakeErrorChannel()
+      }
     });
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('partiallyCovered/partiallyCoveredLib.cpp');
@@ -120,8 +124,10 @@ function collectSummaryCoverageInfoFromFullyCoveredFileShouldSucceed() {
 
   it('should report correct coverage information for a specific file', async () => {
     const provider = DecorationLocationsProvider.make({
-      progressReporter: pr.buildFakeProgressReporter(),
-      errorChannel: e.buildFakeErrorChannel()
+      vscode: {
+        progressReporter: pr.buildFakeProgressReporter(),
+        errorChannel: e.buildFakeErrorChannel()
+      }
     });
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('fullyCovered/fullyCoveredLib.cpp');
@@ -156,8 +162,10 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
 
   it('should report correct coverage information for a specific file', async () => {
     const provider = DecorationLocationsProvider.make({
-      progressReporter: pr.buildFakeProgressReporter(),
-      errorChannel: e.buildFakeErrorChannel()
+      vscode: {
+        progressReporter: pr.buildFakeProgressReporter(),
+        errorChannel: e.buildFakeErrorChannel()
+      }
     });
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('fullyCovered/fullyCoveredLib.cpp');
