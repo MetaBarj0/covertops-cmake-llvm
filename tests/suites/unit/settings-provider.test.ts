@@ -9,7 +9,7 @@ import { defaultSetting } from '../../utils/settings';
 
 import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
 
-import { vscodeWorkspace as v } from '../../fakes/adapters/vscode-workspace';
+import * as vscode from '../../fakes/adapters/vscode';
 import { errorChannel as e } from '../../fakes/adapters/error-channel';
 
 describe('Unit test suite', () => {
@@ -21,7 +21,7 @@ describe('Unit test suite', () => {
 
 function shouldFailBecauseOfNoRootFolderOpened() {
   it('should be instantiated correctly but throw an exception and report in error channel when workspace folders are not set', () => {
-    const workspace = v.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings();
+    const workspace = vscode.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings();
     const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
     const errorChannel = errorChannelSpy.object;
 
@@ -38,7 +38,7 @@ function shouldFailBecauseOfNoRootFolderOpened() {
 function shouldSucceedAndExposeDefaultSettings() {
   it('should be instantiated correctly with a vscode workspace-like instance and provide ' +
     'settings with correct default values', () => {
-      const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+      const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
       const errorChannel = e.buildFakeErrorChannel();
 
       const provider = SettingsProvider.make({ workspace, errorChannel });

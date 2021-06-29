@@ -9,7 +9,7 @@ import * as definitions from '../../../src/definitions';
 import * as BuildTreeDirectoryResolver from '../../../src/domain/services/internal/build-tree-directory-resolver';
 
 import { mkDir as md } from '../../fakes/adapters/mk-dir';
-import { vscodeWorkspace as v } from '../../fakes/adapters/vscode-workspace';
+import *  as vscode from '../../fakes/adapters/vscode';
 import { statFile as sf } from '../../fakes/adapters/stat-file';
 import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';
 import { errorChannel as e } from '../../fakes/adapters/error-channel';
@@ -27,7 +27,7 @@ describe('Unit test suite', () => {
 
 function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryIsAnAbsolutePath() {
   it('should fail to resolve and report to error channel when the build tree directory setting looks like an absolute path', () => {
-    const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({
+    const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({
       buildTreeDirectory: path.normalize('/absolute/build')
     });
 
@@ -57,7 +57,7 @@ function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryIsAnAbsoluteP
 
 function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryDoesNotExistAndCannotBeCreated() {
   it('should fail to resolve and report in error channel if specified relative path target does not exist and cannot be created', () => {
-    const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+    const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const statFile = sf.buildFakeFailingStatFile();
     const mkDir = md.buildFakeFailingMkDir();
     const progressReporter = pr.buildFakeProgressReporter();
@@ -85,7 +85,7 @@ function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryDoesNotExistA
 
 function buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryExists() {
   it('should resolve the full path of the build tree directory if the specified setting target an existing directory', async () => {
-    const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+    const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const statFile = sf.buildFakeSucceedingStatFile();
     const mkDir = md.buildFakeFailingMkDir();
     const progressReporterSpy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());
@@ -109,7 +109,7 @@ function buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryExists() {
 function buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryDoesNotExistAndCanBeCreated() {
   it('should resolve the full path of the build tree directory if the specified setting target ' +
     'an unexisting directory that can be created', async () => {
-      const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+      const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
       const statFile = sf.buildFakeFailingStatFile();
       const mkDir = md.buildFakeSucceedingMkDir();
       const progressReporterSpy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());

@@ -15,8 +15,8 @@ import { errorChannel as e } from '../../fakes/adapters/error-channel';
 
 import * as pc from '../../../src/adapters/process-control';
 import * as fs from '../../../src/adapters/file-system';
+import * as vscode from '../../../src/adapters/vscode';
 
-import * as vscode from 'vscode';
 import { env } from 'process';
 import * as path from 'path';
 
@@ -46,7 +46,8 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
     const provider = DecorationLocationsProvider.make({
       vscode: {
         progressReporter: pr.buildFakeProgressReporter(),
-        errorChannel: e.buildFakeErrorChannel()
+        errorChannel: e.buildFakeErrorChannel(),
+        workspace: vscode.workspace
       },
       processControl: {
         execFileForCommand: pc.execFile,
@@ -101,7 +102,8 @@ function collectSummaryCoverageInfoFromPartiallyCoveredFileShouldSucceed() {
     const provider = DecorationLocationsProvider.make({
       vscode: {
         progressReporter: pr.buildFakeProgressReporter(),
-        errorChannel: e.buildFakeErrorChannel()
+        errorChannel: e.buildFakeErrorChannel(),
+        workspace: vscode.workspace
       },
       processControl: {
         execFileForCommand: pc.execFile,
@@ -149,7 +151,8 @@ function collectSummaryCoverageInfoFromFullyCoveredFileShouldSucceed() {
     const provider = DecorationLocationsProvider.make({
       vscode: {
         progressReporter: pr.buildFakeProgressReporter(),
-        errorChannel: e.buildFakeErrorChannel()
+        errorChannel: e.buildFakeErrorChannel(),
+        workspace: vscode.workspace
       },
       processControl: {
         execFileForCommand: pc.execFile,
@@ -197,7 +200,8 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
     const provider = DecorationLocationsProvider.make({
       vscode: {
         progressReporter: pr.buildFakeProgressReporter(),
-        errorChannel: e.buildFakeErrorChannel()
+        errorChannel: e.buildFakeErrorChannel(),
+        workspace: vscode.workspace
       },
       processControl: {
         execFileForCommand: pc.execFile,

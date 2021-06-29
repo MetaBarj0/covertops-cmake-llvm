@@ -8,7 +8,7 @@ chai.should();
 import * as definitions from '../../../src/definitions';
 import * as CoverageInfoFileResolver from '../../../src/domain/services/internal/coverage-info-file-resolver';
 
-import { vscodeWorkspace as v } from '../../fakes/adapters/vscode-workspace';
+import * as vscode from '../../fakes/adapters/vscode';
 import { globbing as g } from '../../fakes/adapters/globbing';
 import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';
 import { errorChannel as e } from '../../fakes/adapters/error-channel';
@@ -23,7 +23,7 @@ describe('Unit test suite', () => {
 
 function shouldFailWhenNoFileIsFound() {
   it('should fail and report in error channel if the recursive search from the build tree directory does not find one file', () => {
-    const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+    const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const globSearch = g.buildFakeGlobSearchForNoMatch();
     const progressReporter = pr.buildFakeProgressReporter();
     const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
@@ -47,7 +47,7 @@ function shouldFailWhenNoFileIsFound() {
 
 function shouldFailWhenMoreThanOneFileAreFound() {
   it('should fail if the recursive search from the build tree directory does not find one file', () => {
-    const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+    const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const globSearch = g.buildFakeGlobSearchForNoMatch();
     const progressReporter = pr.buildFakeProgressReporter();
     const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
@@ -71,7 +71,7 @@ function shouldFailWhenMoreThanOneFileAreFound() {
 
 function shouldSucceedWhenExactlyOneFileIsFound() {
   it('should resolve correctly if the recursive search from the build tree directory find exactly one file in one discrete step.', async () => {
-    const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+    const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const globSearch = g.buildFakeGlobSearchForExactlyOneMatch();
     const spy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());
     const progressReporter = spy.object;

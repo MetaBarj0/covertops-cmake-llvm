@@ -9,7 +9,7 @@ import * as definitions from '../../../src/definitions';
 import * as Cmake from '../../../src/domain/services/internal/cmake';
 
 import { process as p } from '../../fakes/adapters/process';
-import { vscodeWorkspace as v } from '../../fakes/adapters/vscode-workspace';
+import * as vscode from '../../fakes/adapters/vscode';
 import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';
 import { errorChannel as e } from '../../fakes/adapters/error-channel';
 
@@ -23,7 +23,7 @@ describe('Unit test suite', () => {
 
 function cmakeShouldFailWithWrongCmakeCommandSetting() {
   it('should be instantiated but fails when asking for building a target and reports to error channel', () => {
-    const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ 'cmakeCommand': '' });
+    const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ 'cmakeCommand': '' });
     const processForCommand = p.buildFakeFailingProcess();
     const processForTarget = p.buildFakeSucceedingProcess();
     const progressReporter = pr.buildFakeProgressReporter();
@@ -55,7 +55,7 @@ function cmakeShouldFailWithWrongCmakeCommandSetting() {
 
 function cmakeShouldFailWithWrongCmakeTargetSetting() {
   it('should be instantiated but throw when asking for building a target and reports in error channel', () => {
-    const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ 'cmakeTarget': '' });
+    const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ 'cmakeTarget': '' });
     const processForCommand = p.buildFakeSucceedingProcess();
     const processForTarget = p.buildFakeFailingProcess();
     const progressReporter = pr.buildFakeProgressReporter();
@@ -90,7 +90,7 @@ function cmakeShouldFailWithWrongCmakeTargetSetting() {
 
 function cmakeShouldSucceedWithCorrectSettings() {
   it('should be instantiated and succeed when asking for building a target in three discrete steps', async () => {
-    const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+    const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const processForCommand = p.buildFakeSucceedingProcess();
     const processForTarget = p.buildFakeSucceedingProcess();
     const progressReporterSpy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());

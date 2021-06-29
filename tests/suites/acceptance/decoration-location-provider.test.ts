@@ -10,7 +10,7 @@ import { DecorationLocationsProvider } from '../../../src/domain/services/decora
 import { RegionCoverageInfo } from '../../../src/domain/value-objects/region-coverage-info';
 
 import { mkDir } from '../../fakes/adapters/mk-dir';
-import { vscodeWorkspace as v } from '../../fakes/adapters/vscode-workspace';
+import * as vscode from '../../fakes/adapters/vscode';
 import { process as p } from '../../fakes/adapters/process';
 import { inputStream as i } from '../../fakes/adapters/input-stream';
 import { statFile as sf } from '../../fakes/adapters/stat-file';
@@ -38,7 +38,7 @@ function instantiateService() {
   it('should not throw when instantiated with faked adapters.', () => {
     const instantiation = () => {
       new DecorationLocationsProvider({
-        workspace: v.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(),
+        workspace: vscode.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(),
         stat: sf.buildFakeFailingStatFile(),
         execFileForCmakeCommand: p.buildFakeFailingProcess(),
         execFileForCmakeTarget: p.buildFakeFailingProcess(),
@@ -58,7 +58,7 @@ function failBecauseOfIssuesWithBuildTreeDirectorySetting() {
   it('should not be able to provide any decoration for uncovered code regions ' +
     'when the build tree directory can not be found and / or created', () => {
       const provider = new DecorationLocationsProvider({
-        workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
+        workspace: vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
         stat: sf.buildFakeFailingStatFile(),
         execFileForCmakeCommand: p.buildFakeFailingProcess(),
         execFileForCmakeTarget: p.buildFakeFailingProcess(),
@@ -79,7 +79,7 @@ function failBecauseOfIssuesWithCmakeCommandSetting() {
   it('should not be able to provide any decoration for uncovered code regions ' +
     'when the cmake command cannot be reached.', () => {
       const provider = new DecorationLocationsProvider({
-        workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ cmakeCommand: '' }),
+        workspace: vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ cmakeCommand: '' }),
         stat: sf.buildFakeSucceedingStatFile(),
         execFileForCmakeCommand: p.buildFakeFailingProcess(),
         execFileForCmakeTarget: p.buildFakeFailingProcess(),
@@ -99,7 +99,7 @@ function failBecauseOfIssuesWithCmakeCommandSetting() {
 function failBecauseOfIssuesWithCmakeTargetSetting() {
   it('should not be able to provide any decoration for uncovered code regions ' +
     'when the cmake target cannot be built', () => {
-      const workspace = v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ cmakeTarget: '' });
+      const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ cmakeTarget: '' });
       const target = workspace.getConfiguration('cmake-llvm-workspace').get('cmakeTarget');
 
       const provider = new DecorationLocationsProvider({
@@ -124,7 +124,7 @@ function failBecauseCoverageInfoFileIsNotFound() {
   it('should not be able to provide any decoration for uncovered code regions ' +
     'when the coverage info file name cannot be found', () => {
       const provider = new DecorationLocationsProvider({
-        workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ coverageInfoFileName: 'baadf00d' }),
+        workspace: vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ coverageInfoFileName: 'baadf00d' }),
         stat: sf.buildFakeSucceedingStatFile(),
         execFileForCmakeCommand: p.buildFakeSucceedingProcess(),
         execFileForCmakeTarget: p.buildFakeSucceedingProcess(),
@@ -148,7 +148,7 @@ function failBecauseSeveralCoverageInfoFileAreFound() {
   it('should not not able to provide any decoration for uncovered code regions ' +
     'when there are more than one generated coverage information file that are found', () => {
       const provider = new DecorationLocationsProvider({
-        workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
+        workspace: vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
         stat: sf.buildFakeSucceedingStatFile(),
         execFileForCmakeCommand: p.buildFakeSucceedingProcess(),
         execFileForCmakeTarget: p.buildFakeSucceedingProcess(),
@@ -173,7 +173,7 @@ function succeedWithCorrectSettingsAndFakeAdapters() {
     const progressReporterSpy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());
 
     const provider = new DecorationLocationsProvider({
-      workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
+      workspace: vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
       stat: sf.buildFakeSucceedingStatFile(),
       execFileForCmakeCommand: p.buildFakeSucceedingProcess(),
       execFileForCmakeTarget: p.buildFakeSucceedingProcess(),

@@ -9,7 +9,7 @@ import * as CoverageInfoCollector from '../../../src/domain/services/internal/co
 import * as definitions from '../../../src/definitions';
 import { RegionCoverageInfo } from '../../../src/domain/value-objects/region-coverage-info';
 
-import { vscodeWorkspace as v } from '../../fakes/adapters/vscode-workspace';
+import * as vscode from '../../fakes/adapters/vscode';
 import { inputStream as i } from '../../fakes/adapters/input-stream';
 import { globbing as g } from '../../fakes/adapters/globbing';
 import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';
@@ -195,7 +195,7 @@ function buildCoverageInfoCollectorAndSpiesForProgressReportAndErrorChannel() {
 
   const coverageInfoCollector = CoverageInfoCollector.make({
     globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
-    workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
+    workspace: vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
     createReadStream: i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream),
     progressReporter: progressReporterSpy.object,
     errorChannel: errorChannelSpy.object
@@ -214,7 +214,7 @@ function buildCoverageInfoCollectorsAndErrorChannelSpiesUsingStreamFactories(str
 
     const coverageInfoCollector = CoverageInfoCollector.make({
       globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
-      workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
+      workspace: vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
       createReadStream: i.buildFakeStreamBuilder(streamFfactory),
       progressReporter: pr.buildFakeProgressReporter(),
       errorChannel: errorChannelSpy.object

@@ -1,7 +1,7 @@
 import { extensionId, extensionDisplayName } from '../../definitions';
 import * as DecorationLocationProvider from '../../../src/extension/factories/decoration-location-provider';
 
-import { commands, Disposable, OutputChannel, ProgressLocation, window } from 'vscode';
+import { commands, Disposable, OutputChannel, ProgressLocation, window, workspace } from 'vscode';
 import * as pc from '../../adapters/process-control';
 import * as fs from '../../adapters/file-system';
 
@@ -37,7 +37,8 @@ export class Cov {
       const provider = DecorationLocationProvider.make({
         vscode: {
           progressReporter: progress,
-          errorChannel: this.output
+          errorChannel: this.output,
+          workspace
         },
         processControl: {
           execFileForCommand: pc.execFile,
