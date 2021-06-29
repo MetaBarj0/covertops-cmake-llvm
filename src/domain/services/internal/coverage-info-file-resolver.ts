@@ -3,7 +3,7 @@ import * as SettingsProvider from './settings-provider';
 import * as ProgressReporter from './progress-reporter';
 import * as ErrorChannel from './error-channel';
 // TODO: use module import syntax
-import { VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace-like';
+import { VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace';
 
 import path = require('path');
 

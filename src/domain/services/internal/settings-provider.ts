@@ -2,7 +2,7 @@ import * as definitions from '../../../definitions';
 import * as ErrorChannel from './error-channel';
 import { SettingsContract } from '../../interfaces/settings-contract';
 import { Settings } from '../../value-objects/settings';
-import { VscodeWorkspaceFolderLike, VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace-like';
+import { VscodeWorkspaceFolderLike, VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace';
 
 export function make(adapters: Adapters) {
   return new SettingsProvider(adapters);

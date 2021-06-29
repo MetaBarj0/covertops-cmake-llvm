@@ -6,9 +6,9 @@ import * as ProgressReporter from './internal/progress-reporter';
 import * as ErrorChannel from './internal/error-channel';
 // TODO: module import syntax
 import { DecorationLocationsProviderContract } from '../interfaces/decoration-locations-provider-contract';
-import { StatFileCallable } from '../../adapters/interfaces/stat-file-callable';
-import { VscodeWorkspaceLike } from '../../adapters/interfaces/vscode-workspace-like';
-import { ExecFileCallable } from '../../adapters/interfaces/exec-file-callable';
+import { StatFileCallable } from '../../adapters/interfaces/file-system';
+import { VscodeWorkspaceLike } from '../../adapters/interfaces/vscode-workspace';
+import { ExecFileCallable } from '../../adapters/interfaces/process-control';
 
 export class DecorationLocationsProvider implements DecorationLocationsProviderContract {
   constructor(adapters: Adapters) {

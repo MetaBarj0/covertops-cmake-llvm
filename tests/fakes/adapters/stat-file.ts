@@ -1,4 +1,4 @@
-import { StatFileCallable } from '../../../src/adapters/interfaces/stat-file-callable';
+import { StatFileCallable } from '../../../src/adapters/interfaces/file-system';
 
 import { PathLike, StatOptions, Stats } from 'fs';
 

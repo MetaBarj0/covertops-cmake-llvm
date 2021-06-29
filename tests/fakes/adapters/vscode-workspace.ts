@@ -5,7 +5,7 @@ import {
   VscodeUriLike,
   VscodeWorkspaceConfigurationLike,
   VscodeWorkspaceFolderLike, VscodeWorkspaceLike
-} from '../../../src/adapters/interfaces/vscode-workspace-like';
+} from '../../../src/adapters/interfaces/vscode-workspace';
 
 export namespace vscodeWorkspace {
   type Overrides = {

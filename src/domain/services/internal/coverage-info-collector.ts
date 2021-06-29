@@ -3,7 +3,7 @@ import * as CoverageInfoFileResolver from './coverage-info-file-resolver';
 import * as ProgressReporter from './progress-reporter';
 import * as ErrorChannel from './error-channel';
 import { CoverageInfoCollectorContract } from '../../interfaces/coverage-info-collector-contract';
-import { VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace-like';
+import { VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace';
 
 import { Readable } from 'stream';
 import { CoverageInfo } from '../../value-objects/coverage-info';

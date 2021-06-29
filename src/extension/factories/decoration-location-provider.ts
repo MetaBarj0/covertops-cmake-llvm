@@ -6,7 +6,7 @@ import * as ErrorChannel from '../../domain/services/internal/error-channel';
 
 import { fileSystem } from '../../adapters/file-system';
 import { inputStream } from '../../adapters/input-stream';
-import { ExecFileCallable } from '../../adapters/interfaces/exec-file-callable';
+import { ExecFileCallable } from '../../adapters/interfaces/process-control';
 
 export function make(adapters: Adapters): DecorationLocationsProviderContract {
   return new DecorationLocationsProvider({

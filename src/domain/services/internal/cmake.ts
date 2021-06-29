@@ -5,8 +5,8 @@ import * as ErrorChannel from './error-channel';
 import { BasicCmake } from '../../value-objects/basic-cmake';
 // TODO: import module syntax???
 import { SettingsContract } from '../../interfaces/settings-contract';
-import { VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace-like';
-import { ExecFileCallable } from '../../../adapters/interfaces/exec-file-callable';
+import { VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace';
+import { ExecFileCallable } from '../../../adapters/interfaces/process-control';
 
 type Adapters = {
   vscode: {

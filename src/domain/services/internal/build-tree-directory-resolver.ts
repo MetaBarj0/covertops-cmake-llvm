@@ -2,8 +2,8 @@ import * as definitions from '../../../definitions';
 import * as SettingsProvider from './settings-provider';
 import * as ProgressReporter from './progress-reporter';
 import * as ErrorChannel from './error-channel';
-import { StatFileCallable } from '../../../adapters/interfaces/stat-file-callable';
-import { VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace-like';
+import { StatFileCallable } from '../../../adapters/interfaces/file-system';
+import { VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace';
 
 import { MakeDirectoryOptions, PathLike, } from 'fs';
 import * as path from 'path';

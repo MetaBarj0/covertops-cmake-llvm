@@ -1,5 +1,5 @@
 // TODO: module import syntax
-import { ChildProcessLike, ExecFileExceptionLike, ExecFileOptionsLike, ExecFileCallable } from '../../../src/adapters/interfaces/exec-file-callable';
+import { ChildProcessLike, ExecFileExceptionLike, ExecFileOptionsLike, ExecFileCallable } from '../../../src/adapters/interfaces/process-control';
 
 export namespace process {
   export function buildFakeFailingProcess(): ExecFileCallable {
