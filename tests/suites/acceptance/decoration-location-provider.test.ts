@@ -8,7 +8,7 @@ chai.should();
 import * as Definitions from '../../../src/definitions';
 import * as DecorationLocationsProvider from '../../../src/domain/services/decoration-locations-provider';
 import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
-import { RegionCoverageInfo } from '../../../src/domain/value-objects/region-coverage-info';
+import { RegionCoverageInfo } from '../../../src/modules/coverage-info-collector/abstractions/domain/region-coverage-info';
 
 import { mkDir } from '../../fakes/adapters/mk-dir';
 import * as vscode from '../../fakes/adapters/vscode';

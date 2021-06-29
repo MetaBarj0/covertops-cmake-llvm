@@ -1,26 +1,11 @@
-export enum RegionKind { normal, other }
-export type RawLLVMRegionCoverageInfo = [number, number, number, number, number, number, number, number];
-export type RawLLVMRegionsCoverageInfo = ReadonlyArray<RawLLVMRegionCoverageInfo>;
+import * as Abstractions from '../abstractions/domain/region-coverage-info';
 
-export type RawLLVMFunctionCoverageInfo = {
-  filenames: ReadonlyArray<string>,
-  regions: RawLLVMRegionsCoverageInfo
-};
+export function make(rawLLVMRegionCoverageInfo: Abstractions.RawLLVMRegionCoverageInfo) {
+  return new RegionCoverageInfo(rawLLVMRegionCoverageInfo);
+}
 
-export type RawLLVMFileCoverageInfo = {
-  filename: string;
-};
-
-export type RawLLVMStreamedDataItemCoverageInfo = {
-  key: number,
-  value: {
-    files: ReadonlyArray<RawLLVMFileCoverageInfo>,
-    functions: ReadonlyArray<RawLLVMFunctionCoverageInfo>
-  }
-};
-
-export class RegionCoverageInfo {
-  constructor(rawLLVMRegionCoverageInfo: RawLLVMRegionCoverageInfo) {
+class RegionCoverageInfo implements Abstractions.RegionCoverageInfo {
+  constructor(rawLLVMRegionCoverageInfo: Abstractions.RawLLVMRegionCoverageInfo) {
     // https://github.com/llvm/llvm-project/blob/21c18d5a04316891110cecc2bf37ce51533decba/llvm/tools/llvm-cov/CoverageExporterJson.cpp#L87
     this.kind = rawLLVMRegionCoverageInfo[7] === 0 ? RegionKind.normal : RegionKind.other;
     this.executionCount = rawLLVMRegionCoverageInfo[4];
@@ -55,15 +40,8 @@ export class RegionCoverageInfo {
 
   private readonly kind: RegionKind;
   private readonly executionCount: number;
-  private readonly regionRange: RegionRange;
+  private readonly regionRange: Abstractions.RegionRange;
 }
 
-type RegionPosition = {
-  line: number,
-  character: number
-};
-
-type RegionRange = {
-  start: RegionPosition,
-  end: RegionPosition
-};
+// TODO: union type refacto?
+enum RegionKind { normal, other }

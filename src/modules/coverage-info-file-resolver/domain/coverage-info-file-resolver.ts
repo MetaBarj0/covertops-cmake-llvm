@@ -3,12 +3,12 @@ import { SettingsContract } from '../../../domain/interfaces/settings-contract';
 // TODO: use module import syntax???
 import { OutputChannelLike, ProgressLike } from '../../../adapters/interfaces/vscode';
 import { GlobSearchCallable } from '../../../adapters/interfaces/file-system';
-import * as Interface from '../abstractions/domain/coverage-info-file-resolver';
+import * as Abstractions from '../abstractions/domain/coverage-info-file-resolver';
 
 import * as path from 'path';
 
 
-export function make(context: Context): Interface.CoverageInfoFileResolver {
+export function make(context: Context): Abstractions.CoverageInfoFileResolver {
   return new CoverageInfoFileResolver(context);
 }
 
@@ -19,7 +19,7 @@ type Context = {
   errorChannel: OutputChannelLike
 };
 
-class CoverageInfoFileResolver implements Interface.CoverageInfoFileResolver {
+class CoverageInfoFileResolver implements Abstractions.CoverageInfoFileResolver {
   constructor(context: Context) {
     this.globSearch = context.globSearch;
     this.settings = context.settings;

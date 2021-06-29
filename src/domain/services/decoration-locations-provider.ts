@@ -1,6 +1,6 @@
 import * as BuildTreeDirectoryResolver from './internal/build-tree-directory-resolver';
 import * as Cmake from './internal/cmake';
-import * as CoverageInfoCollector from './internal/coverage-info-collector';
+import * as CoverageInfoCollector from '../../modules/coverage-info-collector/domain/coverage-info-collector';
 // TODO: module import syntax???
 import { DecorationLocationsProviderContract } from '../interfaces/decoration-locations-provider-contract';
 import { CreateReadStreamCallable, GlobSearchCallable, MkdirCallable, StatCallable } from '../../adapters/interfaces/file-system';

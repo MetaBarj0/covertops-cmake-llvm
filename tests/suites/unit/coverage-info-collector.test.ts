@@ -5,10 +5,10 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
-import * as CoverageInfoCollector from '../../../src/domain/services/internal/coverage-info-collector';
+import * as CoverageInfoCollector from '../../../src/modules/coverage-info-collector/domain/coverage-info-collector';
 import * as Definitions from '../../../src/definitions';
 import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
-import { RegionCoverageInfo } from '../../../src/domain/value-objects/region-coverage-info';
+import { RegionCoverageInfo } from '../../../src/modules/coverage-info-collector/abstractions/domain/region-coverage-info';
 
 import * as vscode from '../../fakes/adapters/vscode';
 import { inputStream as i } from '../../fakes/adapters/input-stream';

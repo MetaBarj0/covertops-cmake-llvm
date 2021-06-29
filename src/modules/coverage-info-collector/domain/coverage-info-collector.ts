@@ -1,13 +1,13 @@
-import * as CoverageInfoFileResolver from '../../../modules/coverage-info-file-resolver/domain/coverage-info-file-resolver';
-import { CoverageInfoCollectorContract } from '../../interfaces/coverage-info-collector-contract';
+import * as CoverageInfoFileResolver from '../../coverage-info-file-resolver/domain/coverage-info-file-resolver';
+import * as Abstractions from '../abstractions/domain/coverage-info-collector';
 import { OutputChannelLike, ProgressLike } from '../../../adapters/interfaces/vscode';
 import { CreateReadStreamCallable, GlobSearchCallable } from '../../../adapters/interfaces/file-system';
-import { SettingsContract } from '../../interfaces/settings-contract';
+import { SettingsContract } from '../../../domain/interfaces/settings-contract';
 
 import { Readable } from 'stream';
-import { CoverageInfo } from '../../value-objects/coverage-info';
+import { CoverageInfo } from './coverage-info';
 
-export function make(adapters: Adapters): CoverageInfoCollectorContract {
+export function make(adapters: Adapters): Abstractions.CoverageInfoCollector {
   return new CoverageInfoCollector(adapters);
 }
 
@@ -15,7 +15,7 @@ export type LLVMCoverageInfoStreamBuilder = {
   createStream: (path: string) => Readable;
 };
 
-class CoverageInfoCollector implements CoverageInfoCollectorContract {
+class CoverageInfoCollector implements Abstractions.CoverageInfoCollector {
   constructor(adapters: Adapters) {
     this.settings = adapters.settings;
     this.globSearch = adapters.globSearch;

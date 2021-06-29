@@ -4,13 +4,13 @@ import {
   RawLLVMFileCoverageInfo,
   RawLLVMFunctionCoverageInfo,
   RawLLVMRegionCoverageInfo,
-  RawLLVMRegionsCoverageInfo,
-  RegionCoverageInfo
-} from './region-coverage-info';
+  RawLLVMRegionsCoverageInfo
+} from '../abstractions/domain/region-coverage-info';
 
-import { OutputChannelLike } from '../../adapters/interfaces/vscode';
+import { OutputChannelLike } from '../../../adapters/interfaces/vscode';
 
-import * as Definitions from '../../definitions';
+import * as Definitions from '../../../definitions';
+import * as RegionCoverageInfo from './region-coverage-info';
 
 import { Readable } from 'stream';
 import { chain } from 'stream-chain';
@@ -60,7 +60,7 @@ export class CoverageInfo {
 
   private async *_uncoveredRegions() {
     for await (const rawRegionCoverageInfo of this.allRawRegionsCoverageInfoIn()) {
-      const regionCoverageInfo = new RegionCoverageInfo(<RawLLVMRegionCoverageInfo>rawRegionCoverageInfo);
+      const regionCoverageInfo = RegionCoverageInfo.make(<RawLLVMRegionCoverageInfo>rawRegionCoverageInfo);
 
       if (regionCoverageInfo.isAnUncoveredRegion)
         yield regionCoverageInfo;
