@@ -4,31 +4,12 @@ import * as ProgressReporter from './progress-reporter';
 import * as ErrorChannel from './error-channel';
 import { SettingsContract } from '../../interfaces/settings-contract';
 import { VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace-like';
-
-export type ExecFileExceptionLike = {
-  message: string;
-};
-
-export type ExecFileOptionsLike = {
-  cwd?: string;
-  env?: NodeJS.ProcessEnv;
-};
-
-export type ChildProcessLike = {};
-
-export type ProcessLike = {
-  execFile(
-    file: string,
-    args: ReadonlyArray<string> | undefined | null,
-    options: ExecFileOptionsLike,
-    callback: (error: ExecFileExceptionLike | null, stdout: string, stderr: string) => void
-  ): ChildProcessLike;
-};
+import { ExecFileCallable } from '../../../adapters/interfaces/exec-file-callable';
 
 type Adapters = {
   workspace: VscodeWorkspaceLike,
-  processForCommand: ProcessLike,
-  processForTarget: ProcessLike,
+  execFileForCommand: ExecFileCallable,
+  execFileForTarget: ExecFileCallable,
   progressReporter: ProgressReporter.ProgressLike,
   errorChannel: ErrorChannel.OutputChannelLike
 };
@@ -39,8 +20,8 @@ export function make(adapters: Adapters) {
 
 class Cmake {
   constructor(adapters: Adapters) {
-    this.processForCommand = adapters.processForCommand;
-    this.processForTarget = adapters.processForTarget;
+    this.execFileForCommand = adapters.execFileForCommand;
+    this.execFileForTarget = adapters.execFileForTarget;
     this.progressReporter = adapters.progressReporter;
     this.errorChannel = adapters.errorChannel;
 
@@ -69,7 +50,7 @@ class Cmake {
 
   private ensureCommandIsReachable() {
     return this.executeCommandWith({
-      process: this.processForCommand,
+      execFile: this.execFileForCommand,
       arguments: ['--version'],
       potentialErrorMessage:
         `Cannot find the cmake command. Ensure the '${definitions.extensionNameInSettings}: Cmake Command' ` +
@@ -82,7 +63,7 @@ class Cmake {
     const source = this.settings.rootDirectory;
 
     return this.executeCommandWith({
-      process: this.processForTarget,
+      execFile: this.execFileForTarget,
       arguments: ['-B', build, '-S', source, ...this.settings.additionalCmakeOptions],
       potentialErrorMessage:
         `Error: Could not build the specified cmake target ${this.settings.cmakeTarget}. ` +
@@ -95,7 +76,7 @@ class Cmake {
     const target = this.settings.cmakeTarget;
 
     return this.executeCommandWith({
-      process: this.processForTarget,
+      execFile: this.execFileForTarget,
       arguments: ['--build', build, '--target', target],
       potentialErrorMessage:
         `Error: Could not build the specified cmake target ${this.settings.cmakeTarget}. ` +
@@ -103,11 +84,11 @@ class Cmake {
     });
   }
 
-  private executeCommandWith(options: { process: ProcessLike, arguments: ReadonlyArray<string>, potentialErrorMessage: string }) {
+  private executeCommandWith(options: { execFile: ExecFileCallable, arguments: ReadonlyArray<string>, potentialErrorMessage: string }) {
     return new Promise<void>((resolve, reject) => {
       const cmakeCommand = this.settings.cmakeCommand;
 
-      options.process.execFile(
+      options.execFile(
         cmakeCommand, options.arguments,
         {
           cwd: this.settings.rootDirectory,
@@ -126,8 +107,8 @@ class Cmake {
     });
   }
 
-  private readonly processForCommand: ProcessLike;
-  private readonly processForTarget: ProcessLike;
+  private readonly execFileForCommand: ExecFileCallable;
+  private readonly execFileForTarget: ExecFileCallable;
   private readonly progressReporter: ProgressReporter.ProgressLike;
   private readonly errorChannel: ErrorChannel.OutputChannelLike;
   private readonly settings: SettingsContract;

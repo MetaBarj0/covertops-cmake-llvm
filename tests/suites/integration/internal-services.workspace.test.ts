@@ -156,8 +156,8 @@ const extensionConfiguration = vscode.workspace.getConfiguration(definitions.ext
 function makeCmake() {
   return Cmake.make({
     workspace: vscode.workspace,
-    processForCommand: childProcess.executeFile,
-    processForTarget: childProcess.executeFile,
+    execFileForCommand: childProcess.executeFile,
+    execFileForTarget: childProcess.executeFile,
     progressReporter: pr.buildFakeProgressReporter(),
     errorChannel: e.buildFakeErrorChannel()
   });

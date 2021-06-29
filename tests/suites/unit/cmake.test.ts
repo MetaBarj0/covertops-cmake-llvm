@@ -32,8 +32,8 @@ function cmakeShouldFailWithWrongCmakeCommandSetting() {
 
     const cmake = Cmake.make({
       workspace,
-      processForCommand,
-      processForTarget,
+      execFileForCommand: processForCommand,
+      execFileForTarget: processForTarget,
       progressReporter,
       errorChannel
     });
@@ -60,8 +60,8 @@ function cmakeShouldFailWithWrongCmakeTargetSetting() {
 
     const cmake = Cmake.make({
       workspace,
-      processForCommand,
-      processForTarget,
+      execFileForCommand: processForCommand,
+      execFileForTarget: processForTarget,
       progressReporter,
       errorChannel
     });
@@ -91,8 +91,8 @@ function cmakeShouldSucceedWithCorrectSettings() {
 
     const cmake = Cmake.make({
       workspace,
-      processForCommand,
-      processForTarget,
+      execFileForCommand: processForCommand,
+      execFileForTarget: processForTarget,
       progressReporter,
       errorChannel
     });

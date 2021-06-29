@@ -12,8 +12,8 @@ export function make(adapters: Adapters): DecorationLocationsProviderContract {
   return new DecorationLocationsProvider({
     workspace: vscode.workspace,
     statFile: fileSystem.stat,
-    processForCmakeCommand: childProcess.executeFile,
-    processForCmakeTarget: childProcess.executeFile,
+    execFileForCmakeCommand: childProcess.executeFile,
+    execFileForCmakeTarget: childProcess.executeFile,
     globSearch: fileSystem.globSearch,
     mkDir: fileSystem.makeDirectory,
     llvmCoverageInfoStreamBuilder: inputStream.readableStream,

@@ -4,16 +4,18 @@ import * as CoverageInfoFileResolver from './internal/coverage-info-file-resolve
 import * as CoverageInfoCollector from './internal/coverage-info-collector';
 import * as ProgressReporter from './internal/progress-reporter';
 import * as ErrorChannel from './internal/error-channel';
+// TODO: module import syntax
 import { DecorationLocationsProviderContract } from '../interfaces/decoration-locations-provider-contract';
 import { StatFileCallable } from '../../adapters/interfaces/stat-file-callable';
 import { VscodeWorkspaceLike } from '../../adapters/interfaces/vscode-workspace-like';
+import { ExecFileCallable } from '../../adapters/interfaces/exec-file-callable';
 
 export class DecorationLocationsProvider implements DecorationLocationsProviderContract {
   constructor(adapters: Adapters) {
     this.workspace = adapters.workspace;
     this.statFile = adapters.statFile;
-    this.processForCmakeCommand = adapters.processForCmakeCommand;
-    this.processForCmakeTarget = adapters.processForCmakeTarget;
+    this.execFileForCmakeCommand = adapters.execFileForCmakeCommand;
+    this.execFileForCmakeTarget = adapters.execFileForCmakeTarget;
     this.globSearch = adapters.globSearch;
     this.mkDir = adapters.mkDir;
     this.llvmCoverageInfoStreamBuilder = adapters.llvmCoverageInfoStreamBuilder;
@@ -34,8 +36,8 @@ export class DecorationLocationsProvider implements DecorationLocationsProviderC
 
     const cmake = Cmake.make({
       workspace: this.workspace,
-      processForCommand: this.processForCmakeCommand,
-      processForTarget: this.processForCmakeTarget,
+      execFileForCommand: this.execFileForCmakeCommand,
+      execFileForTarget: this.execFileForCmakeTarget,
       progressReporter: this.progressReporter,
       errorChannel: this.errorChannel
     });
@@ -55,8 +57,8 @@ export class DecorationLocationsProvider implements DecorationLocationsProviderC
 
   private readonly workspace: VscodeWorkspaceLike;
   private readonly statFile: StatFileCallable;
-  private readonly processForCmakeCommand: Cmake.ProcessLike;
-  private readonly processForCmakeTarget: Cmake.ProcessLike;
+  private readonly execFileForCmakeCommand: ExecFileCallable;
+  private readonly execFileForCmakeTarget: ExecFileCallable;
   private readonly globSearch: CoverageInfoFileResolver.GlobSearchLike;
   private readonly mkDir: BuildTreeDirectoryResolver.MkDirLike;
   private readonly llvmCoverageInfoStreamBuilder: CoverageInfoCollector.LLVMCoverageInfoStreamBuilder;
@@ -69,8 +71,8 @@ type Adapters = {
   progressReporter: ProgressReporter.ProgressLike,
   errorChannel: ErrorChannel.OutputChannelLike
   statFile: StatFileCallable,
-  processForCmakeCommand: Cmake.ProcessLike,
-  processForCmakeTarget: Cmake.ProcessLike,
+  execFileForCmakeCommand: ExecFileCallable,
+  execFileForCmakeTarget: ExecFileCallable,
   globSearch: CoverageInfoFileResolver.GlobSearchLike,
   mkDir: BuildTreeDirectoryResolver.MkDirLike,
   llvmCoverageInfoStreamBuilder: CoverageInfoCollector.LLVMCoverageInfoStreamBuilder,
