@@ -1,5 +1,6 @@
 import { SettingsContract } from "../../domain/interfaces/settings-contract";
 
+// TODO: create a vscode workspace adapter
 export type VscodeWorkspaceLike = {
     readonly workspaceFolders: ReadonlyArray<VscodeWorkspaceFolderLike> | undefined;
     readonly getConfiguration: (section?: string | undefined) => VscodeWorkspaceConfigurationLike;
