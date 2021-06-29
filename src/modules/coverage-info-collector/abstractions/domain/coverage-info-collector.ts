@@ -1,5 +1,5 @@
-import * as Abstractions from './coverage-info';
+import { CoverageInfo } from './coverage-info';
 
 export type CoverageInfoCollector = {
-  collectFor(sourceFilePath: string): Promise<Abstractions.CoverageInfo>;
+  collectFor(sourceFilePath: string): Promise<CoverageInfo>;
 };

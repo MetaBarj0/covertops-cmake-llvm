@@ -5,7 +5,7 @@ import { CreateReadStreamCallable, GlobSearchCallable } from '../../../adapters/
 import { SettingsContract } from '../../../domain/interfaces/settings-contract';
 
 import { Readable } from 'stream';
-import { CoverageInfo } from './coverage-info';
+import * as CoverageInfo from './coverage-info';
 
 export function make(adapters: Adapters): Abstractions.CoverageInfoCollector {
   return new CoverageInfoCollector(adapters);
@@ -40,7 +40,7 @@ class CoverageInfoCollector implements Abstractions.CoverageInfoCollector {
       increment: 100 / 6 * 6
     });
 
-    return new CoverageInfo(() => this.createReadStream(path), sourceFilePath, this.errorChannel);
+    return CoverageInfo.make(() => this.createReadStream(path), sourceFilePath, this.errorChannel);
   }
 
   private readonly settings: SettingsContract;

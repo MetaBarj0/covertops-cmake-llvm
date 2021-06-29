@@ -7,6 +7,8 @@ import {
   RawLLVMRegionsCoverageInfo
 } from '../abstractions/domain/region-coverage-info';
 
+import * as Abstractions from '../abstractions/domain/coverage-info';
+
 import { OutputChannelLike } from '../../../adapters/interfaces/vscode';
 
 import * as Definitions from '../../../definitions';
@@ -18,7 +20,11 @@ import { parser } from 'stream-json';
 import { pick } from 'stream-json/filters/Pick';
 import { streamArray } from 'stream-json/streamers/StreamArray';
 
-export class CoverageInfo {
+export function make(llvmCoverageInfoStreamFactory: StreamFactory, sourceFilePath: string, errorChannel: OutputChannelLike): Abstractions.CoverageInfo {
+  return new CoverageInfo(llvmCoverageInfoStreamFactory, sourceFilePath, errorChannel);
+}
+
+class CoverageInfo implements Abstractions.CoverageInfo {
   constructor(llvmCoverageInfoStreamFactory: StreamFactory, sourceFilePath: string, errorChannel: OutputChannelLike) {
     this.llvmCoverageInfoStreamFactory = llvmCoverageInfoStreamFactory;
     this.sourceFilePath = sourceFilePath;
