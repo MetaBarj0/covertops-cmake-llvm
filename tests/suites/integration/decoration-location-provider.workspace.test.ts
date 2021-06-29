@@ -10,8 +10,8 @@ import * as definitions from '../../../src/definitions';
 
 import * as DecorationLocationsProvider from '../../../src/extension/factories/decoration-location-provider';
 
-import { progressReporter as pr } from '../../faked-adapters/progress-reporter';
-import { errorChannel as e } from '../../faked-adapters/error-channel';
+import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';
+import { errorChannel as e } from '../../fakes/adapters/error-channel';
 
 import * as vscode from 'vscode';
 import { env } from 'process';

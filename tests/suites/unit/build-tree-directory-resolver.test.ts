@@ -8,11 +8,11 @@ chai.should();
 import * as definitions from '../../../src/definitions';
 import * as BuildTreeDirectoryResolver from '../../../src/domain/services/internal/build-tree-directory-resolver';
 
-import { mkDir as md } from '../../faked-adapters/mk-dir';
-import { vscodeWorkspace as v } from '../../faked-adapters/vscode-workspace';
-import { statFile as sf } from '../../faked-adapters/stat-file';
-import { progressReporter as pr } from '../../faked-adapters/progress-reporter';
-import { errorChannel as e } from '../../faked-adapters/error-channel';
+import { mkDir as md } from '../../fakes/adapters/mk-dir';
+import { vscodeWorkspace as v } from '../../fakes/adapters/vscode-workspace';
+import { statFile as sf } from '../../fakes/adapters/stat-file';
+import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';
+import { errorChannel as e } from '../../fakes/adapters/error-channel';
 
 import path = require('path');
 

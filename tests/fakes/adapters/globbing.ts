@@ -1,4 +1,4 @@
-import * as CoverageInfoFileResolver from '../../src/domain/services/internal/coverage-info-file-resolver';
+import * as CoverageInfoFileResolver from '../../../src/domain/services/internal/coverage-info-file-resolver';
 
 export namespace globbing {
   export function buildFakeGlobSearchForNoMatch() {

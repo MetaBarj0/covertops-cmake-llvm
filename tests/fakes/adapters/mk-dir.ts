@@ -1,4 +1,4 @@
-import * as BuildTreeDirectoryResolver from '../../src/domain/services/internal/build-tree-directory-resolver';
+import * as BuildTreeDirectoryResolver from '../../../src/domain/services/internal/build-tree-directory-resolver';
 
 import { MakeDirectoryOptions, PathLike } from 'fs';
 

@@ -9,14 +9,14 @@ import * as definitions from '../../../src/definitions';
 import { DecorationLocationsProvider } from '../../../src/domain/services/decoration-locations-provider';
 import { RegionCoverageInfo } from '../../../src/domain/value-objects/region-coverage-info';
 
-import { mkDir } from '../../faked-adapters/mk-dir';
-import { vscodeWorkspace as v } from '../../faked-adapters/vscode-workspace';
-import { process as p } from '../../faked-adapters/process';
-import { inputStream as i } from '../../faked-adapters/input-stream';
-import { statFile as sf } from '../../faked-adapters/stat-file';
-import { globbing as g } from '../../faked-adapters/globbing';
-import { progressReporter as pr } from '../../faked-adapters/progress-reporter';
-import { errorChannel as e } from '../../faked-adapters/error-channel';
+import { mkDir } from '../../fakes/adapters/mk-dir';
+import { vscodeWorkspace as v } from '../../fakes/adapters/vscode-workspace';
+import { process as p } from '../../fakes/adapters/process';
+import { inputStream as i } from '../../fakes/adapters/input-stream';
+import { statFile as sf } from '../../fakes/adapters/stat-file';
+import { globbing as g } from '../../fakes/adapters/globbing';
+import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';
+import { errorChannel as e } from '../../fakes/adapters/error-channel';
 
 describe('acceptance suite of tests', () => {
   describe('The decoration location provider service behavior', () => {

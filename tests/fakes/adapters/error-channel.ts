@@ -1,6 +1,6 @@
-import { OutputChannelLike } from "../../src/domain/services/internal/error-channel";
+import { OutputChannelLike } from "../../../src/domain/services/internal/error-channel";
 
-import { Spy } from "../utils/spy";
+import { Spy } from "../../utils/spy";
 
 export namespace errorChannel {
   export function buildFakeErrorChannel(): OutputChannelLike {

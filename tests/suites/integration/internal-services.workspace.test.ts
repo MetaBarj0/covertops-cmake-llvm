@@ -12,8 +12,8 @@ import * as BuildTreeDirectoryResolver from '../../../src/domain/services/intern
 import * as Cmake from '../../../src/domain/services/internal/cmake';
 import * as definitions from '../../../src/definitions';
 
-import { progressReporter as pr } from '../../faked-adapters/progress-reporter';
-import { errorChannel as e } from '../../faked-adapters/error-channel';
+import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';
+import { errorChannel as e } from '../../fakes/adapters/error-channel';
 
 import * as vscode from 'vscode';
 import { env } from 'process';

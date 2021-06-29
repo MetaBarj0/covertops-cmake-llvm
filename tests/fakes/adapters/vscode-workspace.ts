@@ -1,11 +1,11 @@
-import { defaultSetting } from '../utils/settings';
+import { defaultSetting } from '../../utils/settings';
 
-import { SettingsContract } from '../../src/domain/interfaces/settings-contract';
+import { SettingsContract } from '../../../src/domain/interfaces/settings-contract';
 import {
   VscodeUriLike,
   VscodeWorkspaceConfigurationLike,
   VscodeWorkspaceFolderLike, VscodeWorkspaceLike
-} from '../../src/adapters/interfaces/vscode-workspace-like';
+} from '../../../src/adapters/interfaces/vscode-workspace-like';
 
 export namespace vscodeWorkspace {
   type Overrides = {

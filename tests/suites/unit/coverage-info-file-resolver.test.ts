@@ -8,10 +8,10 @@ chai.should();
 import * as definitions from '../../../src/definitions';
 import * as CoverageInfoFileResolver from '../../../src/domain/services/internal/coverage-info-file-resolver';
 
-import { vscodeWorkspace as v } from '../../faked-adapters/vscode-workspace';
-import { globbing as g } from '../../faked-adapters/globbing';
-import { progressReporter as pr } from '../../faked-adapters/progress-reporter';
-import { errorChannel as e } from '../../faked-adapters/error-channel';
+import { vscodeWorkspace as v } from '../../fakes/adapters/vscode-workspace';
+import { globbing as g } from '../../fakes/adapters/globbing';
+import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';
+import { errorChannel as e } from '../../fakes/adapters/error-channel';
 
 describe('Unit test suite', () => {
   describe('the behavior of the coverage info file resolver', () => {

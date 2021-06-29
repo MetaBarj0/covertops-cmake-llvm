@@ -9,8 +9,8 @@ import { defaultSetting } from '../../utils/settings';
 
 import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
 
-import { vscodeWorkspace as v } from '../../faked-adapters/vscode-workspace';
-import { errorChannel as e } from '../../faked-adapters/error-channel';
+import { vscodeWorkspace as v } from '../../fakes/adapters/vscode-workspace';
+import { errorChannel as e } from '../../fakes/adapters/error-channel';
 
 describe('Unit test suite', () => {
   describe('The setting provider behavior', () => {

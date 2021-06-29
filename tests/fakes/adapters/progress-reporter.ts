@@ -1,6 +1,6 @@
-import { ProgressLike } from "../../src/domain/services/internal/progress-reporter";
+import { ProgressLike } from "../../../src/domain/services/internal/progress-reporter";
 
-import { Spy } from "../utils/spy";
+import { Spy } from "../../utils/spy";
 
 export namespace progressReporter {
   export function buildFakeProgressReporter(): ProgressLike {

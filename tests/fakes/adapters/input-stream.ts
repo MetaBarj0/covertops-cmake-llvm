@@ -1,4 +1,4 @@
-import * as CoverageInfoCollector from '../../src/domain/services/internal/coverage-info-collector';
+import * as CoverageInfoCollector from '../../../src/domain/services/internal/coverage-info-collector';
 import { Readable } from 'stream';
 
 export namespace inputStream {

@@ -6,7 +6,7 @@ chai.use(chaiAsPromised);
 chai.should();
 
 import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
-import { errorChannel as e } from '../../faked-adapters/error-channel';
+import { errorChannel as e } from '../../fakes/adapters/error-channel';
 
 import * as vscode from 'vscode';
 

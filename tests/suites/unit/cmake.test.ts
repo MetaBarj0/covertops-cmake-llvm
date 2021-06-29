@@ -8,10 +8,10 @@ chai.should();
 import * as definitions from '../../../src/definitions';
 import * as Cmake from '../../../src/domain/services/internal/cmake';
 
-import { process as p } from '../../faked-adapters/process';
-import { vscodeWorkspace as v } from '../../faked-adapters/vscode-workspace';
-import { progressReporter as pr } from '../../faked-adapters/progress-reporter';
-import { errorChannel as e } from '../../faked-adapters/error-channel';
+import { process as p } from '../../fakes/adapters/process';
+import { vscodeWorkspace as v } from '../../fakes/adapters/vscode-workspace';
+import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';
+import { errorChannel as e } from '../../fakes/adapters/error-channel';
 
 describe('Unit test suite', () => {
   describe('cmake behavior', () => {

@@ -9,11 +9,11 @@ import * as CoverageInfoCollector from '../../../src/domain/services/internal/co
 import * as definitions from '../../../src/definitions';
 import { RegionCoverageInfo } from '../../../src/domain/value-objects/region-coverage-info';
 
-import { vscodeWorkspace as v } from '../../faked-adapters/vscode-workspace';
-import { inputStream as i } from '../../faked-adapters/input-stream';
-import { globbing as g } from '../../faked-adapters/globbing';
-import { progressReporter as pr } from '../../faked-adapters/progress-reporter';
-import { errorChannel as e } from '../../faked-adapters/error-channel';
+import { vscodeWorkspace as v } from '../../fakes/adapters/vscode-workspace';
+import { inputStream as i } from '../../fakes/adapters/input-stream';
+import { globbing as g } from '../../fakes/adapters/globbing';
+import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';
+import { errorChannel as e } from '../../fakes/adapters/error-channel';
 
 import { Readable } from 'stream';
 
