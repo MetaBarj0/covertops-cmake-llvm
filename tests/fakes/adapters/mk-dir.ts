@@ -1,21 +1,13 @@
-import * as BuildTreeDirectoryResolver from '../../../src/domain/services/internal/build-tree-directory-resolver';
+import { MkdirCallable } from '../../../src/adapters/interfaces/file-system';
 
 import { MakeDirectoryOptions, PathLike } from 'fs';
 
 export namespace mkDir {
-  export function buildFakeFailingMkDir() {
-    return new class implements BuildTreeDirectoryResolver.MkDirLike {
-      mkdir(_path: PathLike, _options: MakeDirectoryOptions & { recursive: true; }): Promise<string | undefined> {
-        return Promise.reject();
-      }
-    };
+  export function buildFakeFailingMkDir(): MkdirCallable {
+    return (_path: PathLike, _options: MakeDirectoryOptions & { recursive: true; }): Promise<string | undefined> => Promise.reject();
   }
 
-  export function buildFakeSucceedingMkDir() {
-    return new class implements BuildTreeDirectoryResolver.MkDirLike {
-      mkdir(_path: PathLike, _options: MakeDirectoryOptions & { recursive: true; }): Promise<string | undefined> {
-        return Promise.resolve('/build/tree/directory');
-      }
-    };
+  export function buildFakeSucceedingMkDir(): MkdirCallable {
+    return (_path: PathLike, _options: MakeDirectoryOptions & { recursive: true; }): Promise<string | undefined> => Promise.resolve('/build/tree/directory');
   }
 }

@@ -171,7 +171,7 @@ function makeBuildTreeDirectoryResolver() {
   return BuildTreeDirectoryResolver.make({
     workspace: vscode.workspace,
     statFile: fileSystem.stat,
-    mkDir: fileSystem.makeDirectory,
+    mkDir: fileSystem.mkdir,
     progressReporter: pr.buildFakeProgressReporter(),
     errorChannel: e.buildFakeErrorChannel()
   });

@@ -15,7 +15,7 @@ export function make(adapters: Adapters): DecorationLocationsProviderContract {
     execFileForCmakeCommand: adapters.processControl.execFileForCommand,
     execFileForCmakeTarget: adapters.processControl.execFileForTarget,
     globSearch: fileSystem.globSearch,
-    mkDir: fileSystem.makeDirectory,
+    mkdir: fileSystem.mkdir,
     llvmCoverageInfoStreamBuilder: inputStream.readableStream,
     progressReporter: adapters.vscode.progressReporter,
     errorChannel: adapters.vscode.errorChannel

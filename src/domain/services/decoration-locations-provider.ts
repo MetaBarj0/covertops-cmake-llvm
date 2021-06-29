@@ -5,7 +5,7 @@ import * as ProgressReporter from './internal/progress-reporter';
 import * as ErrorChannel from './internal/error-channel';
 // TODO: module import syntax???
 import { DecorationLocationsProviderContract } from '../interfaces/decoration-locations-provider-contract';
-import { GlobSearchCallable, StatFileCallable } from '../../adapters/interfaces/file-system';
+import { GlobSearchCallable, MkdirCallable, StatFileCallable } from '../../adapters/interfaces/file-system';
 import { VscodeWorkspaceLike } from '../../adapters/interfaces/vscode-workspace';
 import { ExecFileCallable } from '../../adapters/interfaces/process-control';
 
@@ -16,7 +16,7 @@ export class DecorationLocationsProvider implements DecorationLocationsProviderC
     this.execFileForCmakeCommand = adapters.execFileForCmakeCommand;
     this.execFileForCmakeTarget = adapters.execFileForCmakeTarget;
     this.globSearch = adapters.globSearch;
-    this.mkDir = adapters.mkDir;
+    this.mkdir = adapters.mkdir;
     this.llvmCoverageInfoStreamBuilder = adapters.llvmCoverageInfoStreamBuilder;
     this.progressReporter = adapters.progressReporter;
     this.errorChannel = adapters.errorChannel;
@@ -26,7 +26,7 @@ export class DecorationLocationsProvider implements DecorationLocationsProviderC
     const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({
       workspace: this.workspace,
       statFile: this.statFile,
-      mkDir: this.mkDir,
+      mkDir: this.mkdir,
       progressReporter: this.progressReporter,
       errorChannel: this.errorChannel
     });
@@ -63,7 +63,7 @@ export class DecorationLocationsProvider implements DecorationLocationsProviderC
   private readonly execFileForCmakeCommand: ExecFileCallable;
   private readonly execFileForCmakeTarget: ExecFileCallable;
   private readonly globSearch: GlobSearchCallable;
-  private readonly mkDir: BuildTreeDirectoryResolver.MkDirLike;
+  private readonly mkdir: MkdirCallable;
   private readonly llvmCoverageInfoStreamBuilder: CoverageInfoCollector.LLVMCoverageInfoStreamBuilder;
   private readonly progressReporter: ProgressReporter.ProgressLike;
   private readonly errorChannel: ErrorChannel.OutputChannelLike;
@@ -77,6 +77,6 @@ type Adapters = {
   execFileForCmakeCommand: ExecFileCallable,
   execFileForCmakeTarget: ExecFileCallable,
   globSearch: GlobSearchCallable,
-  mkDir: BuildTreeDirectoryResolver.MkDirLike,
+  mkdir: MkdirCallable,
   llvmCoverageInfoStreamBuilder: CoverageInfoCollector.LLVMCoverageInfoStreamBuilder,
 };

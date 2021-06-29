@@ -2,15 +2,10 @@ import * as definitions from '../../../definitions';
 import * as SettingsProvider from './settings-provider';
 import * as ProgressReporter from './progress-reporter';
 import * as ErrorChannel from './error-channel';
-import { StatFileCallable } from '../../../adapters/interfaces/file-system';
+import { MkdirCallable, StatFileCallable } from '../../../adapters/interfaces/file-system';
 import { VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace';
 
-import { MakeDirectoryOptions, PathLike, } from 'fs';
 import * as path from 'path';
-
-export type MkDirLike = {
-  mkdir(path: PathLike, options: MakeDirectoryOptions & { recursive: true; }): Promise<string | undefined>
-};
 
 export function make(adapters: Adapters) {
   return new BuildTreeDirectoryResolver(adapters);
@@ -19,7 +14,7 @@ export function make(adapters: Adapters) {
 type Adapters = {
   workspace: VscodeWorkspaceLike,
   statFile: StatFileCallable,
-  mkDir: MkDirLike,
+  mkDir: MkdirCallable,
   progressReporter: ProgressReporter.ProgressLike,
   errorChannel: ErrorChannel.OutputChannelLike
 };
@@ -28,7 +23,7 @@ class BuildTreeDirectoryResolver {
   constructor(adapters: Adapters) {
     this.workspace = adapters.workspace;
     this.stat = adapters.statFile;
-    this.mkDir = adapters.mkDir;
+    this.mkdir = adapters.mkDir;
     this.progressReporter = adapters.progressReporter;
     this.errorChannel = adapters.errorChannel;
   }
@@ -60,7 +55,7 @@ class BuildTreeDirectoryResolver {
   private async statAndCreateIfNeeded(buildTreeDirectory: string) {
     await this.stat(buildTreeDirectory)
       .catch(async _ => {
-        await this.mkDir.mkdir(buildTreeDirectory, { recursive: true })
+        await this.mkdir(buildTreeDirectory, { recursive: true })
           .catch(_ => {
             const errorMessage = 'Cannot find or create the build tree directory. Ensure the ' +
               `'${definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`;
@@ -74,7 +69,7 @@ class BuildTreeDirectoryResolver {
 
   private readonly stat: StatFileCallable;
   private readonly workspace: VscodeWorkspaceLike;
-  private readonly mkDir: MkDirLike;
+  private readonly mkdir: MkdirCallable;
   private readonly progressReporter: ProgressReporter.ProgressLike;
   private readonly errorChannel: ErrorChannel.OutputChannelLike;
 };

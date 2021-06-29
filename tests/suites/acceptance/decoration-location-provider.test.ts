@@ -43,7 +43,7 @@ function instantiateService() {
         execFileForCmakeCommand: p.buildFakeFailingProcess(),
         execFileForCmakeTarget: p.buildFakeFailingProcess(),
         globSearch: g.buildFakeGlobSearchForNoMatch(),
-        mkDir: mkDir.buildFakeFailingMkDir(),
+        mkdir: mkDir.buildFakeFailingMkDir(),
         llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
         progressReporter: pr.buildFakeProgressReporter(),
         errorChannel: e.buildFakeErrorChannel()
@@ -63,7 +63,7 @@ function failBecauseOfIssuesWithBuildTreeDirectorySetting() {
         execFileForCmakeCommand: p.buildFakeFailingProcess(),
         execFileForCmakeTarget: p.buildFakeFailingProcess(),
         globSearch: g.buildFakeGlobSearchForNoMatch(),
-        mkDir: mkDir.buildFakeFailingMkDir(),
+        mkdir: mkDir.buildFakeFailingMkDir(),
         llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
         progressReporter: pr.buildFakeProgressReporter(),
         errorChannel: e.buildFakeErrorChannel()
@@ -84,7 +84,7 @@ function failBecauseOfIssuesWithCmakeCommandSetting() {
         execFileForCmakeCommand: p.buildFakeFailingProcess(),
         execFileForCmakeTarget: p.buildFakeFailingProcess(),
         globSearch: g.buildFakeGlobSearchForNoMatch(),
-        mkDir: mkDir.buildFakeFailingMkDir(),
+        mkdir: mkDir.buildFakeFailingMkDir(),
         llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
         progressReporter: pr.buildFakeProgressReporter(),
         errorChannel: e.buildFakeErrorChannel()
@@ -108,7 +108,7 @@ function failBecauseOfIssuesWithCmakeTargetSetting() {
         execFileForCmakeCommand: p.buildFakeSucceedingProcess(),
         execFileForCmakeTarget: p.buildFakeFailingProcess(),
         globSearch: g.buildFakeGlobSearchForNoMatch(),
-        mkDir: mkDir.buildFakeFailingMkDir(),
+        mkdir: mkDir.buildFakeFailingMkDir(),
         llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
         progressReporter: pr.buildFakeProgressReporter(),
         errorChannel: e.buildFakeErrorChannel()
@@ -129,7 +129,7 @@ function failBecauseCoverageInfoFileIsNotFound() {
         execFileForCmakeCommand: p.buildFakeSucceedingProcess(),
         execFileForCmakeTarget: p.buildFakeSucceedingProcess(),
         globSearch: g.buildFakeGlobSearchForNoMatch(),
-        mkDir: mkDir.buildFakeFailingMkDir(),
+        mkdir: mkDir.buildFakeFailingMkDir(),
         llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
         progressReporter: pr.buildFakeProgressReporter(),
         errorChannel: e.buildFakeErrorChannel()
@@ -153,7 +153,7 @@ function failBecauseSeveralCoverageInfoFileAreFound() {
         execFileForCmakeCommand: p.buildFakeSucceedingProcess(),
         execFileForCmakeTarget: p.buildFakeSucceedingProcess(),
         globSearch: g.buildFakeGlobSearchForSeveralMatch(),
-        mkDir: mkDir.buildFakeFailingMkDir(),
+        mkdir: mkDir.buildFakeFailingMkDir(),
         llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
         progressReporter: pr.buildFakeProgressReporter(),
         errorChannel: e.buildFakeErrorChannel()
@@ -178,7 +178,7 @@ function succeedWithCorrectSettingsAndFakeAdapters() {
       execFileForCmakeCommand: p.buildFakeSucceedingProcess(),
       execFileForCmakeTarget: p.buildFakeSucceedingProcess(),
       globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
-      mkDir: mkDir.buildFakeSucceedingMkDir(),
+      mkdir: mkDir.buildFakeSucceedingMkDir(),
       llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream),
       progressReporter: progressReporterSpy.object,
       errorChannel: e.buildFakeErrorChannel()
