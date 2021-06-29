@@ -2,14 +2,11 @@ import * as definitions from '../../../definitions';
 import * as SettingsProvider from './settings-provider';
 import * as ProgressReporter from './progress-reporter';
 import * as ErrorChannel from './error-channel';
-// TODO: use module import syntax
+// TODO: use module import syntax???
 import { VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace';
+import { GlobSearchCallable } from '../../../adapters/interfaces/file-system';
 
-import path = require('path');
-
-export type GlobSearchLike = {
-  search(pattern: string): Promise<ReadonlyArray<string>>;
-};
+import * as path from 'path';
 
 export function make(adapters: Adapters) {
   return new CoverageInfoFileResolver(adapters);
@@ -17,7 +14,7 @@ export function make(adapters: Adapters) {
 
 type Adapters = {
   workspace: VscodeWorkspaceLike,
-  globSearch: GlobSearchLike,
+  globSearch: GlobSearchCallable,
   progressReporter: ProgressReporter.ProgressLike,
   errorChannel: ErrorChannel.OutputChannelLike
 };
@@ -31,7 +28,7 @@ class CoverageInfoFileResolver {
   }
 
   async resolveCoverageInfoFileFullPath() {
-    const searchResult = await this.globSearch.search(this.pattern);
+    const searchResult = await this.globSearch(this.pattern);
 
     this.failsIfNoFileIsFound(searchResult);
     this.failsIfManyFilesAreFound(searchResult);
@@ -81,7 +78,7 @@ class CoverageInfoFileResolver {
     return `${posixRootPath}${path.posix.sep}**${path.posix.sep}${settings.coverageInfoFileName}`;
   }
 
-  private readonly globSearch: GlobSearchLike;
+  private readonly globSearch: GlobSearchCallable;
   private readonly workspace: VscodeWorkspaceLike;
   private readonly progressReporter: ProgressReporter.ProgressLike;
   private readonly errorChannel: ErrorChannel.OutputChannelLike;

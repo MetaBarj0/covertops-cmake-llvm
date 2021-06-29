@@ -1,27 +1,15 @@
-import * as CoverageInfoFileResolver from '../../../src/domain/services/internal/coverage-info-file-resolver';
+import { GlobSearchCallable } from '../../../src/adapters/interfaces/file-system';
 
 export namespace globbing {
-  export function buildFakeGlobSearchForNoMatch() {
-    return new class implements CoverageInfoFileResolver.GlobSearchLike {
-      search(_pattern: string) {
-        return Promise.resolve([]);
-      }
-    };
+  export function buildFakeGlobSearchForNoMatch(): GlobSearchCallable {
+    return (_pattern: string) => Promise.resolve([]);
   }
 
-  export function buildFakeGlobSearchForSeveralMatch() {
-    return new class implements CoverageInfoFileResolver.GlobSearchLike {
-      search(_pattern: string) {
-        return Promise.resolve(['', '']);
-      }
-    };
+  export function buildFakeGlobSearchForSeveralMatch(): GlobSearchCallable {
+    return (_pattern: string) => Promise.resolve(['', '']);
   }
 
-  export function buildFakeGlobSearchForExactlyOneMatch() {
-    return new class implements CoverageInfoFileResolver.GlobSearchLike {
-      search(_pattern: string) {
-        return Promise.resolve(['oneMatchShow']);
-      }
-    };
+  export function buildFakeGlobSearchForExactlyOneMatch(): GlobSearchCallable {
+    return (_pattern: string) => Promise.resolve(['oneMatchShow']);
   }
 }

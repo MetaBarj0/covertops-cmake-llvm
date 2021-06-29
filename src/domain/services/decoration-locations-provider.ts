@@ -1,12 +1,11 @@
 import * as BuildTreeDirectoryResolver from './internal/build-tree-directory-resolver';
 import * as Cmake from './internal/cmake';
-import * as CoverageInfoFileResolver from './internal/coverage-info-file-resolver';
 import * as CoverageInfoCollector from './internal/coverage-info-collector';
 import * as ProgressReporter from './internal/progress-reporter';
 import * as ErrorChannel from './internal/error-channel';
-// TODO: module import syntax
+// TODO: module import syntax???
 import { DecorationLocationsProviderContract } from '../interfaces/decoration-locations-provider-contract';
-import { StatFileCallable } from '../../adapters/interfaces/file-system';
+import { GlobSearchCallable, StatFileCallable } from '../../adapters/interfaces/file-system';
 import { VscodeWorkspaceLike } from '../../adapters/interfaces/vscode-workspace';
 import { ExecFileCallable } from '../../adapters/interfaces/process-control';
 
@@ -63,7 +62,7 @@ export class DecorationLocationsProvider implements DecorationLocationsProviderC
   private readonly statFile: StatFileCallable;
   private readonly execFileForCmakeCommand: ExecFileCallable;
   private readonly execFileForCmakeTarget: ExecFileCallable;
-  private readonly globSearch: CoverageInfoFileResolver.GlobSearchLike;
+  private readonly globSearch: GlobSearchCallable;
   private readonly mkDir: BuildTreeDirectoryResolver.MkDirLike;
   private readonly llvmCoverageInfoStreamBuilder: CoverageInfoCollector.LLVMCoverageInfoStreamBuilder;
   private readonly progressReporter: ProgressReporter.ProgressLike;
@@ -77,7 +76,7 @@ type Adapters = {
   statFile: StatFileCallable,
   execFileForCmakeCommand: ExecFileCallable,
   execFileForCmakeTarget: ExecFileCallable,
-  globSearch: CoverageInfoFileResolver.GlobSearchLike,
+  globSearch: GlobSearchCallable,
   mkDir: BuildTreeDirectoryResolver.MkDirLike,
   llvmCoverageInfoStreamBuilder: CoverageInfoCollector.LLVMCoverageInfoStreamBuilder,
 };
