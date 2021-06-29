@@ -5,15 +5,15 @@ import { DecorationLocationsProvider } from '../../domain/services/decoration-lo
 import * as ErrorChannel from '../../domain/services/internal/error-channel';
 
 import { fileSystem } from '../../adapters/file-system';
-import { childProcess } from '../../adapters/child-process';
 import { inputStream } from '../../adapters/input-stream';
+import { ExecFileCallable } from '../../adapters/interfaces/exec-file-callable';
 
 export function make(adapters: Adapters): DecorationLocationsProviderContract {
   return new DecorationLocationsProvider({
     workspace: vscode.workspace,
     statFile: fileSystem.stat,
-    execFileForCmakeCommand: childProcess.executeFile,
-    execFileForCmakeTarget: childProcess.executeFile,
+    execFileForCmakeCommand: adapters.processControl.execFileForCommand,
+    execFileForCmakeTarget: adapters.processControl.execFileForTarget,
     globSearch: fileSystem.globSearch,
     mkDir: fileSystem.makeDirectory,
     llvmCoverageInfoStreamBuilder: inputStream.readableStream,
@@ -26,5 +26,9 @@ type Adapters = {
   vscode: {
     progressReporter: vscode.Progress<{ message?: string, increment?: number }>,
     errorChannel: ErrorChannel.OutputChannelLike
+  },
+  processControl: {
+    execFileForCommand: ExecFileCallable,
+    execFileForTarget: ExecFileCallable,
   }
 };

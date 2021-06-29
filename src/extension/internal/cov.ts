@@ -2,6 +2,7 @@ import { extensionId, extensionDisplayName } from '../../definitions';
 import * as DecorationLocationProvider from '../../../src/extension/factories/decoration-location-provider';
 
 import { commands, Disposable, OutputChannel, ProgressLocation, window } from 'vscode';
+import { childProcess as cp } from '../../adapters/child-process';
 
 export class Cov {
   constructor() {
@@ -36,6 +37,10 @@ export class Cov {
         vscode: {
           progressReporter: progress,
           errorChannel: this.output
+        },
+        processControl: {
+          execFileForCommand: cp.execFile,
+          execFileForTarget: cp.execFile
         }
       });
 

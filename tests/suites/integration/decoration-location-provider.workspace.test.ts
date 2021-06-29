@@ -13,6 +13,8 @@ import * as DecorationLocationsProvider from '../../../src/extension/factories/d
 import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';
 import { errorChannel as e } from '../../fakes/adapters/error-channel';
 
+import { childProcess as cp } from '../../../src/adapters/child-process';
+
 import * as vscode from 'vscode';
 import { env } from 'process';
 import * as path from 'path';
@@ -44,6 +46,10 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
       vscode: {
         progressReporter: pr.buildFakeProgressReporter(),
         errorChannel: e.buildFakeErrorChannel()
+      },
+      processControl: {
+        execFileForCommand: cp.execFile,
+        execFileForTarget: cp.execFile
       }
     });
 
@@ -89,6 +95,10 @@ function collectSummaryCoverageInfoFromPartiallyCoveredFileShouldSucceed() {
       vscode: {
         progressReporter: pr.buildFakeProgressReporter(),
         errorChannel: e.buildFakeErrorChannel()
+      },
+      processControl: {
+        execFileForCommand: cp.execFile,
+        execFileForTarget: cp.execFile
       }
     });
 
@@ -127,6 +137,10 @@ function collectSummaryCoverageInfoFromFullyCoveredFileShouldSucceed() {
       vscode: {
         progressReporter: pr.buildFakeProgressReporter(),
         errorChannel: e.buildFakeErrorChannel()
+      },
+      processControl: {
+        execFileForCommand: cp.execFile,
+        execFileForTarget: cp.execFile
       }
     });
 
@@ -165,6 +179,10 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
       vscode: {
         progressReporter: pr.buildFakeProgressReporter(),
         errorChannel: e.buildFakeErrorChannel()
+      },
+      processControl: {
+        execFileForCommand: cp.execFile,
+        execFileForTarget: cp.execFile
       }
     });
 
