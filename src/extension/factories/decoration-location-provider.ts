@@ -5,7 +5,6 @@ import { DecorationLocationsProvider } from '../../domain/services/decoration-lo
 import * as ErrorChannel from '../../domain/services/internal/error-channel';
 
 import * as fs from '../../adapters/file-system';
-import { inputStream } from '../../adapters/input-stream';
 import { ExecFileCallable } from '../../adapters/interfaces/process-control';
 
 export function make(adapters: Adapters): DecorationLocationsProviderContract {
@@ -16,7 +15,7 @@ export function make(adapters: Adapters): DecorationLocationsProviderContract {
     execFileForCmakeTarget: adapters.processControl.execFileForTarget,
     globSearch: fs.globSearch,
     mkdir: fs.mkdir,
-    llvmCoverageInfoStreamBuilder: inputStream.readableStream,
+    createReadStream: fs.readableStream,
     progressReporter: adapters.vscode.progressReporter,
     errorChannel: adapters.vscode.errorChannel
   });

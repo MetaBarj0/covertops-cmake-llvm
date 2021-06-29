@@ -3,7 +3,7 @@ import * as ProgressReporter from './progress-reporter';
 import * as ErrorChannel from './error-channel';
 import { CoverageInfoCollectorContract } from '../../interfaces/coverage-info-collector-contract';
 import { VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode-workspace';
-import { GlobSearchCallable } from '../../../adapters/interfaces/file-system';
+import { CreateReadStreamCallable, GlobSearchCallable } from '../../../adapters/interfaces/file-system';
 
 import { Readable } from 'stream';
 import { CoverageInfo } from '../../value-objects/coverage-info';
@@ -20,7 +20,7 @@ class CoverageInfoCollector implements CoverageInfoCollectorContract {
   constructor(adapters: Adapters) {
     this.workspace = adapters.workspace;
     this.globSearch = adapters.globSearch;
-    this.llvmCoverageInfoStreamBuilder = adapters.llvmCoverageInfoStreamBuilder;
+    this.createReadStream = adapters.createReadStream;
     this.progressReporter = adapters.progressReporter;
     this.errorChannel = adapters.errorChannel;
   }
@@ -41,12 +41,12 @@ class CoverageInfoCollector implements CoverageInfoCollectorContract {
       increment: 100 / 6 * 6
     });
 
-    return new CoverageInfo(() => this.llvmCoverageInfoStreamBuilder.createStream(path), sourceFilePath, this.errorChannel);
+    return new CoverageInfo(() => this.createReadStream(path), sourceFilePath, this.errorChannel);
   }
 
   private readonly workspace: VscodeWorkspaceLike;
   private readonly globSearch: GlobSearchCallable;
-  private readonly llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder;
+  private readonly createReadStream: CreateReadStreamCallable;
   private readonly progressReporter: ProgressReporter.ProgressLike;
   private readonly errorChannel: ErrorChannel.OutputChannelLike;
 };
@@ -54,7 +54,7 @@ class CoverageInfoCollector implements CoverageInfoCollectorContract {
 type Adapters = {
   workspace: VscodeWorkspaceLike,
   globSearch: GlobSearchCallable,
-  llvmCoverageInfoStreamBuilder: LLVMCoverageInfoStreamBuilder,
+  createReadStream: CreateReadStreamCallable,
   progressReporter: ProgressReporter.ProgressLike,
   errorChannel: ErrorChannel.OutputChannelLike
 };

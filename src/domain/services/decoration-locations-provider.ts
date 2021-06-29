@@ -5,7 +5,7 @@ import * as ProgressReporter from './internal/progress-reporter';
 import * as ErrorChannel from './internal/error-channel';
 // TODO: module import syntax???
 import { DecorationLocationsProviderContract } from '../interfaces/decoration-locations-provider-contract';
-import { GlobSearchCallable, MkdirCallable, StatFileCallable } from '../../adapters/interfaces/file-system';
+import { CreateReadStreamCallable, GlobSearchCallable, MkdirCallable, StatFileCallable } from '../../adapters/interfaces/file-system';
 import { VscodeWorkspaceLike } from '../../adapters/interfaces/vscode-workspace';
 import { ExecFileCallable } from '../../adapters/interfaces/process-control';
 
@@ -17,7 +17,7 @@ export class DecorationLocationsProvider implements DecorationLocationsProviderC
     this.execFileForCmakeTarget = adapters.execFileForCmakeTarget;
     this.globSearch = adapters.globSearch;
     this.mkdir = adapters.mkdir;
-    this.llvmCoverageInfoStreamBuilder = adapters.llvmCoverageInfoStreamBuilder;
+    this.createReadStream = adapters.createReadStream;
     this.progressReporter = adapters.progressReporter;
     this.errorChannel = adapters.errorChannel;
   }
@@ -50,7 +50,7 @@ export class DecorationLocationsProvider implements DecorationLocationsProviderC
     const collector = CoverageInfoCollector.make({
       workspace: this.workspace,
       globSearch: this.globSearch,
-      llvmCoverageInfoStreamBuilder: this.llvmCoverageInfoStreamBuilder,
+      createReadStream: this.createReadStream,
       progressReporter: this.progressReporter,
       errorChannel: this.errorChannel
     });
@@ -64,7 +64,7 @@ export class DecorationLocationsProvider implements DecorationLocationsProviderC
   private readonly execFileForCmakeTarget: ExecFileCallable;
   private readonly globSearch: GlobSearchCallable;
   private readonly mkdir: MkdirCallable;
-  private readonly llvmCoverageInfoStreamBuilder: CoverageInfoCollector.LLVMCoverageInfoStreamBuilder;
+  private readonly createReadStream: CreateReadStreamCallable;
   private readonly progressReporter: ProgressReporter.ProgressLike;
   private readonly errorChannel: ErrorChannel.OutputChannelLike;
 }
@@ -78,5 +78,5 @@ type Adapters = {
   execFileForCmakeTarget: ExecFileCallable,
   globSearch: GlobSearchCallable,
   mkdir: MkdirCallable,
-  llvmCoverageInfoStreamBuilder: CoverageInfoCollector.LLVMCoverageInfoStreamBuilder,
+  createReadStream: CreateReadStreamCallable,
 };

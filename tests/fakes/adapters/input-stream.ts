@@ -1,4 +1,5 @@
 import * as CoverageInfoCollector from '../../../src/domain/services/internal/coverage-info-collector';
+import { CreateReadStreamCallable } from '../../../src/adapters/interfaces/file-system';
 import { Readable } from 'stream';
 
 export namespace inputStream {
@@ -74,9 +75,7 @@ export namespace inputStream {
     }));
   }
 
-  export function buildFakeStreamBuilder(factory: () => Readable) {
-    return new class implements CoverageInfoCollector.LLVMCoverageInfoStreamBuilder {
-      createStream = (_path: string) => factory();
-    };
+  export function buildFakeStreamBuilder(factory: () => Readable): CreateReadStreamCallable {
+    return (_path: string) => factory();
   }
 }

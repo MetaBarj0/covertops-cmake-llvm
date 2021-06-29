@@ -196,7 +196,7 @@ function buildCoverageInfoCollectorAndSpiesForProgressReportAndErrorChannel() {
   const coverageInfoCollector = CoverageInfoCollector.make({
     globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
     workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-    llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream),
+    createReadStream: i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream),
     progressReporter: progressReporterSpy.object,
     errorChannel: errorChannelSpy.object
   });
@@ -215,7 +215,7 @@ function buildCoverageInfoCollectorsAndErrorChannelSpiesUsingStreamFactories(str
     const coverageInfoCollector = CoverageInfoCollector.make({
       globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
       workspace: v.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-      llvmCoverageInfoStreamBuilder: i.buildFakeStreamBuilder(streamFfactory),
+      createReadStream: i.buildFakeStreamBuilder(streamFfactory),
       progressReporter: pr.buildFakeProgressReporter(),
       errorChannel: errorChannelSpy.object
     });
