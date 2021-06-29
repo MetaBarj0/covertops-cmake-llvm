@@ -1,16 +1,15 @@
 import * as definitions from '../../../definitions';
 import * as SettingsProvider from './settings-provider';
-import * as ProgressReporter from './progress-reporter';
 import { BasicCmake } from '../../value-objects/basic-cmake';
 // TODO: import module syntax???
 import { SettingsContract } from '../../interfaces/settings-contract';
-import { OutputChannelLike, VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode';
+import { OutputChannelLike, ProgressLike, VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode';
 import { ExecFileCallable } from '../../../adapters/interfaces/process-control';
 
 type Adapters = {
   vscode: {
     workspace: VscodeWorkspaceLike,
-    progressReporter: ProgressReporter.ProgressLike,
+    progressReporter: ProgressLike,
     errorChannel: OutputChannelLike,
   },
   processControl: {

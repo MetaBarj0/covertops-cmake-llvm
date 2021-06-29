@@ -1,4 +1,4 @@
-import { ProgressLike } from "../../../src/domain/services/internal/progress-reporter";
+import { ProgressLike } from "../../../src/adapters/interfaces/vscode";
 
 import { Spy } from "../../utils/spy";
 

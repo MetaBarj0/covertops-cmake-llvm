@@ -1,11 +1,10 @@
 import * as BuildTreeDirectoryResolver from './internal/build-tree-directory-resolver';
 import * as Cmake from './internal/cmake';
 import * as CoverageInfoCollector from './internal/coverage-info-collector';
-import * as ProgressReporter from './internal/progress-reporter';
 // TODO: module import syntax???
 import { DecorationLocationsProviderContract } from '../interfaces/decoration-locations-provider-contract';
 import { CreateReadStreamCallable, GlobSearchCallable, MkdirCallable, StatCallable } from '../../adapters/interfaces/file-system';
-import { OutputChannelLike, VscodeWorkspaceLike } from '../../adapters/interfaces/vscode';
+import { OutputChannelLike, ProgressLike, VscodeWorkspaceLike } from '../../adapters/interfaces/vscode';
 import { ExecFileCallable } from '../../adapters/interfaces/process-control';
 
 export class DecorationLocationsProvider implements DecorationLocationsProviderContract {
@@ -64,13 +63,13 @@ export class DecorationLocationsProvider implements DecorationLocationsProviderC
   private readonly globSearch: GlobSearchCallable;
   private readonly mkdir: MkdirCallable;
   private readonly createReadStream: CreateReadStreamCallable;
-  private readonly progressReporter: ProgressReporter.ProgressLike;
+  private readonly progressReporter: ProgressLike;
   private readonly errorChannel: OutputChannelLike;
 }
 
 type Adapters = {
   workspace: VscodeWorkspaceLike,
-  progressReporter: ProgressReporter.ProgressLike,
+  progressReporter: ProgressLike,
   errorChannel: OutputChannelLike
   stat: StatCallable,
   execFileForCmakeCommand: ExecFileCallable,

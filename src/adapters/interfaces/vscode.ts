@@ -2,22 +2,32 @@ import { SettingsContract } from "../../domain/interfaces/settings-contract";
 
 // TODO: create a vscode workspace adapter
 export type VscodeWorkspaceLike = {
-    readonly workspaceFolders: ReadonlyArray<VscodeWorkspaceFolderLike> | undefined;
-    readonly getConfiguration: (section?: string | undefined) => VscodeWorkspaceConfigurationLike;
+  readonly workspaceFolders: ReadonlyArray<VscodeWorkspaceFolderLike> | undefined;
+  readonly getConfiguration: (section?: string | undefined) => VscodeWorkspaceConfigurationLike;
 };
 
 export type VscodeWorkspaceFolderLike = {
-    readonly uri: VscodeUriLike;
+  readonly uri: VscodeUriLike;
 };
 
 export type VscodeWorkspaceConfigurationLike = {
-    get(section: keyof SettingsContract): SettingsContract[typeof section];
+  get(section: keyof SettingsContract): SettingsContract[typeof section];
 };
 
 export type VscodeUriLike = {
-    readonly fsPath: string;
+  readonly fsPath: string;
 };
 
 export type OutputChannelLike = {
-    appendLine(line: string): void;
+  appendLine(line: string): void;
+};
+
+export type ProgressLike = {
+  report(value: ProgressStep): void;
+};
+
+// TODO: export and use
+type ProgressStep = {
+  message?: string,
+  increment?: number
 };

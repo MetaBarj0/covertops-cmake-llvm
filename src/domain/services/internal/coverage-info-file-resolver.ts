@@ -1,8 +1,7 @@
 import * as definitions from '../../../definitions';
 import * as SettingsProvider from './settings-provider';
-import * as ProgressReporter from './progress-reporter';
 // TODO: use module import syntax???
-import { OutputChannelLike, VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode';
+import { OutputChannelLike, ProgressLike, VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode';
 import { GlobSearchCallable } from '../../../adapters/interfaces/file-system';
 
 import * as path from 'path';
@@ -14,7 +13,7 @@ export function make(adapters: Adapters) {
 type Adapters = {
   workspace: VscodeWorkspaceLike,
   globSearch: GlobSearchCallable,
-  progressReporter: ProgressReporter.ProgressLike,
+  progressReporter: ProgressLike,
   errorChannel: OutputChannelLike
 };
 
@@ -79,6 +78,6 @@ class CoverageInfoFileResolver {
 
   private readonly globSearch: GlobSearchCallable;
   private readonly workspace: VscodeWorkspaceLike;
-  private readonly progressReporter: ProgressReporter.ProgressLike;
+  private readonly progressReporter: ProgressLike;
   private readonly errorChannel: OutputChannelLike;
 };

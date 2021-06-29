@@ -1,8 +1,10 @@
+import { ProgressLike } from '../../adapters/interfaces/vscode';
+
+// TODO: move in domain folder
 import * as Cmake from '../interfaces/cmake-contract';
-import * as ProgressReporter from '../services/internal/progress-reporter';
 
 export abstract class BasicCmake implements Cmake.CmakeContract {
-  constructor(progressReporter: ProgressReporter.ProgressLike) {
+  constructor(progressReporter: ProgressLike) {
     this.progressReporter = progressReporter;
   }
 
@@ -31,5 +33,5 @@ export abstract class BasicCmake implements Cmake.CmakeContract {
   protected abstract generateProject(): Thenable<void>;
   protected abstract build(): Thenable<void>;
 
-  private readonly progressReporter: ProgressReporter.ProgressLike;
+  private readonly progressReporter: ProgressLike;
 }
