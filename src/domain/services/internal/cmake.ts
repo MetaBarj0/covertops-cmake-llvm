@@ -2,8 +2,9 @@ import * as definitions from '../../../definitions';
 import { BasicCmake } from '../../value-objects/basic-cmake';
 // TODO: import module syntax???
 import { SettingsContract } from '../../interfaces/settings-contract';
-import { OutputChannelLike, ProgressLike, VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode';
+import { OutputChannelLike, ProgressLike } from '../../../adapters/interfaces/vscode';
 import { ExecFileCallable } from '../../../adapters/interfaces/process-control';
+import * as Abstractions from '../../interfaces/cmake';
 
 type Adapters = {
   settings: SettingsContract,
@@ -21,7 +22,7 @@ export function make(adapters: Adapters) {
   return new Cmake(adapters);
 }
 
-class Cmake extends BasicCmake {
+class Cmake extends BasicCmake implements Abstractions.Cmake {
   constructor(adapters: Adapters) {
     super(adapters.vscode.progressReporter);
 

@@ -1,9 +1,9 @@
 import { ProgressLike } from '../../adapters/interfaces/vscode';
 
 // TODO: move in domain folder
-import * as Cmake from '../interfaces/cmake-contract';
+import * as Abstractions from '../interfaces/cmake';
 
-export abstract class BasicCmake implements Cmake.CmakeContract {
+export abstract class BasicCmake implements Abstractions.Cmake {
   constructor(progressReporter: ProgressLike) {
     this.progressReporter = progressReporter;
   }

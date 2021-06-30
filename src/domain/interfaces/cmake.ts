@@ -1,3 +1,3 @@
-export type CmakeContract = {
+export type Cmake = {
   buildTarget(): Thenable<void>;
 };
