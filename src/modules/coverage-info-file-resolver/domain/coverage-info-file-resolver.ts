@@ -1,5 +1,5 @@
 import * as Definitions from '../../../definitions';
-import { SettingsContract } from '../../../domain/interfaces/settings-contract';
+import { SettingsContract } from '../../settings-provider/abstractions/domain/settings-contract';
 // TODO: use module import syntax???
 import { OutputChannelLike, ProgressLike } from '../../../adapters/interfaces/vscode';
 import { GlobSearchCallable } from '../../../adapters/interfaces/file-system';

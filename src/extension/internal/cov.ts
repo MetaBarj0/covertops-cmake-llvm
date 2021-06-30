@@ -1,6 +1,6 @@
 import { extensionId, extensionDisplayName } from '../../definitions';
-import * as DecorationLocationProvider from '../../../src/domain/services/decoration-locations-provider';
-import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
+import * as DecorationLocationProvider from '../../domain/decoration-locations-provider';
+import * as SettingsProvider from '../../modules/settings-provider/domain/settings-provider';
 
 import { commands, Disposable, OutputChannel, ProgressLocation, window } from 'vscode';
 import * as pc from '../../adapters/process-control';

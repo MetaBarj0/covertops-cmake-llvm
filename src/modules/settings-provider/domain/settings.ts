@@ -1,4 +1,4 @@
-import { SettingsContract } from "../interfaces/settings-contract";
+import { SettingsContract } from "../abstractions/domain/settings-contract";
 
 export class Settings implements SettingsContract {
   constructor(cmakeCommand: string,

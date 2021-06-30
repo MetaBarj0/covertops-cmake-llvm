@@ -1,6 +1,6 @@
 import * as definitions from '../../../definitions';
-import { SettingsContract } from '../../interfaces/settings-contract';
-import { Settings } from '../../value-objects/settings';
+import { SettingsContract } from '../abstractions/domain/settings-contract';
+import { Settings } from './settings';
 import { OutputChannelLike, VscodeWorkspaceFolderLike, VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode';
 
 export function make(adapters: Adapters) {

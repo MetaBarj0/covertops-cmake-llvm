@@ -7,7 +7,7 @@ chai.should();
 
 import { defaultSetting } from '../../utils/settings';
 
-import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
+import * as SettingsProvider from '../../../src/modules/settings-provider/domain/settings-provider';
 import * as BuildTreeDirectoryResolver from '../../../src/modules/build-tree-directory-resolver/domain/build-tree-directory-resolver';
 import * as Cmake from '../../../src/modules/cmake/domain/cmake';
 import * as definitions from '../../../src/definitions';

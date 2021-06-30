@@ -8,8 +8,8 @@ chai.should();
 import { RegionCoverageInfo } from '../../../src/modules/coverage-info-collector/abstractions/domain/region-coverage-info';
 import * as definitions from '../../../src/definitions';
 
-import * as DecorationLocationsProvider from '../../../src/domain/services/decoration-locations-provider';
-import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
+import * as DecorationLocationsProvider from '../../../src/domain/decoration-locations-provider';
+import * as SettingsProvider from '../../../src/modules/settings-provider/domain/settings-provider';
 
 import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';
 import { errorChannel as e } from '../../fakes/adapters/error-channel';

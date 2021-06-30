@@ -2,7 +2,7 @@ import * as CoverageInfoFileResolver from '../../coverage-info-file-resolver/dom
 import * as Abstractions from '../abstractions/domain/coverage-info-collector';
 import { OutputChannelLike, ProgressLike } from '../../../adapters/interfaces/vscode';
 import { CreateReadStreamCallable, GlobSearchCallable } from '../../../adapters/interfaces/file-system';
-import { SettingsContract } from '../../../domain/interfaces/settings-contract';
+import { SettingsContract } from '../../settings-provider/abstractions/domain/settings-contract';
 
 import { Readable } from 'stream';
 import * as CoverageInfo from './coverage-info';

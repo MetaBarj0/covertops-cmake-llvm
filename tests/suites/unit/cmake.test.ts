@@ -7,7 +7,7 @@ chai.should();
 
 import * as definitions from '../../../src/definitions';
 import * as Cmake from '../../../src/modules/cmake/domain/cmake';
-import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
+import * as SettingsProvider from '../../../src/modules/settings-provider/domain/settings-provider';
 
 import { process as p } from '../../fakes/adapters/process';
 import * as vscode from '../../fakes/adapters/vscode';

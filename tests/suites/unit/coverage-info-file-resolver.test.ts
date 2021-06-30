@@ -7,7 +7,7 @@ chai.should();
 
 import * as Definitions from '../../../src/definitions';
 import * as CoverageInfoFileResolver from '../../../src/modules/coverage-info-file-resolver/domain/coverage-info-file-resolver';
-import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
+import * as SettingsProvider from '../../../src/modules/settings-provider/domain/settings-provider';
 
 import * as vscode from '../../fakes/adapters/vscode';
 import { globbing as g } from '../../fakes/adapters/globbing';

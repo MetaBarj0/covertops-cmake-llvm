@@ -1,6 +1,6 @@
 import * as definitions from '../../../definitions';
 import { MkdirCallable, StatCallable } from '../../../adapters/interfaces/file-system';
-import { SettingsContract } from '../../../domain/interfaces/settings-contract';
+import { SettingsContract } from '../../settings-provider/abstractions/domain/settings-contract';
 import { OutputChannelLike, ProgressLike } from '../../../adapters/interfaces/vscode';
 
 import * as Abstractions from '../abstractions/domain/build-tree-directory-resolver';

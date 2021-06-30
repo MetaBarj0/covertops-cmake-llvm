@@ -7,7 +7,7 @@ chai.should();
 
 import { defaultSetting } from '../../utils/settings';
 
-import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
+import * as SettingsProvider from '../../../src/modules/settings-provider/domain/settings-provider';
 
 import * as vscode from '../../fakes/adapters/vscode';
 import { errorChannel as e } from '../../fakes/adapters/error-channel';

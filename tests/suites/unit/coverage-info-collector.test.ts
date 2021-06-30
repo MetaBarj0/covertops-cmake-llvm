@@ -7,7 +7,7 @@ chai.should();
 
 import * as CoverageInfoCollector from '../../../src/modules/coverage-info-collector/domain/coverage-info-collector';
 import * as Definitions from '../../../src/definitions';
-import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
+import * as SettingsProvider from '../../../src/modules/settings-provider/domain/settings-provider';
 import { RegionCoverageInfo } from '../../../src/modules/coverage-info-collector/abstractions/domain/region-coverage-info';
 
 import * as vscode from '../../fakes/adapters/vscode';

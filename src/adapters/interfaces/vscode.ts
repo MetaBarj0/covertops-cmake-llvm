@@ -1,4 +1,4 @@
-import { SettingsContract } from "../../domain/interfaces/settings-contract";
+import { SettingsContract } from "../../modules/settings-provider/abstractions/domain/settings-contract";
 
 export type VscodeWorkspaceLike = {
   readonly workspaceFolders: ReadonlyArray<VscodeWorkspaceFolderLike> | undefined;

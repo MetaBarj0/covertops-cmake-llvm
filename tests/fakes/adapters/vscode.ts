@@ -1,6 +1,6 @@
 import { defaultSetting } from '../../utils/settings';
 
-import { SettingsContract } from '../../../src/domain/interfaces/settings-contract';
+import { SettingsContract } from '../../../src/modules/settings-provider/abstractions/domain/settings-contract';
 import {
   VscodeUriLike,
   VscodeWorkspaceConfigurationLike,
