@@ -1,7 +1,7 @@
-import { ProgressLike } from '../../adapters/interfaces/vscode';
+import { ProgressLike } from '../../../adapters/interfaces/vscode';
 
 // TODO: move in domain folder
-import * as Abstractions from '../interfaces/cmake';
+import * as Abstractions from '../abstractions/domain/cmake';
 
 export abstract class BasicCmake implements Abstractions.Cmake {
   constructor(progressReporter: ProgressLike) {

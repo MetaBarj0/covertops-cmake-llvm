@@ -9,7 +9,7 @@ import { defaultSetting } from '../../utils/settings';
 
 import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
 import * as BuildTreeDirectoryResolver from '../../../src/domain/services/internal/build-tree-directory-resolver';
-import * as Cmake from '../../../src/domain/services/internal/cmake';
+import * as Cmake from '../../../src/modules/cmake/domain/cmake';
 import * as definitions from '../../../src/definitions';
 
 import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';

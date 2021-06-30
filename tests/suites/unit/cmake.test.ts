@@ -6,7 +6,7 @@ chai.use(chaiAsPromised);
 chai.should();
 
 import * as definitions from '../../../src/definitions';
-import * as Cmake from '../../../src/domain/services/internal/cmake';
+import * as Cmake from '../../../src/modules/cmake/domain/cmake';
 import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
 
 import { process as p } from '../../fakes/adapters/process';

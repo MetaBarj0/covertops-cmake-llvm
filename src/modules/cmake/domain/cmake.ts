@@ -1,10 +1,10 @@
 import * as definitions from '../../../definitions';
-import { BasicCmake } from '../../value-objects/basic-cmake';
+import { BasicCmake } from './basic-cmake';
 // TODO: import module syntax???
-import { SettingsContract } from '../../interfaces/settings-contract';
+import { SettingsContract } from '../../../domain/interfaces/settings-contract';
 import { OutputChannelLike, ProgressLike } from '../../../adapters/interfaces/vscode';
 import { ExecFileCallable } from '../../../adapters/interfaces/process-control';
-import * as Abstractions from '../../interfaces/cmake';
+import * as Abstractions from '../abstractions/domain/cmake';
 
 type Adapters = {
   settings: SettingsContract,
