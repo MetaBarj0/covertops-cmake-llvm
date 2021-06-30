@@ -1,6 +1,14 @@
 import * as Abstractions from '../abstractions/domain/settings';
 
-export class Settings implements Abstractions.Settings {
+export function make(cmakeCommand: string,
+  buildTreeDirectory: string,
+  cmakeTarget: string,
+  coverageInfoFileName: string,
+  additionalCmakeOptions: ReadonlyArray<string>,
+  rootDirectory: string): Abstractions.Settings {
+  return new Settings(cmakeCommand, buildTreeDirectory, cmakeTarget, coverageInfoFileName, additionalCmakeOptions, rootDirectory);
+}
+class Settings implements Abstractions.Settings {
   constructor(cmakeCommand: string,
     buildTreeDirectory: string,
     cmakeTarget: string,

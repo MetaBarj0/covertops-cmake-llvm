@@ -1,6 +1,4 @@
-import * as Definitions from '../../../extension/definitions';
-import * as Abstractions from '../abstractions/domain/settings';
-import { Settings } from './settings';
+import * as Imports from '../imports';
 import { OutputChannelLike, VscodeWorkspaceFolderLike, VscodeWorkspaceLike } from '../../../shared-kernel/abstractions/vscode';
 
 export function make(adapters: Adapters) {
@@ -19,14 +17,14 @@ class SettingsProvider {
     this.errorChannel = adapters.errorChannel;
   }
 
-  get settings(): Abstractions.Settings {
+  get settings(): Imports.Abstractions.Settings {
     this.ensureWorkspaceIsLoaded();
 
-    const workspaceSettings = this.workspace.getConfiguration(Definitions.extensionId);
+    const workspaceSettings = this.workspace.getConfiguration(Imports.Extension.definitions.extensionId);
     const workspaceFolders = this.workspace.workspaceFolders as Array<VscodeWorkspaceFolderLike>;
     const rootDirectory = workspaceFolders[0].uri.fsPath;
 
-    return new Settings(
+    return Imports.Implementations.Settings.make(
       workspaceSettings.get('cmakeCommand') as string,
       workspaceSettings.get('buildTreeDirectory') as string,
       workspaceSettings.get('cmakeTarget') as string,
