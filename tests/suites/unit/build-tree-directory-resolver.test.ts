@@ -6,7 +6,7 @@ chai.use(chaiAsPromised);
 chai.should();
 
 import * as definitions from '../../../src/definitions';
-import * as BuildTreeDirectoryResolver from '../../../src/domain/services/internal/build-tree-directory-resolver';
+import * as BuildTreeDirectoryResolver from '../../../src/modules/build-tree-directory-resolver/domain/build-tree-directory-resolver';
 import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
 
 import { mkDir as md } from '../../fakes/adapters/mk-dir';
@@ -46,7 +46,7 @@ function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryIsAnAbsoluteP
       errorChannel
     });
 
-    return resolver.resolveAbsolutePath()
+    return resolver.resolve()
       .catch((error: Error) => {
         error.message.should.contain(
           `Incorrect absolute path specified in '${definitions.extensionNameInSettings}: Build Tree Directory'. It must be a relative path.`);
@@ -74,7 +74,7 @@ function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryDoesNotExistA
       errorChannel
     });
 
-    return resolver.resolveAbsolutePath()
+    return resolver.resolve()
       .catch((error: Error) => {
         error.message.should.contain(
           'Cannot find or create the build tree directory. Ensure the ' +
@@ -103,7 +103,7 @@ function buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryExists() {
       errorChannel
     });
 
-    await resolver.resolveAbsolutePath();
+    await resolver.resolve();
 
     progressReporterSpy.countFor('report').should.be.equal(1);
   });
@@ -128,7 +128,7 @@ function buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryDoesNotExi
         errorChannel
       });
 
-      await resolver.resolveAbsolutePath();
+      await resolver.resolve();
 
       progressReporterSpy.countFor('report').should.be.equal(1);
     });

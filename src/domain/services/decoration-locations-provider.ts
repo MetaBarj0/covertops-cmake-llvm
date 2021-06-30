@@ -1,4 +1,4 @@
-import * as BuildTreeDirectoryResolver from './internal/build-tree-directory-resolver';
+import * as BuildTreeDirectoryResolver from '../../modules/build-tree-directory-resolver/domain/build-tree-directory-resolver';
 import * as Cmake from '../../modules/cmake/domain/cmake';
 import * as CoverageInfoCollector from '../../modules/coverage-info-collector/domain/coverage-info-collector';
 // TODO: module import syntax???
@@ -63,7 +63,7 @@ class DecorationLocationsProvider implements DecorationLocationsProviderContract
       errorChannel: this.errorChannel
     });
 
-    await buildTreeDirectoryResolver.resolveAbsolutePath();
+    await buildTreeDirectoryResolver.resolve();
 
     const cmake = Cmake.make({
       settings: this.settings,

@@ -1,11 +1,13 @@
 import * as definitions from '../../../definitions';
 import { MkdirCallable, StatCallable } from '../../../adapters/interfaces/file-system';
-import { SettingsContract } from '../../interfaces/settings-contract';
-import { OutputChannelLike, ProgressLike, VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode';
+import { SettingsContract } from '../../../domain/interfaces/settings-contract';
+import { OutputChannelLike, ProgressLike } from '../../../adapters/interfaces/vscode';
+
+import * as Abstractions from '../abstractions/domain/build-tree-directory-resolver';
 
 import * as path from 'path';
 
-export function make(adapters: Adapters) {
+export function make(adapters: Adapters): Abstractions.BuildTreeDirectoryResolver {
   return new BuildTreeDirectoryResolver(adapters);
 }
 
@@ -17,7 +19,7 @@ type Adapters = {
   errorChannel: OutputChannelLike
 };
 
-class BuildTreeDirectoryResolver {
+class BuildTreeDirectoryResolver implements Abstractions.BuildTreeDirectoryResolver {
   constructor(adapters: Adapters) {
     this.settings = adapters.settings;
     this.stat = adapters.stat;
@@ -26,7 +28,7 @@ class BuildTreeDirectoryResolver {
     this.errorChannel = adapters.errorChannel;
   }
 
-  async resolveAbsolutePath() {
+  async resolve() {
     const buildTreeDirectory = this.settings.buildTreeDirectory;
 
     this.ensurePathIsNotAbsolute(buildTreeDirectory);

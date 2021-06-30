@@ -8,7 +8,7 @@ chai.should();
 import { defaultSetting } from '../../utils/settings';
 
 import * as SettingsProvider from '../../../src/domain/services/internal/settings-provider';
-import * as BuildTreeDirectoryResolver from '../../../src/domain/services/internal/build-tree-directory-resolver';
+import * as BuildTreeDirectoryResolver from '../../../src/modules/build-tree-directory-resolver/domain/build-tree-directory-resolver';
 import * as Cmake from '../../../src/modules/cmake/domain/cmake';
 import * as definitions from '../../../src/definitions';
 
@@ -58,7 +58,7 @@ function buildTreeDirectoryResolverShouldFail() {
     await extensionConfiguration.update('buildTreeDirectory', '*<>buildz<>*\0'));
 
   it('should not be possible to find or create the build tree directory', () => {
-    return makeBuildTreeDirectoryResolver().resolveAbsolutePath().should.eventually.be.rejectedWith(
+    return makeBuildTreeDirectoryResolver().resolve().should.eventually.be.rejectedWith(
       'Cannot find or create the build tree directory. Ensure the ' +
       `'${definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`);
   });
@@ -115,7 +115,7 @@ function cmakeTargetBuildingShouldFail() {
 
 function buildTreeDirectoryResolverShouldSucceed() {
   it('should find the build tree directory', () => {
-    return makeBuildTreeDirectoryResolver().resolveAbsolutePath().should.eventually.be.fulfilled;
+    return makeBuildTreeDirectoryResolver().resolve().should.eventually.be.fulfilled;
   });
 }
 
