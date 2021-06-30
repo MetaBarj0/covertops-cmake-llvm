@@ -1,4 +1,4 @@
-export type SettingsContract = {
+export type Settings = {
   readonly cmakeCommand: string;
   readonly buildTreeDirectory: string;
   readonly cmakeTarget: string;

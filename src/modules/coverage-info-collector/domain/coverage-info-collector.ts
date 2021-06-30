@@ -3,7 +3,7 @@ import { OutputChannelLike, ProgressLike } from '../../../shared-kernel/abstract
 
 import * as CoverageInfoFileResolver from '../../coverage-info-file-resolver/domain/coverage-info-file-resolver';
 import * as Abstractions from '../abstractions/domain/coverage-info-collector';
-import { SettingsContract } from '../../settings-provider/abstractions/domain/settings-contract';
+import { Settings } from '../../settings-provider/abstractions/domain/settings';
 
 import { Readable } from 'stream';
 import * as CoverageInfo from './coverage-info';
@@ -44,7 +44,7 @@ class CoverageInfoCollector implements Abstractions.CoverageInfoCollector {
     return CoverageInfo.make(() => this.createReadStream(path), sourceFilePath, this.errorChannel);
   }
 
-  private readonly settings: SettingsContract;
+  private readonly settings: Settings;
   private readonly globSearch: GlobSearchCallable;
   private readonly createReadStream: CreateReadStreamCallable;
   private readonly progressReporter: ProgressLike;
@@ -52,7 +52,7 @@ class CoverageInfoCollector implements Abstractions.CoverageInfoCollector {
 };
 
 type Adapters = {
-  settings: SettingsContract,
+  settings: Settings,
   globSearch: GlobSearchCallable,
   createReadStream: CreateReadStreamCallable,
   progressReporter: ProgressLike,

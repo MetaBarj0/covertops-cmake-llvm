@@ -6,7 +6,7 @@ import * as Abstractions from '../abstractions/domain/decoration-locations-provi
 import { CreateReadStreamCallable, GlobSearchCallable, MkdirCallable, StatCallable } from '../../../shared-kernel/abstractions/file-system';
 import { OutputChannelLike, ProgressLike, VscodeWorkspaceLike } from '../../../shared-kernel/abstractions/vscode';
 import { ExecFileCallable } from '../../../shared-kernel/abstractions/process-control';
-import { SettingsContract } from '../../settings-provider/abstractions/domain/settings-contract';
+import { Settings } from '../../settings-provider/abstractions/domain/settings';
 
 export function make(context: Context): Abstractions.DecorationLocationsProvider {
   return new DecorationLocationsProvider({
@@ -23,7 +23,7 @@ export function make(context: Context): Abstractions.DecorationLocationsProvider
 }
 
 type Context = {
-  settings: SettingsContract,
+  settings: Settings,
   vscode: {
     progressReporter: ProgressLike,
     errorChannel: OutputChannelLike,
@@ -90,7 +90,7 @@ class DecorationLocationsProvider implements Abstractions.DecorationLocationsPro
     return collector.collectFor(sourceFilePath);
   }
 
-  private readonly settings: SettingsContract;
+  private readonly settings: Settings;
   private readonly stat: StatCallable;
   private readonly execFileForCmakeCommand: ExecFileCallable;
   private readonly execFileForCmakeTarget: ExecFileCallable;
@@ -102,7 +102,7 @@ class DecorationLocationsProvider implements Abstractions.DecorationLocationsPro
 }
 
 type ContextToBeRefacto = {
-  settings: SettingsContract,
+  settings: Settings,
   progressReporter: ProgressLike,
   errorChannel: OutputChannelLike
   stat: StatCallable,

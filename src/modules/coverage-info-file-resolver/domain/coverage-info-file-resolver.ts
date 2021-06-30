@@ -1,5 +1,5 @@
 import * as Definitions from '../../../extension/definitions';
-import { SettingsContract } from '../../settings-provider/abstractions/domain/settings-contract';
+import { Settings } from '../../settings-provider/abstractions/domain/settings';
 // TODO: use module import syntax???
 import { OutputChannelLike, ProgressLike } from '../../../shared-kernel/abstractions/vscode';
 import { GlobSearchCallable } from '../../../shared-kernel/abstractions/file-system';
@@ -13,7 +13,7 @@ export function make(context: Context): Abstractions.CoverageInfoFileResolver {
 }
 
 type Context = {
-  settings: SettingsContract,
+  settings: Settings,
   globSearch: GlobSearchCallable,
   progressReporter: ProgressLike,
   errorChannel: OutputChannelLike
@@ -78,7 +78,7 @@ class CoverageInfoFileResolver implements Abstractions.CoverageInfoFileResolver 
   }
 
   private readonly globSearch: GlobSearchCallable;
-  private readonly settings: SettingsContract;
+  private readonly settings: Settings;
   private readonly progressReporter: ProgressLike;
   private readonly errorChannel: OutputChannelLike;
 };

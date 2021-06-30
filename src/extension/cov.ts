@@ -1,7 +1,9 @@
+// TODO: Global - find a way to simplify imports
 import { extensionId, extensionDisplayName } from './definitions';
 import * as DecorationLocationProvider from '../modules/decoration-locations-provider/domain/decoration-locations-provider';
 import * as SettingsProvider from '../modules/settings-provider/domain/settings-provider';
 
+// TODO: only use adapters, not vscode directly
 import { commands, Disposable, OutputChannel, ProgressLocation, window } from 'vscode';
 import * as pc from '../adapters/process-control';
 import * as fs from '../adapters/file-system';

@@ -1,6 +1,6 @@
-import { SettingsContract } from "../abstractions/domain/settings-contract";
+import * as Abstractions from '../abstractions/domain/settings';
 
-export class Settings implements SettingsContract {
+export class Settings implements Abstractions.Settings {
   constructor(cmakeCommand: string,
     buildTreeDirectory: string,
     cmakeTarget: string,

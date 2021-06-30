@@ -1,4 +1,4 @@
-import { SettingsContract } from "../../modules/settings-provider/abstractions/domain/settings-contract";
+import { Settings } from "../../modules/settings-provider/abstractions/domain/settings";
 
 export type VscodeWorkspaceLike = {
   readonly workspaceFolders: ReadonlyArray<VscodeWorkspaceFolderLike> | undefined;
@@ -10,7 +10,7 @@ export type VscodeWorkspaceFolderLike = {
 };
 
 export type VscodeWorkspaceConfigurationLike = {
-  get(section: keyof SettingsContract): SettingsContract[typeof section];
+  get(section: keyof Settings): Settings[typeof section];
   update(section: string, value: any): Thenable<void>;
 };
 

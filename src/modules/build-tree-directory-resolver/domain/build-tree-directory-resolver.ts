@@ -2,7 +2,7 @@ import { MkdirCallable, StatCallable } from '../../../shared-kernel/abstractions
 import { OutputChannelLike, ProgressLike } from '../../../shared-kernel/abstractions/vscode';
 
 import * as Definitions from '../../../extension/definitions';
-import { SettingsContract } from '../../settings-provider/abstractions/domain/settings-contract';
+import { Settings } from '../../settings-provider/abstractions/domain/settings';
 import * as Abstractions from '../abstractions/domain/build-tree-directory-resolver';
 
 import * as path from 'path';
@@ -12,7 +12,7 @@ export function make(adapters: Adapters): Abstractions.BuildTreeDirectoryResolve
 }
 
 type Adapters = {
-  settings: SettingsContract,
+  settings: Settings,
   stat: StatCallable,
   mkDir: MkdirCallable,
   progressReporter: ProgressLike,
@@ -68,7 +68,7 @@ class BuildTreeDirectoryResolver implements Abstractions.BuildTreeDirectoryResol
   }
 
   private readonly stat: StatCallable;
-  private readonly settings: SettingsContract;
+  private readonly settings: Settings;
   private readonly mkdir: MkdirCallable;
   private readonly progressReporter: ProgressLike;
   private readonly errorChannel: OutputChannelLike;

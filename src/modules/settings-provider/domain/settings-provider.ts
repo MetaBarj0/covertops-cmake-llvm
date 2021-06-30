@@ -1,5 +1,5 @@
-import * as definitions from '../../../extension/definitions';
-import { SettingsContract } from '../abstractions/domain/settings-contract';
+import * as Definitions from '../../../extension/definitions';
+import * as Abstractions from '../abstractions/domain/settings';
 import { Settings } from './settings';
 import { OutputChannelLike, VscodeWorkspaceFolderLike, VscodeWorkspaceLike } from '../../../shared-kernel/abstractions/vscode';
 
@@ -12,16 +12,17 @@ type Adapters = {
   errorChannel: OutputChannelLike
 };
 
+// TODO: make an abstraction on that provider?
 class SettingsProvider {
   constructor(adapters: Adapters) {
     this.workspace = adapters.workspace;
     this.errorChannel = adapters.errorChannel;
   }
 
-  get settings(): SettingsContract {
+  get settings(): Abstractions.Settings {
     this.ensureWorkspaceIsLoaded();
 
-    const workspaceSettings = this.workspace.getConfiguration(definitions.extensionId);
+    const workspaceSettings = this.workspace.getConfiguration(Definitions.extensionId);
     const workspaceFolders = this.workspace.workspaceFolders as Array<VscodeWorkspaceFolderLike>;
     const rootDirectory = workspaceFolders[0].uri.fsPath;
 

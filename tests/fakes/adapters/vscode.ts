@@ -1,6 +1,6 @@
 import { defaultSetting } from '../../utils/settings';
 
-import { SettingsContract } from '../../../src/modules/settings-provider/abstractions/domain/settings-contract';
+import { Settings } from '../../../src/modules/settings-provider/abstractions/domain/settings';
 import {
   VscodeUriLike,
   VscodeWorkspaceConfigurationLike,
@@ -8,7 +8,7 @@ import {
 } from '../../../src/shared-kernel/abstractions/vscode';
 
 type Overrides = {
-  -readonly [Property in keyof SettingsContract]?: SettingsContract[Property]
+  -readonly [Property in keyof Settings]?: Settings[Property]
 };
 
 export function buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(overrides: Overrides = {}): VscodeWorkspaceLike {
@@ -30,9 +30,9 @@ export function buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettin
           this.overrides = overrides;
         }
 
-        get(section: keyof SettingsContract) {
+        get(section: keyof Settings) {
           if (this.overrides[section])
-            return <SettingsContract[typeof section]>this.overrides[section];
+            return <Settings[typeof section]>this.overrides[section];
 
           return defaultSetting(section);
         }
@@ -53,7 +53,7 @@ export function buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(): Vs
 
     getConfiguration(_section?: string) {
       return new class implements VscodeWorkspaceConfigurationLike {
-        get(section: keyof SettingsContract) {
+        get(section: keyof Settings) {
           return defaultSetting(section);
         }
 

@@ -4,11 +4,11 @@ import { OutputChannelLike, ProgressLike } from '../../../shared-kernel/abstract
 import * as definitions from '../../../extension/definitions';
 import { BasicCmake } from './basic-cmake';
 // TODO: import module syntax???
-import { SettingsContract } from '../../settings-provider/abstractions/domain/settings-contract';
+import { Settings } from '../../settings-provider/abstractions/domain/settings';
 import * as Abstractions from '../abstractions/domain/cmake';
 
 type Adapters = {
-  settings: SettingsContract,
+  settings: Settings,
   vscode: {
     progressReporter: ProgressLike,
     errorChannel: OutputChannelLike,
@@ -96,5 +96,5 @@ class Cmake extends BasicCmake implements Abstractions.Cmake {
   private readonly execFileForCommand: ExecFileCallable;
   private readonly execFileForTarget: ExecFileCallable;
   private readonly errorChannel: OutputChannelLike;
-  private readonly settings: SettingsContract;
+  private readonly settings: Settings;
 };
