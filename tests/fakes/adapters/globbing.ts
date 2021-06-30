@@ -1,4 +1,4 @@
-import { GlobSearchCallable } from '../../../src/adapters/interfaces/file-system';
+import { GlobSearchCallable } from '../../../src/shared-kernel/abstractions/file-system';
 
 export namespace globbing {
   export function buildFakeGlobSearchForNoMatch(): GlobSearchCallable {

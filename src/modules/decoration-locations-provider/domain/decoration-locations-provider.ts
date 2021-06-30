@@ -3,9 +3,9 @@ import * as Cmake from '../../cmake/domain/cmake';
 import * as CoverageInfoCollector from '../../coverage-info-collector/domain/coverage-info-collector';
 // TODO: module import syntax???
 import * as Abstractions from '../abstractions/domain/decoration-locations-provider';
-import { CreateReadStreamCallable, GlobSearchCallable, MkdirCallable, StatCallable } from '../../../adapters/interfaces/file-system';
-import { OutputChannelLike, ProgressLike, VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode';
-import { ExecFileCallable } from '../../../adapters/interfaces/process-control';
+import { CreateReadStreamCallable, GlobSearchCallable, MkdirCallable, StatCallable } from '../../../shared-kernel/abstractions/file-system';
+import { OutputChannelLike, ProgressLike, VscodeWorkspaceLike } from '../../../shared-kernel/abstractions/vscode';
+import { ExecFileCallable } from '../../../shared-kernel/abstractions/process-control';
 import { SettingsContract } from '../../settings-provider/abstractions/domain/settings-contract';
 
 export function make(context: Context): Abstractions.DecorationLocationsProvider {

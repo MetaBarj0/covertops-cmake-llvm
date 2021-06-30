@@ -12,7 +12,7 @@ import { RegionCoverageInfo } from '../../../src/modules/coverage-info-collector
 
 import { mkDir } from '../../fakes/adapters/mk-dir';
 import * as vscode from '../../fakes/adapters/vscode';
-import { process as p } from '../../fakes/adapters/process';
+import { process as p } from '../../fakes/adapters/process-control';
 import { inputStream as i } from '../../fakes/adapters/input-stream';
 import { statFile as sf } from '../../fakes/adapters/stat-file';
 import { globbing as g } from '../../fakes/adapters/globbing';

@@ -1,4 +1,4 @@
-import { ExecFileCallable } from './interfaces/process-control';
+import { ExecFileCallable } from '../shared-kernel/abstractions/process-control';
 
 import * as cp from 'child_process';
 

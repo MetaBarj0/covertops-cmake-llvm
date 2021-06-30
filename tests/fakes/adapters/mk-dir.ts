@@ -1,4 +1,4 @@
-import { MkdirCallable } from '../../../src/adapters/interfaces/file-system';
+import { MkdirCallable } from '../../../src/shared-kernel/abstractions/file-system';
 
 import { MakeDirectoryOptions, PathLike } from 'fs';
 

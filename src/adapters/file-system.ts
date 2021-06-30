@@ -1,6 +1,6 @@
 import { promises as fs, createReadStream as crs } from 'fs';
 import * as globby from 'globby';
-import { CreateReadStreamCallable, GlobSearchCallable, MkdirCallable, StatCallable } from './interfaces/file-system';
+import { CreateReadStreamCallable, GlobSearchCallable, MkdirCallable, StatCallable } from '../shared-kernel/abstractions/file-system';
 
 export const stat: StatCallable = fs.stat;
 export const globSearch: GlobSearchCallable = globby;

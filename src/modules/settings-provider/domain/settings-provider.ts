@@ -1,7 +1,7 @@
 import * as definitions from '../../../extension/definitions';
 import { SettingsContract } from '../abstractions/domain/settings-contract';
 import { Settings } from './settings';
-import { OutputChannelLike, VscodeWorkspaceFolderLike, VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode';
+import { OutputChannelLike, VscodeWorkspaceFolderLike, VscodeWorkspaceLike } from '../../../shared-kernel/abstractions/vscode';
 
 export function make(adapters: Adapters) {
   return new SettingsProvider(adapters);

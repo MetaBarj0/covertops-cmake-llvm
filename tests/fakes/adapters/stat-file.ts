@@ -1,4 +1,4 @@
-import { StatCallable } from '../../../src/adapters/interfaces/file-system';
+import { StatCallable } from '../../../src/shared-kernel/abstractions/file-system';
 
 import { PathLike, StatOptions, Stats } from 'fs';
 

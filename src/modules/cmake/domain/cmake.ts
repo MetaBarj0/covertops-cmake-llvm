@@ -1,9 +1,10 @@
+import { ExecFileCallable } from '../../../shared-kernel/abstractions/process-control';
+import { OutputChannelLike, ProgressLike } from '../../../shared-kernel/abstractions/vscode';
+
 import * as definitions from '../../../extension/definitions';
 import { BasicCmake } from './basic-cmake';
 // TODO: import module syntax???
 import { SettingsContract } from '../../settings-provider/abstractions/domain/settings-contract';
-import { OutputChannelLike, ProgressLike } from '../../../adapters/interfaces/vscode';
-import { ExecFileCallable } from '../../../adapters/interfaces/process-control';
 import * as Abstractions from '../abstractions/domain/cmake';
 
 type Adapters = {

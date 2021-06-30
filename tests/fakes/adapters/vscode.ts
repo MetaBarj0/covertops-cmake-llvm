@@ -5,7 +5,7 @@ import {
   VscodeUriLike,
   VscodeWorkspaceConfigurationLike,
   VscodeWorkspaceFolderLike, VscodeWorkspaceLike
-} from '../../../src/adapters/interfaces/vscode';
+} from '../../../src/shared-kernel/abstractions/vscode';
 
 type Overrides = {
   -readonly [Property in keyof SettingsContract]?: SettingsContract[Property]

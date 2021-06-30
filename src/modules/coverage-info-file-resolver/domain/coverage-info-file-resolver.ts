@@ -1,8 +1,8 @@
 import * as Definitions from '../../../extension/definitions';
 import { SettingsContract } from '../../settings-provider/abstractions/domain/settings-contract';
 // TODO: use module import syntax???
-import { OutputChannelLike, ProgressLike } from '../../../adapters/interfaces/vscode';
-import { GlobSearchCallable } from '../../../adapters/interfaces/file-system';
+import { OutputChannelLike, ProgressLike } from '../../../shared-kernel/abstractions/vscode';
+import { GlobSearchCallable } from '../../../shared-kernel/abstractions/file-system';
 import * as Abstractions from '../abstractions/domain/coverage-info-file-resolver';
 
 import * as path from 'path';

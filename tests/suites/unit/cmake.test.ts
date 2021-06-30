@@ -9,7 +9,7 @@ import * as definitions from '../../../src/extension/definitions';
 import * as Cmake from '../../../src/modules/cmake/domain/cmake';
 import * as SettingsProvider from '../../../src/modules/settings-provider/domain/settings-provider';
 
-import { process as p } from '../../fakes/adapters/process';
+import { process as p } from '../../fakes/adapters/process-control';
 import * as vscode from '../../fakes/adapters/vscode';
 import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';
 import { errorChannel as e } from '../../fakes/adapters/error-channel';

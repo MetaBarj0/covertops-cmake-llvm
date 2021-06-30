@@ -1,4 +1,4 @@
-import { VscodeWorkspaceLike } from './interfaces/vscode';
+import { VscodeWorkspaceLike } from '../shared-kernel/abstractions/vscode';
 
 import * as vscode from 'vscode';
 

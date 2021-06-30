@@ -1,4 +1,4 @@
-import { OutputChannelLike } from '../../../src/adapters/interfaces/vscode';
+import { OutputChannelLike } from '../../../src/shared-kernel/abstractions/vscode';
 
 import { Spy } from "../../utils/spy";
 

@@ -1,4 +1,4 @@
-import { ProgressLike } from "../../../src/adapters/interfaces/vscode";
+import { ProgressLike } from "../../../src/shared-kernel/abstractions/vscode";
 
 import { Spy } from "../../utils/spy";
 
