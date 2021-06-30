@@ -1,4 +1,4 @@
-import * as definitions from '../../../definitions';
+import * as definitions from '../../../extension/definitions';
 import { SettingsContract } from '../abstractions/domain/settings-contract';
 import { Settings } from './settings';
 import { OutputChannelLike, VscodeWorkspaceFolderLike, VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode';

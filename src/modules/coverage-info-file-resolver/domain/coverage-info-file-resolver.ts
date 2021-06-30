@@ -1,4 +1,4 @@
-import * as Definitions from '../../../definitions';
+import * as Definitions from '../../../extension/definitions';
 import { SettingsContract } from '../../settings-provider/abstractions/domain/settings-contract';
 // TODO: use module import syntax???
 import { OutputChannelLike, ProgressLike } from '../../../adapters/interfaces/vscode';

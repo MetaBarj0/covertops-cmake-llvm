@@ -5,8 +5,8 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
-import * as Cov from '../../../src/extension/factories/cov';
-import { extensionId } from '../../../src/definitions';
+import * as Cov from '../../../src/extension/cov';
+import { extensionId } from '../../../src/extension/definitions';
 
 import { Disposable, OutputChannel, commands, window, Uri, workspace } from 'vscode';
 

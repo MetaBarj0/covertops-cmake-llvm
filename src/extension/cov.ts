@@ -1,13 +1,17 @@
-import { extensionId, extensionDisplayName } from '../../definitions';
-import * as DecorationLocationProvider from '../../domain/decoration-locations-provider';
-import * as SettingsProvider from '../../modules/settings-provider/domain/settings-provider';
+import { extensionId, extensionDisplayName } from './definitions';
+import * as DecorationLocationProvider from '../domain/decoration-locations-provider';
+import * as SettingsProvider from '../modules/settings-provider/domain/settings-provider';
 
 import { commands, Disposable, OutputChannel, ProgressLocation, window } from 'vscode';
-import * as pc from '../../adapters/process-control';
-import * as fs from '../../adapters/file-system';
-import * as vscode from '../../adapters/vscode';
+import * as pc from '../adapters/process-control';
+import * as fs from '../adapters/file-system';
+import * as vscode from '../adapters/vscode';
 
-export class Cov {
+export function make() {
+  return new Cov();
+}
+
+class Cov {
   constructor() {
     this.output = window.createOutputChannel(extensionId);
     this.command = commands.registerCommand(`${extensionId}.reportUncoveredCodeRegionsInFile`, this.run, this);

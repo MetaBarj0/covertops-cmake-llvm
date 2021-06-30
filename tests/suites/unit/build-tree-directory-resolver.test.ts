@@ -5,7 +5,7 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
-import * as definitions from '../../../src/definitions';
+import * as definitions from '../../../src/extension/definitions';
 import * as BuildTreeDirectoryResolver from '../../../src/modules/build-tree-directory-resolver/domain/build-tree-directory-resolver';
 import * as SettingsProvider from '../../../src/modules/settings-provider/domain/settings-provider';
 

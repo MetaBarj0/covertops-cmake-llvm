@@ -1,4 +1,4 @@
-import * as definitions from '../../../definitions';
+import * as definitions from '../../../extension/definitions';
 import { BasicCmake } from './basic-cmake';
 // TODO: import module syntax???
 import { SettingsContract } from '../../settings-provider/abstractions/domain/settings-contract';

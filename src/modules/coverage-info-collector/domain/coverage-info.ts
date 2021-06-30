@@ -11,7 +11,7 @@ import * as Abstractions from '../abstractions/domain/coverage-info';
 
 import { OutputChannelLike } from '../../../adapters/interfaces/vscode';
 
-import * as Definitions from '../../../definitions';
+import * as Definitions from '../../../extension/definitions';
 import * as RegionCoverageInfo from './region-coverage-info';
 
 import { Readable } from 'stream';

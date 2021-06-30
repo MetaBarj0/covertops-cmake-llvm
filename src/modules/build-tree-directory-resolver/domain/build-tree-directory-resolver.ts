@@ -1,4 +1,4 @@
-import * as definitions from '../../../definitions';
+import * as definitions from '../../../extension/definitions';
 import { MkdirCallable, StatCallable } from '../../../adapters/interfaces/file-system';
 import { SettingsContract } from '../../settings-provider/abstractions/domain/settings-contract';
 import { OutputChannelLike, ProgressLike } from '../../../adapters/interfaces/vscode';

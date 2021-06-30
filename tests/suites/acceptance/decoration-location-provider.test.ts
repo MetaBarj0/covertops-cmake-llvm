@@ -5,7 +5,7 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
-import * as Definitions from '../../../src/definitions';
+import * as Definitions from '../../../src/extension/definitions';
 import * as DecorationLocationsProvider from '../../../src/domain/decoration-locations-provider';
 import * as SettingsProvider from '../../../src/modules/settings-provider/domain/settings-provider';
 import { RegionCoverageInfo } from '../../../src/modules/coverage-info-collector/abstractions/domain/region-coverage-info';

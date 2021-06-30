@@ -5,7 +5,7 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
-import * as definitions from '../../../src/definitions';
+import * as definitions from '../../../src/extension/definitions';
 import * as Cmake from '../../../src/modules/cmake/domain/cmake';
 import * as SettingsProvider from '../../../src/modules/settings-provider/domain/settings-provider';
 
