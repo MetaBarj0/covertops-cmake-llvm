@@ -1,14 +1,14 @@
-import * as BuildTreeDirectoryResolver from '../modules/build-tree-directory-resolver/domain/build-tree-directory-resolver';
-import * as Cmake from '../modules/cmake/domain/cmake';
-import * as CoverageInfoCollector from '../modules/coverage-info-collector/domain/coverage-info-collector';
+import * as BuildTreeDirectoryResolver from '../../build-tree-directory-resolver/domain/build-tree-directory-resolver';
+import * as Cmake from '../../cmake/domain/cmake';
+import * as CoverageInfoCollector from '../../coverage-info-collector/domain/coverage-info-collector';
 // TODO: module import syntax???
-import { DecorationLocationsProviderContract } from '../modules/settings-provider/abstractions/domain/decoration-locations-provider-contract';
-import { CreateReadStreamCallable, GlobSearchCallable, MkdirCallable, StatCallable } from '../adapters/interfaces/file-system';
-import { OutputChannelLike, ProgressLike, VscodeWorkspaceLike } from '../adapters/interfaces/vscode';
-import { ExecFileCallable } from '../adapters/interfaces/process-control';
-import { SettingsContract } from '../modules/settings-provider/abstractions/domain/settings-contract';
+import * as Abstractions from '../abstractions/domain/decoration-locations-provider';
+import { CreateReadStreamCallable, GlobSearchCallable, MkdirCallable, StatCallable } from '../../../adapters/interfaces/file-system';
+import { OutputChannelLike, ProgressLike, VscodeWorkspaceLike } from '../../../adapters/interfaces/vscode';
+import { ExecFileCallable } from '../../../adapters/interfaces/process-control';
+import { SettingsContract } from '../../settings-provider/abstractions/domain/settings-contract';
 
-export function make(context: Context): DecorationLocationsProviderContract {
+export function make(context: Context): Abstractions.DecorationLocationsProvider {
   return new DecorationLocationsProvider({
     settings: context.settings,
     stat: context.fileSystem.stat,
@@ -41,7 +41,7 @@ type Context = {
   }
 };
 
-class DecorationLocationsProvider implements DecorationLocationsProviderContract {
+class DecorationLocationsProvider implements Abstractions.DecorationLocationsProvider {
   constructor(context: ContextToBeRefacto) {
     this.settings = context.settings;
     this.stat = context.stat;
