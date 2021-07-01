@@ -1,8 +1,9 @@
-import { promises as fs, createReadStream as crs } from 'fs';
-import * as globby from 'globby';
-import { CreateReadStreamCallable, GlobSearchCallable, MkdirCallable, StatCallable } from '../shared-kernel/abstractions/file-system';
+import * as Abstrations from '../shared-kernel/abstractions/file-system';
 
-export const stat: StatCallable = fs.stat;
-export const globSearch: GlobSearchCallable = globby;
-export const mkdir: MkdirCallable = fs.mkdir;
-export const createReadStream: CreateReadStreamCallable = crs;
+import * as fs from 'fs';
+import * as globby from 'globby';
+
+export const stat: Abstrations.StatCallable = fs.promises.stat;
+export const globSearch: Abstrations.GlobSearchCallable = globby;
+export const mkdir: Abstrations.MkdirCallable = fs.promises.mkdir;
+export const createReadStream: Abstrations.CreateReadStreamCallable = fs.createReadStream;
