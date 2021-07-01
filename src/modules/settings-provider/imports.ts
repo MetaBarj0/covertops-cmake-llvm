@@ -1,4 +1,3 @@
-// TODO: Global, attempt to refacto all imports following this
 import * as SettingModule from './domain/settings';
 import * as DefinitionsModule from '../../extension/definitions';
 import * as VscodeModule from '../../shared-kernel/abstractions/vscode';
@@ -12,25 +11,26 @@ export namespace Extension {
   }
 }
 
-export namespace Abstractions {
-  export namespace Domain {
+export namespace Domain {
+  export namespace Abstractions {
     export type Settings = SettingsType;
     export type SettingsProvider = SettingsProviderType;
   }
+  export namespace Implementations {
+    export namespace Settings {
+      export const make = SettingModule.make;
+    }
+  }
 
-  export namespace Adapters {
+}
+
+export namespace Adapters {
+
+  export namespace Abstractions {
     export namespace vscode {
       export type VscodeWorkspaceLike = VscodeModule.VscodeWorkspaceLike;
       export type OutputChannelLike = VscodeModule.OutputChannelLike;
       export type VscodeWorkspaceFolderLike = VscodeModule.VscodeWorkspaceFolderLike;
-    }
-  }
-}
-
-export namespace Implementations {
-  export namespace Domain {
-    export namespace Settings {
-      export const make = SettingModule.make;
     }
   }
 }

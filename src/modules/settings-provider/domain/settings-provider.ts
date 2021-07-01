@@ -5,24 +5,24 @@ export function make(adapters: Adapters) {
 }
 
 type Adapters = {
-  workspace: Imports.Abstractions.Adapters.vscode.VscodeWorkspaceLike,
-  errorChannel: Imports.Abstractions.Adapters.vscode.OutputChannelLike
+  workspace: Imports.Adapters.Abstractions.vscode.VscodeWorkspaceLike,
+  errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike
 };
 
-class SettingsProvider implements Imports.Abstractions.Domain.SettingsProvider {
+class SettingsProvider implements Imports.Domain.Abstractions.SettingsProvider {
   constructor(adapters: Adapters) {
     this.workspace = adapters.workspace;
     this.errorChannel = adapters.errorChannel;
   }
 
-  get settings(): Imports.Abstractions.Domain.Settings {
+  get settings(): Imports.Domain.Abstractions.Settings {
     this.ensureWorkspaceIsLoaded();
 
     const workspaceSettings = this.workspace.getConfiguration(Imports.Extension.Definitions.extensionId);
-    const workspaceFolders = this.workspace.workspaceFolders as Array<Imports.Abstractions.Adapters.vscode.VscodeWorkspaceFolderLike>;
+    const workspaceFolders = this.workspace.workspaceFolders as Array<Imports.Adapters.Abstractions.vscode.VscodeWorkspaceFolderLike>;
     const rootDirectory = workspaceFolders[0].uri.fsPath;
 
-    return Imports.Implementations.Domain.Settings.make(
+    return Imports.Domain.Implementations.Settings.make(
       workspaceSettings.get('cmakeCommand') as string,
       workspaceSettings.get('buildTreeDirectory') as string,
       workspaceSettings.get('cmakeTarget') as string,
@@ -43,6 +43,6 @@ class SettingsProvider implements Imports.Abstractions.Domain.SettingsProvider {
     throw new Error(errorMessage);
   }
 
-  private readonly workspace: Imports.Abstractions.Adapters.vscode.VscodeWorkspaceLike;
-  private readonly errorChannel: Imports.Abstractions.Adapters.vscode.OutputChannelLike;
+  private readonly workspace: Imports.Adapters.Abstractions.vscode.VscodeWorkspaceLike;
+  private readonly errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
 }

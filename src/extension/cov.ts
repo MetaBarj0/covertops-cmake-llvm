@@ -1,14 +1,4 @@
-// TODO: Global - Imports pattern
-import { extensionId, extensionDisplayName } from './definitions';
-import * as DecorationLocationProvider from '../modules/decoration-locations-provider/domain/decoration-locations-provider';
-import * as SettingsProvider from '../modules/settings-provider/domain/settings-provider';
-import * as BuildTreeDirectoryResolver from '../modules/build-tree-directory-resolver/domain/build-tree-directory-resolver';
-import * as Cmake from '../modules/cmake/domain/cmake';
-import * as CoverageInfoCollector from '../modules/coverage-info-collector/domain/coverage-info-collector';
-
-import * as pc from '../adapters/process-control';
-import * as fs from '../adapters/file-system';
-import * as vscode from '../adapters/vscode';
+import * as Imports from './imports';
 
 export function make() {
   return new Cov();
@@ -16,12 +6,12 @@ export function make() {
 
 class Cov {
   constructor() {
-    this.output = vscode.window.createOutputChannel(extensionId);
-    this.command = vscode.commands.registerCommand(`${extensionId}.reportUncoveredCodeRegionsInFile`, this.run, this);
+    this.output = Imports.Adapters.Implementations.vscode.window.createOutputChannel(Imports.Extension.Definitions.extensionId);
+    this.command = Imports.Adapters.Implementations.vscode.commands.registerCommand(`${Imports.Extension.Definitions.extensionId}.reportUncoveredCodeRegionsInFile`, this.run, this);
   }
 
   get asDisposable() {
-    return vscode.Disposable.from(this);
+    return Imports.Adapters.Implementations.vscode.Disposable.from(this);
   }
 
   get outputChannel() {
@@ -36,39 +26,45 @@ class Cov {
   }
 
   run() {
-    return vscode.window.withProgress({
-      location: vscode.ProgressLocation.Notification,
+    return Imports.Adapters.Implementations.vscode.window.withProgress({
+      location: Imports.Adapters.Implementations.vscode.ProgressLocation.Notification,
       title: 'Computing uncovered code region locations',
       cancellable: false
     }, async progressReporter => {
       this.reportStartInOutputChannel();
 
-      const workspace = vscode.workspace;
+      const workspace = Imports.Adapters.Implementations.vscode.workspace;
       const errorChannel = this.output;
 
-      const settings = SettingsProvider.make({ workspace, errorChannel }).settings;
-      const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, progressReporter, settings, mkdir: fs.mkdir, stat: fs.stat });
+      const settings = Imports.Domain.Implementations.SettingsProvider.make({ workspace, errorChannel }).settings;
+      const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({
+        errorChannel,
+        progressReporter,
+        settings,
+        mkdir: Imports.Adapters.Implementations.fileSystem.mkdir,
+        stat: Imports.Adapters.Implementations.fileSystem.stat
+      });
       // TODO: Rework Cmake construction adapters
-      const cmake = Cmake.make({
+      const cmake = Imports.Domain.Implementations.Cmake.make({
         settings,
         processControl: {
-          execFileForCommand: pc.execFile,
-          execFileForTarget: pc.execFile
+          execFileForCommand: Imports.Adapters.Implementations.processControl.execFile,
+          execFileForTarget: Imports.Adapters.Implementations.processControl.execFile
         },
         vscode: {
           errorChannel: this.output,
           progressReporter: progressReporter
         }
       });
-      const coverageInfoCollector = CoverageInfoCollector.make({
+      const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({
         settings,
         progressReporter,
         errorChannel,
-        createReadStream: fs.createReadStream,
-        globSearch: fs.globSearch
+        createReadStream: Imports.Adapters.Implementations.fileSystem.createReadStream,
+        globSearch: Imports.Adapters.Implementations.fileSystem.globSearch
       });
 
-      const provider = DecorationLocationProvider.make({
+      const provider = Imports.Domain.Implementations.DecorationLocationProvider.make({
         settings,
         buildTreeDirectoryResolver,
         cmake,
@@ -82,9 +78,9 @@ class Cov {
   private reportStartInOutputChannel() {
     this.output.show(false);
     this.output.clear();
-    this.output.appendLine(`starting ${extensionDisplayName}`);
+    this.output.appendLine(`starting ${Imports.Extension.Definitions.extensionDisplayName}`);
   }
 
-  private readonly output: vscode.OutputChannel;
-  private readonly command: vscode.Disposable;
+  private readonly output: Imports.Adapters.Implementations.vscode.OutputChannel;
+  private readonly command: Imports.Adapters.Implementations.vscode.Disposable;
 }
