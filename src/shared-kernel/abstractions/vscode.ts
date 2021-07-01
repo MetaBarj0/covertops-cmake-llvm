@@ -1,5 +1,4 @@
-// TODO: File system - change hierrarchie to domain/(abstractions|implementations)
-import { Settings } from "../../modules/settings-provider/domain/abstractions/settings";
+import { Settings } from '../../modules/settings-provider/domain/abstractions/settings';
 
 export type VscodeWorkspaceLike = {
   readonly workspaceFolders: ReadonlyArray<VscodeWorkspaceFolderLike> | undefined;
@@ -27,7 +26,6 @@ export type ProgressLike = {
   report(value: ProgressStep): void;
 };
 
-// TODO: export and use
 type ProgressStep = {
   message?: string,
   increment?: number

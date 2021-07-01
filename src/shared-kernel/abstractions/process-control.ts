@@ -1,9 +1,7 @@
-// TODO: check if export is necessary
 export type ExecFileExceptionLike = {
   message: string;
 };
 
-// TODO: check if export is necessary
 export type ExecFileOptionsLike = {
   cwd?: string;
   env?: NodeJS.ProcessEnv;
