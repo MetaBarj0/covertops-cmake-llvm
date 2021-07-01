@@ -11,6 +11,7 @@ import * as definitions from '../../../src/extension/definitions';
 import * as DecorationLocationsProvider from '../../../src/modules/decoration-locations-provider/domain/decoration-locations-provider';
 import * as SettingsProvider from '../../../src/modules/settings-provider/domain/settings-provider';
 import * as BuildTreeDirectoryResolver from '../../../src/modules/build-tree-directory-resolver/domain/build-tree-directory-resolver';
+import * as Cmake from '../../../src/modules/cmake/domain/cmake';
 
 import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';
 import { errorChannel as e } from '../../fakes/adapters/error-channel';
@@ -21,6 +22,7 @@ import * as vscode from '../../../src/adapters/vscode';
 
 import { env } from 'process';
 import * as path from 'path';
+import { PeerCertificate } from 'tls';
 
 describe('integration test suite', () => {
   describe('The behavior of the decoration location provider using real world adapters', () => {
@@ -51,18 +53,26 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
     const mkdir = fs.mkdir;
     const stat = fs.stat;
     const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
+    const execFileForCommand = pc.execFile;
+    const execFileForTarget = pc.execFile;
+    const cmake = Cmake.make({
+      settings,
+      processControl: { execFileForCommand, execFileForTarget },
+      vscode: { errorChannel, progressReporter }
+    });
 
     const provider = DecorationLocationsProvider.make({
       settings,
       buildTreeDirectoryResolver,
+      cmake,
       vscode: {
-        progressReporter: pr.buildFakeProgressReporter(),
+        progressReporter,
         errorChannel,
         workspace: vscode.workspace
       },
       processControl: {
-        execFileForCommand: pc.execFile,
-        execFileForTarget: pc.execFile
+        execFileForCommand,
+        execFileForTarget
       },
       fileSystem: {
         createReadStream: fs.createReadStream,
@@ -114,18 +124,26 @@ function collectSummaryCoverageInfoFromPartiallyCoveredFileShouldSucceed() {
     const mkdir = fs.mkdir;
     const stat = fs.stat;
     const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
+    const execFileForCommand = pc.execFile;
+    const execFileForTarget = pc.execFile;
+    const cmake = Cmake.make({
+      settings,
+      processControl: { execFileForCommand, execFileForTarget },
+      vscode: { errorChannel, progressReporter }
+    });
 
     const provider = DecorationLocationsProvider.make({
       settings,
       buildTreeDirectoryResolver,
+      cmake,
       vscode: {
-        progressReporter: pr.buildFakeProgressReporter(),
+        progressReporter,
         errorChannel,
         workspace: vscode.workspace
       },
       processControl: {
-        execFileForCommand: pc.execFile,
-        execFileForTarget: pc.execFile
+        execFileForCommand,
+        execFileForTarget
       },
       fileSystem: {
         createReadStream: fs.createReadStream,
@@ -170,18 +188,26 @@ function collectSummaryCoverageInfoFromFullyCoveredFileShouldSucceed() {
     const mkdir = fs.mkdir;
     const stat = fs.stat;
     const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
+    const execFileForCommand = pc.execFile;
+    const execFileForTarget = pc.execFile;
+    const cmake = Cmake.make({
+      settings,
+      processControl: { execFileForCommand, execFileForTarget },
+      vscode: { errorChannel, progressReporter }
+    });
 
     const provider = DecorationLocationsProvider.make({
       settings,
       buildTreeDirectoryResolver,
+      cmake,
       vscode: {
-        progressReporter: pr.buildFakeProgressReporter(),
+        progressReporter,
         errorChannel,
         workspace: vscode.workspace
       },
       processControl: {
-        execFileForCommand: pc.execFile,
-        execFileForTarget: pc.execFile
+        execFileForCommand,
+        execFileForTarget
       },
       fileSystem: {
         createReadStream: fs.createReadStream,
@@ -226,18 +252,26 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
     const mkdir = fs.mkdir;
     const stat = fs.stat;
     const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
+    const execFileForCommand = pc.execFile;
+    const execFileForTarget = pc.execFile;
+    const cmake = Cmake.make({
+      settings,
+      processControl: { execFileForCommand, execFileForTarget },
+      vscode: { errorChannel, progressReporter }
+    });
 
     const provider = DecorationLocationsProvider.make({
       settings,
       buildTreeDirectoryResolver,
+      cmake,
       vscode: {
-        progressReporter: pr.buildFakeProgressReporter(),
+        progressReporter,
         errorChannel,
         workspace: vscode.workspace
       },
       processControl: {
-        execFileForCommand: pc.execFile,
-        execFileForTarget: pc.execFile
+        execFileForCommand,
+        execFileForTarget
       },
       fileSystem: {
         createReadStream: fs.createReadStream,

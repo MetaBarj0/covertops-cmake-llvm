@@ -1,8 +1,9 @@
-// TODO: Global - find a way to simplify imports
+// TODO: Global - Imports pattern
 import { extensionId, extensionDisplayName } from './definitions';
 import * as DecorationLocationProvider from '../modules/decoration-locations-provider/domain/decoration-locations-provider';
 import * as SettingsProvider from '../modules/settings-provider/domain/settings-provider';
 import * as BuildTreeDirectoryResolver from '../modules/build-tree-directory-resolver/domain/build-tree-directory-resolver';
+import * as Cmake from '../modules/cmake/domain/cmake';
 
 // TODO: only use adapters, not vscode directly
 import { commands, Disposable, OutputChannel, ProgressLocation, window } from 'vscode';
@@ -45,10 +46,23 @@ class Cov {
 
       const settings = SettingsProvider.make({ workspace: vscode.workspace, errorChannel: this.output }).settings;
       const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel: this.output, progressReporter: progress, settings, mkdir: fs.mkdir, stat: fs.stat });
+      // TODO: Rework Cmake construction adapters
+      const cmake = Cmake.make({
+        settings,
+        processControl: {
+          execFileForCommand: pc.execFile,
+          execFileForTarget: pc.execFile
+        },
+        vscode: {
+          errorChannel: this.output,
+          progressReporter: progress
+        }
+      });
 
       const provider = DecorationLocationProvider.make({
         settings,
         buildTreeDirectoryResolver,
+        cmake,
         vscode: {
           progressReporter: progress,
           errorChannel: this.output,

@@ -9,6 +9,9 @@ import * as Definitions from '../../../src/extension/definitions';
 import * as DecorationLocationsProvider from '../../../src/modules/decoration-locations-provider/domain/decoration-locations-provider';
 import * as SettingsProvider from '../../../src/modules/settings-provider/domain/settings-provider';
 import * as BuildTreeDirectoryResolver from '../../../src/modules/build-tree-directory-resolver/domain/build-tree-directory-resolver';
+// TODO: Global - rename 'domain' folder of module 'implementations'
+import * as Cmake from '../../../src/modules/cmake/domain/cmake';
+
 import { RegionCoverageInfo } from '../../../src/modules/coverage-info-collector/abstractions/domain/region-coverage-info';
 
 // TODO: refacto adapter fakes to be the mirroring of the adapter structure
@@ -45,13 +48,20 @@ function instantiateService() {
     const progressReporter = pr.buildFakeProgressReporter();
     const mkdir = mkDir.buildFakeFailingMkDir();
     const stat = sf.buildFakeFailingStatFile();
-
     const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
+    const execFileForCommand = p.buildFakeFailingProcess();
+    const execFileForTarget = p.buildFakeFailingProcess();
+    const cmake = Cmake.make({
+      settings,
+      processControl: { execFileForCommand, execFileForTarget },
+      vscode: { errorChannel, progressReporter }
+    });
 
     const instantiation = () => {
       DecorationLocationsProvider.make({
         settings,
         buildTreeDirectoryResolver,
+        cmake,
         fileSystem: {
           globSearch: g.buildFakeGlobSearchForNoMatch(),
           createReadStream: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
@@ -81,23 +91,30 @@ function failBecauseOfIssuesWithBuildTreeDirectorySetting() {
       const progressReporter = pr.buildFakeProgressReporter();
       const mkdir = mkDir.buildFakeFailingMkDir();
       const stat = sf.buildFakeFailingStatFile();
-
       const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
+      const execFileForCommand = p.buildFakeFailingProcess();
+      const execFileForTarget = p.buildFakeFailingProcess();
+      const cmake = Cmake.make({
+        settings,
+        processControl: { execFileForCommand, execFileForTarget },
+        vscode: { errorChannel, progressReporter }
+      });
 
       const provider = DecorationLocationsProvider.make({
         settings,
         buildTreeDirectoryResolver,
+        cmake,
         fileSystem: {
           globSearch: g.buildFakeGlobSearchForNoMatch(),
           createReadStream: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
         },
         processControl: {
-          execFileForCommand: p.buildFakeFailingProcess(),
-          execFileForTarget: p.buildFakeFailingProcess(),
+          execFileForCommand,
+          execFileForTarget,
         },
         vscode: {
           workspace,
-          progressReporter: pr.buildFakeProgressReporter(),
+          progressReporter,
           errorChannel
         }
       });
@@ -118,21 +135,29 @@ function failBecauseOfIssuesWithCmakeCommandSetting() {
       const mkdir = mkDir.buildFakeFailingMkDir();
       const stat = sf.buildFakeSucceedingStatFile();
       const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
+      const execFileForCommand = p.buildFakeFailingProcess();
+      const execFileForTarget = p.buildFakeFailingProcess();
+      const cmake = Cmake.make({
+        settings,
+        processControl: { execFileForCommand, execFileForTarget },
+        vscode: { errorChannel, progressReporter }
+      });
 
       const provider = DecorationLocationsProvider.make({
         settings,
         buildTreeDirectoryResolver,
+        cmake,
         fileSystem: {
           globSearch: g.buildFakeGlobSearchForNoMatch(),
           createReadStream: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
         },
         processControl: {
-          execFileForCommand: p.buildFakeFailingProcess(),
-          execFileForTarget: p.buildFakeFailingProcess(),
+          execFileForCommand,
+          execFileForTarget
         },
         vscode: {
           workspace,
-          progressReporter: pr.buildFakeProgressReporter(),
+          progressReporter,
           errorChannel
         }
       });
@@ -155,10 +180,18 @@ function failBecauseOfIssuesWithCmakeTargetSetting() {
       const mkdir = mkDir.buildFakeFailingMkDir();
       const stat = sf.buildFakeSucceedingStatFile();
       const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
+      const execFileForCommand = p.buildFakeSucceedingProcess();
+      const execFileForTarget = p.buildFakeFailingProcess();
+      const cmake = Cmake.make({
+        settings,
+        processControl: { execFileForCommand, execFileForTarget },
+        vscode: { errorChannel, progressReporter }
+      });
 
       const provider = DecorationLocationsProvider.make({
         settings,
         buildTreeDirectoryResolver,
+        cmake,
         fileSystem: {
           globSearch: g.buildFakeGlobSearchForNoMatch(),
           createReadStream: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
@@ -169,7 +202,7 @@ function failBecauseOfIssuesWithCmakeTargetSetting() {
         },
         vscode: {
           workspace,
-          progressReporter: pr.buildFakeProgressReporter(),
+          progressReporter,
           errorChannel
         }
       });
@@ -190,21 +223,29 @@ function failBecauseCoverageInfoFileIsNotFound() {
       const mkdir = mkDir.buildFakeFailingMkDir();
       const stat = sf.buildFakeSucceedingStatFile();
       const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
+      const execFileForCommand = p.buildFakeSucceedingProcess();
+      const execFileForTarget = p.buildFakeSucceedingProcess();
+      const cmake = Cmake.make({
+        settings,
+        processControl: { execFileForCommand, execFileForTarget },
+        vscode: { errorChannel, progressReporter }
+      });
 
       const provider = DecorationLocationsProvider.make({
         settings,
         buildTreeDirectoryResolver,
+        cmake,
         fileSystem: {
           globSearch: g.buildFakeGlobSearchForNoMatch(),
           createReadStream: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
         },
         processControl: {
-          execFileForCommand: p.buildFakeSucceedingProcess(),
-          execFileForTarget: p.buildFakeSucceedingProcess(),
+          execFileForCommand,
+          execFileForTarget,
         },
         vscode: {
           workspace,
-          progressReporter: pr.buildFakeProgressReporter(),
+          progressReporter,
           errorChannel
         }
       });
@@ -228,21 +269,29 @@ function failBecauseSeveralCoverageInfoFileAreFound() {
       const mkdir = mkDir.buildFakeFailingMkDir();
       const stat = sf.buildFakeSucceedingStatFile();
       const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
+      const execFileForCommand = p.buildFakeSucceedingProcess();
+      const execFileForTarget = p.buildFakeSucceedingProcess();
+      const cmake = Cmake.make({
+        settings,
+        processControl: { execFileForCommand, execFileForTarget },
+        vscode: { errorChannel, progressReporter }
+      });
 
       const provider = DecorationLocationsProvider.make({
         settings,
         buildTreeDirectoryResolver,
+        cmake,
         fileSystem: {
           globSearch: g.buildFakeGlobSearchForSeveralMatch(),
           createReadStream: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
         },
         processControl: {
-          execFileForCommand: p.buildFakeSucceedingProcess(),
-          execFileForTarget: p.buildFakeSucceedingProcess(),
+          execFileForCommand,
+          execFileForTarget,
         },
         vscode: {
           workspace,
-          progressReporter: pr.buildFakeProgressReporter(),
+          progressReporter,
           errorChannel
         }
       });
@@ -267,17 +316,25 @@ function succeedWithCorrectSettingsAndFakeAdapters() {
     const mkdir = mkDir.buildFakeSucceedingMkDir();
     const stat = sf.buildFakeSucceedingStatFile();
     const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
+    const execFileForCommand = p.buildFakeSucceedingProcess();
+    const execFileForTarget = p.buildFakeSucceedingProcess();
+    const cmake = Cmake.make({
+      settings,
+      processControl: { execFileForCommand, execFileForTarget },
+      vscode: { errorChannel, progressReporter }
+    });
 
     const provider = DecorationLocationsProvider.make({
       settings,
       buildTreeDirectoryResolver,
+      cmake,
       fileSystem: {
         globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
         createReadStream: i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream),
       },
       processControl: {
-        execFileForCommand: p.buildFakeSucceedingProcess(),
-        execFileForTarget: p.buildFakeSucceedingProcess(),
+        execFileForCommand,
+        execFileForTarget
       },
       vscode: {
         workspace,

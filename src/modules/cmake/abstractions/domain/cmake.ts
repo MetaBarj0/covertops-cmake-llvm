@@ -1,3 +1,3 @@
 export type Cmake = {
-  buildTarget(): Thenable<void>;
+  buildTarget(): Promise<void>;
 };

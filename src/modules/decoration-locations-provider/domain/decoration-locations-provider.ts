@@ -1,5 +1,4 @@
 // TODO: refacto in imports
-import * as Cmake from '../../cmake/domain/cmake';
 import * as CoverageInfoCollector from '../../coverage-info-collector/domain/coverage-info-collector';
 import * as Abstractions from '../abstractions/domain/decoration-locations-provider';
 import { CreateReadStreamCallable, GlobSearchCallable } from '../../../shared-kernel/abstractions/file-system';
@@ -12,6 +11,7 @@ export function make(context: Context): Imports.Abstractions.Domain.DecorationLo
   return new DecorationLocationsProvider({
     settings: context.settings,
     buildTreeDirectoryResolver: context.buildTreeDirectoryResolver,
+    cmake: context.cmake,
     execFileForCmakeCommand: context.processControl.execFileForCommand,
     execFileForCmakeTarget: context.processControl.execFileForTarget,
     globSearch: context.fileSystem.globSearch,
@@ -24,6 +24,7 @@ export function make(context: Context): Imports.Abstractions.Domain.DecorationLo
 type Context = {
   settings: Imports.Abstractions.Domain.Settings,
   buildTreeDirectoryResolver: Imports.Abstractions.Domain.BuildTreeDirectoryResolver,
+  cmake: Imports.Abstractions.Domain.Cmake,
   vscode: {
     progressReporter: ProgressLike,
     errorChannel: OutputChannelLike,
@@ -43,8 +44,7 @@ class DecorationLocationsProvider implements Abstractions.DecorationLocationsPro
   constructor(context: ContextToBeRefacto) {
     this.settings = context.settings;
     this.buildTreeDirectoryResolver = context.buildTreeDirectoryResolver;
-    this.execFileForCmakeCommand = context.execFileForCmakeCommand;
-    this.execFileForCmakeTarget = context.execFileForCmakeTarget;
+    this.cmake = context.cmake;
     this.globSearch = context.globSearch;
     this.createReadStream = context.createReadStream;
     this.progressReporter = context.progressReporter;
@@ -53,20 +53,7 @@ class DecorationLocationsProvider implements Abstractions.DecorationLocationsPro
 
   async getDecorationLocationsForUncoveredCodeRegions(sourceFilePath: string) {
     await this.buildTreeDirectoryResolver.resolve();
-
-    const cmake = Cmake.make({
-      settings: this.settings,
-      processControl: {
-        execFileForCommand: this.execFileForCmakeCommand,
-        execFileForTarget: this.execFileForCmakeTarget,
-      },
-      vscode: {
-        progressReporter: this.progressReporter,
-        errorChannel: this.errorChannel
-      }
-    });
-
-    await cmake.buildTarget();
+    await this.cmake.buildTarget();
 
     const collector = CoverageInfoCollector.make({
       settings: this.settings,
@@ -81,8 +68,7 @@ class DecorationLocationsProvider implements Abstractions.DecorationLocationsPro
 
   private readonly settings: Imports.Abstractions.Domain.Settings;
   private readonly buildTreeDirectoryResolver: Imports.Abstractions.Domain.BuildTreeDirectoryResolver;
-  private readonly execFileForCmakeCommand: ExecFileCallable;
-  private readonly execFileForCmakeTarget: ExecFileCallable;
+  private readonly cmake: Imports.Abstractions.Domain.Cmake;
   private readonly globSearch: GlobSearchCallable;
   private readonly createReadStream: CreateReadStreamCallable;
   private readonly progressReporter: ProgressLike;
@@ -92,6 +78,7 @@ class DecorationLocationsProvider implements Abstractions.DecorationLocationsPro
 type ContextToBeRefacto = {
   settings: Imports.Abstractions.Domain.Settings,
   buildTreeDirectoryResolver: Imports.Abstractions.Domain.BuildTreeDirectoryResolver,
+  cmake: Imports.Abstractions.Domain.Cmake,
   progressReporter: ProgressLike,
   errorChannel: OutputChannelLike
   execFileForCmakeCommand: ExecFileCallable,

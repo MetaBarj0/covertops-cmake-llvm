@@ -19,7 +19,7 @@ type Adapters = {
   }
 };
 
-export function make(adapters: Adapters) {
+export function make(adapters: Adapters): Abstractions.Cmake {
   return new Cmake(adapters);
 }
 
