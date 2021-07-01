@@ -1,25 +1,20 @@
-import { MkdirCallable, StatCallable } from '../../../../shared-kernel/abstractions/file-system';
-import { OutputChannelLike, ProgressLike } from '../../../../shared-kernel/abstractions/vscode';
-
-import * as Definitions from '../../../../extension/definitions';
-import { Settings } from '../../../settings-provider/domain/abstractions/settings';
-import * as Abstractions from '../abstractions/build-tree-directory-resolver';
+import * as Imports from '../../imports';
 
 import * as path from 'path';
 
-export function make(adapters: Adapters): Abstractions.BuildTreeDirectoryResolver {
+export function make(adapters: Adapters): Imports.Domain.Abstractions.BuildTreeDirectoryResolver {
   return new BuildTreeDirectoryResolver(adapters);
 }
 
 type Adapters = {
-  settings: Settings,
-  stat: StatCallable,
-  mkdir: MkdirCallable,
-  progressReporter: ProgressLike,
-  errorChannel: OutputChannelLike
+  settings: Imports.Domain.Abstractions.Settings,
+  stat: Imports.Adapters.Abstractions.fileSystem.StatCallable,
+  mkdir: Imports.Adapters.Abstractions.fileSystem.MkdirCallable,
+  progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike,
+  errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike
 };
 
-class BuildTreeDirectoryResolver implements Abstractions.BuildTreeDirectoryResolver {
+class BuildTreeDirectoryResolver implements Imports.Domain.Abstractions.BuildTreeDirectoryResolver {
   constructor(adapters: Adapters) {
     this.settings = adapters.settings;
     this.stat = adapters.stat;
@@ -43,7 +38,7 @@ class BuildTreeDirectoryResolver implements Abstractions.BuildTreeDirectoryResol
 
   private ensurePathIsNotAbsolute(buildTreeDirectory: string) {
     if (path.isAbsolute(buildTreeDirectory)) {
-      const errorMessage = `Incorrect absolute path specified in '${Definitions.extensionNameInSettings}: ` +
+      const errorMessage = `Incorrect absolute path specified in '${Imports.Extension.Definitions.extensionNameInSettings}: ` +
         "Build Tree Directory'. It must be a relative path.";
 
       this.errorChannel.appendLine(errorMessage);
@@ -58,7 +53,7 @@ class BuildTreeDirectoryResolver implements Abstractions.BuildTreeDirectoryResol
         await this.mkdir(buildTreeDirectory, { recursive: true })
           .catch(_ => {
             const errorMessage = 'Cannot find or create the build tree directory. Ensure the ' +
-              `'${Definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`;
+              `'${Imports.Extension.Definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`;
 
             this.errorChannel.appendLine(errorMessage);
 
@@ -67,9 +62,9 @@ class BuildTreeDirectoryResolver implements Abstractions.BuildTreeDirectoryResol
       });
   }
 
-  private readonly stat: StatCallable;
-  private readonly settings: Settings;
-  private readonly mkdir: MkdirCallable;
-  private readonly progressReporter: ProgressLike;
-  private readonly errorChannel: OutputChannelLike;
+  private readonly stat: Imports.Adapters.Abstractions.fileSystem.StatCallable;
+  private readonly settings: Imports.Domain.Abstractions.Settings;
+  private readonly mkdir: Imports.Adapters.Abstractions.fileSystem.MkdirCallable;
+  private readonly progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike;
+  private readonly errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
 };
