@@ -1,14 +1,8 @@
-import { CreateReadStreamCallable, GlobSearchCallable } from '../../../../shared-kernel/abstractions/file-system';
-import { OutputChannelLike, ProgressLike } from '../../../../shared-kernel/abstractions/vscode';
-
-import * as CoverageInfoFileResolver from '../../../coverage-info-file-resolver/domain/coverage-info-file-resolver';
-import * as Abstractions from '../abstractions/coverage-info-collector';
-import { Settings } from '../../../settings-provider/domain/abstractions/settings';
+import * as Imports from '../../imports';
 
 import { Readable } from 'stream';
-import * as CoverageInfo from './coverage-info';
 
-export function make(adapters: Adapters): Abstractions.CoverageInfoCollector {
+export function make(adapters: Context): Imports.Domain.Abstractions.CoverageInfoCollector {
   return new CoverageInfoCollector(adapters);
 }
 
@@ -16,17 +10,17 @@ export type LLVMCoverageInfoStreamBuilder = {
   createStream: (path: string) => Readable;
 };
 
-class CoverageInfoCollector implements Abstractions.CoverageInfoCollector {
-  constructor(adapters: Adapters) {
-    this.settings = adapters.settings;
-    this.globSearch = adapters.globSearch;
-    this.createReadStream = adapters.createReadStream;
-    this.progressReporter = adapters.progressReporter;
-    this.errorChannel = adapters.errorChannel;
+class CoverageInfoCollector implements Imports.Domain.Abstractions.CoverageInfoCollector {
+  constructor(context: Context) {
+    this.settings = context.settings;
+    this.globSearch = context.globSearch;
+    this.createReadStream = context.createReadStream;
+    this.progressReporter = context.progressReporter;
+    this.errorChannel = context.errorChannel;
   }
 
   async collectFor(sourceFilePath: string) {
-    const coverageInfoFileResolver = CoverageInfoFileResolver.make({
+    const coverageInfoFileResolver = Imports.Domain.Implementations.CoverageInfoFileResolver.make({
       settings: this.settings,
       globSearch: this.globSearch,
       progressReporter: this.progressReporter,
@@ -41,20 +35,20 @@ class CoverageInfoCollector implements Abstractions.CoverageInfoCollector {
       increment: 100 / 6 * 6
     });
 
-    return CoverageInfo.make(() => this.createReadStream(path), sourceFilePath, this.errorChannel);
+    return Imports.Domain.Implementations.CoverageInfo.make(() => this.createReadStream(path), sourceFilePath, this.errorChannel);
   }
 
-  private readonly settings: Settings;
-  private readonly globSearch: GlobSearchCallable;
-  private readonly createReadStream: CreateReadStreamCallable;
-  private readonly progressReporter: ProgressLike;
-  private readonly errorChannel: OutputChannelLike;
+  private readonly settings: Imports.Domain.Abstractions.Settings;
+  private readonly globSearch: Imports.Adapters.Abstractions.fileSystem.GlobSearchCallable;
+  private readonly createReadStream: Imports.Adapters.Abstractions.fileSystem.CreateReadStreamCallable;
+  private readonly progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike;
+  private readonly errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
 };
 
-type Adapters = {
-  settings: Settings,
-  globSearch: GlobSearchCallable,
-  createReadStream: CreateReadStreamCallable,
-  progressReporter: ProgressLike,
-  errorChannel: OutputChannelLike
+type Context = {
+  settings: Imports.Domain.Abstractions.Settings,
+  globSearch: Imports.Adapters.Abstractions.fileSystem.GlobSearchCallable,
+  createReadStream: Imports.Adapters.Abstractions.fileSystem.CreateReadStreamCallable,
+  progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike,
+  errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike
 };

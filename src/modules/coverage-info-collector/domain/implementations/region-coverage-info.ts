@@ -1,11 +1,11 @@
-import * as Abstractions from '../../domain/abstractions/region-coverage-info';
+import * as Imports from '../../imports';
 
-export function make(rawLLVMRegionCoverageInfo: Abstractions.RawLLVMRegionCoverageInfo) {
+export function make(rawLLVMRegionCoverageInfo: Imports.Domain.Abstractions.RawLLVMRegionCoverageInfo) {
   return new RegionCoverageInfo(rawLLVMRegionCoverageInfo);
 }
 
-class RegionCoverageInfo implements Abstractions.RegionCoverageInfo {
-  constructor(rawLLVMRegionCoverageInfo: Abstractions.RawLLVMRegionCoverageInfo) {
+class RegionCoverageInfo implements Imports.Domain.Abstractions.RegionCoverageInfo {
+  constructor(rawLLVMRegionCoverageInfo: Imports.Domain.Abstractions.RawLLVMRegionCoverageInfo) {
     // https://github.com/llvm/llvm-project/blob/21c18d5a04316891110cecc2bf37ce51533decba/llvm/tools/llvm-cov/CoverageExporterJson.cpp#L87
     this.kind = rawLLVMRegionCoverageInfo[7] === 0 ? RegionKind.normal : RegionKind.other;
     this.executionCount = rawLLVMRegionCoverageInfo[4];
@@ -40,7 +40,7 @@ class RegionCoverageInfo implements Abstractions.RegionCoverageInfo {
 
   private readonly kind: RegionKind;
   private readonly executionCount: number;
-  private readonly regionRange: Abstractions.RegionRange;
+  private readonly regionRange: Imports.Domain.Abstractions.RegionRange;
 }
 
 // TODO: union type refacto?

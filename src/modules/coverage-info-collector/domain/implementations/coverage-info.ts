@@ -1,18 +1,4 @@
-import { OutputChannelLike } from '../../../../shared-kernel/abstractions/vscode';
-
-import { CoverageSummary } from './coverage-summary';
-import {
-  RawLLVMStreamedDataItemCoverageInfo,
-  RawLLVMFileCoverageInfo,
-  RawLLVMFunctionCoverageInfo,
-  RawLLVMRegionCoverageInfo,
-  RawLLVMRegionsCoverageInfo
-} from '../../domain/abstractions/region-coverage-info';
-
-import * as Abstractions from '../../domain/abstractions/coverage-info';
-
-import * as Definitions from '../../../../extension/definitions';
-import * as RegionCoverageInfo from './region-coverage-info';
+import * as Imports from '../../imports';
 
 import { Readable } from 'stream';
 import { chain } from 'stream-chain';
@@ -20,12 +6,16 @@ import { parser } from 'stream-json';
 import { pick } from 'stream-json/filters/Pick';
 import { streamArray } from 'stream-json/streamers/StreamArray';
 
-export function make(llvmCoverageInfoStreamFactory: StreamFactory, sourceFilePath: string, errorChannel: OutputChannelLike): Abstractions.CoverageInfo {
+export function make(llvmCoverageInfoStreamFactory: StreamFactory,
+  sourceFilePath: string,
+  errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike): Imports.Domain.Abstractions.CoverageInfo {
   return new CoverageInfo(llvmCoverageInfoStreamFactory, sourceFilePath, errorChannel);
 }
 
-class CoverageInfo implements Abstractions.CoverageInfo {
-  constructor(llvmCoverageInfoStreamFactory: StreamFactory, sourceFilePath: string, errorChannel: OutputChannelLike) {
+class CoverageInfo implements Imports.Domain.Abstractions.CoverageInfo {
+  constructor(llvmCoverageInfoStreamFactory: StreamFactory,
+    sourceFilePath: string,
+    errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike) {
     this.llvmCoverageInfoStreamFactory = llvmCoverageInfoStreamFactory;
     this.sourceFilePath = sourceFilePath;
     this.errorChannel = errorChannel;
@@ -34,14 +24,14 @@ class CoverageInfo implements Abstractions.CoverageInfo {
   get summary() {
     const pipeline = this.preparePipelineForSummary();
 
-    return new Promise<CoverageSummary>((resolve, reject) => {
+    return new Promise<Imports.Domain.Abstractions.CoverageSummary>((resolve, reject) => {
       let s: RawLLVMCoverageSummary;
 
       pipeline
         .once('data', chunk => { s = <RawLLVMCoverageSummary>chunk.summary.regions; })
         .once('end', () => {
           if (s)
-            return resolve(new CoverageSummary(s.count, s.covered, s.notcovered, s.percent));
+            return resolve(new Imports.Domain.Implementations.CoverageSummary(s.count, s.covered, s.notcovered, s.percent));
 
           const errorMessage = 'Cannot find any summary coverage info for the file ' +
             `${this.sourceFilePath}. Ensure this source file is covered by a test in your project.`;
@@ -66,7 +56,7 @@ class CoverageInfo implements Abstractions.CoverageInfo {
 
   private async *_uncoveredRegions() {
     for await (const rawRegionCoverageInfo of this.allRawRegionsCoverageInfoIn()) {
-      const regionCoverageInfo = RegionCoverageInfo.make(<RawLLVMRegionCoverageInfo>rawRegionCoverageInfo);
+      const regionCoverageInfo = Imports.Domain.Implementations.RegionCoverageInfo.make(<Imports.Domain.Abstractions.RawLLVMRegionCoverageInfo>rawRegionCoverageInfo);
 
       if (regionCoverageInfo.isAnUncoveredRegion)
         yield regionCoverageInfo;
@@ -91,7 +81,8 @@ class CoverageInfo implements Abstractions.CoverageInfo {
       const functionsForSourceFilePath = functions.filter((f: { filenames: ReadonlyArray<string> }) => f.filenames[0] === self.sourceFilePath);
 
       const regionsForSourceFilePath =
-        functionsForSourceFilePath.map((fn: RawLLVMFunctionCoverageInfo) => <RawLLVMRegionsCoverageInfo>fn.regions);
+        functionsForSourceFilePath.map((fn: Imports.Domain.Abstractions.RawLLVMFunctionCoverageInfo) =>
+          <Imports.Domain.Abstractions.RawLLVMRegionsCoverageInfo>fn.regions);
 
       for (const region of regionsForSourceFilePath)
         yield region;
@@ -107,11 +98,11 @@ class CoverageInfo implements Abstractions.CoverageInfo {
 
       const files = dataItem.value.files;
 
-      return files.find((file: RawLLVMFileCoverageInfo) => file.filename === this.sourceFilePath);
+      return files.find((file: Imports.Domain.Abstractions.RawLLVMFileCoverageInfo) => file.filename === this.sourceFilePath);
     });
   }
 
-  private extendBasicPipelineWith<T>(fn: (dataItem: RawLLVMStreamedDataItemCoverageInfo) => T) {
+  private extendBasicPipelineWith<T>(fn: (dataItem: Imports.Domain.Abstractions.RawLLVMStreamedDataItemCoverageInfo) => T) {
     return chain([
       this.llvmCoverageInfoStreamFactory(),
       parser({ streamValues: true }),
@@ -123,14 +114,14 @@ class CoverageInfo implements Abstractions.CoverageInfo {
 
   private readonly llvmCoverageInfoStreamFactory: StreamFactory;
   private readonly sourceFilePath: string;
-  private readonly errorChannel: OutputChannelLike;
+  private readonly errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
 
   static get invalidInputReadableStreamMessage() {
     return 'Invalid coverage information file have been found in the build tree directory. ' +
       'Coverage information file must contain llvm coverage report in json format. ' +
       'Ensure that both ' +
-      `'${Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
-      `'${Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
+      `'${Imports.Extension.Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+      `'${Imports.Extension.Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
       'settings are correctly set.';
   };
 };
@@ -152,7 +143,7 @@ class RawLLVMCoverageSummary {
 };
 
 class RegionCoverageInfoAsyncIterable {
-  constructor(pipeline: Readable, sourceFilePath: string, errorChannel: OutputChannelLike) {
+  constructor(pipeline: Readable, sourceFilePath: string, errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike) {
     this.iterator = new RegionCoverageInfoAsyncIteratorContract(pipeline, sourceFilePath, errorChannel);
   }
 
@@ -164,7 +155,7 @@ class RegionCoverageInfoAsyncIterable {
 };
 
 class RegionCoverageInfoAsyncIteratorContract {
-  constructor(pipeline: Readable, sourceFilePath: string, errorChannel: OutputChannelLike) {
+  constructor(pipeline: Readable, sourceFilePath: string, errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike) {
     this.pipeline = pipeline;
     this.sourceFilePath = sourceFilePath;
     this.errorChannel = errorChannel;
@@ -173,7 +164,7 @@ class RegionCoverageInfoAsyncIteratorContract {
   async next() {
     await this.ensureInputReadableStreaIsValid();
 
-    const regionCoverageInfo = <RawLLVMRegionCoverageInfo>this.pipeline.read(1);
+    const regionCoverageInfo = <Imports.Domain.Abstractions.RawLLVMRegionCoverageInfo>this.pipeline.read(1);
 
     if (regionCoverageInfo === null)
       return this.terminateIteration();
@@ -212,8 +203,8 @@ class RegionCoverageInfoAsyncIteratorContract {
 
   private readonly pipeline: Readable;
   private readonly sourceFilePath: string;
-  private last: RawLLVMRegionCoverageInfo | undefined = undefined;
-  private readonly errorChannel: OutputChannelLike;
+  private last: Imports.Domain.Abstractions.RawLLVMRegionCoverageInfo | undefined = undefined;
+  private readonly errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
 };
 
 class RegionCoverageInfoIterator {
@@ -223,5 +214,5 @@ class RegionCoverageInfoIterator {
   }
 
   readonly done: boolean;
-  readonly value?: RawLLVMRegionCoverageInfo;
+  readonly value?: Imports.Domain.Abstractions.RawLLVMRegionCoverageInfo;
 };
