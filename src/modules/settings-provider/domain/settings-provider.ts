@@ -9,8 +9,7 @@ type Adapters = {
   errorChannel: Imports.Abstractions.Adapters.vscode.OutputChannelLike
 };
 
-// TODO: make an abstraction on that provider?
-class SettingsProvider {
+class SettingsProvider implements Imports.Abstractions.Domain.SettingsProvider {
   constructor(adapters: Adapters) {
     this.workspace = adapters.workspace;
     this.errorChannel = adapters.errorChannel;

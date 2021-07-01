@@ -1,5 +1,6 @@
 import * as _definitions from '../../extension/definitions';
-import { Settings as SettingsContract } from './abstractions/domain/settings';
+import { Settings as _Settings } from './abstractions/domain/settings';
+import { SettingsProvider as _SettingsProvider } from './abstractions/domain/settings-provider';
 import * as SettingModule from './domain/settings';
 import * as _vscode from '../../shared-kernel/abstractions/vscode';
 
@@ -9,7 +10,8 @@ export namespace Extension {
 
 export namespace Abstractions {
   export namespace Domain {
-    export type Settings = SettingsContract;
+    export type Settings = _Settings;
+    export type SettingsProvider = _SettingsProvider;
   }
 
   export namespace Adapters {
