@@ -1,25 +1,19 @@
-import * as Definitions from '../../../../extension/definitions';
-import { Settings } from '../../../settings-provider/domain/abstractions/settings';
-// TODO: use module import syntax???
-import { OutputChannelLike, ProgressLike } from '../../../../shared-kernel/abstractions/vscode';
-import { GlobSearchCallable } from '../../../../shared-kernel/abstractions/file-system';
-import * as Abstractions from '../abstractions/coverage-info-file-resolver';
+import * as Imports from '../../imports';
 
 import * as path from 'path';
 
-
-export function make(context: Context): Abstractions.CoverageInfoFileResolver {
+export function make(context: Context): Imports.Domain.Abstractions.CoverageInfoFileResolver {
   return new CoverageInfoFileResolver(context);
 }
 
 type Context = {
-  settings: Settings,
-  globSearch: GlobSearchCallable,
-  progressReporter: ProgressLike,
-  errorChannel: OutputChannelLike
+  settings: Imports.Domain.Abstractions.Settings,
+  globSearch: Imports.Adapters.Abstractions.fileSystem.GlobSearchCallable,
+  progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike,
+  errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike
 };
 
-class CoverageInfoFileResolver implements Abstractions.CoverageInfoFileResolver {
+class CoverageInfoFileResolver implements Imports.Domain.Abstractions.CoverageInfoFileResolver {
   constructor(context: Context) {
     this.globSearch = context.globSearch;
     this.settings = context.settings;
@@ -47,8 +41,8 @@ class CoverageInfoFileResolver implements Abstractions.CoverageInfoFileResolver 
 
     const errorMessage = 'More than one coverage information file have been found in the build tree directory. ' +
       'Ensure that both ' +
-      `'${Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
-      `'${Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
+      `'${Imports.Extension.Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+      `'${Imports.Extension.Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
       'settings are correctly set.';
 
     this.errorChannel.appendLine(errorMessage);
@@ -62,8 +56,8 @@ class CoverageInfoFileResolver implements Abstractions.CoverageInfoFileResolver 
 
     const errorMessage = 'Cannot resolve the coverage info file path in the build tree directory. ' +
       'Ensure that both ' +
-      `'${Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
-      `'${Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
+      `'${Imports.Extension.Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+      `'${Imports.Extension.Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
       'settings are correctly set.';
 
     this.errorChannel.appendLine(errorMessage);
@@ -77,8 +71,8 @@ class CoverageInfoFileResolver implements Abstractions.CoverageInfoFileResolver 
     return `${posixRootPath}${path.posix.sep}**${path.posix.sep}${this.settings.coverageInfoFileName}`;
   }
 
-  private readonly globSearch: GlobSearchCallable;
-  private readonly settings: Settings;
-  private readonly progressReporter: ProgressLike;
-  private readonly errorChannel: OutputChannelLike;
+  private readonly globSearch: Imports.Adapters.Abstractions.fileSystem.GlobSearchCallable;
+  private readonly settings: Imports.Domain.Abstractions.Settings;
+  private readonly progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike;
+  private readonly errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
 };
