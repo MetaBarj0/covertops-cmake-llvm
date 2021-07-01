@@ -9,11 +9,8 @@ export type ExecFileOptionsLike = {
   env?: NodeJS.ProcessEnv;
 };
 
-// TODO: check if export is necessary
-export type ChildProcessLike = void;
-
 export type ExecFileCallable = (file: string,
   args: ReadonlyArray<string> | undefined | null,
   options: ExecFileOptionsLike,
   callback: (error: ExecFileExceptionLike | null, stdout: string, stderr: string) => void
-) => ChildProcessLike;
+) => void;

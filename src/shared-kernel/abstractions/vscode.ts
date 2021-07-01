@@ -1,3 +1,4 @@
+// TODO: File system - change hierrarchie to domain/(abstractions|implementations)
 import { Settings } from "../../modules/settings-provider/abstractions/domain/settings";
 
 export type VscodeWorkspaceLike = {
