@@ -1,29 +1,23 @@
-import { ExecFileCallable } from '../../../../shared-kernel/abstractions/process-control';
-import { OutputChannelLike, ProgressLike } from '../../../../shared-kernel/abstractions/vscode';
+import * as Imports from '../../imports';
 
-import * as definitions from '../../../../extension/definitions';
-import { BasicCmake } from './basic-cmake';
-// TODO: import module syntax???
-import { Settings } from '../../../settings-provider/domain/abstractions/settings';
-import * as Abstractions from '../abstractions/cmake';
-
+// TODO: flatten adapters, and change type name to Context
 type Adapters = {
-  settings: Settings,
+  settings: Imports.Domain.Abstractions.Settings,
   vscode: {
-    progressReporter: ProgressLike,
-    errorChannel: OutputChannelLike,
+    progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike,
+    errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike,
   },
   processControl: {
-    execFileForCommand: ExecFileCallable,
-    execFileForTarget: ExecFileCallable,
+    execFileForCommand: Imports.Adapters.Abstractions.processControl.ExecFileCallable,
+    execFileForTarget: Imports.Adapters.Abstractions.processControl.ExecFileCallable,
   }
 };
 
-export function make(adapters: Adapters): Abstractions.Cmake {
+export function make(adapters: Adapters): Imports.Domain.Abstractions.Cmake {
   return new Cmake(adapters);
 }
 
-class Cmake extends BasicCmake implements Abstractions.Cmake {
+class Cmake extends Imports.Domain.Implementations.BasicCmake implements Imports.Domain.Abstractions.Cmake {
   constructor(adapters: Adapters) {
     super(adapters.vscode.progressReporter);
 
@@ -39,7 +33,7 @@ class Cmake extends BasicCmake implements Abstractions.Cmake {
       execFile: this.execFileForCommand,
       arguments: ['--version'],
       potentialErrorMessage:
-        `Cannot find the cmake command. Ensure the '${definitions.extensionNameInSettings}: Cmake Command' ` +
+        `Cannot find the cmake command. Ensure the '${Imports.Extension.Definitions.extensionNameInSettings}: Cmake Command' ` +
         'setting is correctly set. Have you verified your PATH environment variable?'
     });
   }
@@ -53,7 +47,7 @@ class Cmake extends BasicCmake implements Abstractions.Cmake {
       arguments: ['-B', build, '-S', source, ...this.settings.additionalCmakeOptions],
       potentialErrorMessage:
         `Error: Could not build the specified cmake target ${this.settings.cmakeTarget}. ` +
-        `Ensure '${definitions.extensionNameInSettings}: Cmake Target' setting is properly set.`
+        `Ensure '${Imports.Extension.Definitions.extensionNameInSettings}: Cmake Target' setting is properly set.`
     });
   }
 
@@ -66,11 +60,14 @@ class Cmake extends BasicCmake implements Abstractions.Cmake {
       arguments: ['--build', build, '--target', target],
       potentialErrorMessage:
         `Error: Could not build the specified cmake target ${this.settings.cmakeTarget}. ` +
-        `Ensure '${definitions.extensionNameInSettings}: Cmake Target' setting is properly set.`
+        `Ensure '${Imports.Extension.Definitions.extensionNameInSettings}: Cmake Target' setting is properly set.`
     });
   }
 
-  private executeCommandWith(options: { execFile: ExecFileCallable, arguments: ReadonlyArray<string>, potentialErrorMessage: string }) {
+  private executeCommandWith(options: {
+    execFile: Imports.Adapters.Abstractions.processControl.ExecFileCallable,
+    arguments: ReadonlyArray<string>, potentialErrorMessage: string
+  }) {
     return new Promise<void>((resolve, reject) => {
       const cmakeCommand = this.settings.cmakeCommand;
 
@@ -93,8 +90,8 @@ class Cmake extends BasicCmake implements Abstractions.Cmake {
     });
   }
 
-  private readonly execFileForCommand: ExecFileCallable;
-  private readonly execFileForTarget: ExecFileCallable;
-  private readonly errorChannel: OutputChannelLike;
-  private readonly settings: Settings;
+  private readonly execFileForCommand: Imports.Adapters.Abstractions.processControl.ExecFileCallable;
+  private readonly execFileForTarget: Imports.Adapters.Abstractions.processControl.ExecFileCallable;
+  private readonly errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
+  private readonly settings: Imports.Domain.Abstractions.Settings;
 };
