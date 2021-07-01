@@ -1,14 +1,16 @@
+// TODO: refacto in imports
 import * as BuildTreeDirectoryResolver from '../../build-tree-directory-resolver/domain/build-tree-directory-resolver';
 import * as Cmake from '../../cmake/domain/cmake';
 import * as CoverageInfoCollector from '../../coverage-info-collector/domain/coverage-info-collector';
-// TODO: module import syntax???
 import * as Abstractions from '../abstractions/domain/decoration-locations-provider';
 import { CreateReadStreamCallable, GlobSearchCallable, MkdirCallable, StatCallable } from '../../../shared-kernel/abstractions/file-system';
 import { OutputChannelLike, ProgressLike, VscodeWorkspaceLike } from '../../../shared-kernel/abstractions/vscode';
 import { ExecFileCallable } from '../../../shared-kernel/abstractions/process-control';
 import { Settings } from '../../settings-provider/abstractions/domain/settings';
 
-export function make(context: Context): Abstractions.DecorationLocationsProvider {
+import * as Imports from '../imports';
+
+export function make(context: Context): Imports.Abstractions.Domain.DecorationLocationsProvider {
   return new DecorationLocationsProvider({
     settings: context.settings,
     stat: context.fileSystem.stat,
@@ -23,7 +25,7 @@ export function make(context: Context): Abstractions.DecorationLocationsProvider
 }
 
 type Context = {
-  settings: Settings,
+  settings: Imports.Abstractions.Domain.Settings,
   vscode: {
     progressReporter: ProgressLike,
     errorChannel: OutputChannelLike,
