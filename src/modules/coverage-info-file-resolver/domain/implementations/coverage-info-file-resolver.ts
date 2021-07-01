@@ -1,9 +1,9 @@
-import * as Definitions from '../../../extension/definitions';
-import { Settings } from '../../settings-provider/domain/abstractions/settings';
+import * as Definitions from '../../../../extension/definitions';
+import { Settings } from '../../../settings-provider/domain/abstractions/settings';
 // TODO: use module import syntax???
-import { OutputChannelLike, ProgressLike } from '../../../shared-kernel/abstractions/vscode';
-import { GlobSearchCallable } from '../../../shared-kernel/abstractions/file-system';
-import * as Abstractions from '../abstractions/domain/coverage-info-file-resolver';
+import { OutputChannelLike, ProgressLike } from '../../../../shared-kernel/abstractions/vscode';
+import { GlobSearchCallable } from '../../../../shared-kernel/abstractions/file-system';
+import * as Abstractions from '../abstractions/coverage-info-file-resolver';
 
 import * as path from 'path';
 

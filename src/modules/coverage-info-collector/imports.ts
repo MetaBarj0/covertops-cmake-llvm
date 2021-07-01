@@ -7,7 +7,7 @@ import * as RegionCoverageInfoModule from './domain/implementations/region-cover
 import * as DefinitionsModule from '../../extension/definitions';
 import * as CoverageInfoCollectorModule from './domain/abstractions/coverage-info-collector';
 // TODO: refacto this (directory structure) and inject in coverage info collector
-import * as CoverageInfoFileResolverModule from '../coverage-info-file-resolver/domain/coverage-info-file-resolver';
+import * as CoverageInfoFileResolverModule from '../coverage-info-file-resolver/domain/implementations/coverage-info-file-resolver';
 import * as CoverageInfoModule from './domain/implementations/coverage-info';
 import * as SettingsModule from '../settings-provider/domain/abstractions/settings';
 import * as FileSystemModule from '../../shared-kernel/abstractions/file-system';

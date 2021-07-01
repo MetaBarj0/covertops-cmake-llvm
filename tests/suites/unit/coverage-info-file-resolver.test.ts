@@ -6,7 +6,7 @@ chai.use(chaiAsPromised);
 chai.should();
 
 import * as Definitions from '../../../src/extension/definitions';
-import * as CoverageInfoFileResolver from '../../../src/modules/coverage-info-file-resolver/domain/coverage-info-file-resolver';
+import * as CoverageInfoFileResolver from '../../../src/modules/coverage-info-file-resolver/domain/implementations/coverage-info-file-resolver';
 import * as SettingsProvider from '../../../src/modules/settings-provider/domain/implementations/settings-provider';
 
 import * as vscode from '../../fakes/adapters/vscode';
