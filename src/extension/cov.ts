@@ -4,6 +4,7 @@ import * as DecorationLocationProvider from '../modules/decoration-locations-pro
 import * as SettingsProvider from '../modules/settings-provider/domain/settings-provider';
 import * as BuildTreeDirectoryResolver from '../modules/build-tree-directory-resolver/domain/build-tree-directory-resolver';
 import * as Cmake from '../modules/cmake/domain/cmake';
+import * as CoverageInfoCollector from '../modules/coverage-info-collector/domain/coverage-info-collector';
 
 // TODO: only use adapters, not vscode directly
 import { commands, Disposable, OutputChannel, ProgressLocation, window } from 'vscode';
@@ -41,11 +42,14 @@ class Cov {
       location: ProgressLocation.Notification,
       title: 'Computing uncovered code region locations',
       cancellable: false
-    }, async progress => {
+    }, async progressReporter => {
       this.reportStartInOutputChannel();
 
-      const settings = SettingsProvider.make({ workspace: vscode.workspace, errorChannel: this.output }).settings;
-      const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel: this.output, progressReporter: progress, settings, mkdir: fs.mkdir, stat: fs.stat });
+      const workspace = vscode.workspace;
+      const errorChannel = this.output;
+
+      const settings = SettingsProvider.make({ workspace, errorChannel }).settings;
+      const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, progressReporter, settings, mkdir: fs.mkdir, stat: fs.stat });
       // TODO: Rework Cmake construction adapters
       const cmake = Cmake.make({
         settings,
@@ -55,27 +59,22 @@ class Cov {
         },
         vscode: {
           errorChannel: this.output,
-          progressReporter: progress
+          progressReporter: progressReporter
         }
+      });
+      const coverageInfoCollector = CoverageInfoCollector.make({
+        settings,
+        progressReporter,
+        errorChannel,
+        createReadStream: fs.createReadStream,
+        globSearch: fs.globSearch
       });
 
       const provider = DecorationLocationProvider.make({
         settings,
         buildTreeDirectoryResolver,
         cmake,
-        vscode: {
-          progressReporter: progress,
-          errorChannel: this.output,
-          workspace: vscode.workspace
-        },
-        processControl: {
-          execFileForCommand: pc.execFile,
-          execFileForTarget: pc.execFile
-        },
-        fileSystem: {
-          createReadStream: fs.createReadStream,
-          globSearch: fs.globSearch
-        }
+        coverageInfoCollector
       });
 
       await provider.getDecorationLocationsForUncoveredCodeRegions('');

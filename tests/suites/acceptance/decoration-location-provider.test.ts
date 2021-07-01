@@ -11,6 +11,7 @@ import * as SettingsProvider from '../../../src/modules/settings-provider/domain
 import * as BuildTreeDirectoryResolver from '../../../src/modules/build-tree-directory-resolver/domain/build-tree-directory-resolver';
 // TODO: Global - rename 'domain' folder of module 'implementations'
 import * as Cmake from '../../../src/modules/cmake/domain/cmake';
+import * as CoverageInfoCollector from '../../../src/modules/coverage-info-collector/domain/coverage-info-collector';
 
 import { RegionCoverageInfo } from '../../../src/modules/coverage-info-collector/abstractions/domain/region-coverage-info';
 
@@ -56,25 +57,16 @@ function instantiateService() {
       processControl: { execFileForCommand, execFileForTarget },
       vscode: { errorChannel, progressReporter }
     });
+    const globSearch = g.buildFakeGlobSearchForNoMatch();
+    const createReadStream = i.buildFakeStreamBuilder(i.buildEmptyReadableStream);
+    const coverageInfoCollector = CoverageInfoCollector.make({ createReadStream, globSearch, errorChannel, progressReporter, settings });
 
     const instantiation = () => {
       DecorationLocationsProvider.make({
         settings,
         buildTreeDirectoryResolver,
         cmake,
-        fileSystem: {
-          globSearch: g.buildFakeGlobSearchForNoMatch(),
-          createReadStream: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
-        },
-        processControl: {
-          execFileForCommand: p.buildFakeFailingProcess(),
-          execFileForTarget: p.buildFakeFailingProcess(),
-        },
-        vscode: {
-          workspace,
-          progressReporter: pr.buildFakeProgressReporter(),
-          errorChannel
-        }
+        coverageInfoCollector
       });
     };
 
@@ -99,24 +91,15 @@ function failBecauseOfIssuesWithBuildTreeDirectorySetting() {
         processControl: { execFileForCommand, execFileForTarget },
         vscode: { errorChannel, progressReporter }
       });
+      const globSearch = g.buildFakeGlobSearchForNoMatch();
+      const createReadStream = i.buildFakeStreamBuilder(i.buildEmptyReadableStream);
+      const coverageInfoCollector = CoverageInfoCollector.make({ createReadStream, globSearch, errorChannel, progressReporter, settings });
 
       const provider = DecorationLocationsProvider.make({
         settings,
         buildTreeDirectoryResolver,
         cmake,
-        fileSystem: {
-          globSearch: g.buildFakeGlobSearchForNoMatch(),
-          createReadStream: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
-        },
-        processControl: {
-          execFileForCommand,
-          execFileForTarget,
-        },
-        vscode: {
-          workspace,
-          progressReporter,
-          errorChannel
-        }
+        coverageInfoCollector
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
@@ -142,24 +125,15 @@ function failBecauseOfIssuesWithCmakeCommandSetting() {
         processControl: { execFileForCommand, execFileForTarget },
         vscode: { errorChannel, progressReporter }
       });
+      const globSearch = g.buildFakeGlobSearchForNoMatch();
+      const createReadStream = i.buildFakeStreamBuilder(i.buildEmptyReadableStream);
+      const coverageInfoCollector = CoverageInfoCollector.make({ createReadStream, globSearch, errorChannel, progressReporter, settings });
 
       const provider = DecorationLocationsProvider.make({
         settings,
         buildTreeDirectoryResolver,
         cmake,
-        fileSystem: {
-          globSearch: g.buildFakeGlobSearchForNoMatch(),
-          createReadStream: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
-        },
-        processControl: {
-          execFileForCommand,
-          execFileForTarget
-        },
-        vscode: {
-          workspace,
-          progressReporter,
-          errorChannel
-        }
+        coverageInfoCollector
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
@@ -187,24 +161,15 @@ function failBecauseOfIssuesWithCmakeTargetSetting() {
         processControl: { execFileForCommand, execFileForTarget },
         vscode: { errorChannel, progressReporter }
       });
+      const globSearch = g.buildFakeGlobSearchForNoMatch();
+      const createReadStream = i.buildFakeStreamBuilder(i.buildEmptyReadableStream);
+      const coverageInfoCollector = CoverageInfoCollector.make({ createReadStream, globSearch, errorChannel, progressReporter, settings });
 
       const provider = DecorationLocationsProvider.make({
         settings,
         buildTreeDirectoryResolver,
         cmake,
-        fileSystem: {
-          globSearch: g.buildFakeGlobSearchForNoMatch(),
-          createReadStream: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
-        },
-        processControl: {
-          execFileForCommand: p.buildFakeSucceedingProcess(),
-          execFileForTarget: p.buildFakeFailingProcess(),
-        },
-        vscode: {
-          workspace,
-          progressReporter,
-          errorChannel
-        }
+        coverageInfoCollector
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
@@ -230,24 +195,15 @@ function failBecauseCoverageInfoFileIsNotFound() {
         processControl: { execFileForCommand, execFileForTarget },
         vscode: { errorChannel, progressReporter }
       });
+      const globSearch = g.buildFakeGlobSearchForNoMatch();
+      const createReadStream = i.buildFakeStreamBuilder(i.buildEmptyReadableStream);
+      const coverageInfoCollector = CoverageInfoCollector.make({ createReadStream, globSearch, errorChannel, progressReporter, settings });
 
       const provider = DecorationLocationsProvider.make({
         settings,
         buildTreeDirectoryResolver,
         cmake,
-        fileSystem: {
-          globSearch: g.buildFakeGlobSearchForNoMatch(),
-          createReadStream: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
-        },
-        processControl: {
-          execFileForCommand,
-          execFileForTarget,
-        },
-        vscode: {
-          workspace,
-          progressReporter,
-          errorChannel
-        }
+        coverageInfoCollector
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
@@ -276,24 +232,15 @@ function failBecauseSeveralCoverageInfoFileAreFound() {
         processControl: { execFileForCommand, execFileForTarget },
         vscode: { errorChannel, progressReporter }
       });
+      const globSearch = g.buildFakeGlobSearchForSeveralMatch();
+      const createReadStream = i.buildFakeStreamBuilder(i.buildEmptyReadableStream);
+      const coverageInfoCollector = CoverageInfoCollector.make({ createReadStream, globSearch, errorChannel, progressReporter, settings });
 
       const provider = DecorationLocationsProvider.make({
         settings,
         buildTreeDirectoryResolver,
         cmake,
-        fileSystem: {
-          globSearch: g.buildFakeGlobSearchForSeveralMatch(),
-          createReadStream: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
-        },
-        processControl: {
-          execFileForCommand,
-          execFileForTarget,
-        },
-        vscode: {
-          workspace,
-          progressReporter,
-          errorChannel
-        }
+        coverageInfoCollector
       });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
@@ -323,24 +270,15 @@ function succeedWithCorrectSettingsAndFakeAdapters() {
       processControl: { execFileForCommand, execFileForTarget },
       vscode: { errorChannel, progressReporter }
     });
+    const globSearch = g.buildFakeGlobSearchForExactlyOneMatch();
+    const createReadStream = i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream);
+    const coverageInfoCollector = CoverageInfoCollector.make({ createReadStream, globSearch, errorChannel, progressReporter, settings });
 
     const provider = DecorationLocationsProvider.make({
       settings,
       buildTreeDirectoryResolver,
       cmake,
-      fileSystem: {
-        globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
-        createReadStream: i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream),
-      },
-      processControl: {
-        execFileForCommand,
-        execFileForTarget
-      },
-      vscode: {
-        workspace,
-        progressReporter,
-        errorChannel
-      }
+      coverageInfoCollector
     });
 
     const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions('/a/source/file.cpp');

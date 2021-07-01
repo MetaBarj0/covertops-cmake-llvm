@@ -12,6 +12,7 @@ import * as DecorationLocationsProvider from '../../../src/modules/decoration-lo
 import * as SettingsProvider from '../../../src/modules/settings-provider/domain/settings-provider';
 import * as BuildTreeDirectoryResolver from '../../../src/modules/build-tree-directory-resolver/domain/build-tree-directory-resolver';
 import * as Cmake from '../../../src/modules/cmake/domain/cmake';
+import * as CoverageInfoCollector from '../../../src/modules/coverage-info-collector/domain/coverage-info-collector';
 
 import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';
 import { errorChannel as e } from '../../fakes/adapters/error-channel';
@@ -22,7 +23,6 @@ import * as vscode from '../../../src/adapters/vscode';
 
 import { env } from 'process';
 import * as path from 'path';
-import { PeerCertificate } from 'tls';
 
 describe('integration test suite', () => {
   describe('The behavior of the decoration location provider using real world adapters', () => {
@@ -60,24 +60,15 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
       processControl: { execFileForCommand, execFileForTarget },
       vscode: { errorChannel, progressReporter }
     });
+    const createReadStream = fs.createReadStream;
+    const globSearch = fs.globSearch;
+    const coverageInfoCollector = CoverageInfoCollector.make({ createReadStream, globSearch, errorChannel, progressReporter, settings });
 
     const provider = DecorationLocationsProvider.make({
       settings,
       buildTreeDirectoryResolver,
       cmake,
-      vscode: {
-        progressReporter,
-        errorChannel,
-        workspace: vscode.workspace
-      },
-      processControl: {
-        execFileForCommand,
-        execFileForTarget
-      },
-      fileSystem: {
-        createReadStream: fs.createReadStream,
-        globSearch: fs.globSearch
-      }
+      coverageInfoCollector
     });
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('partiallyCovered/partiallyCoveredLib.cpp');
@@ -131,24 +122,15 @@ function collectSummaryCoverageInfoFromPartiallyCoveredFileShouldSucceed() {
       processControl: { execFileForCommand, execFileForTarget },
       vscode: { errorChannel, progressReporter }
     });
+    const createReadStream = fs.createReadStream;
+    const globSearch = fs.globSearch;
+    const coverageInfoCollector = CoverageInfoCollector.make({ createReadStream, globSearch, errorChannel, progressReporter, settings });
 
     const provider = DecorationLocationsProvider.make({
       settings,
       buildTreeDirectoryResolver,
       cmake,
-      vscode: {
-        progressReporter,
-        errorChannel,
-        workspace: vscode.workspace
-      },
-      processControl: {
-        execFileForCommand,
-        execFileForTarget
-      },
-      fileSystem: {
-        createReadStream: fs.createReadStream,
-        globSearch: fs.globSearch
-      }
+      coverageInfoCollector
     });
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('partiallyCovered/partiallyCoveredLib.cpp');
@@ -195,24 +177,15 @@ function collectSummaryCoverageInfoFromFullyCoveredFileShouldSucceed() {
       processControl: { execFileForCommand, execFileForTarget },
       vscode: { errorChannel, progressReporter }
     });
+    const createReadStream = fs.createReadStream;
+    const globSearch = fs.globSearch;
+    const coverageInfoCollector = CoverageInfoCollector.make({ createReadStream, globSearch, errorChannel, progressReporter, settings });
 
     const provider = DecorationLocationsProvider.make({
       settings,
       buildTreeDirectoryResolver,
       cmake,
-      vscode: {
-        progressReporter,
-        errorChannel,
-        workspace: vscode.workspace
-      },
-      processControl: {
-        execFileForCommand,
-        execFileForTarget
-      },
-      fileSystem: {
-        createReadStream: fs.createReadStream,
-        globSearch: fs.globSearch
-      }
+      coverageInfoCollector
     });
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('fullyCovered/fullyCoveredLib.cpp');
@@ -259,24 +232,15 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
       processControl: { execFileForCommand, execFileForTarget },
       vscode: { errorChannel, progressReporter }
     });
+    const createReadStream = fs.createReadStream;
+    const globSearch = fs.globSearch;
+    const coverageInfoCollector = CoverageInfoCollector.make({ createReadStream, globSearch, errorChannel, progressReporter, settings });
 
     const provider = DecorationLocationsProvider.make({
       settings,
       buildTreeDirectoryResolver,
       cmake,
-      vscode: {
-        progressReporter,
-        errorChannel,
-        workspace: vscode.workspace
-      },
-      processControl: {
-        execFileForCommand,
-        execFileForTarget
-      },
-      fileSystem: {
-        createReadStream: fs.createReadStream,
-        globSearch: fs.globSearch
-      }
+      coverageInfoCollector
     });
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('fullyCovered/fullyCoveredLib.cpp');
