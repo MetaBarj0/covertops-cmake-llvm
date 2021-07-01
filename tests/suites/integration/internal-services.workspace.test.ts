@@ -177,7 +177,7 @@ function makeBuildTreeDirectoryResolver() {
   return BuildTreeDirectoryResolver.make({
     settings,
     stat: fs.stat,
-    mkDir: fs.mkdir,
+    mkdir: fs.mkdir,
     progressReporter: pr.buildFakeProgressReporter(),
     errorChannel
   });

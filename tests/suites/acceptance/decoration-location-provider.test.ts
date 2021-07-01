@@ -8,8 +8,10 @@ chai.should();
 import * as Definitions from '../../../src/extension/definitions';
 import * as DecorationLocationsProvider from '../../../src/modules/decoration-locations-provider/domain/decoration-locations-provider';
 import * as SettingsProvider from '../../../src/modules/settings-provider/domain/settings-provider';
+import * as BuildTreeDirectoryResolver from '../../../src/modules/build-tree-directory-resolver/domain/build-tree-directory-resolver';
 import { RegionCoverageInfo } from '../../../src/modules/coverage-info-collector/abstractions/domain/region-coverage-info';
 
+// TODO: refacto adapter fakes to be the mirroring of the adapter structure
 import { mkDir } from '../../fakes/adapters/mk-dir';
 import * as vscode from '../../fakes/adapters/vscode';
 import { process as p } from '../../fakes/adapters/process-control';
@@ -37,17 +39,21 @@ describe('acceptance suite of tests', () => {
 
 function instantiateService() {
   it('should not throw when instantiated with faked adapters.', () => {
-    const errorChannel = e.buildFakeErrorChannel();
     const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+    const errorChannel = e.buildFakeErrorChannel();
     const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
+    const progressReporter = pr.buildFakeProgressReporter();
+    const mkdir = mkDir.buildFakeFailingMkDir();
+    const stat = sf.buildFakeFailingStatFile();
+
+    const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
 
     const instantiation = () => {
       DecorationLocationsProvider.make({
         settings,
+        buildTreeDirectoryResolver,
         fileSystem: {
-          stat: sf.buildFakeFailingStatFile(),
           globSearch: g.buildFakeGlobSearchForNoMatch(),
-          mkdir: mkDir.buildFakeFailingMkDir(),
           createReadStream: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
         },
         processControl: {
@@ -72,13 +78,17 @@ function failBecauseOfIssuesWithBuildTreeDirectorySetting() {
       const errorChannel = e.buildFakeErrorChannel();
       const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
       const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
+      const progressReporter = pr.buildFakeProgressReporter();
+      const mkdir = mkDir.buildFakeFailingMkDir();
+      const stat = sf.buildFakeFailingStatFile();
+
+      const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
 
       const provider = DecorationLocationsProvider.make({
         settings,
+        buildTreeDirectoryResolver,
         fileSystem: {
-          stat: sf.buildFakeFailingStatFile(),
           globSearch: g.buildFakeGlobSearchForNoMatch(),
-          mkdir: mkDir.buildFakeFailingMkDir(),
           createReadStream: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
         },
         processControl: {
@@ -104,13 +114,16 @@ function failBecauseOfIssuesWithCmakeCommandSetting() {
       const errorChannel = e.buildFakeErrorChannel();
       const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ cmakeCommand: '' });
       const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
+      const progressReporter = pr.buildFakeProgressReporter();
+      const mkdir = mkDir.buildFakeFailingMkDir();
+      const stat = sf.buildFakeSucceedingStatFile();
+      const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
 
       const provider = DecorationLocationsProvider.make({
         settings,
+        buildTreeDirectoryResolver,
         fileSystem: {
-          stat: sf.buildFakeSucceedingStatFile(),
           globSearch: g.buildFakeGlobSearchForNoMatch(),
-          mkdir: mkDir.buildFakeFailingMkDir(),
           createReadStream: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
         },
         processControl: {
@@ -130,6 +143,7 @@ function failBecauseOfIssuesWithCmakeCommandSetting() {
     });
 }
 
+// TODO: File - remove arrange sections duplications
 function failBecauseOfIssuesWithCmakeTargetSetting() {
   it('should not be able to provide any decoration for uncovered code regions ' +
     'when the cmake target cannot be built', () => {
@@ -137,13 +151,16 @@ function failBecauseOfIssuesWithCmakeTargetSetting() {
       const errorChannel = e.buildFakeErrorChannel();
       const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
       const target = workspace.getConfiguration(Definitions.extensionId).get('cmakeTarget');
+      const progressReporter = pr.buildFakeProgressReporter();
+      const mkdir = mkDir.buildFakeFailingMkDir();
+      const stat = sf.buildFakeSucceedingStatFile();
+      const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
 
       const provider = DecorationLocationsProvider.make({
         settings,
+        buildTreeDirectoryResolver,
         fileSystem: {
-          stat: sf.buildFakeSucceedingStatFile(),
           globSearch: g.buildFakeGlobSearchForNoMatch(),
-          mkdir: mkDir.buildFakeFailingMkDir(),
           createReadStream: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
         },
         processControl: {
@@ -169,13 +186,16 @@ function failBecauseCoverageInfoFileIsNotFound() {
       const errorChannel = e.buildFakeErrorChannel();
       const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ coverageInfoFileName: 'baadf00d' });
       const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
+      const progressReporter = pr.buildFakeProgressReporter();
+      const mkdir = mkDir.buildFakeFailingMkDir();
+      const stat = sf.buildFakeSucceedingStatFile();
+      const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
 
       const provider = DecorationLocationsProvider.make({
         settings,
+        buildTreeDirectoryResolver,
         fileSystem: {
-          stat: sf.buildFakeSucceedingStatFile(),
           globSearch: g.buildFakeGlobSearchForNoMatch(),
-          mkdir: mkDir.buildFakeFailingMkDir(),
           createReadStream: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
         },
         processControl: {
@@ -204,13 +224,16 @@ function failBecauseSeveralCoverageInfoFileAreFound() {
       const errorChannel = e.buildFakeErrorChannel();
       const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
       const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
+      const progressReporter = pr.buildFakeProgressReporter();
+      const mkdir = mkDir.buildFakeFailingMkDir();
+      const stat = sf.buildFakeSucceedingStatFile();
+      const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
 
       const provider = DecorationLocationsProvider.make({
         settings,
+        buildTreeDirectoryResolver,
         fileSystem: {
-          stat: sf.buildFakeSucceedingStatFile(),
           globSearch: g.buildFakeGlobSearchForSeveralMatch(),
-          mkdir: mkDir.buildFakeFailingMkDir(),
           createReadStream: i.buildFakeStreamBuilder(i.buildEmptyReadableStream),
         },
         processControl: {
@@ -233,19 +256,23 @@ function failBecauseSeveralCoverageInfoFileAreFound() {
     });
 }
 
+// TODO: File - duplication in arrange sections
 function succeedWithCorrectSettingsAndFakeAdapters() {
   it('should succed to collect correct coverage information for the requested file in x discrete steps.', async () => {
     const progressReporterSpy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());
     const errorChannel = e.buildFakeErrorChannel();
     const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
+    const progressReporter = progressReporterSpy.object;
+    const mkdir = mkDir.buildFakeSucceedingMkDir();
+    const stat = sf.buildFakeSucceedingStatFile();
+    const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
 
     const provider = DecorationLocationsProvider.make({
       settings,
+      buildTreeDirectoryResolver,
       fileSystem: {
-        stat: sf.buildFakeSucceedingStatFile(),
         globSearch: g.buildFakeGlobSearchForExactlyOneMatch(),
-        mkdir: mkDir.buildFakeSucceedingMkDir(),
         createReadStream: i.buildFakeStreamBuilder(i.buildValidLlvmCoverageJsonObjectStream),
       },
       processControl: {
@@ -254,7 +281,7 @@ function succeedWithCorrectSettingsAndFakeAdapters() {
       },
       vscode: {
         workspace,
-        progressReporter: progressReporterSpy.object,
+        progressReporter,
         errorChannel
       }
     });

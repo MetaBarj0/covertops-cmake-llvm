@@ -2,6 +2,7 @@
 import { extensionId, extensionDisplayName } from './definitions';
 import * as DecorationLocationProvider from '../modules/decoration-locations-provider/domain/decoration-locations-provider';
 import * as SettingsProvider from '../modules/settings-provider/domain/settings-provider';
+import * as BuildTreeDirectoryResolver from '../modules/build-tree-directory-resolver/domain/build-tree-directory-resolver';
 
 // TODO: only use adapters, not vscode directly
 import { commands, Disposable, OutputChannel, ProgressLocation, window } from 'vscode';
@@ -43,9 +44,11 @@ class Cov {
       this.reportStartInOutputChannel();
 
       const settings = SettingsProvider.make({ workspace: vscode.workspace, errorChannel: this.output }).settings;
+      const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel: this.output, progressReporter: progress, settings, mkdir: fs.mkdir, stat: fs.stat });
 
       const provider = DecorationLocationProvider.make({
         settings,
+        buildTreeDirectoryResolver,
         vscode: {
           progressReporter: progress,
           errorChannel: this.output,
@@ -57,9 +60,7 @@ class Cov {
         },
         fileSystem: {
           createReadStream: fs.createReadStream,
-          globSearch: fs.globSearch,
-          mkdir: fs.mkdir,
-          stat: fs.stat
+          globSearch: fs.globSearch
         }
       });
 

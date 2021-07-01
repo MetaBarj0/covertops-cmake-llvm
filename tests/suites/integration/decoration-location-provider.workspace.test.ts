@@ -10,6 +10,7 @@ import * as definitions from '../../../src/extension/definitions';
 
 import * as DecorationLocationsProvider from '../../../src/modules/decoration-locations-provider/domain/decoration-locations-provider';
 import * as SettingsProvider from '../../../src/modules/settings-provider/domain/settings-provider';
+import * as BuildTreeDirectoryResolver from '../../../src/modules/build-tree-directory-resolver/domain/build-tree-directory-resolver';
 
 import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';
 import { errorChannel as e } from '../../fakes/adapters/error-channel';
@@ -46,9 +47,14 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
   it('should report correct coverage information for a specific cpp file', async () => {
     const errorChannel = e.buildFakeErrorChannel();
     const settings = SettingsProvider.make({ workspace: vscode.workspace, errorChannel }).settings;
+    const progressReporter = pr.buildFakeProgressReporter();
+    const mkdir = fs.mkdir;
+    const stat = fs.stat;
+    const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
 
     const provider = DecorationLocationsProvider.make({
       settings,
+      buildTreeDirectoryResolver,
       vscode: {
         progressReporter: pr.buildFakeProgressReporter(),
         errorChannel,
@@ -60,9 +66,7 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
       },
       fileSystem: {
         createReadStream: fs.createReadStream,
-        globSearch: fs.globSearch,
-        mkdir: fs.mkdir,
-        stat: fs.stat
+        globSearch: fs.globSearch
       }
     });
 
@@ -106,9 +110,14 @@ function collectSummaryCoverageInfoFromPartiallyCoveredFileShouldSucceed() {
   it('should report correct coverage information for a specific cpp file', async () => {
     const errorChannel = e.buildFakeErrorChannel();
     const settings = SettingsProvider.make({ workspace: vscode.workspace, errorChannel }).settings;
+    const progressReporter = pr.buildFakeProgressReporter();
+    const mkdir = fs.mkdir;
+    const stat = fs.stat;
+    const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
 
     const provider = DecorationLocationsProvider.make({
       settings,
+      buildTreeDirectoryResolver,
       vscode: {
         progressReporter: pr.buildFakeProgressReporter(),
         errorChannel,
@@ -120,9 +129,7 @@ function collectSummaryCoverageInfoFromPartiallyCoveredFileShouldSucceed() {
       },
       fileSystem: {
         createReadStream: fs.createReadStream,
-        globSearch: fs.globSearch,
-        mkdir: fs.mkdir,
-        stat: fs.stat
+        globSearch: fs.globSearch
       }
     });
 
@@ -159,9 +166,14 @@ function collectSummaryCoverageInfoFromFullyCoveredFileShouldSucceed() {
   it('should report correct coverage information for a specific file', async () => {
     const errorChannel = e.buildFakeErrorChannel();
     const settings = SettingsProvider.make({ workspace: vscode.workspace, errorChannel }).settings;
+    const progressReporter = pr.buildFakeProgressReporter();
+    const mkdir = fs.mkdir;
+    const stat = fs.stat;
+    const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
 
     const provider = DecorationLocationsProvider.make({
       settings,
+      buildTreeDirectoryResolver,
       vscode: {
         progressReporter: pr.buildFakeProgressReporter(),
         errorChannel,
@@ -173,9 +185,7 @@ function collectSummaryCoverageInfoFromFullyCoveredFileShouldSucceed() {
       },
       fileSystem: {
         createReadStream: fs.createReadStream,
-        globSearch: fs.globSearch,
-        mkdir: fs.mkdir,
-        stat: fs.stat
+        globSearch: fs.globSearch
       }
     });
 
@@ -212,9 +222,14 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
   it('should report correct coverage information for a specific file', async () => {
     const errorChannel = e.buildFakeErrorChannel();
     const settings = SettingsProvider.make({ workspace: vscode.workspace, errorChannel }).settings;
+    const progressReporter = pr.buildFakeProgressReporter();
+    const mkdir = fs.mkdir;
+    const stat = fs.stat;
+    const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
 
     const provider = DecorationLocationsProvider.make({
       settings,
+      buildTreeDirectoryResolver,
       vscode: {
         progressReporter: pr.buildFakeProgressReporter(),
         errorChannel,
@@ -226,9 +241,7 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
       },
       fileSystem: {
         createReadStream: fs.createReadStream,
-        globSearch: fs.globSearch,
-        mkdir: fs.mkdir,
-        stat: fs.stat
+        globSearch: fs.globSearch
       }
     });
 

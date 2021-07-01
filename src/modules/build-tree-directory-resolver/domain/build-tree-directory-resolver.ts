@@ -14,7 +14,7 @@ export function make(adapters: Adapters): Abstractions.BuildTreeDirectoryResolve
 type Adapters = {
   settings: Settings,
   stat: StatCallable,
-  mkDir: MkdirCallable,
+  mkdir: MkdirCallable,
   progressReporter: ProgressLike,
   errorChannel: OutputChannelLike
 };
@@ -23,7 +23,7 @@ class BuildTreeDirectoryResolver implements Abstractions.BuildTreeDirectoryResol
   constructor(adapters: Adapters) {
     this.settings = adapters.settings;
     this.stat = adapters.stat;
-    this.mkdir = adapters.mkDir;
+    this.mkdir = adapters.mkdir;
     this.progressReporter = adapters.progressReporter;
     this.errorChannel = adapters.errorChannel;
   }
