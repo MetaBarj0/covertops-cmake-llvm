@@ -6,8 +6,6 @@ import * as BuildTreeDirectoryResolver from '../modules/build-tree-directory-res
 import * as Cmake from '../modules/cmake/domain/cmake';
 import * as CoverageInfoCollector from '../modules/coverage-info-collector/domain/coverage-info-collector';
 
-// TODO: only use adapters, not vscode directly
-import { commands, Disposable, OutputChannel, ProgressLocation, window } from 'vscode';
 import * as pc from '../adapters/process-control';
 import * as fs from '../adapters/file-system';
 import * as vscode from '../adapters/vscode';
@@ -18,12 +16,12 @@ export function make() {
 
 class Cov {
   constructor() {
-    this.output = window.createOutputChannel(extensionId);
-    this.command = commands.registerCommand(`${extensionId}.reportUncoveredCodeRegionsInFile`, this.run, this);
+    this.output = vscode.window.createOutputChannel(extensionId);
+    this.command = vscode.commands.registerCommand(`${extensionId}.reportUncoveredCodeRegionsInFile`, this.run, this);
   }
 
   get asDisposable() {
-    return Disposable.from(this);
+    return vscode.Disposable.from(this);
   }
 
   get outputChannel() {
@@ -38,8 +36,8 @@ class Cov {
   }
 
   run() {
-    return window.withProgress({
-      location: ProgressLocation.Notification,
+    return vscode.window.withProgress({
+      location: vscode.ProgressLocation.Notification,
       title: 'Computing uncovered code region locations',
       cancellable: false
     }, async progressReporter => {
@@ -87,6 +85,6 @@ class Cov {
     this.output.appendLine(`starting ${extensionDisplayName}`);
   }
 
-  private readonly output: OutputChannel;
-  private readonly command: Disposable;
+  private readonly output: vscode.OutputChannel;
+  private readonly command: vscode.Disposable;
 }
