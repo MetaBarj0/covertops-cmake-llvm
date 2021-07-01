@@ -1,31 +1,36 @@
-import * as _definitions from '../../extension/definitions';
-import { Settings as _Settings } from './abstractions/domain/settings';
-import { SettingsProvider as _SettingsProvider } from './abstractions/domain/settings-provider';
+// TODO: Global, attempt to refacto all imports following this
 import * as SettingModule from './domain/settings';
-import * as _vscode from '../../shared-kernel/abstractions/vscode';
+import * as DefinitionsModule from '../../extension/definitions';
+import * as VscodeModule from '../../shared-kernel/abstractions/vscode';
+
+import { Settings as SettingsType } from './abstractions/domain/settings';
+import { SettingsProvider as SettingsProviderType } from './abstractions/domain/settings-provider';
 
 export namespace Extension {
-  export const definitions = _definitions;
+  export namespace Definitions {
+    export const extensionId = DefinitionsModule.extensionId;
+  }
 }
 
 export namespace Abstractions {
   export namespace Domain {
-    export type Settings = _Settings;
-    export type SettingsProvider = _SettingsProvider;
+    export type Settings = SettingsType;
+    export type SettingsProvider = SettingsProviderType;
   }
 
   export namespace Adapters {
     export namespace vscode {
-      export type VscodeWorkspaceLike = _vscode.VscodeWorkspaceLike;
-      export type OutputChannelLike = _vscode.OutputChannelLike;
-      export type VscodeWorkspaceFolderLike = _vscode.VscodeWorkspaceFolderLike;
+      export type VscodeWorkspaceLike = VscodeModule.VscodeWorkspaceLike;
+      export type OutputChannelLike = VscodeModule.OutputChannelLike;
+      export type VscodeWorkspaceFolderLike = VscodeModule.VscodeWorkspaceFolderLike;
     }
   }
 }
 
 export namespace Implementations {
   export namespace Domain {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    export const Settings = SettingModule;
+    export namespace Settings {
+      export const make = SettingModule.make;
+    }
   }
 }

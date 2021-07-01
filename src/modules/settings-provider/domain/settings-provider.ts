@@ -18,7 +18,7 @@ class SettingsProvider implements Imports.Abstractions.Domain.SettingsProvider {
   get settings(): Imports.Abstractions.Domain.Settings {
     this.ensureWorkspaceIsLoaded();
 
-    const workspaceSettings = this.workspace.getConfiguration(Imports.Extension.definitions.extensionId);
+    const workspaceSettings = this.workspace.getConfiguration(Imports.Extension.Definitions.extensionId);
     const workspaceFolders = this.workspace.workspaceFolders as Array<Imports.Abstractions.Adapters.vscode.VscodeWorkspaceFolderLike>;
     const rootDirectory = workspaceFolders[0].uri.fsPath;
 
