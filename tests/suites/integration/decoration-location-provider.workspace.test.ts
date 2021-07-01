@@ -5,14 +5,14 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
-import { RegionCoverageInfo } from '../../../src/modules/coverage-info-collector/abstractions/domain/region-coverage-info';
+import { RegionCoverageInfo } from '../../../src/modules/coverage-info-collector/domain/abstractions/region-coverage-info';
 import * as definitions from '../../../src/extension/definitions';
 
-import * as DecorationLocationsProvider from '../../../src/modules/decoration-locations-provider/domain/decoration-locations-provider';
-import * as SettingsProvider from '../../../src/modules/settings-provider/domain/settings-provider';
-import * as BuildTreeDirectoryResolver from '../../../src/modules/build-tree-directory-resolver/domain/build-tree-directory-resolver';
-import * as Cmake from '../../../src/modules/cmake/domain/cmake';
-import * as CoverageInfoCollector from '../../../src/modules/coverage-info-collector/domain/coverage-info-collector';
+import * as DecorationLocationsProvider from '../../../src/modules/decoration-locations-provider/domain/implementations/decoration-locations-provider';
+import * as SettingsProvider from '../../../src/modules/settings-provider/domain/implementations/settings-provider';
+import * as BuildTreeDirectoryResolver from '../../../src/modules/build-tree-directory-resolver/domain/implementations/build-tree-directory-resolver';
+import * as Cmake from '../../../src/modules/cmake/domain/implementations/cmake';
+import * as CoverageInfoCollector from '../../../src/modules/coverage-info-collector/domain/implementations/coverage-info-collector';
 
 import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';
 import { errorChannel as e } from '../../fakes/adapters/error-channel';

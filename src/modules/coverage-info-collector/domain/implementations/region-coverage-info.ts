@@ -1,4 +1,4 @@
-import * as Abstractions from '../abstractions/domain/region-coverage-info';
+import * as Abstractions from '../../domain/abstractions/region-coverage-info';
 
 export function make(rawLLVMRegionCoverageInfo: Abstractions.RawLLVMRegionCoverageInfo) {
   return new RegionCoverageInfo(rawLLVMRegionCoverageInfo);

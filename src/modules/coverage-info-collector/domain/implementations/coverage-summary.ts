@@ -1,4 +1,4 @@
-import * as Abstractions from '../abstractions/domain/coverage-summary';
+import * as Abstractions from '../../domain/abstractions/coverage-summary';
 
 export class CoverageSummary implements Abstractions.CoverageSummary {
   constructor(count: number, covered: number, notCovered: number, percent: number) {

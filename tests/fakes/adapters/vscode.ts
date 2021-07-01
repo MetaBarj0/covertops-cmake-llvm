@@ -1,6 +1,6 @@
 import { defaultSetting } from '../../utils/settings';
 
-import { Settings } from '../../../src/modules/settings-provider/abstractions/domain/settings';
+import { Settings } from '../../../src/modules/settings-provider/domain/abstractions/settings';
 import {
   VscodeUriLike,
   VscodeWorkspaceConfigurationLike,

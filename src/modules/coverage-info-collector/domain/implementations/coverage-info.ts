@@ -1,4 +1,4 @@
-import { OutputChannelLike } from '../../../shared-kernel/abstractions/vscode';
+import { OutputChannelLike } from '../../../../shared-kernel/abstractions/vscode';
 
 import { CoverageSummary } from './coverage-summary';
 import {
@@ -7,11 +7,11 @@ import {
   RawLLVMFunctionCoverageInfo,
   RawLLVMRegionCoverageInfo,
   RawLLVMRegionsCoverageInfo
-} from '../abstractions/domain/region-coverage-info';
+} from '../../domain/abstractions/region-coverage-info';
 
-import * as Abstractions from '../abstractions/domain/coverage-info';
+import * as Abstractions from '../../domain/abstractions/coverage-info';
 
-import * as Definitions from '../../../extension/definitions';
+import * as Definitions from '../../../../extension/definitions';
 import * as RegionCoverageInfo from './region-coverage-info';
 
 import { Readable } from 'stream';

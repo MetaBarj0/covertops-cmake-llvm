@@ -1,5 +1,5 @@
 import * as Definitions from '../../../extension/definitions';
-import { Settings } from '../../settings-provider/abstractions/domain/settings';
+import { Settings } from '../../settings-provider/domain/abstractions/settings';
 // TODO: use module import syntax???
 import { OutputChannelLike, ProgressLike } from '../../../shared-kernel/abstractions/vscode';
 import { GlobSearchCallable } from '../../../shared-kernel/abstractions/file-system';

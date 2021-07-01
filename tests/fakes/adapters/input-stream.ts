@@ -1,4 +1,4 @@
-import * as CoverageInfoCollector from '../../../src/modules/coverage-info-collector/domain/coverage-info-collector';
+import * as CoverageInfoCollector from '../../../src/modules/coverage-info-collector/domain/implementations/coverage-info-collector';
 import { CreateReadStreamCallable } from '../../../src/shared-kernel/abstractions/file-system';
 import { Readable } from 'stream';
 

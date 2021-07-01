@@ -6,8 +6,8 @@ chai.use(chaiAsPromised);
 chai.should();
 
 import * as definitions from '../../../src/extension/definitions';
-import * as Cmake from '../../../src/modules/cmake/domain/cmake';
-import * as SettingsProvider from '../../../src/modules/settings-provider/domain/settings-provider';
+import * as Cmake from '../../../src/modules/cmake/domain/implementations/cmake';
+import * as SettingsProvider from '../../../src/modules/settings-provider/domain/implementations/settings-provider';
 
 import { process as p } from '../../fakes/adapters/process-control';
 import * as vscode from '../../fakes/adapters/vscode';

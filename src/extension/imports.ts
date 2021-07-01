@@ -1,13 +1,13 @@
 import * as DefinitionsModule from './definitions';
 
 import * as VscodeModule from '../adapters/vscode';
-import * as SettingsProviderModule from '../modules/settings-provider/domain/settings-provider';
-import * as BuildTreeDirectoryResolverModule from '../modules/build-tree-directory-resolver/domain/build-tree-directory-resolver';
+import * as SettingsProviderModule from '../modules/settings-provider/domain/implementations/settings-provider';
+import * as BuildTreeDirectoryResolverModule from '../modules/build-tree-directory-resolver/domain/implementations/build-tree-directory-resolver';
 import * as fileSystemModule from '../adapters/file-system';
-import * as CmakeModule from '../modules/cmake/domain/cmake';
+import * as CmakeModule from '../modules/cmake/domain/implementations/cmake';
 import * as processControlModule from '../adapters/process-control';
-import * as CoverageInfoCollectorModule from '../modules/coverage-info-collector/domain/coverage-info-collector';
-import * as DecorationLocationProviderModule from '../modules/decoration-locations-provider/domain/decoration-locations-provider';
+import * as CoverageInfoCollectorModule from '../modules/coverage-info-collector/domain/implementations/coverage-info-collector';
+import * as DecorationLocationProviderModule from '../modules/decoration-locations-provider/domain/implementations/decoration-locations-provider';
 
 
 export namespace Extension {

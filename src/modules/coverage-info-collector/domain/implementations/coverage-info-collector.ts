@@ -1,9 +1,9 @@
-import { CreateReadStreamCallable, GlobSearchCallable } from '../../../shared-kernel/abstractions/file-system';
-import { OutputChannelLike, ProgressLike } from '../../../shared-kernel/abstractions/vscode';
+import { CreateReadStreamCallable, GlobSearchCallable } from '../../../../shared-kernel/abstractions/file-system';
+import { OutputChannelLike, ProgressLike } from '../../../../shared-kernel/abstractions/vscode';
 
-import * as CoverageInfoFileResolver from '../../coverage-info-file-resolver/domain/coverage-info-file-resolver';
-import * as Abstractions from '../abstractions/domain/coverage-info-collector';
-import { Settings } from '../../settings-provider/abstractions/domain/settings';
+import * as CoverageInfoFileResolver from '../../../coverage-info-file-resolver/domain/coverage-info-file-resolver';
+import * as Abstractions from '../abstractions/coverage-info-collector';
+import { Settings } from '../../../settings-provider/domain/abstractions/settings';
 
 import { Readable } from 'stream';
 import * as CoverageInfo from './coverage-info';

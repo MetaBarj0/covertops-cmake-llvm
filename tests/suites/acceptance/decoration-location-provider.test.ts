@@ -6,14 +6,14 @@ chai.use(chaiAsPromised);
 chai.should();
 
 import * as Definitions from '../../../src/extension/definitions';
-import * as DecorationLocationsProvider from '../../../src/modules/decoration-locations-provider/domain/decoration-locations-provider';
-import * as SettingsProvider from '../../../src/modules/settings-provider/domain/settings-provider';
-import * as BuildTreeDirectoryResolver from '../../../src/modules/build-tree-directory-resolver/domain/build-tree-directory-resolver';
+import * as DecorationLocationsProvider from '../../../src/modules/decoration-locations-provider/domain/implementations/decoration-locations-provider';
+import * as SettingsProvider from '../../../src/modules/settings-provider/domain/implementations/settings-provider';
+import * as BuildTreeDirectoryResolver from '../../../src/modules/build-tree-directory-resolver/domain/implementations/build-tree-directory-resolver';
 // TODO: Global - rename 'domain' folder of module 'implementations'
-import * as Cmake from '../../../src/modules/cmake/domain/cmake';
-import * as CoverageInfoCollector from '../../../src/modules/coverage-info-collector/domain/coverage-info-collector';
+import * as Cmake from '../../../src/modules/cmake/domain/implementations/cmake';
+import * as CoverageInfoCollector from '../../../src/modules/coverage-info-collector/domain/implementations/coverage-info-collector';
 
-import { RegionCoverageInfo } from '../../../src/modules/coverage-info-collector/abstractions/domain/region-coverage-info';
+import { RegionCoverageInfo } from '../../../src/modules/coverage-info-collector/domain/abstractions/region-coverage-info';
 
 // TODO: refacto adapter fakes to be the mirroring of the adapter structure
 import { mkDir } from '../../fakes/adapters/mk-dir';

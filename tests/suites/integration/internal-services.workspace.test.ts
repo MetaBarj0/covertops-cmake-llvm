@@ -7,9 +7,9 @@ chai.should();
 
 import { defaultSetting } from '../../utils/settings';
 
-import * as SettingsProvider from '../../../src/modules/settings-provider/domain/settings-provider';
-import * as BuildTreeDirectoryResolver from '../../../src/modules/build-tree-directory-resolver/domain/build-tree-directory-resolver';
-import * as Cmake from '../../../src/modules/cmake/domain/cmake';
+import * as SettingsProvider from '../../../src/modules/settings-provider/domain/implementations/settings-provider';
+import * as BuildTreeDirectoryResolver from '../../../src/modules/build-tree-directory-resolver/domain/implementations/build-tree-directory-resolver';
+import * as Cmake from '../../../src/modules/cmake/domain/implementations/cmake';
 import * as definitions from '../../../src/extension/definitions';
 
 import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';

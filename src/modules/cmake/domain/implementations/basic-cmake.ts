@@ -1,6 +1,6 @@
-import { ProgressLike } from '../../../shared-kernel/abstractions/vscode';
+import { ProgressLike } from '../../../../shared-kernel/abstractions/vscode';
 
-import * as Abstractions from '../abstractions/domain/cmake';
+import * as Abstractions from '../abstractions/cmake';
 
 export abstract class BasicCmake implements Abstractions.Cmake {
   constructor(progressReporter: ProgressLike) {

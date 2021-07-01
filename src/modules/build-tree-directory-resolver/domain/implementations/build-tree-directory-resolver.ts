@@ -1,9 +1,9 @@
-import { MkdirCallable, StatCallable } from '../../../shared-kernel/abstractions/file-system';
-import { OutputChannelLike, ProgressLike } from '../../../shared-kernel/abstractions/vscode';
+import { MkdirCallable, StatCallable } from '../../../../shared-kernel/abstractions/file-system';
+import { OutputChannelLike, ProgressLike } from '../../../../shared-kernel/abstractions/vscode';
 
-import * as Definitions from '../../../extension/definitions';
-import { Settings } from '../../settings-provider/abstractions/domain/settings';
-import * as Abstractions from '../abstractions/domain/build-tree-directory-resolver';
+import * as Definitions from '../../../../extension/definitions';
+import { Settings } from '../../../settings-provider/domain/abstractions/settings';
+import * as Abstractions from '../abstractions/build-tree-directory-resolver';
 
 import * as path from 'path';
 
