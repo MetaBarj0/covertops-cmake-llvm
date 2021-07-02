@@ -47,14 +47,10 @@ class Cov {
       // TODO: Rework Cmake construction adapters
       const cmake = Imports.Domain.Implementations.Cmake.make({
         settings,
-        processControl: {
-          execFileForCommand: Imports.Adapters.Implementations.processControl.execFile,
-          execFileForTarget: Imports.Adapters.Implementations.processControl.execFile
-        },
-        vscode: {
-          errorChannel: this.output,
-          progressReporter: progressReporter
-        }
+        execFileForCommand: Imports.Adapters.Implementations.processControl.execFile,
+        execFileForTarget: Imports.Adapters.Implementations.processControl.execFile,
+        errorChannel: this.output,
+        progressReporter: progressReporter
       });
       const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({
         settings,

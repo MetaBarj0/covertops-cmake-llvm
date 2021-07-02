@@ -36,8 +36,10 @@ function instantiateService() {
     const execFileForTarget = Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess();
     const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
-      processControl: { execFileForCommand, execFileForTarget },
-      vscode: { errorChannel, progressReporter }
+      execFileForCommand,
+      execFileForTarget,
+      errorChannel,
+      progressReporter
     });
     const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForNoMatch();
     const createReadStream = Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(Imports.Fakes.Adapters.FileSystem.buildEmptyReadableStream);
@@ -70,8 +72,10 @@ function failBecauseOfIssuesWithBuildTreeDirectorySetting() {
       const execFileForTarget = Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess();
       const cmake = Imports.Domain.Implementations.Cmake.make({
         settings,
-        processControl: { execFileForCommand, execFileForTarget },
-        vscode: { errorChannel, progressReporter }
+        execFileForCommand,
+        execFileForTarget,
+        errorChannel,
+        progressReporter
       });
       const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForNoMatch();
       const createReadStream = Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(Imports.Fakes.Adapters.FileSystem.buildEmptyReadableStream);
@@ -104,8 +108,10 @@ function failBecauseOfIssuesWithCmakeCommandSetting() {
       const execFileForTarget = Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess();
       const cmake = Imports.Domain.Implementations.Cmake.make({
         settings,
-        processControl: { execFileForCommand, execFileForTarget },
-        vscode: { errorChannel, progressReporter }
+        execFileForCommand,
+        execFileForTarget,
+        errorChannel,
+        progressReporter
       });
       const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForNoMatch();
       const createReadStream = Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(Imports.Fakes.Adapters.FileSystem.buildEmptyReadableStream);
@@ -140,8 +146,10 @@ function failBecauseOfIssuesWithCmakeTargetSetting() {
       const execFileForTarget = Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess();
       const cmake = Imports.Domain.Implementations.Cmake.make({
         settings,
-        processControl: { execFileForCommand, execFileForTarget },
-        vscode: { errorChannel, progressReporter }
+        execFileForCommand,
+        execFileForTarget,
+        errorChannel,
+        progressReporter
       });
       const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForNoMatch();
       const createReadStream = Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(Imports.Fakes.Adapters.FileSystem.buildEmptyReadableStream);
@@ -174,8 +182,10 @@ function failBecauseCoverageInfoFileIsNotFound() {
       const execFileForTarget = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
       const cmake = Imports.Domain.Implementations.Cmake.make({
         settings,
-        processControl: { execFileForCommand, execFileForTarget },
-        vscode: { errorChannel, progressReporter }
+        execFileForCommand,
+        execFileForTarget,
+        errorChannel,
+        progressReporter
       });
       const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForNoMatch();
       const createReadStream = Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(Imports.Fakes.Adapters.FileSystem.buildEmptyReadableStream);
@@ -211,8 +221,10 @@ function failBecauseSeveralCoverageInfoFileAreFound() {
       const execFileForTarget = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
       const cmake = Imports.Domain.Implementations.Cmake.make({
         settings,
-        processControl: { execFileForCommand, execFileForTarget },
-        vscode: { errorChannel, progressReporter }
+        execFileForCommand,
+        execFileForTarget,
+        errorChannel,
+        progressReporter
       });
       const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForSeveralMatch();
       const createReadStream = Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(Imports.Fakes.Adapters.FileSystem.buildEmptyReadableStream);
@@ -249,8 +261,10 @@ function succeedWithCorrectSettingsAndFakeAdapters() {
     const execFileForTarget = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
     const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
-      processControl: { execFileForCommand, execFileForTarget },
-      vscode: { errorChannel, progressReporter }
+      execFileForCommand,
+      execFileForTarget,
+      errorChannel,
+      progressReporter
     });
     const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForExactlyOneMatch();
     const createReadStream = Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(Imports.Fakes.Adapters.FileSystem.buildValidLlvmCoverageJsonObjectStream);

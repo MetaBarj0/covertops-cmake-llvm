@@ -43,8 +43,10 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
     const execFileForTarget = Imports.Adapters.ProcessControl.execFile;
     const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
-      processControl: { execFileForCommand, execFileForTarget },
-      vscode: { errorChannel, progressReporter }
+      execFileForCommand,
+      execFileForTarget,
+      errorChannel,
+      progressReporter
     });
     const createReadStream = Imports.Adapters.FileSystem.createReadStream;
     const globSearch = Imports.Adapters.FileSystem.globSearch;
@@ -105,8 +107,10 @@ function collectSummaryCoverageInfoFromPartiallyCoveredFileShouldSucceed() {
     const execFileForTarget = Imports.Adapters.ProcessControl.execFile;
     const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
-      processControl: { execFileForCommand, execFileForTarget },
-      vscode: { errorChannel, progressReporter }
+      execFileForCommand,
+      execFileForTarget,
+      errorChannel,
+      progressReporter
     });
     const createReadStream = Imports.Adapters.FileSystem.createReadStream;
     const globSearch = Imports.Adapters.FileSystem.globSearch;
@@ -160,8 +164,10 @@ function collectSummaryCoverageInfoFromFullyCoveredFileShouldSucceed() {
     const execFileForTarget = Imports.Adapters.ProcessControl.execFile;
     const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
-      processControl: { execFileForCommand, execFileForTarget },
-      vscode: { errorChannel, progressReporter }
+      execFileForCommand,
+      execFileForTarget,
+      errorChannel,
+      progressReporter
     });
     const createReadStream = Imports.Adapters.FileSystem.createReadStream;
     const globSearch = Imports.Adapters.FileSystem.globSearch;
@@ -215,8 +221,10 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
     const execFileForTarget = Imports.Adapters.ProcessControl.execFile;
     const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
-      processControl: { execFileForCommand, execFileForTarget },
-      vscode: { errorChannel, progressReporter }
+      execFileForCommand,
+      execFileForTarget,
+      errorChannel,
+      progressReporter
     });
     const createReadStream = Imports.Adapters.FileSystem.createReadStream;
     const globSearch = Imports.Adapters.FileSystem.globSearch;

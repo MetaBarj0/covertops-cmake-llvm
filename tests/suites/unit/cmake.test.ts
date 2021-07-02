@@ -27,14 +27,10 @@ function cmakeShouldFailWithWrongCmakeCommandSetting() {
 
     const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
-      processControl: {
-        execFileForCommand: processForCommand,
-        execFileForTarget: processForTarget,
-      },
-      vscode: {
-        progressReporter,
-        errorChannel
-      }
+      execFileForCommand: processForCommand,
+      execFileForTarget: processForTarget,
+      progressReporter,
+      errorChannel
     });
 
     return cmake.buildTarget()
@@ -60,14 +56,10 @@ function cmakeShouldFailWithWrongCmakeTargetSetting() {
 
     const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
-      processControl: {
-        execFileForCommand: processForCommand,
-        execFileForTarget: processForTarget,
-      },
-      vscode: {
-        progressReporter,
-        errorChannel
-      }
+      execFileForCommand: processForCommand,
+      execFileForTarget: processForTarget,
+      progressReporter,
+      errorChannel
     });
 
     const target = workspace.getConfiguration(Imports.Extension.Definitions.extensionNameInSettings).get('cmakeTarget');
@@ -96,14 +88,10 @@ function cmakeShouldSucceedWithCorrectSettings() {
 
     const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
-      vscode: {
-        progressReporter,
-        errorChannel
-      },
-      processControl: {
-        execFileForCommand: processForCommand,
-        execFileForTarget: processForTarget,
-      }
+      progressReporter,
+      errorChannel,
+      execFileForCommand: processForCommand,
+      execFileForTarget: processForTarget,
     });
 
     await cmake.buildTarget();

@@ -1,31 +1,26 @@
 import * as Imports from '../../imports';
 
-// TODO: flatten adapters, and change type name to Context
-type Adapters = {
+type Context = {
   settings: Imports.Domain.Abstractions.Settings,
-  vscode: {
-    progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike,
-    errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike,
-  },
-  processControl: {
-    execFileForCommand: Imports.Adapters.Abstractions.processControl.ExecFileCallable,
-    execFileForTarget: Imports.Adapters.Abstractions.processControl.ExecFileCallable,
-  }
+  progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike,
+  errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike,
+  execFileForCommand: Imports.Adapters.Abstractions.processControl.ExecFileCallable,
+  execFileForTarget: Imports.Adapters.Abstractions.processControl.ExecFileCallable,
 };
 
-export function make(adapters: Adapters): Imports.Domain.Abstractions.Cmake {
-  return new Cmake(adapters);
+export function make(context: Context): Imports.Domain.Abstractions.Cmake {
+  return new Cmake(context);
 }
 
 class Cmake extends Imports.Domain.Implementations.BasicCmake implements Imports.Domain.Abstractions.Cmake {
-  constructor(adapters: Adapters) {
-    super(adapters.vscode.progressReporter);
+  constructor(context: Context) {
+    super(context.progressReporter);
 
-    this.execFileForCommand = adapters.processControl.execFileForCommand;
-    this.execFileForTarget = adapters.processControl.execFileForTarget;
-    this.errorChannel = adapters.vscode.errorChannel;
+    this.execFileForCommand = context.execFileForCommand;
+    this.execFileForTarget = context.execFileForTarget;
+    this.errorChannel = context.errorChannel;
 
-    this.settings = adapters.settings;
+    this.settings = context.settings;
   }
 
   protected reachCommand() {

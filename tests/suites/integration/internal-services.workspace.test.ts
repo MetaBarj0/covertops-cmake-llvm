@@ -157,14 +157,10 @@ function makeCmake() {
 
   return Imports.Domain.Implementations.Cmake.make({
     settings,
-    processControl: {
-      execFileForCommand: Imports.Adapters.ProcessControl.execFile,
-      execFileForTarget: Imports.Adapters.ProcessControl.execFile,
-    },
-    vscode: {
-      progressReporter: Imports.Fakes.Adapters.vscode.buildFakeProgressReporter(),
-      errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel()
-    }
+    execFileForCommand: Imports.Adapters.ProcessControl.execFile,
+    execFileForTarget: Imports.Adapters.ProcessControl.execFile,
+    progressReporter: Imports.Fakes.Adapters.vscode.buildFakeProgressReporter(),
+    errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel()
   });
 }
 
