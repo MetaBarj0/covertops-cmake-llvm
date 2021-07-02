@@ -5,21 +5,7 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
-import { RegionCoverageInfo } from '../../../src/modules/coverage-info-collector/domain/abstractions/region-coverage-info';
-import * as definitions from '../../../src/extension/definitions';
-
-import * as DecorationLocationsProvider from '../../../src/modules/decoration-locations-provider/domain/implementations/decoration-locations-provider';
-import * as SettingsProvider from '../../../src/modules/settings-provider/domain/implementations/settings-provider';
-import * as BuildTreeDirectoryResolver from '../../../src/modules/build-tree-directory-resolver/domain/implementations/build-tree-directory-resolver';
-import * as Cmake from '../../../src/modules/cmake/domain/implementations/cmake';
-import * as CoverageInfoCollector from '../../../src/modules/coverage-info-collector/domain/implementations/coverage-info-collector';
-
-import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';
-import { errorChannel as e } from '../../fakes/adapters/error-channel';
-
-import * as pc from '../../../src/adapters/process-control';
-import * as fs from '../../../src/adapters/file-system';
-import * as vscode from '../../../src/adapters/vscode';
+import * as Imports from './imports';
 
 import { env } from 'process';
 import * as path from 'path';
@@ -47,24 +33,24 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
   });
 
   it('should report correct coverage information for a specific cpp file', async () => {
-    const errorChannel = e.buildFakeErrorChannel();
-    const settings = SettingsProvider.make({ workspace: vscode.workspace, errorChannel }).settings;
-    const progressReporter = pr.buildFakeProgressReporter();
-    const mkdir = fs.mkdir;
-    const stat = fs.stat;
-    const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
-    const execFileForCommand = pc.execFile;
-    const execFileForTarget = pc.execFile;
-    const cmake = Cmake.make({
+    const errorChannel = Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
+    const settings = Imports.Domain.Implementations.SettingsProvider.make({ workspace: Imports.Adapters.vscode.workspace, errorChannel }).settings;
+    const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
+    const mkdir = Imports.Adapters.FileSystem.mkdir;
+    const stat = Imports.Adapters.FileSystem.stat;
+    const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
+    const execFileForCommand = Imports.Adapters.ProcessControl.execFile;
+    const execFileForTarget = Imports.Adapters.ProcessControl.execFile;
+    const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
       processControl: { execFileForCommand, execFileForTarget },
       vscode: { errorChannel, progressReporter }
     });
-    const createReadStream = fs.createReadStream;
-    const globSearch = fs.globSearch;
-    const coverageInfoCollector = CoverageInfoCollector.make({ createReadStream, globSearch, errorChannel, progressReporter, settings });
+    const createReadStream = Imports.Adapters.FileSystem.createReadStream;
+    const globSearch = Imports.Adapters.FileSystem.globSearch;
+    const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({ createReadStream, globSearch, errorChannel, progressReporter, settings });
 
-    const provider = DecorationLocationsProvider.make({
+    const provider = Imports.Domain.Implementations.DecorationLocationsProvider.make({
       settings,
       buildTreeDirectoryResolver,
       cmake,
@@ -75,7 +61,7 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
 
     const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions(sourceFilePath);
 
-    const uncoveredRegions: Array<RegionCoverageInfo> = [];
+    const uncoveredRegions: Array<Imports.Domain.Abstractions.RegionCoverageInfo> = [];
     for await (const region of decorations.uncoveredRegions)
       uncoveredRegions.push(region);
 
@@ -109,24 +95,24 @@ function collectSummaryCoverageInfoFromPartiallyCoveredFileShouldSucceed() {
   });
 
   it('should report correct coverage information for a specific cpp file', async () => {
-    const errorChannel = e.buildFakeErrorChannel();
-    const settings = SettingsProvider.make({ workspace: vscode.workspace, errorChannel }).settings;
-    const progressReporter = pr.buildFakeProgressReporter();
-    const mkdir = fs.mkdir;
-    const stat = fs.stat;
-    const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
-    const execFileForCommand = pc.execFile;
-    const execFileForTarget = pc.execFile;
-    const cmake = Cmake.make({
+    const errorChannel = Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
+    const settings = Imports.Domain.Implementations.SettingsProvider.make({ workspace: Imports.Adapters.vscode.workspace, errorChannel }).settings;
+    const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
+    const mkdir = Imports.Adapters.FileSystem.mkdir;
+    const stat = Imports.Adapters.FileSystem.stat;
+    const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
+    const execFileForCommand = Imports.Adapters.ProcessControl.execFile;
+    const execFileForTarget = Imports.Adapters.ProcessControl.execFile;
+    const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
       processControl: { execFileForCommand, execFileForTarget },
       vscode: { errorChannel, progressReporter }
     });
-    const createReadStream = fs.createReadStream;
-    const globSearch = fs.globSearch;
-    const coverageInfoCollector = CoverageInfoCollector.make({ createReadStream, globSearch, errorChannel, progressReporter, settings });
+    const createReadStream = Imports.Adapters.FileSystem.createReadStream;
+    const globSearch = Imports.Adapters.FileSystem.globSearch;
+    const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({ createReadStream, globSearch, errorChannel, progressReporter, settings });
 
-    const provider = DecorationLocationsProvider.make({
+    const provider = Imports.Domain.Implementations.DecorationLocationsProvider.make({
       settings,
       buildTreeDirectoryResolver,
       cmake,
@@ -164,24 +150,24 @@ function collectSummaryCoverageInfoFromFullyCoveredFileShouldSucceed() {
   });
 
   it('should report correct coverage information for a specific file', async () => {
-    const errorChannel = e.buildFakeErrorChannel();
-    const settings = SettingsProvider.make({ workspace: vscode.workspace, errorChannel }).settings;
-    const progressReporter = pr.buildFakeProgressReporter();
-    const mkdir = fs.mkdir;
-    const stat = fs.stat;
-    const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
-    const execFileForCommand = pc.execFile;
-    const execFileForTarget = pc.execFile;
-    const cmake = Cmake.make({
+    const errorChannel = Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
+    const settings = Imports.Domain.Implementations.SettingsProvider.make({ workspace: Imports.Adapters.vscode.workspace, errorChannel }).settings;
+    const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
+    const mkdir = Imports.Adapters.FileSystem.mkdir;
+    const stat = Imports.Adapters.FileSystem.stat;
+    const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
+    const execFileForCommand = Imports.Adapters.ProcessControl.execFile;
+    const execFileForTarget = Imports.Adapters.ProcessControl.execFile;
+    const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
       processControl: { execFileForCommand, execFileForTarget },
       vscode: { errorChannel, progressReporter }
     });
-    const createReadStream = fs.createReadStream;
-    const globSearch = fs.globSearch;
-    const coverageInfoCollector = CoverageInfoCollector.make({ createReadStream, globSearch, errorChannel, progressReporter, settings });
+    const createReadStream = Imports.Adapters.FileSystem.createReadStream;
+    const globSearch = Imports.Adapters.FileSystem.globSearch;
+    const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({ createReadStream, globSearch, errorChannel, progressReporter, settings });
 
-    const provider = DecorationLocationsProvider.make({
+    const provider = Imports.Domain.Implementations.DecorationLocationsProvider.make({
       settings,
       buildTreeDirectoryResolver,
       cmake,
@@ -219,24 +205,24 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
   });
 
   it('should report correct coverage information for a specific file', async () => {
-    const errorChannel = e.buildFakeErrorChannel();
-    const settings = SettingsProvider.make({ workspace: vscode.workspace, errorChannel }).settings;
-    const progressReporter = pr.buildFakeProgressReporter();
-    const mkdir = fs.mkdir;
-    const stat = fs.stat;
-    const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
-    const execFileForCommand = pc.execFile;
-    const execFileForTarget = pc.execFile;
-    const cmake = Cmake.make({
+    const errorChannel = Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
+    const settings = Imports.Domain.Implementations.SettingsProvider.make({ workspace: Imports.Adapters.vscode.workspace, errorChannel }).settings;
+    const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
+    const mkdir = Imports.Adapters.FileSystem.mkdir;
+    const stat = Imports.Adapters.FileSystem.stat;
+    const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
+    const execFileForCommand = Imports.Adapters.ProcessControl.execFile;
+    const execFileForTarget = Imports.Adapters.ProcessControl.execFile;
+    const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
       processControl: { execFileForCommand, execFileForTarget },
       vscode: { errorChannel, progressReporter }
     });
-    const createReadStream = fs.createReadStream;
-    const globSearch = fs.globSearch;
-    const coverageInfoCollector = CoverageInfoCollector.make({ createReadStream, globSearch, errorChannel, progressReporter, settings });
+    const createReadStream = Imports.Adapters.FileSystem.createReadStream;
+    const globSearch = Imports.Adapters.FileSystem.globSearch;
+    const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({ createReadStream, globSearch, errorChannel, progressReporter, settings });
 
-    const provider = DecorationLocationsProvider.make({
+    const provider = Imports.Domain.Implementations.DecorationLocationsProvider.make({
       settings,
       buildTreeDirectoryResolver,
       cmake,
@@ -247,7 +233,7 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
 
     const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions(sourceFilePath);
 
-    const uncoveredRegions: Array<RegionCoverageInfo> = [];
+    const uncoveredRegions: Array<Imports.Domain.Abstractions.RegionCoverageInfo> = [];
     for await (const region of decorations.uncoveredRegions)
       uncoveredRegions.push(region);
 
@@ -281,4 +267,4 @@ function prependLlvmBinDirToPathEnvironmentVariable() {
   return oldPath;
 }
 
-const extensionConfiguration = vscode.workspace.getConfiguration(definitions.extensionId);
+const extensionConfiguration = Imports.Adapters.vscode.workspace.getConfiguration(Imports.Extension.Definitions.extensionId);

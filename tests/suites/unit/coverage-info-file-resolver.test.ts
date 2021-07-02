@@ -5,14 +5,7 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
-import * as Definitions from '../../../src/extension/definitions';
-import * as CoverageInfoFileResolver from '../../../src/modules/coverage-info-file-resolver/domain/implementations/coverage-info-file-resolver';
-import * as SettingsProvider from '../../../src/modules/settings-provider/domain/implementations/settings-provider';
-
-import * as vscode from '../../fakes/adapters/vscode';
-import { globbing as g } from '../../fakes/adapters/globbing';
-import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';
-import { errorChannel as e } from '../../fakes/adapters/error-channel';
+import * as Imports from './imports';
 
 describe('Unit test suite', () => {
   describe('the behavior of the coverage info file resolver', () => {
@@ -24,21 +17,21 @@ describe('Unit test suite', () => {
 
 function shouldFailWhenNoFileIsFound() {
   it('should fail and report in error channel if the recursive search from the build tree directory does not find one file', () => {
-    const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
-    const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
+    const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+    const errorChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfErrorChannel(Imports.Fakes.Adapters.vscode.buildFakeErrorChannel());
     const errorChannel = errorChannelSpy.object;
-    const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
-    const globSearch = g.buildFakeGlobSearchForNoMatch();
-    const progressReporter = pr.buildFakeProgressReporter();
+    const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
+    const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForNoMatch();
+    const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
 
-    const resolver = CoverageInfoFileResolver.make({ settings, globSearch, progressReporter, errorChannel });
+    const resolver = Imports.Domain.Implementations.CoverageInfoFileResolver.make({ settings, globSearch, progressReporter, errorChannel });
 
     return resolver.resolveCoverageInfoFileFullPath()
       .catch((error: Error) => {
         const errorMessage = 'Cannot resolve the coverage info file path in the build tree directory. ' +
           'Ensure that both ' +
-          `'${Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
-          `'${Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
+          `'${Imports.Extension.Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+          `'${Imports.Extension.Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
           'settings are correctly set.';
 
         error.message.should.contain(errorMessage);
@@ -49,21 +42,21 @@ function shouldFailWhenNoFileIsFound() {
 
 function shouldFailWhenMoreThanOneFileAreFound() {
   it('should fail if the recursive search from the build tree directory does not find one file', () => {
-    const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
-    const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
+    const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+    const errorChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfErrorChannel(Imports.Fakes.Adapters.vscode.buildFakeErrorChannel());
     const errorChannel = errorChannelSpy.object;
-    const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
-    const globSearch = g.buildFakeGlobSearchForNoMatch();
-    const progressReporter = pr.buildFakeProgressReporter();
+    const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
+    const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForNoMatch();
+    const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
 
-    const resolver = CoverageInfoFileResolver.make({ settings, globSearch, progressReporter, errorChannel });
+    const resolver = Imports.Domain.Implementations.CoverageInfoFileResolver.make({ settings, globSearch, progressReporter, errorChannel });
 
     return resolver.resolveCoverageInfoFileFullPath()
       .catch((error: Error) => {
         const errorMessage = 'Cannot resolve the coverage info file path in the build tree directory. ' +
           'Ensure that both ' +
-          `'${Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
-          `'${Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
+          `'${Imports.Extension.Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+          `'${Imports.Extension.Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
           'settings are correctly set.';
 
         error.message.should.contain(errorMessage);
@@ -74,14 +67,14 @@ function shouldFailWhenMoreThanOneFileAreFound() {
 
 function shouldSucceedWhenExactlyOneFileIsFound() {
   it('should resolve correctly if the recursive search from the build tree directory find exactly one file in one discrete step.', async () => {
-    const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
-    const errorChannel = e.buildFakeErrorChannel();
-    const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
-    const globSearch = g.buildFakeGlobSearchForExactlyOneMatch();
-    const progressReporterSpy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());
+    const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+    const errorChannel = Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
+    const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
+    const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForExactlyOneMatch();
+    const progressReporterSpy = Imports.Fakes.Adapters.vscode.buildSpyOfProgressReporter(Imports.Fakes.Adapters.vscode.buildFakeProgressReporter());
     const progressReporter = progressReporterSpy.object;
 
-    const resolver = CoverageInfoFileResolver.make({ settings, globSearch, progressReporter, errorChannel });
+    const resolver = Imports.Domain.Implementations.CoverageInfoFileResolver.make({ settings, globSearch, progressReporter, errorChannel });
 
     await resolver.resolveCoverageInfoFileFullPath();
 

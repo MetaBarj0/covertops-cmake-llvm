@@ -2,12 +2,10 @@ import { MkdirCallable } from '../../../src/shared-kernel/abstractions/file-syst
 
 import { MakeDirectoryOptions, PathLike } from 'fs';
 
-export namespace mkDir {
-  export function buildFakeFailingMkDir(): MkdirCallable {
-    return (_path: PathLike, _options: MakeDirectoryOptions & { recursive: true; }): Promise<string | undefined> => Promise.reject();
-  }
+export function buildFakeFailingMkDir(): MkdirCallable {
+  return (_path: PathLike, _options: MakeDirectoryOptions & { recursive: true; }): Promise<string | undefined> => Promise.reject();
+}
 
-  export function buildFakeSucceedingMkDir(): MkdirCallable {
-    return (_path: PathLike, _options: MakeDirectoryOptions & { recursive: true; }): Promise<string | undefined> => Promise.resolve('/build/tree/directory');
-  }
+export function buildFakeSucceedingMkDir(): MkdirCallable {
+  return (_path: PathLike, _options: MakeDirectoryOptions & { recursive: true; }): Promise<string | undefined> => Promise.resolve('/build/tree/directory');
 }

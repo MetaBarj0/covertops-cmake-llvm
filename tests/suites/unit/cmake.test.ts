@@ -5,14 +5,7 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
-import * as definitions from '../../../src/extension/definitions';
-import * as Cmake from '../../../src/modules/cmake/domain/implementations/cmake';
-import * as SettingsProvider from '../../../src/modules/settings-provider/domain/implementations/settings-provider';
-
-import { process as p } from '../../fakes/adapters/process-control';
-import * as vscode from '../../fakes/adapters/vscode';
-import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';
-import { errorChannel as e } from '../../fakes/adapters/error-channel';
+import * as Imports from './imports';
 
 describe('Unit test suite', () => {
   describe('cmake behavior', () => {
@@ -24,15 +17,15 @@ describe('Unit test suite', () => {
 
 function cmakeShouldFailWithWrongCmakeCommandSetting() {
   it('should be instantiated but fails when asking for building a target and reports to error channel', () => {
-    const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ 'cmakeCommand': '' });
-    const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
+    const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ 'cmakeCommand': '' });
+    const errorChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfErrorChannel(Imports.Fakes.Adapters.vscode.buildFakeErrorChannel());
     const errorChannel = errorChannelSpy.object;
-    const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
-    const processForCommand = p.buildFakeFailingProcess();
-    const processForTarget = p.buildFakeSucceedingProcess();
-    const progressReporter = pr.buildFakeProgressReporter();
+    const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
+    const processForCommand = Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess();
+    const processForTarget = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
+    const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
 
-    const cmake = Cmake.make({
+    const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
       processControl: {
         execFileForCommand: processForCommand,
@@ -47,7 +40,7 @@ function cmakeShouldFailWithWrongCmakeCommandSetting() {
     return cmake.buildTarget()
       .catch((error: Error) => {
         error.message.should.contain(
-          `Cannot find the cmake command. Ensure the '${definitions.extensionNameInSettings}: Cmake Command' ` +
+          `Cannot find the cmake command. Ensure the '${Imports.Extension.Definitions.extensionNameInSettings}: Cmake Command' ` +
           'setting is correctly set. Have you verified your PATH environment variable?');
 
         errorChannelSpy.countFor('appendLine').should.be.equal(1);
@@ -57,15 +50,15 @@ function cmakeShouldFailWithWrongCmakeCommandSetting() {
 
 function cmakeShouldFailWithWrongCmakeTargetSetting() {
   it('should be instantiated but throw when asking for building a target and reports in error channel', () => {
-    const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ 'cmakeTarget': '' });
-    const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
+    const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ 'cmakeTarget': '' });
+    const errorChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfErrorChannel(Imports.Fakes.Adapters.vscode.buildFakeErrorChannel());
     const errorChannel = errorChannelSpy.object;
-    const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
-    const processForCommand = p.buildFakeSucceedingProcess();
-    const processForTarget = p.buildFakeFailingProcess();
-    const progressReporter = pr.buildFakeProgressReporter();
+    const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
+    const processForCommand = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
+    const processForTarget = Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess();
+    const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
 
-    const cmake = Cmake.make({
+    const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
       processControl: {
         execFileForCommand: processForCommand,
@@ -77,13 +70,13 @@ function cmakeShouldFailWithWrongCmakeTargetSetting() {
       }
     });
 
-    const target = workspace.getConfiguration(definitions.extensionNameInSettings).get('cmakeTarget');
+    const target = workspace.getConfiguration(Imports.Extension.Definitions.extensionNameInSettings).get('cmakeTarget');
 
     return cmake.buildTarget()
       .catch((error: Error) => {
         error.message.should.contain(
           `Error: Could not build the specified cmake target ${target}. ` +
-          `Ensure '${definitions.extensionNameInSettings}: Cmake Target' setting is properly set.`);
+          `Ensure '${Imports.Extension.Definitions.extensionNameInSettings}: Cmake Target' setting is properly set.`);
 
         errorChannelSpy.countFor('appendLine').should.be.equal(1);
       });
@@ -93,15 +86,15 @@ function cmakeShouldFailWithWrongCmakeTargetSetting() {
 
 function cmakeShouldSucceedWithCorrectSettings() {
   it('should be instantiated and succeed when asking for building a target in three discrete steps', async () => {
-    const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
-    const errorChannel = e.buildFakeErrorChannel();
-    const settings = SettingsProvider.make({ errorChannel, workspace }).settings;
-    const processForCommand = p.buildFakeSucceedingProcess();
-    const processForTarget = p.buildFakeSucceedingProcess();
-    const progressReporterSpy = pr.buildSpyOfProgressReporter(pr.buildFakeProgressReporter());
+    const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+    const errorChannel = Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
+    const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
+    const processForCommand = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
+    const processForTarget = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
+    const progressReporterSpy = Imports.Fakes.Adapters.vscode.buildSpyOfProgressReporter(Imports.Fakes.Adapters.vscode.buildFakeProgressReporter());
     const progressReporter = progressReporterSpy.object;
 
-    const cmake = Cmake.make({
+    const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
       vscode: {
         progressReporter,

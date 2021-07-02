@@ -1,3 +1,4 @@
+// TODO: global - check suite of test regarding the new module architecture
 import * as chai from 'chai';
 import { describe, it, before, after } from 'mocha';
 import * as chaiAsPromised from 'chai-as-promised';
@@ -5,21 +6,10 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
-import { defaultSetting } from '../../utils/settings';
+import * as Imports from './imports';
 
-import * as SettingsProvider from '../../../src/modules/settings-provider/domain/implementations/settings-provider';
-import * as BuildTreeDirectoryResolver from '../../../src/modules/build-tree-directory-resolver/domain/implementations/build-tree-directory-resolver';
-import * as Cmake from '../../../src/modules/cmake/domain/implementations/cmake';
-import * as definitions from '../../../src/extension/definitions';
-
-import { progressReporter as pr } from '../../fakes/adapters/progress-reporter';
-import { errorChannel as e } from '../../fakes/adapters/error-channel';
-
-import * as vscode from 'vscode';
 import { env } from 'process';
 import * as path from 'path';
-import * as fs from '../../../src/adapters/file-system';
-import * as pc from '../../../src/adapters/process-control';
 
 describe('integration test suite', () => {
   describe('the behavior of internal services', () => {
@@ -40,7 +30,10 @@ describe('integration test suite', () => {
 
 function settingsProviderGivesDefaultSettings() {
   it('should not throw any exception when instantiating settings provider and settings should be set with default values', () => {
-    const settings = SettingsProvider.make({ workspace: vscode.workspace, errorChannel: e.buildFakeErrorChannel() }).settings;
+    const settings = Imports.Domain.Implementations.SettingsProvider.make({
+      workspace: Imports.Adapters.vscode.workspace,
+      errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel()
+    }).settings;
 
     settings.buildTreeDirectory.should.be.equal('build');
     settings.cmakeCommand.should.be.equal('cmake');
@@ -48,7 +41,7 @@ function settingsProviderGivesDefaultSettings() {
     settings.coverageInfoFileName.should.be.equal('coverage.json');
     settings.additionalCmakeOptions.should.be.empty;
 
-    const rootFolder = (vscode.workspace.workspaceFolders as Array<vscode.WorkspaceFolder>)[0].uri.fsPath;
+    const rootFolder = (Imports.Adapters.vscode.workspace.workspaceFolders as Array<Imports.SharedKernel.vscode.VscodeWorkspaceFolderLike>)[0].uri.fsPath;
     settings.rootDirectory.should.be.equal(rootFolder);
   });
 }
@@ -60,11 +53,11 @@ function buildTreeDirectoryResolverShouldFail() {
   it('should not be possible to find or create the build tree directory', () => {
     return makeBuildTreeDirectoryResolver().resolve().should.eventually.be.rejectedWith(
       'Cannot find or create the build tree directory. Ensure the ' +
-      `'${definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`);
+      `'${Imports.Extension.Definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`);
   });
 
   after('restoring default build tree directory setting', async () =>
-    await extensionConfiguration.update('buildTreeDirectory', defaultSetting('buildTreeDirectory')));
+    await extensionConfiguration.update('buildTreeDirectory', Imports.TestUtils.defaultSetting('buildTreeDirectory')));
 }
 
 function cmakeInvocationShouldFail() {
@@ -74,12 +67,12 @@ function cmakeInvocationShouldFail() {
 
   it('should fail in attempting to invoke cmake', () => {
     return makeCmake().buildTarget().should.eventually.be.rejectedWith(
-      `Cannot find the cmake command. Ensure the '${definitions.extensionNameInSettings}: Cmake Command' ` +
+      `Cannot find the cmake command. Ensure the '${Imports.Extension.Definitions.extensionNameInSettings}: Cmake Command' ` +
       'setting is correctly set. Have you verified your PATH environment variable?');
   });
 
   after('restoring cmake command setting', async () => {
-    await extensionConfiguration.update('cmakeCommand', defaultSetting('cmakeCommand'));
+    await extensionConfiguration.update('cmakeCommand', Imports.TestUtils.defaultSetting('cmakeCommand'));
   });
 }
 
@@ -96,17 +89,20 @@ function cmakeTargetBuildingShouldFail() {
   });
 
   it('should fail in attempting to build an invalid cmake target', () => {
-    const settings = SettingsProvider.make({ workspace: vscode.workspace, errorChannel: e.buildFakeErrorChannel() }).settings;
+    const settings = Imports.Domain.Implementations.SettingsProvider.make({
+      workspace: Imports.Adapters.vscode.workspace,
+      errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel()
+    }).settings;
 
     return makeCmake().buildTarget().should.eventually.be.rejectedWith(
       `Error: Could not build the specified cmake target ${settings.cmakeTarget}. ` +
-      `Ensure '${definitions.extensionNameInSettings}: Cmake Target' setting is properly set.`);
+      `Ensure '${Imports.Extension.Definitions.extensionNameInSettings}: Cmake Target' setting is properly set.`);
   });
 
   after('restoring cmake target and additonal options settings and PATH environment variable', async () => {
     await Promise.all([
-      extensionConfiguration.update('cmakeTarget', defaultSetting('cmakeTarget')),
-      extensionConfiguration.update('additionalCmakeOptions', defaultSetting('additionalCmakeOptions'))
+      extensionConfiguration.update('cmakeTarget', Imports.TestUtils.defaultSetting('cmakeTarget')),
+      extensionConfiguration.update('additionalCmakeOptions', Imports.TestUtils.defaultSetting('additionalCmakeOptions'))
     ]);
 
     env['PATH'] = originalEnvPath;
@@ -151,34 +147,37 @@ function prependLlvmBinDirToPathEnvironmentVariable() {
   return oldPath;
 }
 
-const extensionConfiguration = vscode.workspace.getConfiguration(definitions.extensionId);
+const extensionConfiguration = Imports.Adapters.vscode.workspace.getConfiguration(Imports.Extension.Definitions.extensionId);
 
 function makeCmake() {
-  const settings = SettingsProvider.make({ errorChannel: e.buildFakeErrorChannel(), workspace: vscode.workspace }).settings;
+  const settings = Imports.Domain.Implementations.SettingsProvider.make({
+    errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel(),
+    workspace: Imports.Adapters.vscode.workspace
+  }).settings;
 
-  return Cmake.make({
+  return Imports.Domain.Implementations.Cmake.make({
     settings,
     processControl: {
-      execFileForCommand: pc.execFile,
-      execFileForTarget: pc.execFile,
+      execFileForCommand: Imports.Adapters.ProcessControl.execFile,
+      execFileForTarget: Imports.Adapters.ProcessControl.execFile,
     },
     vscode: {
-      progressReporter: pr.buildFakeProgressReporter(),
-      errorChannel: e.buildFakeErrorChannel()
+      progressReporter: Imports.Fakes.Adapters.vscode.buildFakeProgressReporter(),
+      errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel()
     }
   });
 }
 
 function makeBuildTreeDirectoryResolver() {
-  const errorChannel = e.buildFakeErrorChannel();
-  const workspace = vscode.workspace;
-  const settings = SettingsProvider.make({ workspace, errorChannel }).settings;
+  const errorChannel = Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
+  const workspace = Imports.Adapters.vscode.workspace;
+  const settings = Imports.Domain.Implementations.SettingsProvider.make({ workspace, errorChannel }).settings;
 
-  return BuildTreeDirectoryResolver.make({
+  return Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({
     settings,
-    stat: fs.stat,
-    mkdir: fs.mkdir,
-    progressReporter: pr.buildFakeProgressReporter(),
+    stat: Imports.Adapters.FileSystem.stat,
+    mkdir: Imports.Adapters.FileSystem.mkdir,
+    progressReporter: Imports.Fakes.Adapters.vscode.buildFakeProgressReporter(),
     errorChannel
   });
 }

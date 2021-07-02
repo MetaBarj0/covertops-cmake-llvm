@@ -5,17 +5,14 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
-import * as SettingsProvider from '../../../src/modules/settings-provider/domain/implementations/settings-provider';
-import { errorChannel as e } from '../../fakes/adapters/error-channel';
-
-import * as vscode from 'vscode';
+import * as Imports from './imports';
 
 describe('Querying settings from a setting provider initialized with a workspace that does not have a root folder.', () => {
   it('should throw an error when settings are queried from a setting provider', () => {
     (() => {
-      SettingsProvider.make({
-        workspace: vscode.workspace,
-        errorChannel: e.buildFakeErrorChannel()
+      Imports.Domain.Implementations.SettingsProvider.make({
+        workspace: Imports.Adapters.vscode.workspace,
+        errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel()
       }).settings;
     }).should.throw(
       'A workspace must be loaded to get coverage information.');

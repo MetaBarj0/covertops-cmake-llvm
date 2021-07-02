@@ -5,12 +5,7 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
-import { defaultSetting } from '../../utils/settings';
-
-import * as SettingsProvider from '../../../src/modules/settings-provider/domain/implementations/settings-provider';
-
-import * as vscode from '../../fakes/adapters/vscode';
-import { errorChannel as e } from '../../fakes/adapters/error-channel';
+import * as Imports from './imports';
 
 describe('Unit test suite', () => {
   describe('The setting provider behavior', () => {
@@ -21,11 +16,11 @@ describe('Unit test suite', () => {
 
 function shouldFailBecauseOfNoRootFolderOpened() {
   it('should be instantiated correctly but throw an exception and report in error channel when workspace folders are not set', () => {
-    const workspace = vscode.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings();
-    const errorChannelSpy = e.buildSpyOfErrorChannel(e.buildFakeErrorChannel());
+    const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings();
+    const errorChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfErrorChannel(Imports.Fakes.Adapters.vscode.buildFakeErrorChannel());
     const errorChannel = errorChannelSpy.object;
 
-    const provider = SettingsProvider.make({ workspace, errorChannel });
+    const provider = Imports.Domain.Implementations.SettingsProvider.make({ workspace, errorChannel });
 
     const errorMessage = 'A workspace must be loaded to get coverage information.';
 
@@ -38,18 +33,18 @@ function shouldFailBecauseOfNoRootFolderOpened() {
 function shouldSucceedAndExposeDefaultSettings() {
   it('should be instantiated correctly with a vscode workspace-like instance and provide ' +
     'settings with correct default values', () => {
-      const workspace = vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
-      const errorChannel = e.buildFakeErrorChannel();
+      const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+      const errorChannel = Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
 
-      const provider = SettingsProvider.make({ workspace, errorChannel });
+      const provider = Imports.Domain.Implementations.SettingsProvider.make({ workspace, errorChannel });
       const settings = provider.settings;
 
       settings.additionalCmakeOptions.should.be.empty;
-      settings.buildTreeDirectory.should.be.equal(defaultSetting('buildTreeDirectory'));
-      settings.cmakeCommand.should.be.equal(defaultSetting('cmakeCommand'));
-      settings.cmakeTarget.should.be.equal(defaultSetting('cmakeTarget'));
-      settings.coverageInfoFileName.should.be.equal(defaultSetting('coverageInfoFileName'));
+      settings.buildTreeDirectory.should.be.equal(Imports.TestUtils.defaultSetting('buildTreeDirectory'));
+      settings.cmakeCommand.should.be.equal(Imports.TestUtils.defaultSetting('cmakeCommand'));
+      settings.cmakeTarget.should.be.equal(Imports.TestUtils.defaultSetting('cmakeTarget'));
+      settings.coverageInfoFileName.should.be.equal(Imports.TestUtils.defaultSetting('coverageInfoFileName'));
 
-      settings.rootDirectory.should.be.equal(defaultSetting('rootDirectory'));
+      settings.rootDirectory.should.be.equal(Imports.TestUtils.defaultSetting('rootDirectory'));
     });
 }
