@@ -104,15 +104,7 @@ function failBecauseOfIssuesWithCmakeCommandSetting() {
       const mkdir = Imports.Fakes.Adapters.FileSystem.buildFakeFailingMkDir();
       const stat = Imports.Fakes.Adapters.FileSystem.buildFakeSucceedingStatFile();
       const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
-      const execFileForCommand = Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess();
-      const execFileForTarget = Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess();
-      const cmake = Imports.Domain.Implementations.Cmake.make({
-        settings,
-        execFileForCommand,
-        execFileForTarget,
-        errorChannel,
-        progressReporter
-      });
+      const cmake = Imports.Fakes.Domain.buildUnreachableCmake();
       const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForNoMatch();
       const createReadStream = Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(Imports.Fakes.Adapters.FileSystem.buildEmptyReadableStream);
       const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({ createReadStream, globSearch, errorChannel, progressReporter, settings });
@@ -142,15 +134,7 @@ function failBecauseOfIssuesWithCmakeTargetSetting() {
       const mkdir = Imports.Fakes.Adapters.FileSystem.buildFakeFailingMkDir();
       const stat = Imports.Fakes.Adapters.FileSystem.buildFakeSucceedingStatFile();
       const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
-      const execFileForCommand = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
-      const execFileForTarget = Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess();
-      const cmake = Imports.Domain.Implementations.Cmake.make({
-        settings,
-        execFileForCommand,
-        execFileForTarget,
-        errorChannel,
-        progressReporter
-      });
+      const cmake = Imports.Fakes.Domain.buildCmakeFailingAtBuildingTarget();
       const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForNoMatch();
       const createReadStream = Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(Imports.Fakes.Adapters.FileSystem.buildEmptyReadableStream);
       const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({ createReadStream, globSearch, errorChannel, progressReporter, settings });

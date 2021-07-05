@@ -10,6 +10,7 @@ import * as GlobSearchFakes from '../../fakes/adapters/globbing';
 import * as InputStreamFakes from '../../fakes/adapters/input-stream';
 
 import * as ProcessControlFakes from '../../fakes/adapters/process-control';
+import * as CmakeFakes from '../../fakes/domain/cmake';
 import * as SettingsProviderModule from '../../../src/modules/settings-provider/domain/implementations/settings-provider';
 import * as BuildTreeDirectoryResolverModule from '../../../src/modules/build-tree-directory-resolver/domain/implementations/build-tree-directory-resolver';
 import * as CmakeModule from '../../../src/modules/cmake/domain/implementations/cmake';
@@ -44,6 +45,11 @@ export namespace Fakes {
       export const buildFakeFailingProcess = ProcessControlFakes.buildFakeFailingProcess;
       export const buildFakeSucceedingProcess = ProcessControlFakes.buildFakeSucceedingProcess;
     }
+  }
+
+  export namespace Domain {
+    export const buildUnreachableCmake = CmakeFakes.buildUnreachableCmake;
+    export const buildCmakeFailingAtBuildingTarget = CmakeFakes.buildCmakeFailingAtBuildingTarget;
   }
 }
 
