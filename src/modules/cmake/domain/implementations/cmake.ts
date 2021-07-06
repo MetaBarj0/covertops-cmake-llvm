@@ -36,11 +36,14 @@ class Cmake extends Imports.Domain.Implementations.BasicCmake implements Imports
     const source = this.settings.rootDirectory;
 
     return this.executeCommandWith({
-      execFile: this.execFileForTarget,
+      execFile: this.execFileForCommand,
       arguments: ['-B', build, '-S', source, ...this.settings.additionalCmakeOptions],
-      potentialErrorMessage:
-        `Error: Could not build the specified cmake target ${this.settings.cmakeTarget}. ` +
-        `Ensure '${Imports.Extension.Definitions.extensionNameInSettings}: Cmake Target' setting is properly set.`
+      potentialErrorMessage: 'Cannot generate the cmake project in the ' +
+        `${this.settings.rootDirectory} directory. ` +
+        'Ensure either you have opened a valid cmake project, or the cmake project has not already been generated using different options. ' +
+        `You may have to take a look in '${Imports.Extension.Definitions.extensionNameInSettings}: Additional Cmake Options' settings ` +
+        'and check the generator used is correct for instance.'
+
     });
   }
 

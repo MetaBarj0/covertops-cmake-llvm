@@ -148,8 +148,8 @@ function failBecauseOfIssuesWithCmakeProjectGeneration() {
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith('Cannot generate the cmake project in the ' +
         `${settings.rootDirectory} directory. ` +
         'Ensure either you have opened a valid cmake project, or the cmake project has not already been generated using different options. ' +
-        `You may have to take a look in '${Imports.Extension.Definitions.extensionNameInSettings}: Additional Cmake Options' settings` +
-        'and check the generator used is correct for instance');
+        `You may have to take a look in '${Imports.Extension.Definitions.extensionNameInSettings}: Additional Cmake Options' settings ` +
+        'and check the generator used is correct for instance.');
     });
 }
 

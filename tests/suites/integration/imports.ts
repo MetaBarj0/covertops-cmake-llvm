@@ -20,6 +20,7 @@ import * as VscodeModule from '../../../src/adapters/vscode';
 import * as FileSystemModule from '../../../src/adapters/file-system';
 import * as ProcessControlModule from '../../../src/adapters/process-control';
 import * as AbstractVscodeModule from '../../../src/shared-kernel/abstractions/vscode';
+import { Settings as AbstractSettings } from '../../../src/modules/settings-provider/domain/abstractions/settings';
 
 export namespace Fakes {
   export namespace Adapters {
@@ -82,6 +83,7 @@ export namespace Domain {
 
   export namespace Abstractions {
     export type RegionCoverageInfo = RegionCoverageInfoModule.RegionCoverageInfo;
+    export type Settings = AbstractSettings;
   }
 }
 

@@ -20,8 +20,9 @@ describe('integration test suite', () => {
         describe('with a valid build tree directory setting', buildTreeDirectoryResolverShouldSucceed);
       });
       describe('the behavior of cmake', () => {
-        describe('with an invalid cmake command setting', cmakeInvocationShouldFail);
-        describe('with an invalid cmake target setting', cmakeTargetBuildingShouldFail);
+        describe('with an unreachable cmake command', cmakeInvocationShouldFail);
+        describe('with a fail in cmake project generation', cmakeProjectGenerationShouldFail);
+        describe('with a fail in cmake target building', cmakeTargetBuildingShouldFail);
         describe('with valid cmake comand and cmake target settings', cmakeTargetBuildingShouldSucceed);
       });
     });
@@ -73,6 +74,30 @@ function cmakeInvocationShouldFail() {
 
   after('restoring cmake command setting', async () => {
     await extensionConfiguration.update('cmakeCommand', Imports.TestUtils.defaultSetting('cmakeCommand'));
+  });
+}
+
+function cmakeProjectGenerationShouldFail() {
+  let originalEnvPath: string;
+
+  before('Modifying additional cmake command options, PATH environment variable ', async () => {
+    await extensionConfiguration.update('additionalCmakeOptions', ['-DCMAKE_CXX_COMPILER=clang++', '-G', 'Ninjaz']);
+
+    originalEnvPath = prependLlvmBinDirToPathEnvironmentVariable();
+  });
+
+  it('should fail when attempting to generate the project', () => {
+    return makeCmake().buildTarget().should.eventually.be.rejectedWith('Cannot generate the cmake project in the ' +
+      `${buildSettings().rootDirectory} directory. ` +
+      'Ensure either you have opened a valid cmake project, or the cmake project has not already been generated using different options. ' +
+      `You may have to take a look in '${Imports.Extension.Definitions.extensionNameInSettings}: Additional Cmake Options' settings ` +
+      'and check the generator used is correct for instance.');
+  });
+
+  after('restoring additional cmake command options and PATH environment variable', async () => {
+    await extensionConfiguration.update('additionalCmakeOptions', []);
+
+    env['PATH'] = originalEnvPath;
   });
 }
 
@@ -150,13 +175,8 @@ function prependLlvmBinDirToPathEnvironmentVariable() {
 const extensionConfiguration = Imports.Adapters.vscode.workspace.getConfiguration(Imports.Extension.Definitions.extensionId);
 
 function makeCmake() {
-  const settings = Imports.Domain.Implementations.SettingsProvider.make({
-    errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel(),
-    workspace: Imports.Adapters.vscode.workspace
-  }).settings;
-
   return Imports.Domain.Implementations.Cmake.make({
-    settings,
+    settings: buildSettings(),
     execFileForCommand: Imports.Adapters.ProcessControl.execFile,
     execFileForTarget: Imports.Adapters.ProcessControl.execFile,
     progressReporter: Imports.Fakes.Adapters.vscode.buildFakeProgressReporter(),
@@ -176,4 +196,11 @@ function makeBuildTreeDirectoryResolver() {
     progressReporter: Imports.Fakes.Adapters.vscode.buildFakeProgressReporter(),
     errorChannel
   });
+}
+
+function buildSettings(): Imports.Domain.Abstractions.Settings {
+  return Imports.Domain.Implementations.SettingsProvider.make({
+    errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel(),
+    workspace: Imports.Adapters.vscode.workspace
+  }).settings;
 }
