@@ -21,13 +21,9 @@ export abstract class BasicCmake implements Imports.Domain.Abstractions.Cmake {
         increment: 100 / 6 * 2
       });
     } catch (error) {
-      const errorMessage = `Cannot find the cmake command. Ensure the '${Definitions.extensionNameInSettings}: Cmake Command' ` +
-        'setting is correctly set. Have you verified your PATH environment variable?' +
-        `${(<Error>error).message}`;
-
-      this.errorChannel.appendLine(errorMessage);
-
-      return Promise.reject(new Error(errorMessage));
+      return this.handleErrorWithMessage(error,
+        `Cannot find the cmake command. Ensure the '${Definitions.extensionNameInSettings}: Cmake Command' ` +
+        'setting is correctly set. Have you verified your PATH environment variable?');
     }
 
     try {
@@ -38,16 +34,12 @@ export abstract class BasicCmake implements Imports.Domain.Abstractions.Cmake {
         increment: 100 / 6 * 3
       });
     } catch (error) {
-      const errorMessage = 'Cannot generate the cmake project in the ' +
+      return this.handleErrorWithMessage(error,
+        'Cannot generate the cmake project in the ' +
         `${this.settings.rootDirectory} directory. ` +
         'Ensure either you have opened a valid cmake project, or the cmake project has not already been generated using different options. ' +
         `You may have to take a look in '${Definitions.extensionNameInSettings}: Additional Cmake Options' settings ` +
-        'and check the generator used is correct for instance.' +
-        `${(<Error>error).message}`;
-
-      this.errorChannel.appendLine(errorMessage);
-
-      return Promise.reject(new Error(errorMessage));
+        'and check the generator used is correct for instance.');
     }
 
     try {
@@ -58,13 +50,9 @@ export abstract class BasicCmake implements Imports.Domain.Abstractions.Cmake {
         increment: 100 / 6 * 4
       });
     } catch (error) {
-      const errorMessage = `Error: Could not build the specified cmake target ${this.settings.cmakeTarget}. ` +
-        `Ensure '${Definitions.extensionNameInSettings}: Cmake Target' setting is properly set.` +
-        `${(<Error>error).message}`;
-
-      this.errorChannel.appendLine(errorMessage);
-
-      return Promise.reject(new Error(errorMessage));
+      return this.handleErrorWithMessage(error,
+        `Error: Could not build the specified cmake target ${this.settings.cmakeTarget}. ` +
+        `Ensure '${Definitions.extensionNameInSettings}: Cmake Target' setting is properly set.`);
     }
   }
 
@@ -73,6 +61,14 @@ export abstract class BasicCmake implements Imports.Domain.Abstractions.Cmake {
   protected abstract build(): Thenable<void>;
 
   protected readonly settings: Imports.Domain.Abstractions.Settings;
+
+  private handleErrorWithMessage(error: Error, message: string) {
+    const errorMessage = `${message}${(<Error>error).message}`;
+
+    this.errorChannel.appendLine(errorMessage);
+
+    return Promise.reject(new Error(errorMessage));
+  }
 
   private readonly progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike;
   private readonly errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
