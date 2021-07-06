@@ -1,8 +1,10 @@
 import * as Imports from '../../imports';
 
 export abstract class BasicCmake implements Imports.Domain.Abstractions.Cmake {
-  constructor(progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike) {
+  constructor(progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike,
+    settings: Imports.Domain.Abstractions.Settings) {
     this.progressReporter = progressReporter;
+    this.settings = settings;
   }
 
   async buildTarget(): Promise<void> {
@@ -29,6 +31,8 @@ export abstract class BasicCmake implements Imports.Domain.Abstractions.Cmake {
   protected abstract reachCommand(): Thenable<void>;
   protected abstract generateProject(): Thenable<void>;
   protected abstract build(): Thenable<void>;
+
+  protected readonly settings: Imports.Domain.Abstractions.Settings;
 
   private readonly progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike;
 }

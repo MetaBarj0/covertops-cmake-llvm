@@ -14,13 +14,11 @@ export function make(context: Context): Imports.Domain.Abstractions.Cmake {
 
 class Cmake extends Imports.Domain.Implementations.BasicCmake implements Imports.Domain.Abstractions.Cmake {
   constructor(context: Context) {
-    super(context.progressReporter);
+    super(context.progressReporter, context.settings);
 
     this.execFileForCommand = context.execFileForCommand;
     this.execFileForTarget = context.execFileForTarget;
     this.errorChannel = context.errorChannel;
-
-    this.settings = context.settings;
   }
 
   protected reachCommand() {
@@ -88,5 +86,4 @@ class Cmake extends Imports.Domain.Implementations.BasicCmake implements Imports
   private readonly execFileForCommand: Imports.Adapters.Abstractions.processControl.ExecFileCallable;
   private readonly execFileForTarget: Imports.Adapters.Abstractions.processControl.ExecFileCallable;
   private readonly errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
-  private readonly settings: Imports.Domain.Abstractions.Settings;
 };

@@ -12,8 +12,8 @@ describe('acceptance suite of tests', () => {
     describe('The service being instantiated with faked adapters', instantiateService);
     describe('The service failing with incorrect settings', () => {
       describe('When issues arise with the build tree directory', failBecauseOfIssuesWithBuildTreeDirectorySetting);
-      describe('When issues arise with the cmake command', failBecauseOfIssuesWithCmakeCommandSetting);
-      describe('When issues arise with the cmake target', failBecauseOfIssuesWithCmakeTargetSetting);
+      describe('When issues arise with the cmake command reachability', failBecauseOfIssuesWithCmakeCommandSetting);
+      describe('When issues arise with the cmake target build', failBecauseOfIssuesWithCmakeTargetSetting);
       describe('When issues arise with the coverage info file name', () => {
         describe('When the coverage info file is not found', failBecauseCoverageInfoFileIsNotFound);
         describe('When several coverage info file are found', failBecauseSeveralCoverageInfoFileAreFound);
