@@ -14,6 +14,12 @@ export abstract class BasicCmake implements Imports.Domain.Abstractions.Cmake {
   async buildTarget(): Promise<void> {
     try {
       await this.reachCommand();
+
+      this.progressReporter.report({
+        message: 'Found an invocable cmake command.',
+        // TODO: meh, bad progress creating temporal coupling between components
+        increment: 100 / 6 * 2
+      });
     } catch (error) {
       const errorMessage = `Cannot find the cmake command. Ensure the '${Definitions.extensionNameInSettings}: Cmake Command' ` +
         'setting is correctly set. Have you verified your PATH environment variable?' +
@@ -24,14 +30,13 @@ export abstract class BasicCmake implements Imports.Domain.Abstractions.Cmake {
       return Promise.reject(new Error(errorMessage));
     }
 
-    this.progressReporter.report({
-      message: 'Found an invocable cmake command.',
-      // TODO: meh, bad progress creating temporal coupling between components
-      increment: 100 / 6 * 2
-    });
-
     try {
       await this.generateProject();
+
+      this.progressReporter.report({
+        message: 'Generated the cmake project.',
+        increment: 100 / 6 * 3
+      });
     } catch (error) {
       const errorMessage = 'Cannot generate the cmake project in the ' +
         `${this.settings.rootDirectory} directory. ` +
@@ -45,13 +50,13 @@ export abstract class BasicCmake implements Imports.Domain.Abstractions.Cmake {
       return Promise.reject(new Error(errorMessage));
     }
 
-    this.progressReporter.report({
-      message: 'Generated the cmake project.',
-      increment: 100 / 6 * 3
-    });
-
     try {
       await this.build();
+
+      this.progressReporter.report({
+        message: 'Built the target.',
+        increment: 100 / 6 * 4
+      });
     } catch (error) {
       const errorMessage = `Error: Could not build the specified cmake target ${this.settings.cmakeTarget}. ` +
         `Ensure '${Definitions.extensionNameInSettings}: Cmake Target' setting is properly set.` +
@@ -61,11 +66,6 @@ export abstract class BasicCmake implements Imports.Domain.Abstractions.Cmake {
 
       return Promise.reject(new Error(errorMessage));
     }
-
-    this.progressReporter.report({
-      message: 'Built the target.',
-      increment: 100 / 6 * 4
-    });
   }
 
   protected abstract reachCommand(): Thenable<void>;
