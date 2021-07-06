@@ -12,8 +12,9 @@ describe('acceptance suite of tests', () => {
     describe('The service being instantiated with faked adapters', instantiateService);
     describe('The service failing with incorrect settings', () => {
       describe('When issues arise with the build tree directory', failBecauseOfIssuesWithBuildTreeDirectorySetting);
-      describe('When issues arise with the cmake command reachability', failBecauseOfIssuesWithCmakeCommandSetting);
-      describe('When issues arise with the cmake target build', failBecauseOfIssuesWithCmakeTargetSetting);
+      describe('When issues arise with the cmake command reachability', failBecauseOfIssuesWithCmakeCommandReachability);
+      describe('When issues arise with the cmake project generation', failBecauseOfIssuesWithCmakeProjectGeneration);
+      describe('When issues arise with the cmake target build', failBecauseOfIssuesWithCmakeTargetBuilding);
       describe('When issues arise with the coverage info file name', () => {
         describe('When the coverage info file is not found', failBecauseCoverageInfoFileIsNotFound);
         describe('When several coverage info file are found', failBecauseSeveralCoverageInfoFileAreFound);
@@ -94,7 +95,7 @@ function failBecauseOfIssuesWithBuildTreeDirectorySetting() {
     });
 }
 
-function failBecauseOfIssuesWithCmakeCommandSetting() {
+function failBecauseOfIssuesWithCmakeCommandReachability() {
   it('should not be able to provide any decoration for uncovered code regions ' +
     'when the cmake command cannot be reached.', () => {
       const errorChannel = Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
@@ -122,8 +123,38 @@ function failBecauseOfIssuesWithCmakeCommandSetting() {
     });
 }
 
+function failBecauseOfIssuesWithCmakeProjectGeneration() {
+  it('should not be able to provide any decoration for uncovered code regions ' +
+    'when the cmake project cannot be generated.', () => {
+      const errorChannel = Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
+      const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ cmakeCommand: '' });
+      const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
+      const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
+      const mkdir = Imports.Fakes.Adapters.FileSystem.buildFakeFailingMkDir();
+      const stat = Imports.Fakes.Adapters.FileSystem.buildFakeSucceedingStatFile();
+      const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
+      const cmake = Imports.Fakes.Domain.buildCmakeFailingAtGeneratingProject();
+      const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForNoMatch();
+      const createReadStream = Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(Imports.Fakes.Adapters.FileSystem.buildEmptyReadableStream);
+      const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({ createReadStream, globSearch, errorChannel, progressReporter, settings });
+
+      const provider = Imports.Domain.Implementations.DecorationLocationsProvider.make({
+        settings,
+        buildTreeDirectoryResolver,
+        cmake,
+        coverageInfoCollector
+      });
+
+      return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith('Cannot generate the cmake project in the ' +
+        `${settings.rootDirectory} directory. ` +
+        'Ensure either you have opened a valid cmake project, or the cmake project has not already been generated using different options. ' +
+        `You may have to take a look in '${Imports.Extension.Definitions.extensionNameInSettings}: Additional Cmake Options' settings` +
+        'and check the generator used is correct for instance');
+    });
+}
+
 // TODO: File - remove arrange sections duplications
-function failBecauseOfIssuesWithCmakeTargetSetting() {
+function failBecauseOfIssuesWithCmakeTargetBuilding() {
   it('should not be able to provide any decoration for uncovered code regions ' +
     'when the cmake target cannot be built', () => {
       const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ cmakeTarget: '' });

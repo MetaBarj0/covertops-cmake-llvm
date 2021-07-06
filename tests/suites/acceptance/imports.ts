@@ -49,6 +49,7 @@ export namespace Fakes {
 
   export namespace Domain {
     export const buildUnreachableCmake = CmakeFakes.buildUnreachableCmake;
+    export const buildCmakeFailingAtGeneratingProject = CmakeFakes.buildCmakeFailingAtGeneratingProject;
     export const buildCmakeFailingAtBuildingTarget = CmakeFakes.buildCmakeFailingAtBuildingTarget;
   }
 }
