@@ -14,20 +14,16 @@ export function make(context: Context): Imports.Domain.Abstractions.Cmake {
 
 class Cmake extends Imports.Domain.Implementations.BasicCmake implements Imports.Domain.Abstractions.Cmake {
   constructor(context: Context) {
-    super(context.progressReporter, context.settings);
+    super(context.progressReporter, context.settings, context.errorChannel);
 
     this.execFileForCommand = context.execFileForCommand;
     this.execFileForTarget = context.execFileForTarget;
-    this.errorChannel = context.errorChannel;
   }
 
   protected reachCommand() {
     return this.executeCommandWith({
       execFile: this.execFileForCommand,
-      arguments: ['--version'],
-      potentialErrorMessage:
-        `Cannot find the cmake command. Ensure the '${Imports.Extension.Definitions.extensionNameInSettings}: Cmake Command' ` +
-        'setting is correctly set. Have you verified your PATH environment variable?'
+      arguments: ['--version']
     });
   }
 
@@ -37,13 +33,7 @@ class Cmake extends Imports.Domain.Implementations.BasicCmake implements Imports
 
     return this.executeCommandWith({
       execFile: this.execFileForCommand,
-      arguments: ['-B', build, '-S', source, ...this.settings.additionalCmakeOptions],
-      potentialErrorMessage: 'Cannot generate the cmake project in the ' +
-        `${this.settings.rootDirectory} directory. ` +
-        'Ensure either you have opened a valid cmake project, or the cmake project has not already been generated using different options. ' +
-        `You may have to take a look in '${Imports.Extension.Definitions.extensionNameInSettings}: Additional Cmake Options' settings ` +
-        'and check the generator used is correct for instance.'
-
+      arguments: ['-B', build, '-S', source, ...this.settings.additionalCmakeOptions]
     });
   }
 
@@ -53,16 +43,13 @@ class Cmake extends Imports.Domain.Implementations.BasicCmake implements Imports
 
     return this.executeCommandWith({
       execFile: this.execFileForTarget,
-      arguments: ['--build', build, '--target', target],
-      potentialErrorMessage:
-        `Error: Could not build the specified cmake target ${this.settings.cmakeTarget}. ` +
-        `Ensure '${Imports.Extension.Definitions.extensionNameInSettings}: Cmake Target' setting is properly set.`
+      arguments: ['--build', build, '--target', target]
     });
   }
 
   private executeCommandWith(options: {
     execFile: Imports.Adapters.Abstractions.processControl.ExecFileCallable,
-    arguments: ReadonlyArray<string>, potentialErrorMessage: string
+    arguments: ReadonlyArray<string>
   }) {
     return new Promise<void>((resolve, reject) => {
       const cmakeCommand = this.settings.cmakeCommand;
@@ -77,9 +64,7 @@ class Cmake extends Imports.Domain.Implementations.BasicCmake implements Imports
           if (!error)
             return resolve();
 
-          const errorMessage = `${options.potentialErrorMessage}\n${error.message}\n${stderr}\n${stdout}`;
-
-          this.errorChannel.appendLine(errorMessage);
+          const errorMessage = `\n${error.message}\n${stderr}\n${stdout}`;
 
           return reject(new Error(errorMessage));
         });
@@ -88,5 +73,4 @@ class Cmake extends Imports.Domain.Implementations.BasicCmake implements Imports
 
   private readonly execFileForCommand: Imports.Adapters.Abstractions.processControl.ExecFileCallable;
   private readonly execFileForTarget: Imports.Adapters.Abstractions.processControl.ExecFileCallable;
-  private readonly errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
 };

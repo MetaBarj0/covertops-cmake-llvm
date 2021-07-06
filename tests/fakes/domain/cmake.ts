@@ -9,7 +9,7 @@ import * as Definitions from '../../../src/extension/definitions';
 export function buildUnreachableCmake(): Cmake {
   return new class extends BasicCmake implements Cmake {
     constructor() {
-      super(buildFakeProgressReporter(), defaultSettings());
+      super(buildFakeProgressReporter(), defaultSettings(), buildFakeErrorChannel());
     }
 
     protected reachCommand() {
@@ -25,7 +25,7 @@ export function buildUnreachableCmake(): Cmake {
 export function buildCmakeFailingAtGeneratingProject(): Cmake {
   return new class extends BasicCmake implements Cmake {
     constructor() {
-      super(buildFakeProgressReporter(), defaultSettings());
+      super(buildFakeProgressReporter(), defaultSettings(), buildFakeErrorChannel());
     }
 
     protected async reachCommand() { }
@@ -45,7 +45,7 @@ export function buildCmakeFailingAtGeneratingProject(): Cmake {
 export function buildCmakeFailingAtBuildingTarget() {
   return new class extends BasicCmake implements Cmake {
     constructor() {
-      super(buildFakeProgressReporter(), defaultSettings());
+      super(buildFakeProgressReporter(), defaultSettings(), buildFakeErrorChannel());
     }
 
     protected async reachCommand() { }
