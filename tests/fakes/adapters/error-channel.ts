@@ -11,23 +11,16 @@ export function buildFakeErrorChannel(): OutputChannelLike {
 export function buildSpyOfErrorChannel(errorChannel: OutputChannelLike): Spy<OutputChannelLike> {
   return new class extends Spy<OutputChannelLike> implements OutputChannelLike {
     constructor(errorChannel: OutputChannelLike) {
-      super();
-
-      // TODO: all spy - put this in base class?
-      this.errorChannel = errorChannel;
+      super(errorChannel);
     }
 
     appendLine(line: string) {
-      this.errorChannel.appendLine(line);
+      this.decorated.appendLine(line);
       this.incrementCallCountFor('appendLine');
     }
 
-    // TODO: put this in base class?
     get object() {
       return this;
     }
-
-    // TODO: put this in base class?
-    private readonly errorChannel: OutputChannelLike;
   }(errorChannel);
 }

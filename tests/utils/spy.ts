@@ -1,4 +1,8 @@
 export abstract class Spy<T> {
+  constructor(decorated: T) {
+    this.decorated = decorated;
+  }
+
   abstract get object(): T;
 
   countFor(member: keyof T) {
@@ -18,4 +22,6 @@ export abstract class Spy<T> {
   private callCountMap: {
     [P in keyof T]?: number
   } = {};
+
+  protected readonly decorated: T;
 };

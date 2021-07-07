@@ -12,21 +12,17 @@ export function buildFakeProgressReporter(): ProgressLike {
 export function buildSpyOfProgressReporter(progressReporter: ProgressLike): Spy<ProgressLike> {
   return new class extends Spy<ProgressLike> implements ProgressLike {
     constructor(progressReporter: ProgressLike) {
-      super();
-
-      this.progressReporter = progressReporter;
+      super(progressReporter);
     }
 
     report(value: ProgressStep) {
-      this.progressReporter.report(value);
+      this.decorated.report(value);
       super.incrementCallCountFor('report');
     }
 
     get object() {
       return this;
     }
-
-    private readonly progressReporter: ProgressLike;
   }(progressReporter);
 }
 
