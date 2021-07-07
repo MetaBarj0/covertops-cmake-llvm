@@ -183,14 +183,19 @@ function shouldSucceedToCollectUncoveredRegions() {
 
 function buildCoverageInfoCollectorAndSpiesForProgressReportAndErrorChannel() {
   const progressReporterSpy = Imports.Fakes.Adapters.vscode.buildSpyOfProgressReporter(Imports.Fakes.Adapters.vscode.buildFakeProgressReporter());
+  const progressReporter = progressReporterSpy.object;
   const errorChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfErrorChannel(Imports.Fakes.Adapters.vscode.buildFakeErrorChannel());
   const errorChannel = errorChannelSpy.object;
-  const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
-  const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
+  const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForExactlyOneMatch();
+  const settings = buildSettings();
 
   const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({
-    globSearch: Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForExactlyOneMatch(),
-    settings,
+    coverageInfoFileResolver: Imports.Domain.Implementations.CoverageInfoFileResolver.make({
+      errorChannel,
+      globSearch,
+      progressReporter,
+      settings
+    }),
     createReadStream: Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(Imports.Fakes.Adapters.FileSystem.buildValidLlvmCoverageJsonObjectStream),
     progressReporter: progressReporterSpy.object,
     errorChannel
@@ -207,15 +212,20 @@ function buildCoverageInfoCollectorsAndErrorChannelSpiesUsingStreamFactories(str
   return streamFactories.map(streamFfactory => {
     const errorChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfErrorChannel(Imports.Fakes.Adapters.vscode.buildFakeErrorChannel());
     const errorChannel = errorChannelSpy.object;
-    const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
-    const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
+    const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForExactlyOneMatch();
+    const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
+    const settings = buildSettings();
 
     const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({
-      globSearch: Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForExactlyOneMatch(),
-      settings,
+      coverageInfoFileResolver: Imports.Domain.Implementations.CoverageInfoFileResolver.make({
+        errorChannel,
+        globSearch,
+        progressReporter,
+        settings
+      }),
       createReadStream: Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(streamFfactory),
       progressReporter: Imports.Fakes.Adapters.vscode.buildFakeProgressReporter(),
-      errorChannel: errorChannelSpy.object
+      errorChannel
     });
 
     return {
@@ -226,3 +236,10 @@ function buildCoverageInfoCollectorsAndErrorChannelSpiesUsingStreamFactories(str
 }
 
 type StreamFactory = () => Readable;
+
+function buildSettings() {
+  return Imports.Domain.Implementations.SettingsProvider.make({
+    errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel(),
+    workspace: Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings()
+  }).settings;
+}

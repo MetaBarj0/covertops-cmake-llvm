@@ -4,6 +4,7 @@ import * as SettingsProviderModule from '../../../src/modules/settings-provider/
 import * as RegionCoverageInfoModule from '../../../src/modules/coverage-info-collector/domain/abstractions/region-coverage-info';
 import * as CoverageInfoCollectorModule from '../../../src/modules/coverage-info-collector/domain/implementations/coverage-info-collector';
 import * as BuildTreeDirectoryResolverModule from '../../../src/modules/build-tree-directory-resolver/domain/implementations/build-tree-directory-resolver';
+import * as CoverageInfoFileResolverModule from '../../../src/modules/coverage-info-file-resolver/domain/implementations/coverage-info-file-resolver';
 import * as CmakeModule from '../../../src/modules/cmake/domain/implementations/cmake';
 import * as DecorationLocationsProviderModule from '../../../src/modules/decoration-locations-provider/domain/implementations/decoration-locations-provider';
 import * as TestUtilsModule from '../../utils/settings';
@@ -43,6 +44,10 @@ export namespace Domain {
 
     export namespace DecorationLocationsProvider {
       export const make = DecorationLocationsProviderModule.make;
+    }
+
+    export namespace CoverageInfoFileResolver {
+      export const make = CoverageInfoFileResolverModule.make;
     }
   }
 

@@ -1,18 +1,25 @@
-// TODO: module import syntax
 import { ExecFileExceptionLike, ExecFileOptionsLike, ExecFileCallable } from '../../../src/shared-kernel/abstractions/process-control';
 
-export function buildFakeFailingProcess(): ExecFileCallable {
+export function buildFakeFailingProcess(failureStage?: FailureStages): ExecFileCallable {
+  const maxSuccessfulCallCount = failureStage ? <number>failureStage : 0;
+  let currentCallCount = 0;
+
   return (_file: string,
     _args: readonly string[] | null | undefined,
     _options: ExecFileOptionsLike,
     callback: (error: ExecFileExceptionLike | null,
       stdout: string, stderr: string) => void) => {
-    callback(
-      new class implements ExecFileExceptionLike {
-        message = 'Epic fail!';
-      },
-      'stdout',
-      'stderr');
+    if (currentCallCount >= maxSuccessfulCallCount)
+      callback(
+        new class implements ExecFileExceptionLike {
+          message = 'Epic Fail!';
+        },
+        'Epic Fail!',
+        'Epic Fail!');
+    else
+      callback(null, 'Epic Success!', '');
+
+    ++currentCallCount;
   };
 }
 
@@ -22,6 +29,12 @@ export function buildFakeSucceedingProcess(): ExecFileCallable {
     _options: ExecFileOptionsLike,
     callback: (error: ExecFileExceptionLike | null,
       stdout: string, stderr: string) => void) => {
-    callback(null, 'epic success!', '');
+    callback(null, 'Epic Success!', '');
   };
 }
+
+export enum FailureStages {
+  reach = 0,
+  generate = 1,
+  build = 2
+};

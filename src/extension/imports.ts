@@ -8,7 +8,7 @@ import * as CmakeModule from '../modules/cmake/domain/implementations/cmake';
 import * as processControlModule from '../adapters/process-control';
 import * as CoverageInfoCollectorModule from '../modules/coverage-info-collector/domain/implementations/coverage-info-collector';
 import * as DecorationLocationProviderModule from '../modules/decoration-locations-provider/domain/implementations/decoration-locations-provider';
-
+import * as CoverageInfoFileResolverModule from '../modules/coverage-info-file-resolver/domain/implementations/coverage-info-file-resolver';
 
 export namespace Extension {
   export namespace Definitions {
@@ -72,6 +72,10 @@ export namespace Domain {
 
     export namespace DecorationLocationProvider {
       export const make = DecorationLocationProviderModule.make;
+    }
+
+    export namespace CoverageInfoFileResolver {
+      export const make = CoverageInfoFileResolverModule.make;
     }
   }
 }

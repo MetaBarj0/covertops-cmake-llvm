@@ -6,12 +6,12 @@ import * as InputStreamFakes from '../../fakes/adapters/input-stream';
 import * as ProcessControlFakes from '../../fakes/adapters/process-control';
 import * as StatFileFakes from '../../fakes/adapters/stat-file';
 import * as MkdirFakes from '../../fakes/adapters/mk-dir';
-import * as CmakeFakes from '../../fakes/domain/cmake';
 import * as SettingsProviderModule from '../../../src/modules/settings-provider/domain/implementations/settings-provider';
 import * as CoverageInfoFileResolverModule from '../../../src/modules/coverage-info-file-resolver/domain/implementations/coverage-info-file-resolver';
 import * as RegionCoverageInfoModule from '../../../src/modules/coverage-info-collector/domain/abstractions/region-coverage-info';
 import * as CoverageInfoCollectorModule from '../../../src/modules/coverage-info-collector/domain/implementations/coverage-info-collector';
 import * as BuildTreeDirectoryResolverModule from '../../../src/modules/build-tree-directory-resolver/domain/implementations/build-tree-directory-resolver';
+import * as CmakeModule from '../../../src/modules/cmake/domain/implementations/cmake';
 import * as TestUtilsModule from '../../utils/settings';
 import * as DefinitionsModule from '../../../src/extension/definitions';
 
@@ -45,13 +45,6 @@ export namespace Fakes {
       export const buildFakeSucceedingProcess = ProcessControlFakes.buildFakeSucceedingProcess;
     }
   }
-
-  export namespace Domain {
-    export const buildUnreachableCmake = CmakeFakes.buildUnreachableCmake;
-    export const buildCmakeFailingAtGeneratingProject = CmakeFakes.buildCmakeFailingAtGeneratingProject;
-    export const buildCmakeFailingAtBuildingTarget = CmakeFakes.buildCmakeFailingAtBuildingTarget;
-    export const buildFakeSucceedingCmake = CmakeFakes.buildFakeSucceedingCmake;
-  }
 }
 
 export namespace Domain {
@@ -70,6 +63,10 @@ export namespace Domain {
 
     export namespace BuildTreeDirectoryResolver {
       export const make = BuildTreeDirectoryResolverModule.make;
+    }
+
+    export namespace Cmake {
+      export const make = CmakeModule.make;
     }
   }
 

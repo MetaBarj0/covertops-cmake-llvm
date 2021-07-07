@@ -48,7 +48,18 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
     });
     const createReadStream = Imports.Adapters.FileSystem.createReadStream;
     const globSearch = Imports.Adapters.FileSystem.globSearch;
-    const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({ createReadStream, globSearch, errorChannel, progressReporter, settings });
+    const coverageInfoFileResolver = Imports.Domain.Implementations.CoverageInfoFileResolver.make({
+      errorChannel,
+      globSearch,
+      progressReporter,
+      settings
+    });
+    const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({
+      coverageInfoFileResolver,
+      createReadStream,
+      errorChannel,
+      progressReporter,
+    });
 
     const provider = Imports.Domain.Implementations.DecorationLocationsProvider.make({
       settings,
@@ -110,7 +121,18 @@ function collectSummaryCoverageInfoFromPartiallyCoveredFileShouldSucceed() {
     });
     const createReadStream = Imports.Adapters.FileSystem.createReadStream;
     const globSearch = Imports.Adapters.FileSystem.globSearch;
-    const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({ createReadStream, globSearch, errorChannel, progressReporter, settings });
+    const coverageInfoFileResolver = Imports.Domain.Implementations.CoverageInfoFileResolver.make({
+      errorChannel,
+      globSearch,
+      progressReporter,
+      settings
+    });
+    const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({
+      coverageInfoFileResolver,
+      createReadStream,
+      errorChannel,
+      progressReporter,
+    });
 
     const provider = Imports.Domain.Implementations.DecorationLocationsProvider.make({
       settings,
@@ -165,7 +187,18 @@ function collectSummaryCoverageInfoFromFullyCoveredFileShouldSucceed() {
     });
     const createReadStream = Imports.Adapters.FileSystem.createReadStream;
     const globSearch = Imports.Adapters.FileSystem.globSearch;
-    const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({ createReadStream, globSearch, errorChannel, progressReporter, settings });
+    const coverageInfoFileResolver = Imports.Domain.Implementations.CoverageInfoFileResolver.make({
+      errorChannel,
+      globSearch,
+      progressReporter,
+      settings
+    });
+    const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({
+      coverageInfoFileResolver,
+      createReadStream,
+      errorChannel,
+      progressReporter
+    });
 
     const provider = Imports.Domain.Implementations.DecorationLocationsProvider.make({
       settings,
@@ -212,15 +245,26 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
     const stat = Imports.Adapters.FileSystem.stat;
     const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
     const execFile = Imports.Adapters.ProcessControl.execFile;
+    const globSearch = Imports.Adapters.FileSystem.globSearch;
     const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
       execFile,
       errorChannel,
       progressReporter
     });
+    const coverageInfoFileResolver = Imports.Domain.Implementations.CoverageInfoFileResolver.make({
+      errorChannel,
+      progressReporter,
+      settings,
+      globSearch
+    });
     const createReadStream = Imports.Adapters.FileSystem.createReadStream;
-    const globSearch = Imports.Adapters.FileSystem.globSearch;
-    const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({ createReadStream, globSearch, errorChannel, progressReporter, settings });
+    const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({
+      coverageInfoFileResolver,
+      createReadStream,
+      errorChannel,
+      progressReporter
+    });
 
     const provider = Imports.Domain.Implementations.DecorationLocationsProvider.make({
       settings,

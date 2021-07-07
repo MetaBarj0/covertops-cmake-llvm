@@ -50,12 +50,17 @@ class Cov {
         errorChannel: this.output,
         progressReporter: progressReporter
       });
+      const coverageInfoFileResolver = Imports.Domain.Implementations.CoverageInfoFileResolver.make({
+        errorChannel,
+        globSearch: Imports.Adapters.Implementations.fileSystem.globSearch,
+        progressReporter,
+        settings
+      });
       const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({
-        settings,
+        coverageInfoFileResolver,
         progressReporter,
         errorChannel,
-        createReadStream: Imports.Adapters.Implementations.fileSystem.createReadStream,
-        globSearch: Imports.Adapters.Implementations.fileSystem.globSearch
+        createReadStream: Imports.Adapters.Implementations.fileSystem.createReadStream
       });
 
       const provider = Imports.Domain.Implementations.DecorationLocationProvider.make({
