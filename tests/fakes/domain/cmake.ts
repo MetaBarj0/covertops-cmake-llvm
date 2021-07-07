@@ -2,19 +2,18 @@ import { Cmake } from '../../../src/modules/cmake/domain/abstractions/cmake';
 import { BasicCmake } from '../../../src/modules/cmake/domain/implementations/basic-cmake';
 import { buildFakeProgressReporter } from '../adapters/progress-reporter';
 import * as SettingsProvider from '../../../src/modules/settings-provider/domain/implementations/settings-provider';
+import * as CmakeModule from '../../../src/modules/cmake/domain/implementations/cmake';
 import { buildFakeErrorChannel } from '../adapters/error-channel';
 import { buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings } from '../adapters/vscode';
-import * as Definitions from '../../../src/extension/definitions';
 
-export function buildUnreachableCmake(): Cmake {
+export function buildUnreachableCmake(context?: Context): Cmake {
   return new class extends BasicCmake implements Cmake {
     constructor() {
-      super(buildFakeProgressReporter(), defaultSettings(), buildFakeErrorChannel());
+      super(...buildBasicCmakeConstructorArgumentsFromContext(context));
     }
 
     protected reachCommand() {
-      return Promise.reject(`Cannot find the cmake command. Ensure the '${Definitions.extensionNameInSettings}: Cmake Command' ` +
-        'setting is correctly set. Have you verified your PATH environment variable?');
+      return Promise.reject(new Error);
     }
 
     protected async generateProject() { }
@@ -22,45 +21,52 @@ export function buildUnreachableCmake(): Cmake {
   };
 }
 
-export function buildCmakeFailingAtGeneratingProject(): Cmake {
+export function buildCmakeFailingAtGeneratingProject(context?: Context): Cmake {
   return new class extends BasicCmake implements Cmake {
     constructor() {
-      super(buildFakeProgressReporter(), defaultSettings(), buildFakeErrorChannel());
+      super(...buildBasicCmakeConstructorArgumentsFromContext(context));
     }
 
     protected async reachCommand() { }
 
     protected async generateProject() {
-      return Promise.reject('Cannot generate the cmake project in the ' +
-        `${this.settings.rootDirectory} directory. ` +
-        'Ensure either you have opened a valid cmake project, or the cmake project has not already been generated using different options. ' +
-        `You may have to take a look in '${Definitions.extensionNameInSettings}: Additional Cmake Options' settings ` +
-        'and check the generator used is correct for instance.');
+      return Promise.reject(new Error);
     }
 
     protected async build() { }
   };
 }
 
-export function buildCmakeFailingAtBuildingTarget() {
+export function buildCmakeFailingAtBuildingTarget(context?: Context) {
   return new class extends BasicCmake implements Cmake {
     constructor() {
-      super(buildFakeProgressReporter(), defaultSettings(), buildFakeErrorChannel());
+      super(...buildBasicCmakeConstructorArgumentsFromContext(context));
     }
 
     protected async reachCommand() { }
     protected async generateProject() { }
 
     protected build() {
-      return Promise.reject(`Error: Could not build the specified cmake target ${this.settings.cmakeTarget}. ` +
-        `Ensure '${Definitions.extensionNameInSettings}: Cmake Target' setting is properly set.`);
+      return Promise.reject(new Error);
     }
   };
 }
 
-function defaultSettings() {
+function buildDefaultSettings() {
   return SettingsProvider.make({
     errorChannel: buildFakeErrorChannel(),
     workspace: buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings()
   }).settings;
+}
+
+type Context = typeof CmakeModule.make extends (context: infer T) => Cmake ? T : never;
+
+type BasicCmakeConstructorArguments = ConstructorParameters<typeof BasicCmake>;
+
+function buildBasicCmakeConstructorArgumentsFromContext(context?: Context): BasicCmakeConstructorArguments {
+  const progressReporter = context ? context.progressReporter : buildFakeProgressReporter();
+  const settings = context ? context.settings : buildDefaultSettings();
+  const errorChannel = context ? context.errorChannel : buildFakeErrorChannel();
+
+  return [progressReporter, settings, errorChannel];
 }

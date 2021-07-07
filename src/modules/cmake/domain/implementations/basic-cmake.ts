@@ -1,5 +1,7 @@
 import * as Imports from '../../imports';
 
+// TODO: Cannot use Imports to access definitions because of a circular dependency issue.
+// Such an issue does not trigger for types usage.
 import * as Definitions from '../../../../extension/definitions';
 
 export abstract class BasicCmake implements Imports.Domain.Abstractions.Cmake {
