@@ -29,10 +29,8 @@ class CoverageInfoCollector implements Imports.Domain.Abstractions.CoverageInfoC
 
     const path = await coverageInfoFileResolver.resolveCoverageInfoFileFullPath();
 
-    // TODO: find a way to report progress...better
     this.progressReporter.report({
-      message: 'Prepared summary and uncovered region of code information.',
-      increment: 100 / 6 * 6
+      message: 'Prepared summary and uncovered region of code information.'
     });
 
     return Imports.Domain.Implementations.CoverageInfo.make(() => this.createReadStream(path), sourceFilePath, this.errorChannel);

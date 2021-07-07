@@ -28,8 +28,7 @@ class CoverageInfoFileResolver implements Imports.Domain.Abstractions.CoverageIn
     this.failsIfManyFilesAreFound(searchResult);
 
     this.progressReporter.report({
-      message: 'Resolved the LLVM coverage information file path.',
-      increment: 100 / 6 * 5
+      message: 'Resolved the LLVM coverage information file path.'
     });
 
     return searchResult[0];

@@ -31,8 +31,7 @@ class BuildTreeDirectoryResolver implements Imports.Domain.Abstractions.BuildTre
     await this.statAndCreateIfNeeded(buildTreeDirectory);
 
     this.progressReporter.report({
-      message: 'Resolved build tree directory path.',
-      increment: 100 / 6 * 1
+      message: 'Resolved build tree directory path.'
     });
   }
 

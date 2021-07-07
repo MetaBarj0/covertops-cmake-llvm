@@ -14,9 +14,7 @@ export abstract class BasicCmake implements Imports.Domain.Abstractions.Cmake {
       await this.reachCommand();
 
       this.progressReporter.report({
-        message: 'Found an invocable cmake command.',
-        // TODO: meh, bad progress creating temporal coupling between components
-        increment: 100 / 6 * 2
+        message: 'Found an invocable cmake command.'
       });
     } catch (error) {
       return this.handleErrorWithMessage(error,
@@ -28,8 +26,7 @@ export abstract class BasicCmake implements Imports.Domain.Abstractions.Cmake {
       await this.generateProject();
 
       this.progressReporter.report({
-        message: 'Generated the cmake project.',
-        increment: 100 / 6 * 3
+        message: 'Generated the cmake project.'
       });
     } catch (error) {
       return this.handleErrorWithMessage(error,
@@ -44,8 +41,7 @@ export abstract class BasicCmake implements Imports.Domain.Abstractions.Cmake {
       await this.build();
 
       this.progressReporter.report({
-        message: 'Built the target.',
-        increment: 100 / 6 * 4
+        message: 'Built the target.'
       });
     } catch (error) {
       return this.handleErrorWithMessage(error,
