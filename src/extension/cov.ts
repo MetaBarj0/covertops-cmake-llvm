@@ -44,7 +44,6 @@ class Cov {
         mkdir: Imports.Adapters.Implementations.fileSystem.mkdir,
         stat: Imports.Adapters.Implementations.fileSystem.stat
       });
-      // TODO: Rework Cmake construction adapters
       const cmake = Imports.Domain.Implementations.Cmake.make({
         settings,
         execFile: Imports.Adapters.Implementations.processControl.execFile,

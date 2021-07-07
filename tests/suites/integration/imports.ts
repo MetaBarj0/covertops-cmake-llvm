@@ -1,5 +1,3 @@
-// TODO: verify usage to clean as it's been copy pasted
-import * as VscodeFakes from '../../fakes/adapters/vscode';
 import * as ErrorChannelFakes from '../../fakes/adapters/error-channel';
 import * as ProgressReporterFakes from '../../fakes/adapters/progress-reporter';
 import * as GlobSearchFakes from '../../fakes/adapters/globbing';
@@ -25,31 +23,8 @@ import { Settings as AbstractSettings } from '../../../src/modules/settings-prov
 export namespace Fakes {
   export namespace Adapters {
     export namespace vscode {
-      export const buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings = VscodeFakes.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings;
-      export const buildSpyOfErrorChannel = ErrorChannelFakes.buildSpyOfErrorChannel;
       export const buildFakeErrorChannel = ErrorChannelFakes.buildFakeErrorChannel;
-      export const buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings = VscodeFakes.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings;
       export const buildFakeProgressReporter = ProgressReporterFakes.buildFakeProgressReporter;
-      export const buildSpyOfProgressReporter = ProgressReporterFakes.buildSpyOfProgressReporter;
-    }
-
-    export namespace FileSystem {
-      export const buildFakeGlobSearchForNoMatch = GlobSearchFakes.buildFakeGlobSearchForNoMatch;
-      export const buildFakeGlobSearchForExactlyOneMatch = GlobSearchFakes.buildFakeGlobSearchForExactlyOneMatch;
-      export const buildEmptyReadableStream = InputStreamFakes.buildEmptyReadableStream;
-      export const buildInvalidLlvmCoverageJsonObjectStream = InputStreamFakes.buildInvalidLlvmCoverageJsonObjectStream;
-      export const buildNotJsonStream = InputStreamFakes.buildNotJsonStream;
-      export const buildFakeStreamBuilder = InputStreamFakes.buildFakeStreamBuilder;
-      export const buildValidLlvmCoverageJsonObjectStream = InputStreamFakes.buildValidLlvmCoverageJsonObjectStream;
-      export const buildFakeFailingStatFile = StatFileFakes.buildFakeFailingStatFile;
-      export const buildFakeFailingMkDir = MkdirFakes.buildFakeFailingMkDir;
-      export const buildFakeSucceedingStatFile = StatFileFakes.buildFakeSucceedingStatFile;
-      export const buildFakeSucceedingMkDir = MkdirFakes.buildFakeSucceedingMkDir;
-    }
-
-    export namespace ProcessControl {
-      export const buildFakeFailingProcess = ProcessControlFakes.buildFakeFailingProcess;
-      export const buildFakeSucceedingProcess = ProcessControlFakes.buildFakeSucceedingProcess;
     }
   }
 }
@@ -58,10 +33,6 @@ export namespace Domain {
   export namespace Implementations {
     export namespace SettingsProvider {
       export const make = SettingsProviderModule.make;
-    }
-
-    export namespace CoverageInfoFileResolver {
-      export const make = CoverageInfoFileResolverModule.make;
     }
 
     export namespace CoverageInfoCollector {

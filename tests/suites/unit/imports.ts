@@ -69,10 +69,6 @@ export namespace Domain {
       export const make = CoverageInfoCollectorModule.make;
     }
 
-    export namespace Cmake {
-      export const make = CmakeModule.make;
-    }
-
     export namespace BuildTreeDirectoryResolver {
       export const make = BuildTreeDirectoryResolverModule.make;
     }
