@@ -51,6 +51,7 @@ export namespace Fakes {
     export const buildUnreachableCmake = CmakeFakes.buildUnreachableCmake;
     export const buildCmakeFailingAtGeneratingProject = CmakeFakes.buildCmakeFailingAtGeneratingProject;
     export const buildCmakeFailingAtBuildingTarget = CmakeFakes.buildCmakeFailingAtBuildingTarget;
+    export const buildFakeSucceedingCmake = CmakeFakes.buildFakeSucceedingCmake;
   }
 }
 

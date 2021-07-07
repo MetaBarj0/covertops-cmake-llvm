@@ -39,12 +39,10 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
     const mkdir = Imports.Adapters.FileSystem.mkdir;
     const stat = Imports.Adapters.FileSystem.stat;
     const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
-    const execFileForCommand = Imports.Adapters.ProcessControl.execFile;
-    const execFileForTarget = Imports.Adapters.ProcessControl.execFile;
+    const execFile = Imports.Adapters.ProcessControl.execFile;
     const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
-      execFileForCommand,
-      execFileForTarget,
+      execFile,
       errorChannel,
       progressReporter
     });
@@ -103,12 +101,10 @@ function collectSummaryCoverageInfoFromPartiallyCoveredFileShouldSucceed() {
     const mkdir = Imports.Adapters.FileSystem.mkdir;
     const stat = Imports.Adapters.FileSystem.stat;
     const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
-    const execFileForCommand = Imports.Adapters.ProcessControl.execFile;
-    const execFileForTarget = Imports.Adapters.ProcessControl.execFile;
+    const execFile = Imports.Adapters.ProcessControl.execFile;
     const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
-      execFileForCommand,
-      execFileForTarget,
+      execFile,
       errorChannel,
       progressReporter
     });
@@ -160,12 +156,10 @@ function collectSummaryCoverageInfoFromFullyCoveredFileShouldSucceed() {
     const mkdir = Imports.Adapters.FileSystem.mkdir;
     const stat = Imports.Adapters.FileSystem.stat;
     const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
-    const execFileForCommand = Imports.Adapters.ProcessControl.execFile;
-    const execFileForTarget = Imports.Adapters.ProcessControl.execFile;
+    const execFile = Imports.Adapters.ProcessControl.execFile;
     const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
-      execFileForCommand,
-      execFileForTarget,
+      execFile,
       errorChannel,
       progressReporter
     });
@@ -217,12 +211,10 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
     const mkdir = Imports.Adapters.FileSystem.mkdir;
     const stat = Imports.Adapters.FileSystem.stat;
     const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
-    const execFileForCommand = Imports.Adapters.ProcessControl.execFile;
-    const execFileForTarget = Imports.Adapters.ProcessControl.execFile;
+    const execFile = Imports.Adapters.ProcessControl.execFile;
     const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
-      execFileForCommand,
-      execFileForTarget,
+      execFile,
       errorChannel,
       progressReporter
     });

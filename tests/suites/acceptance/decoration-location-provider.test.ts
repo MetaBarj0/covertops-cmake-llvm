@@ -33,12 +33,10 @@ function instantiateService() {
     const mkdir = Imports.Fakes.Adapters.FileSystem.buildFakeFailingMkDir();
     const stat = Imports.Fakes.Adapters.FileSystem.buildFakeFailingStatFile();
     const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
-    const execFileForCommand = Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess();
-    const execFileForTarget = Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess();
+    const execFile = Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess();
     const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
-      execFileForCommand,
-      execFileForTarget,
+      execFile,
       errorChannel,
       progressReporter
     });
@@ -69,12 +67,10 @@ function failBecauseOfIssuesWithBuildTreeDirectorySetting() {
       const mkdir = Imports.Fakes.Adapters.FileSystem.buildFakeFailingMkDir();
       const stat = Imports.Fakes.Adapters.FileSystem.buildFakeFailingStatFile();
       const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
-      const execFileForCommand = Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess();
-      const execFileForTarget = Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess();
+      const execFile = Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess();
       const cmake = Imports.Domain.Implementations.Cmake.make({
         settings,
-        execFileForCommand,
-        execFileForTarget,
+        execFile,
         errorChannel,
         progressReporter
       });
@@ -193,12 +189,11 @@ function failBecauseCoverageInfoFileIsNotFound() {
       const mkdir = Imports.Fakes.Adapters.FileSystem.buildFakeFailingMkDir();
       const stat = Imports.Fakes.Adapters.FileSystem.buildFakeSucceedingStatFile();
       const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
-      const execFileForCommand = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
+      const execFile = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
       const execFileForTarget = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
-      const cmake = Imports.Domain.Implementations.Cmake.make({
+      const cmake = Imports.Fakes.Domain.buildFakeSucceedingCmake({
         settings,
-        execFileForCommand,
-        execFileForTarget,
+        execFile,
         errorChannel,
         progressReporter
       });
@@ -232,12 +227,10 @@ function failBecauseSeveralCoverageInfoFileAreFound() {
       const mkdir = Imports.Fakes.Adapters.FileSystem.buildFakeFailingMkDir();
       const stat = Imports.Fakes.Adapters.FileSystem.buildFakeSucceedingStatFile();
       const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
-      const execFileForCommand = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
-      const execFileForTarget = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
-      const cmake = Imports.Domain.Implementations.Cmake.make({
+      const execFile = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
+      const cmake = Imports.Fakes.Domain.buildFakeSucceedingCmake({
         settings,
-        execFileForCommand,
-        execFileForTarget,
+        execFile,
         errorChannel,
         progressReporter
       });
@@ -272,12 +265,10 @@ function succeedWithCorrectSettingsAndFakeAdapters() {
     const mkdir = Imports.Fakes.Adapters.FileSystem.buildFakeSucceedingMkDir();
     const stat = Imports.Fakes.Adapters.FileSystem.buildFakeSucceedingStatFile();
     const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
-    const execFileForCommand = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
-    const execFileForTarget = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
-    const cmake = Imports.Domain.Implementations.Cmake.make({
+    const execFile = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
+    const cmake = Imports.Fakes.Domain.buildFakeSucceedingCmake({
       settings,
-      execFileForCommand,
-      execFileForTarget,
+      execFile,
       errorChannel,
       progressReporter
     });

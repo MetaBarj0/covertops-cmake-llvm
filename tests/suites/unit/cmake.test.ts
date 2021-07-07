@@ -22,16 +22,14 @@ function cmakeShouldFailBecauseCmakeCommandIsUnreachable() {
     const errorChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfErrorChannel(Imports.Fakes.Adapters.vscode.buildFakeErrorChannel());
     const errorChannel = errorChannelSpy.object;
     const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
-    const processForCommand = Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess();
-    const processForTarget = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
+    const execFile = Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess();
     const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
 
     const cmake = Imports.Fakes.Domain.buildUnreachableCmake({
       settings,
       progressReporter,
       errorChannel,
-      execFileForCommand: processForCommand,
-      execFileForTarget: processForTarget
+      execFile
     });
 
     return cmake.buildTarget()
@@ -51,16 +49,14 @@ function cmakeShouldFailBecauseItCannotGenerateTheProject() {
     const errorChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfErrorChannel(Imports.Fakes.Adapters.vscode.buildFakeErrorChannel());
     const errorChannel = errorChannelSpy.object;
     const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
-    const processForCommand = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
-    const processForTarget = Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess();
+    const execFile = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
     const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
 
     const cmake = Imports.Fakes.Domain.buildCmakeFailingAtGeneratingProject({
       settings,
       progressReporter,
       errorChannel,
-      execFileForCommand: processForCommand,
-      execFileForTarget: processForTarget
+      execFile
     });
 
     return cmake.buildTarget()
@@ -84,16 +80,14 @@ function cmakeShouldFailBecauseItCannotBuildATarget() {
     const errorChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfErrorChannel(Imports.Fakes.Adapters.vscode.buildFakeErrorChannel());
     const errorChannel = errorChannelSpy.object;
     const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
-    const processForCommand = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
-    const processForTarget = Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess();
+    const execFile = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
     const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
 
     const cmake = Imports.Fakes.Domain.buildCmakeFailingAtBuildingTarget({
       settings,
       progressReporter,
       errorChannel,
-      execFileForCommand: processForCommand,
-      execFileForTarget: processForTarget
+      execFile
     });
 
     return cmake.buildTarget()
@@ -113,17 +107,15 @@ function cmakeShouldSucceedWithCorrectSettings() {
     const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const errorChannel = Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
     const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
-    const processForCommand = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
-    const processForTarget = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
+    const execFile = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
     const progressReporterSpy = Imports.Fakes.Adapters.vscode.buildSpyOfProgressReporter(Imports.Fakes.Adapters.vscode.buildFakeProgressReporter());
     const progressReporter = progressReporterSpy.object;
 
-    const cmake = Imports.Domain.Implementations.Cmake.make({
+    const cmake = Imports.Fakes.Domain.buildFakeSucceedingCmake({
       settings,
       progressReporter,
       errorChannel,
-      execFileForCommand: processForCommand,
-      execFileForTarget: processForTarget
+      execFile
     });
 
     await cmake.buildTarget();

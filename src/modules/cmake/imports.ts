@@ -1,8 +1,9 @@
+// TODO: Global - check imports usage and clean if necessary
 import * as VscodeModule from '../../shared-kernel/abstractions/vscode';
-import * as CmakeModule from '../cmake/domain/abstractions/cmake';
-import * as BasicCmakeModule from '../cmake/domain/implementations/basic-cmake';
+import { Cmake as AbstractCmake } from '../cmake/domain/abstractions/cmake';
 import * as SettingsProviderModule from '../settings-provider/domain/abstractions/settings';
-import * as ProcessControlModule from '../../shared-kernel/abstractions/process-control';
+import * as AbstractProcessControl from '../../shared-kernel/abstractions/process-control';
+import * as ConcreteProcessControl from '../../adapters/process-control';
 import * as DefinitionsModule from '../../extension/definitions';
 
 export namespace Adapters {
@@ -13,19 +14,21 @@ export namespace Adapters {
     }
 
     export namespace processControl {
-      export type ExecFileCallable = ProcessControlModule.ExecFileCallable;
+      export type ExecFileCallable = AbstractProcessControl.ExecFileCallable;
+    }
+  }
+
+  export namespace Implementations {
+    export namespace processControl {
+      export const execFile = ConcreteProcessControl.execFile;
     }
   }
 }
 
 export namespace Domain {
   export namespace Abstractions {
-    export type Cmake = CmakeModule.Cmake;
+    export type Cmake = AbstractCmake;
     export type Settings = SettingsProviderModule.Settings;
-  }
-
-  export namespace Implementations {
-    export abstract class BasicCmake extends BasicCmakeModule.BasicCmake { }
   }
 }
 

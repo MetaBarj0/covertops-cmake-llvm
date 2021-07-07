@@ -177,8 +177,7 @@ const extensionConfiguration = Imports.Adapters.vscode.workspace.getConfiguratio
 function makeCmake() {
   return Imports.Domain.Implementations.Cmake.make({
     settings: buildSettings(),
-    execFileForCommand: Imports.Adapters.ProcessControl.execFile,
-    execFileForTarget: Imports.Adapters.ProcessControl.execFile,
+    execFile: Imports.Adapters.ProcessControl.execFile,
     progressReporter: Imports.Fakes.Adapters.vscode.buildFakeProgressReporter(),
     errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel()
   });

@@ -47,8 +47,7 @@ class Cov {
       // TODO: Rework Cmake construction adapters
       const cmake = Imports.Domain.Implementations.Cmake.make({
         settings,
-        execFileForCommand: Imports.Adapters.Implementations.processControl.execFile,
-        execFileForTarget: Imports.Adapters.Implementations.processControl.execFile,
+        execFile: Imports.Adapters.Implementations.processControl.execFile,
         errorChannel: this.output,
         progressReporter: progressReporter
       });
