@@ -7,7 +7,7 @@ export function make(rawLLVMRegionCoverageInfo: Imports.Domain.Abstractions.RawL
 class RegionCoverageInfo implements Imports.Domain.Abstractions.RegionCoverageInfo {
   constructor(rawLLVMRegionCoverageInfo: Imports.Domain.Abstractions.RawLLVMRegionCoverageInfo) {
     // https://github.com/llvm/llvm-project/blob/21c18d5a04316891110cecc2bf37ce51533decba/llvm/tools/llvm-cov/CoverageExporterJson.cpp#L87
-    this.kind = rawLLVMRegionCoverageInfo[7] === 0 ? RegionKind.normal : RegionKind.other;
+    this.kind = rawLLVMRegionCoverageInfo[7] === 0 ? 'Normal' : 'Other';
     this.executionCount = rawLLVMRegionCoverageInfo[4];
 
     this.regionRange = {
@@ -31,7 +31,7 @@ class RegionCoverageInfo implements Imports.Domain.Abstractions.RegionCoverageIn
   }
 
   private get isNormalRegion() {
-    return this.kind === RegionKind.normal;
+    return this.kind === 'Normal';
   }
 
   private get hasNotBeenExecuted() {
@@ -43,5 +43,4 @@ class RegionCoverageInfo implements Imports.Domain.Abstractions.RegionCoverageIn
   private readonly regionRange: Imports.Domain.Abstractions.RegionRange;
 }
 
-// TODO: union type refacto?
-enum RegionKind { normal, other }
+type RegionKind = 'Normal' | 'Other';
