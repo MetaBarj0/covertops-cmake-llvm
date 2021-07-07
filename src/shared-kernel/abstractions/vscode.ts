@@ -26,7 +26,7 @@ export type ProgressLike = {
   report(value: ProgressStep): void;
 };
 
-type ProgressStep = {
+export type ProgressStep = {
   message?: string,
   increment?: number
 };

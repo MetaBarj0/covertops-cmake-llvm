@@ -1,4 +1,4 @@
-import { ProgressLike } from "../../../src/shared-kernel/abstractions/vscode";
+import { ProgressLike, ProgressStep } from "../../../src/shared-kernel/abstractions/vscode";
 
 import { Spy } from "../../utils/spy";
 
@@ -25,6 +25,3 @@ export function buildSpyOfProgressReporter(progressReporter: ProgressLike): Spy<
     }
   }(progressReporter);
 }
-
-// TODO: interesting approach to infer argument type but use an exported type instead
-type ProgressStep = ProgressLike['report'] extends (value: infer T) => void ? T : never;
