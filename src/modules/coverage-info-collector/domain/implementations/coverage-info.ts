@@ -41,8 +41,7 @@ class CoverageInfo implements Imports.Domain.Abstractions.CoverageInfo {
           reject(new Error(errorMessage));
         })
         .once('error', err => {
-          // TODO: refacto string
-          const errorMessage = CoverageInfo.invalidInputReadableStreamMessage + err.message;
+          const errorMessage = `${CoverageInfo.invalidInputReadableStreamMessage}${err.message}`;
 
           this.errorChannel.appendLine(errorMessage);
           reject(new Error(errorMessage));
