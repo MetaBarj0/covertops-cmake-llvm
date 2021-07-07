@@ -1,4 +1,3 @@
-// TODO: global - check suite of test regarding the new module architecture
 import * as chai from 'chai';
 import { describe, it, before, after } from 'mocha';
 import * as chaiAsPromised from 'chai-as-promised';
@@ -12,7 +11,7 @@ import { env } from 'process';
 import * as path from 'path';
 
 describe('integration test suite', () => {
-  describe('the behavior of internal services', () => {
+  describe('the behavior of all modules but decoration locations provider', () => {
     describe('instantiating the setting provider with a real vscode workspace', settingsProviderGivesDefaultSettings);
     describe('with an initialized vscode workspace', () => {
       describe('the behavior of build tree directory resolver', () => {
