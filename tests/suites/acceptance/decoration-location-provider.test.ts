@@ -9,9 +9,9 @@ import * as Imports from './imports';
 
 describe('acceptance suite of tests', () => {
   describe('The decoration location provider service behavior', () => {
-    describe('The service being instantiated with faked adapters', instantiateService);
-    describe('The service failing with incorrect settings', () => {
-      describe('When issues arise with the build tree directory', failBecauseOfIssuesWithBuildTreeDirectoryAccess);
+    describe('The service being instantiated with faked adapters and domain sub modules', instantiateService);
+    describe('The service failing because of incorrect settings leading to mis-behaving adapters', () => {
+      describe('When issues arise with the build tree directory path resolution', failBecauseOfIssuesWithBuildTreeDirectoryAccess);
       describe('When issues arise with the cmake target building', failBecauseOfIssuesWithCmakeTargetBuilding);
       describe('When issues arise with the coverage info file path resolution', failBecauseCoverageInfoFileResolutionIssue);
     });
@@ -102,9 +102,7 @@ function failBecauseOfIssuesWithBuildTreeDirectoryAccess() {
         coverageInfoCollector
       });
 
-      return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejectedWith(
-        'Cannot find or create the build tree directory. Ensure the ' +
-        `'${Imports.Extension.Definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`);
+      return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejected;
     });
 }
 
@@ -147,7 +145,6 @@ function failBecauseOfIssuesWithCmakeTargetBuilding() {
         coverageInfoCollector
       });
 
-      // TODO: Too narrow, expect better message for decoration locations provider level?
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejected;
     });
 }
@@ -191,7 +188,6 @@ function failBecauseCoverageInfoFileResolutionIssue() {
         coverageInfoCollector
       });
 
-      // TODO: too narrow?
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejected;
     });
 }
