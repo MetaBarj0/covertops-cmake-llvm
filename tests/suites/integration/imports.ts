@@ -1,5 +1,4 @@
-import * as ErrorChannelFakes from '../../fakes/adapters/error-channel';
-import * as ProgressReporterFakes from '../../fakes/adapters/progress-reporter';
+import * as VscodeFakes from '../../fakes/adapters/vscode';
 import * as SettingsProviderModule from '../../../src/modules/settings-provider/domain/implementations/settings-provider';
 import * as RegionCoverageInfoModule from '../../../src/modules/coverage-info-collector/domain/abstractions/region-coverage-info';
 import * as CoverageInfoCollectorModule from '../../../src/modules/coverage-info-collector/domain/implementations/coverage-info-collector';
@@ -18,8 +17,8 @@ import { Settings as AbstractSettings } from '../../../src/modules/settings-prov
 export namespace Fakes {
   export namespace Adapters {
     export namespace vscode {
-      export const buildFakeErrorChannel = ErrorChannelFakes.buildFakeErrorChannel;
-      export const buildFakeProgressReporter = ProgressReporterFakes.buildFakeProgressReporter;
+      export const buildFakeErrorChannel = VscodeFakes.buildFakeErrorChannel;
+      export const buildFakeProgressReporter = VscodeFakes.buildFakeProgressReporter;
     }
   }
 }

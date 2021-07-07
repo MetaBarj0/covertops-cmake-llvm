@@ -1,5 +1,24 @@
-import { CreateReadStreamCallable } from '../../../src/shared-kernel/abstractions/file-system';
+import {
+  MkdirCallable,
+  StatCallable,
+  CreateReadStreamCallable,
+  GlobSearchCallable
+} from '../../../src/shared-kernel/abstractions/file-system';
+
+import { MakeDirectoryOptions, PathLike, StatOptions, Stats } from 'fs';
 import { Readable } from 'stream';
+
+export function buildFakeGlobSearchForNoMatch(): GlobSearchCallable {
+  return (_pattern: string) => Promise.resolve([]);
+}
+
+export function buildFakeGlobSearchForSeveralMatch(): GlobSearchCallable {
+  return (_pattern: string) => Promise.resolve(['', '']);
+}
+
+export function buildFakeGlobSearchForExactlyOneMatch(): GlobSearchCallable {
+  return (_pattern: string) => Promise.resolve(['oneMatchShow']);
+}
 
 export function buildEmptyReadableStream() {
   const empty = (function* () { })();
@@ -76,3 +95,19 @@ export function buildValidLlvmCoverageJsonObjectStream() {
 export function buildFakeStreamBuilder(factory: () => Readable): CreateReadStreamCallable {
   return (_path: string) => factory();
 }
+
+export function buildFakeFailingMkDir(): MkdirCallable {
+  return (_path: PathLike, _options: MakeDirectoryOptions & { recursive: true; }): Promise<string | undefined> => Promise.reject();
+}
+
+export function buildFakeSucceedingMkDir(): MkdirCallable {
+  return (_path: PathLike, _options: MakeDirectoryOptions & { recursive: true; }): Promise<string | undefined> => Promise.resolve('/build/tree/directory');
+}
+
+export function buildFakeFailingStatFile(): StatCallable {
+  return (_path: PathLike, _opts?: StatOptions) => Promise.reject();
+};
+
+export function buildFakeSucceedingStatFile(): StatCallable {
+  return (_path: PathLike, _opts?: StatOptions) => Promise.resolve(new Stats());
+};

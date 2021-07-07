@@ -7,6 +7,10 @@ import {
   VscodeWorkspaceFolderLike, VscodeWorkspaceLike
 } from '../../../src/shared-kernel/abstractions/vscode';
 
+import { OutputChannelLike, ProgressLike, ProgressStep } from '../../../src/shared-kernel/abstractions/vscode';
+
+import { Spy } from "../../utils/spy";
+
 type Overrides = {
   -readonly [Property in keyof Settings]?: Settings[Property]
 };
@@ -61,4 +65,51 @@ export function buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(): Vs
       };
     };
   };
+}
+
+export function buildFakeErrorChannel(): OutputChannelLike {
+  return new class implements OutputChannelLike {
+    appendLine(_line: string) { }
+  };
+}
+
+export function buildSpyOfErrorChannel(errorChannel: OutputChannelLike): Spy<OutputChannelLike> {
+  return new class extends Spy<OutputChannelLike> implements OutputChannelLike {
+    constructor(errorChannel: OutputChannelLike) {
+      super(errorChannel);
+    }
+
+    appendLine(line: string) {
+      this.decorated.appendLine(line);
+      this.incrementCallCountFor('appendLine');
+    }
+
+    get object() {
+      return this;
+    }
+  }(errorChannel);
+}
+
+export function buildFakeProgressReporter(): ProgressLike {
+
+  return new class implements ProgressLike {
+    report(_value: ProgressStep) { }
+  };
+}
+
+export function buildSpyOfProgressReporter(progressReporter: ProgressLike): Spy<ProgressLike> {
+  return new class extends Spy<ProgressLike> implements ProgressLike {
+    constructor(progressReporter: ProgressLike) {
+      super(progressReporter);
+    }
+
+    report(value: ProgressStep) {
+      this.decorated.report(value);
+      super.incrementCallCountFor('report');
+    }
+
+    get object() {
+      return this;
+    }
+  }(progressReporter);
 }

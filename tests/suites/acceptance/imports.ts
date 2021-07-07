@@ -1,14 +1,6 @@
-// TODO: group adapters fake
+import * as FileSystemFakes from '../../fakes/adapters/file-system';
+
 import * as VscodeFakes from '../../fakes/adapters/vscode';
-import * as ErrorChannelFakes from '../../fakes/adapters/error-channel';
-import * as ProgressReporterFakes from '../../fakes/adapters/progress-reporter';
-
-// TODO: group adapters fake
-import * as MkdirFakes from '../../fakes/adapters/mk-dir';
-import * as StatFileFakes from '../../fakes/adapters/stat-file';
-import * as GlobSearchFakes from '../../fakes/adapters/globbing';
-import * as InputStreamFakes from '../../fakes/adapters/input-stream';
-
 import * as ProcessControlFakes from '../../fakes/adapters/process-control';
 import * as SettingsProviderModule from '../../../src/modules/settings-provider/domain/implementations/settings-provider';
 import * as BuildTreeDirectoryResolverModule from '../../../src/modules/build-tree-directory-resolver/domain/implementations/build-tree-directory-resolver';
@@ -23,22 +15,22 @@ export namespace Fakes {
   export namespace Adapters {
     export namespace vscode {
       export const buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings = VscodeFakes.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings;
-      export const buildFakeErrorChannel = ErrorChannelFakes.buildFakeErrorChannel;
-      export const buildFakeProgressReporter = ProgressReporterFakes.buildFakeProgressReporter;
-      export const buildSpyOfProgressReporter = ProgressReporterFakes.buildSpyOfProgressReporter;
+      export const buildFakeErrorChannel = VscodeFakes.buildFakeErrorChannel;
+      export const buildFakeProgressReporter = VscodeFakes.buildFakeProgressReporter;
+      export const buildSpyOfProgressReporter = VscodeFakes.buildSpyOfProgressReporter;
     }
 
     export namespace FileSystem {
-      export const buildFakeFailingMkDir = MkdirFakes.buildFakeFailingMkDir;
-      export const buildFakeFailingStatFile = StatFileFakes.buildFakeFailingStatFile;
-      export const buildFakeGlobSearchForNoMatch = GlobSearchFakes.buildFakeGlobSearchForNoMatch;
-      export const buildFakeStreamBuilder = InputStreamFakes.buildFakeStreamBuilder;
-      export const buildEmptyReadableStream = InputStreamFakes.buildEmptyReadableStream;
-      export const buildFakeSucceedingStatFile = StatFileFakes.buildFakeSucceedingStatFile;
-      export const buildFakeGlobSearchForSeveralMatch = GlobSearchFakes.buildFakeGlobSearchForSeveralMatch;
-      export const buildFakeSucceedingMkDir = MkdirFakes.buildFakeSucceedingMkDir;
-      export const buildFakeGlobSearchForExactlyOneMatch = GlobSearchFakes.buildFakeGlobSearchForExactlyOneMatch;
-      export const buildValidLlvmCoverageJsonObjectStream = InputStreamFakes.buildValidLlvmCoverageJsonObjectStream;
+      export const buildFakeFailingMkDir = FileSystemFakes.buildFakeFailingMkDir;
+      export const buildFakeFailingStatFile = FileSystemFakes.buildFakeFailingStatFile;
+      export const buildFakeGlobSearchForNoMatch = FileSystemFakes.buildFakeGlobSearchForNoMatch;
+      export const buildFakeStreamBuilder = FileSystemFakes.buildFakeStreamBuilder;
+      export const buildEmptyReadableStream = FileSystemFakes.buildEmptyReadableStream;
+      export const buildFakeSucceedingStatFile = FileSystemFakes.buildFakeSucceedingStatFile;
+      export const buildFakeGlobSearchForSeveralMatch = FileSystemFakes.buildFakeGlobSearchForSeveralMatch;
+      export const buildFakeSucceedingMkDir = FileSystemFakes.buildFakeSucceedingMkDir;
+      export const buildFakeGlobSearchForExactlyOneMatch = FileSystemFakes.buildFakeGlobSearchForExactlyOneMatch;
+      export const buildValidLlvmCoverageJsonObjectStream = FileSystemFakes.buildValidLlvmCoverageJsonObjectStream;
     }
 
     export namespace ProcessControl {
