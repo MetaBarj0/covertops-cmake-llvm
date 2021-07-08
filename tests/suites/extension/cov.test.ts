@@ -9,7 +9,6 @@ import * as Cov from '../../../src/extension/cov';
 import { extensionId } from '../../../src/extension/definitions';
 
 import { Disposable, OutputChannel, commands, window, Uri, workspace } from 'vscode';
-
 import * as path from 'path';
 
 describe('Extension test suite', () => {
@@ -23,25 +22,19 @@ describe('Extension test suite', () => {
 function instantiateCovAsDisposableShouldSucceed() {
   let cov: ReturnType<typeof Cov.make>;
 
-  before('Instantiating Cov', () => {
-    cov = Cov.make();
-  });
+  before('Instantiating Cov', () => cov = Cov.make());
 
   it('should succeed when instantiating the extension as a vscode disposable', () => {
     cov.asDisposable.should.be.an.instanceOf(Disposable);
   });
 
-  after('Disposing of cov instance', () => {
-    cov.dispose();
-  });
+  after('Disposing of cov instance', () => cov.dispose());
 }
 
 function covInstanceHasAnOutputChannel() {
   let cov: ReturnType<typeof Cov.make>;
 
-  before('Instantiating Cov', () => {
-    cov = Cov.make();
-  });
+  before('Instantiating Cov', () => cov = Cov.make());
 
   it('should expose a vscode output channel', () => {
     const covExposesAVscodeOutputChannel = ((outputChannel: OutputChannel): outputChannel is OutputChannel => {
@@ -57,29 +50,22 @@ function covInstanceHasAnOutputChannel() {
     covExposesAVscodeOutputChannel.should.be.equal(true);
   });
 
-  after('Disposing of cov instance', () => {
-    cov.dispose();
-  });
+  after('Disposing of cov instance', () => cov.dispose());
 }
 
 function extensionCanExecuteCommand() {
   let cov: ReturnType<typeof Cov.make>;
 
-  before('Instantiating Cov', async () => {
-    cov = Cov.make();
+  before('Instantiating Cov', () => cov = Cov.make());
 
+  it('should run the command successfully', async () => {
     const workspaceRootFolder = workspace.workspaceFolders?.[0].uri.fsPath;
-
     const cppFilePath = path.join(<string>workspaceRootFolder, 'src', 'partiallyCovered', 'partiallyCoveredLib.cpp');
 
     await window.showTextDocument(Uri.file(cppFilePath), { preserveFocus: false });
-  });
 
-  it('should run successfully', () => {
     return commands.executeCommand(`${extensionId}.reportUncoveredCodeRegionsInFile`).should.eventually.be.fulfilled;
   });
 
-  after('Disposing of cov instance', () => {
-    cov.dispose();
-  });
+  after('Disposing of cov instance', () => cov.dispose());
 }
