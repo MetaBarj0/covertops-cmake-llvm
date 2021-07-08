@@ -74,7 +74,7 @@ class Cov {
     });
   }
 
-  get uncoveredCodeRegionsEditors() {
+  get uncoveredCodeRegionsEditors(): ReadonlyArray<Imports.Adapters.Implementations.vscode.TextEditor> {
     return [];
   }
 

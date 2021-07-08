@@ -37,6 +37,7 @@ export namespace Adapters {
       export const workspace = VscodeModule.workspace;
 
       export type OutputChannel = VscodeModule.OutputChannel;
+      export type TextEditor = VscodeModule.TextEditor;
     }
 
     export namespace fileSystem {

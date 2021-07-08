@@ -19,3 +19,5 @@ export class Disposable extends vscode.Disposable { }
 export const ProgressLocation = vscode.ProgressLocation;
 
 export type OutputChannel = vscode.OutputChannel;
+
+export type TextEditor = vscode.TextEditor;

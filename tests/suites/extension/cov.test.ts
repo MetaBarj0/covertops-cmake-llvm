@@ -10,7 +10,7 @@ import * as Cov from '../../../src/extension/cov';
 import { extensionId } from '../../../src/extension/definitions';
 import { OutputChannelLike } from '../../../src/shared-kernel/abstractions/vscode';
 
-import { Disposable, OutputChannel, commands, window, Uri, workspace, TextEditor } from 'vscode';
+import { Disposable, commands, window, Uri, workspace, TextEditor } from 'vscode';
 import * as path from 'path';
 
 // TODO: all test suites - attempt to use hooks to refacto before, after, ...
@@ -61,7 +61,6 @@ function extensionCanExecuteCommand() {
 
     await window.showTextDocument(Uri.file(cppFilePath), { preserveFocus: false });
 
-    // TODO: get a less narrow test, take a look at output channel for instance, thanks to a spy? It may restore the macos build viability? Check path env variable on macos!
     return commands.executeCommand(`${extensionId}.reportUncoveredCodeRegionsInFile`).should.eventually.be.fulfilled;
   });
 
@@ -74,6 +73,9 @@ function shouldHaveAnEmptyUncoveredCodeRegionsEditorsCollectionAtInstantiation()
   before('Instantiating Cov', () => cov = Cov.make());
 
   it('should contain an empty collection of uncovered code regions read only editors', () => {
+    const covExposesReadonlyArrayOfTextEditors = ((_: ReadonlyArray<TextEditor>): _ is ReadonlyArray<TextEditor> => true)(cov.uncoveredCodeRegionsEditors);
+
+    covExposesReadonlyArrayOfTextEditors.should.be.equal(true);
     cov.uncoveredCodeRegionsEditors.should.be.empty;
   });
 
