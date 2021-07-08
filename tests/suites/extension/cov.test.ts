@@ -5,8 +5,10 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
+// TODO: imports idiom
 import * as Cov from '../../../src/extension/cov';
 import { extensionId } from '../../../src/extension/definitions';
+import { OutputChannelLike } from '../../../src/shared-kernel/abstractions/vscode';
 
 import { Disposable, OutputChannel, commands, window, Uri, workspace, TextEditor } from 'vscode';
 import * as path from 'path';
@@ -18,7 +20,7 @@ describe('Extension test suite', () => {
     describe('The extension has a working vscode window output channel', covInstanceHasAnOutputChannel);
     describe('The extension can leverage vscode api adapters when executing the reportUncoveredRegionsInFile command', extensionCanExecuteCommand);
     describe('The freshly instantiated extension have an empty uncovered code regions editors collection', shouldHaveAnEmptyUncoveredCodeRegionsEditorsCollectionAtInstantiation);
-    describe('', shouldHaveOneUncoveredCodeRegionsEditorOpened);
+    describe('The cov extension having one virtual readonly editor showing uncovered code regions', shouldHaveOneUncoveredCodeRegionsEditorOpened);
   });
 });
 
@@ -40,15 +42,7 @@ function covInstanceHasAnOutputChannel() {
   before('Instantiating Cov', () => cov = Cov.make());
 
   it('should expose a vscode output channel', () => {
-    const covExposesAVscodeOutputChannel = ((outputChannel: OutputChannel): outputChannel is OutputChannel => {
-      return outputChannel.append !== undefined &&
-        outputChannel.appendLine !== undefined &&
-        outputChannel.clear !== undefined &&
-        outputChannel.dispose !== undefined &&
-        outputChannel.hide !== undefined &&
-        outputChannel.name !== undefined &&
-        outputChannel.show !== undefined;
-    })(cov.outputChannel);
+    const covExposesAVscodeOutputChannel = ((_: OutputChannelLike): _ is OutputChannelLike => true)(cov.outputChannel);
 
     covExposesAVscodeOutputChannel.should.be.equal(true);
   });
