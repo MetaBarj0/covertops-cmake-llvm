@@ -87,15 +87,17 @@ function shouldHaveOneUncoveredCodeRegionsEditorOpened() {
 
   before('Instantiating Cov', () => cov = Cov.make());
 
-  it.skip('should have one uncovered code regions editor in the collection that is a virtual read only text editor', async () => {
+  it('should have one uncovered code regions editor in the collection that is a virtual read only text editor', async () => {
     // TODO: duplicated 2 tests above
     const workspaceRootFolder = workspace.workspaceFolders?.[0].uri.fsPath;
     const cppFilePath = path.join(<string>workspaceRootFolder, 'src', 'partiallyCovered', 'partiallyCoveredLib.cpp');
 
-    await window.showTextDocument(Uri.file(cppFilePath), { preserveFocus: false });
+    const currentEditor = await window.showTextDocument(Uri.file(cppFilePath), { preserveFocus: false });
     await commands.executeCommand(`${extensionId}.reportUncoveredCodeRegionsInFile`);
 
     cov.uncoveredCodeRegionsEditors.length.should.equal(1);
+    cov.uncoveredCodeRegionsEditors[0].document.uri.scheme.should.be.equal(extensionId);
+    cov.uncoveredCodeRegionsEditors[0].document.uri.fsPath.should.be.equal(currentEditor.document.uri.fsPath);
   });
 
   after('Disposing of cov instance', () => cov.dispose());
