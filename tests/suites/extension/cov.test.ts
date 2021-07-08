@@ -16,6 +16,7 @@ describe('Extension test suite', () => {
     describe('The instantiation of the extension as a vscode disposable', instantiateCovAsDisposableShouldSucceed);
     describe('The extension has a working vscode window output channel', covInstanceHasAnOutputChannel);
     describe('The extension can leverage vscode api adapters when executing the reportUncoveredRegionsInFile command', extensionCanExecuteCommand);
+    describe('The freshly instantiated extension have an empty uncovered code regions editors collection', shouldHaveAnEmptyUncoveredCodeRegionsEditorsCollectionAtInstantiation);
   });
 });
 
@@ -65,6 +66,18 @@ function extensionCanExecuteCommand() {
     await window.showTextDocument(Uri.file(cppFilePath), { preserveFocus: false });
 
     return commands.executeCommand(`${extensionId}.reportUncoveredCodeRegionsInFile`).should.eventually.be.fulfilled;
+  });
+
+  after('Disposing of cov instance', () => cov.dispose());
+}
+
+function shouldHaveAnEmptyUncoveredCodeRegionsEditorsCollectionAtInstantiation() {
+  let cov: ReturnType<typeof Cov.make>;
+
+  before('Instantiating Cov', () => cov = Cov.make());
+
+  it('should contain an empty collection of uncovered code regions read only editors', () => {
+    cov.uncoveredCodeRegionsEditors.should.be.empty;
   });
 
   after('Disposing of cov instance', () => cov.dispose());

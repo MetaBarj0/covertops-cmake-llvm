@@ -74,6 +74,10 @@ class Cov {
     });
   }
 
+  get uncoveredCodeRegionsEditors() {
+    return [];
+  }
+
   private reportStartInOutputChannel() {
     this.output.show(false);
     this.output.clear();
