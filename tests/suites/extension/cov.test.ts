@@ -87,7 +87,7 @@ function shouldHaveOneUncoveredCodeRegionsEditorOpened() {
 
   before('Instantiating Cov', () => cov = Cov.make());
 
-  it('should have one uncovered code regions editor in the collection that is a virtual read only text editor', async () => {
+  it.skip('should have one uncovered code regions editor in the collection that is a virtual read only text editor', async () => {
     // TODO: duplicated 2 tests above
     const workspaceRootFolder = workspace.workspaceFolders?.[0].uri.fsPath;
     const cppFilePath = path.join(<string>workspaceRootFolder, 'src', 'partiallyCovered', 'partiallyCoveredLib.cpp');
