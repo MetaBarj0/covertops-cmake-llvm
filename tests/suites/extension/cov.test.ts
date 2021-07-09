@@ -16,15 +16,15 @@ import * as path from 'path';
 // TODO: all test suites - attempt to use hooks to refacto before, after, ...
 describe('Extension test suite', () => {
   describe('The cov extension behavior', () => {
-    describe('The instantiation of the extension as a vscode disposable', instantiateCovAsDisposableShouldSucceed);
-    describe('The extension has a working vscode window output channel', covInstanceHasAnOutputChannel);
-    describe('The extension can leverage vscode api adapters when executing the reportUncoveredRegionsInFile command', extensionCanExecuteCommand);
-    describe('The freshly instantiated extension have an empty uncovered code regions editors collection', shouldHaveAnEmptyUncoveredCodeRegionsEditorsCollectionAtInstantiation);
-    describe('The cov extension having one virtual readonly editor showing uncovered code regions', shouldHaveOneUncoveredCodeRegionsEditorOpened);
+    describe('The instantiation of the extension as a vscode disposable', covShouldBeDisposable);
+    describe('The extension has a working vscode window output channel', covShouldHaveAnOutputChannel);
+    describe('The extension can leverage vscode api adapters when executing the reportUncoveredRegionsInFile command', covCanExecuteCommand);
+    describe('The freshly instantiated extension have an empty uncovered code regions editors collection', covShouldHaveAnEmptyUncoveredCodeRegionsEditorsCollection);
+    describe('The cov extension having one virtual readonly editor showing uncovered code regions', covShouldHaveOneUncoveredCodeRegionsEditorOpenedAfterCommandExecution);
   });
 });
 
-function instantiateCovAsDisposableShouldSucceed() {
+function covShouldBeDisposable() {
   let cov: ReturnType<typeof Cov.make>;
 
   before('Instantiating Cov', () => cov = Cov.make());
@@ -36,7 +36,7 @@ function instantiateCovAsDisposableShouldSucceed() {
   after('Disposing of cov instance', () => cov.dispose());
 }
 
-function covInstanceHasAnOutputChannel() {
+function covShouldHaveAnOutputChannel() {
   let cov: ReturnType<typeof Cov.make>;
 
   before('Instantiating Cov', () => cov = Cov.make());
@@ -50,7 +50,7 @@ function covInstanceHasAnOutputChannel() {
   after('Disposing of cov instance', () => cov.dispose());
 }
 
-function extensionCanExecuteCommand() {
+function covCanExecuteCommand() {
   let cov: ReturnType<typeof Cov.make>;
 
   before('Instantiating Cov', () => cov = Cov.make());
@@ -67,7 +67,7 @@ function extensionCanExecuteCommand() {
   after('Disposing of cov instance', () => cov.dispose());
 }
 
-function shouldHaveAnEmptyUncoveredCodeRegionsEditorsCollectionAtInstantiation() {
+function covShouldHaveAnEmptyUncoveredCodeRegionsEditorsCollection() {
   let cov: ReturnType<typeof Cov.make>;
 
   before('Instantiating Cov', () => cov = Cov.make());
@@ -82,7 +82,7 @@ function shouldHaveAnEmptyUncoveredCodeRegionsEditorsCollectionAtInstantiation()
   after('Disposing of cov instance', () => cov.dispose());
 }
 
-function shouldHaveOneUncoveredCodeRegionsEditorOpened() {
+function covShouldHaveOneUncoveredCodeRegionsEditorOpenedAfterCommandExecution() {
   let cov: ReturnType<typeof Cov.make>;
 
   before('Instantiating Cov', () => cov = Cov.make());
