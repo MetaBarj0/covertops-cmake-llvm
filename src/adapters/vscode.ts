@@ -20,3 +20,8 @@ export const ProgressLocation = vscode.ProgressLocation;
 
 export type OutputChannel = vscode.OutputChannel;
 export type TextEditor = vscode.TextEditor;
+export type TextDocumentContentProvider = vscode.TextDocumentContentProvider;
+
+export type DisposableLike = {
+  dispose(): any;
+};

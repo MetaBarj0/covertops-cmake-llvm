@@ -53,6 +53,8 @@ export namespace Adapters {
     export namespace vscode {
       export type OutputChannel = VscodeModule.OutputChannel;
       export type TextEditor = VscodeModule.TextEditor;
+      export type TextDocumentContentProvider = VscodeModule.TextDocumentContentProvider;
+      export type DisposableLike = VscodeModule.DisposableLike;
     }
   }
 }

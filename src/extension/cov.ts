@@ -1,3 +1,5 @@
+// TODO: put those in imports.ts
+import { Uri, CancellationToken, ProviderResult } from 'vscode';
 import * as Imports from './imports';
 
 export function make() {
@@ -8,6 +10,7 @@ class Cov {
   constructor() {
     this.output = Imports.Adapters.Implementations.vscode.window.createOutputChannel(Imports.Extension.Definitions.extensionId);
     this.command = Imports.Adapters.Implementations.vscode.commands.registerCommand(`${Imports.Extension.Definitions.extensionId}.reportUncoveredCodeRegionsInFile`, this.run, this);
+    this.textDocumentProvider = this.createUncoveredCodeRegionsDocumentProvider();
   }
 
   get asDisposable() {
@@ -21,18 +24,32 @@ class Cov {
   dispose() {
     [
       this.output,
-      this.command
+      this.command,
+      this.textDocumentProvider
     ].forEach(disposable => disposable.dispose());
   }
 
   async run() {
     this.reportStartInOutputChannel();
 
-    const _coverageInfo = await this.getCoverageInfoForFile('');
   }
 
   get uncoveredCodeRegionsEditors(): ReadonlyArray<Imports.Adapters.Abstractions.vscode.TextEditor> {
     return [];
+  }
+
+  get uncoveredCodeRegionsDocumentProvider() {
+    return this.textDocumentProvider;
+  }
+
+  private createUncoveredCodeRegionsDocumentProvider() {
+    const provider = new class implements Imports.Adapters.Abstractions.vscode.TextDocumentContentProvider {
+      provideTextDocumentContent(_uri: Uri, _token: CancellationToken): ProviderResult<string> {
+        throw new Error('Method not implemented.');
+      }
+    };
+
+    return Imports.Adapters.Implementations.vscode.workspace.registerTextDocumentContentProvider(Imports.Extension.Definitions.extensionId, provider);
   }
 
   private reportStartInOutputChannel() {
@@ -90,5 +107,6 @@ class Cov {
   }
 
   private readonly output: Imports.Adapters.Abstractions.vscode.OutputChannel;
-  private readonly command: Imports.Adapters.Implementations.vscode.Disposable;
+  private readonly command: Imports.Adapters.Abstractions.vscode.DisposableLike;
+  private readonly textDocumentProvider: Imports.Adapters.Abstractions.vscode.DisposableLike;
 }

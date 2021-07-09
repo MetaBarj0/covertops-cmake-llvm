@@ -8,9 +8,9 @@ chai.should();
 // TODO: imports idiom
 import * as Cov from '../../../src/extension/cov';
 import { extensionId } from '../../../src/extension/definitions';
-import { OutputChannelLike } from '../../../src/shared-kernel/abstractions/vscode';
+import { DisposableLike, OutputChannelLike } from '../../../src/shared-kernel/abstractions/vscode';
 
-import { Disposable, commands, window, Uri, workspace, TextEditor } from 'vscode';
+import { commands, window, Uri, workspace, TextEditor } from 'vscode';
 import * as path from 'path';
 
 // TODO: all test suites - attempt to use hooks to refacto before, after, ...
@@ -18,6 +18,7 @@ describe('Extension test suite', () => {
   describe('The cov extension behavior', () => {
     describe('The instantiation of the extension as a vscode disposable', covShouldBeDisposable);
     describe('The extension has a working vscode window output channel', covShouldHaveAnOutputChannel);
+    describe('The extension have a disposable text document provider for uncovered code regions display', covShouldHaveDisposableTextDocumentProviderForUncoveredCodeRegionsDisplay);
     describe('The extension can leverage vscode api adapters when executing the reportUncoveredRegionsInFile command', covCanExecuteCommand);
     describe('The freshly instantiated extension have an empty uncovered code regions editors collection', covShouldHaveAnEmptyUncoveredCodeRegionsEditorsCollection);
     describe('The cov extension having one virtual readonly editor showing uncovered code regions', covShouldHaveOneUncoveredCodeRegionsEditorOpenedAfterCommandExecution);
@@ -30,7 +31,9 @@ function covShouldBeDisposable() {
   before('Instantiating Cov', () => cov = Cov.make());
 
   it('should succeed when instantiating the extension as a vscode disposable', () => {
-    cov.asDisposable.should.be.an.instanceOf(Disposable);
+    const covIsADisposableResource = ((_: DisposableLike): _ is DisposableLike => true)(cov.asDisposable);
+
+    covIsADisposableResource.should.be.true;
   });
 
   after('Disposing of cov instance', () => cov.dispose());
@@ -75,7 +78,7 @@ function covShouldHaveAnEmptyUncoveredCodeRegionsEditorsCollection() {
   it('should contain an empty collection of uncovered code regions read only editors', () => {
     const covExposesReadonlyArrayOfTextEditors = ((_: ReadonlyArray<TextEditor>): _ is ReadonlyArray<TextEditor> => true)(cov.uncoveredCodeRegionsEditors);
 
-    covExposesReadonlyArrayOfTextEditors.should.be.equal(true);
+    covExposesReadonlyArrayOfTextEditors.should.be.true;
     cov.uncoveredCodeRegionsEditors.should.be.empty;
   });
 
@@ -98,6 +101,20 @@ function covShouldHaveOneUncoveredCodeRegionsEditorOpenedAfterCommandExecution()
     cov.uncoveredCodeRegionsEditors.length.should.equal(1);
     cov.uncoveredCodeRegionsEditors[0].document.uri.scheme.should.be.equal(extensionId);
     cov.uncoveredCodeRegionsEditors[0].document.uri.fsPath.should.be.equal(currentEditor.document.uri.fsPath);
+  });
+
+  after('Disposing of cov instance', () => cov.dispose());
+}
+
+function covShouldHaveDisposableTextDocumentProviderForUncoveredCodeRegionsDisplay() {
+  let cov: ReturnType<typeof Cov.make>;
+
+  before('Instantiating Cov', () => cov = Cov.make());
+
+  it('should create and expose a disposable text document provider', () => {
+    const covExposesDisposableTextDocumentProvider = ((_: DisposableLike): _ is DisposableLike => true)(cov.uncoveredCodeRegionsDocumentProvider);
+
+    covExposesDisposableTextDocumentProvider.should.be.true;
   });
 
   after('Disposing of cov instance', () => cov.dispose());

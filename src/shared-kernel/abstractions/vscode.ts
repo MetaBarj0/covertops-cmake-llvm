@@ -3,6 +3,7 @@ import { Settings } from '../../modules/settings-provider/domain/abstractions/se
 export type VscodeWorkspaceLike = {
   readonly workspaceFolders: ReadonlyArray<VscodeWorkspaceFolderLike> | undefined;
   getConfiguration(section?: string | undefined): VscodeWorkspaceConfigurationLike;
+  registerTextDocumentContentProvider(scheme: string, provider: TextDocumentContentProviderLike): DisposableLike;
 };
 
 export type VscodeWorkspaceFolderLike = {
@@ -29,4 +30,10 @@ export type ProgressLike = {
 export type ProgressStep = {
   message?: string,
   increment?: number
+};
+
+export type TextDocumentContentProviderLike = {};
+
+export type DisposableLike = {
+  dispose(): any;
 };

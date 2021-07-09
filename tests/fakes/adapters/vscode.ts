@@ -2,6 +2,8 @@ import { defaultSetting } from '../../utils/settings';
 
 import { Settings } from '../../../src/modules/settings-provider/domain/abstractions/settings';
 import {
+  DisposableLike,
+  TextDocumentContentProviderLike,
   VscodeUriLike,
   VscodeWorkspaceConfigurationLike,
   VscodeWorkspaceFolderLike, VscodeWorkspaceLike
@@ -19,6 +21,10 @@ export function buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettin
   return new class implements VscodeWorkspaceLike {
     constructor(overrides: Overrides) {
       this.overrides = overrides;
+    }
+
+    registerTextDocumentContentProvider(_scheme: string, _provider: TextDocumentContentProviderLike): DisposableLike {
+      throw new Error('Method not implemented.');
     }
 
     workspaceFolders = [
@@ -53,6 +59,10 @@ export function buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettin
 
 export function buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(): VscodeWorkspaceLike {
   return new class implements VscodeWorkspaceLike {
+
+    registerTextDocumentContentProvider(_scheme: string, _provider: TextDocumentContentProviderLike): DisposableLike {
+      throw new Error('Method not implemented.');
+    }
     workspaceFolders = undefined;
 
     getConfiguration(_section?: string) {
