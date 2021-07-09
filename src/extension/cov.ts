@@ -25,13 +25,28 @@ class Cov {
     ].forEach(disposable => disposable.dispose());
   }
 
-  run() {
+  async run() {
+    this.reportStartInOutputChannel();
+
+    const _coverageInfo = await this.getCoverageInfoForFile('');
+  }
+
+  get uncoveredCodeRegionsEditors(): ReadonlyArray<Imports.Adapters.Abstractions.vscode.TextEditor> {
+    return [];
+  }
+
+  private reportStartInOutputChannel() {
+    this.output.show(false);
+    this.output.clear();
+    this.output.appendLine(`starting ${Imports.Extension.Definitions.extensionDisplayName}`);
+  }
+
+  private getCoverageInfoForFile(path: string) {
     return Imports.Adapters.Implementations.vscode.window.withProgress({
       location: Imports.Adapters.Implementations.vscode.ProgressLocation.Notification,
       title: 'Computing uncovered code region locations',
       cancellable: false
     }, async progressReporter => {
-      this.reportStartInOutputChannel();
 
       const workspace = Imports.Adapters.Implementations.vscode.workspace;
       const errorChannel = this.output;
@@ -70,20 +85,10 @@ class Cov {
         coverageInfoCollector
       });
 
-      await provider.getDecorationLocationsForUncoveredCodeRegions('');
+      return await provider.getDecorationLocationsForUncoveredCodeRegions(path);
     });
   }
 
-  get uncoveredCodeRegionsEditors(): ReadonlyArray<Imports.Adapters.Implementations.vscode.TextEditor> {
-    return [];
-  }
-
-  private reportStartInOutputChannel() {
-    this.output.show(false);
-    this.output.clear();
-    this.output.appendLine(`starting ${Imports.Extension.Definitions.extensionDisplayName}`);
-  }
-
-  private readonly output: Imports.Adapters.Implementations.vscode.OutputChannel;
+  private readonly output: Imports.Adapters.Abstractions.vscode.OutputChannel;
   private readonly command: Imports.Adapters.Implementations.vscode.Disposable;
 }

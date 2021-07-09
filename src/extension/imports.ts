@@ -35,9 +35,6 @@ export namespace Adapters {
       export const ProgressLocation = VscodeModule.ProgressLocation;
 
       export const workspace = VscodeModule.workspace;
-
-      export type OutputChannel = VscodeModule.OutputChannel;
-      export type TextEditor = VscodeModule.TextEditor;
     }
 
     export namespace fileSystem {
@@ -49,6 +46,13 @@ export namespace Adapters {
 
     export namespace processControl {
       export const execFile = processControlModule.execFile;
+    }
+  }
+
+  export namespace Abstractions {
+    export namespace vscode {
+      export type OutputChannel = VscodeModule.OutputChannel;
+      export type TextEditor = VscodeModule.TextEditor;
     }
   }
 }
