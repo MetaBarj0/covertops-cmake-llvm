@@ -43,6 +43,7 @@ class Cov {
   }
 
   private createUncoveredCodeRegionsDocumentProvider() {
+    // TODO: new named class in a new file, keep cov dumb
     const provider = new class implements Imports.Adapters.Abstractions.vscode.TextDocumentContentProvider {
       provideTextDocumentContent(_uri: Uri, _token: CancellationToken): ProviderResult<string> {
         throw new Error('Method not implemented.');
@@ -58,6 +59,7 @@ class Cov {
     this.output.appendLine(`starting ${Imports.Extension.Definitions.extensionDisplayName}`);
   }
 
+  // TODO: move close to document provider
   private getCoverageInfoForFile(path: string) {
     return Imports.Adapters.Implementations.vscode.window.withProgress({
       location: Imports.Adapters.Implementations.vscode.ProgressLocation.Notification,
