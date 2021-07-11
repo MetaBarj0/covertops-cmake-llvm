@@ -9,6 +9,7 @@ chai.should();
 import * as Cov from '../../../src/extension/cov';
 import { extensionId } from '../../../src/extension/definitions';
 import { DisposableLike, OutputChannelLike } from '../../../src/shared-kernel/abstractions/vscode';
+import * as DecorationLocationsProvider from '../../../src/extension/factories/decoration-locations-provider';
 
 import { commands, window, Uri, workspace, TextEditor } from 'vscode';
 import * as path from 'path';
@@ -25,10 +26,11 @@ describe('Extension test suite', () => {
   });
 });
 
+// TODO: global - duplication in before sections to remove
 function covShouldBeDisposable() {
   let cov: ReturnType<typeof Cov.make>;
 
-  before('Instantiating Cov', () => cov = Cov.make());
+  before('Instantiating Cov', async () => cov = Cov.make(await DecorationLocationsProvider.make()));
 
   it('should succeed when instantiating the extension as a vscode disposable', () => {
     const covIsADisposableResource = ((_: DisposableLike): _ is DisposableLike => true)(cov.asDisposable);
@@ -42,7 +44,7 @@ function covShouldBeDisposable() {
 function covShouldHaveAnOutputChannel() {
   let cov: ReturnType<typeof Cov.make>;
 
-  before('Instantiating Cov', () => cov = Cov.make());
+  before('Instantiating Cov', async () => cov = Cov.make(await DecorationLocationsProvider.make()));
 
   it('should expose a vscode output channel', () => {
     const covExposesAVscodeOutputChannel = ((_: OutputChannelLike): _ is OutputChannelLike => true)(cov.outputChannel);
@@ -56,7 +58,7 @@ function covShouldHaveAnOutputChannel() {
 function covCanExecuteCommand() {
   let cov: ReturnType<typeof Cov.make>;
 
-  before('Instantiating Cov', () => cov = Cov.make());
+  before('Instantiating Cov', async () => cov = Cov.make(await DecorationLocationsProvider.make()));
 
   it('should run the command successfully', async () => {
     const workspaceRootFolder = workspace.workspaceFolders?.[0].uri.fsPath;
@@ -73,7 +75,7 @@ function covCanExecuteCommand() {
 function covShouldHaveAnEmptyUncoveredCodeRegionsEditorsCollection() {
   let cov: ReturnType<typeof Cov.make>;
 
-  before('Instantiating Cov', () => cov = Cov.make());
+  before('Instantiating Cov', async () => cov = Cov.make(await DecorationLocationsProvider.make()));
 
   it('should contain an empty collection of uncovered code regions read only editors', () => {
     const covExposesReadonlyArrayOfTextEditors = ((_: ReadonlyArray<TextEditor>): _ is ReadonlyArray<TextEditor> => true)(cov.uncoveredCodeRegionsEditors);
@@ -88,7 +90,7 @@ function covShouldHaveAnEmptyUncoveredCodeRegionsEditorsCollection() {
 function covShouldHaveDisposableTextDocumentProviderForUncoveredCodeRegionsDisplay() {
   let cov: ReturnType<typeof Cov.make>;
 
-  before('Instantiating Cov', () => cov = Cov.make());
+  before('Instantiating Cov', async () => cov = Cov.make(await DecorationLocationsProvider.make()));
 
   it('should create and expose a disposable text document provider', () => {
     const covExposesDisposableTextDocumentProvider = ((_: DisposableLike): _ is DisposableLike => true)(cov.uncoveredCodeRegionsDocumentProvider);
@@ -102,7 +104,7 @@ function covShouldHaveDisposableTextDocumentProviderForUncoveredCodeRegionsDispl
 function covShouldHaveOneUncoveredCodeRegionsEditorOpenedAfterCommandExecution() {
   let cov: ReturnType<typeof Cov.make>;
 
-  before('Instantiating Cov', () => cov = Cov.make());
+  before('Instantiating Cov', async () => cov = Cov.make(await DecorationLocationsProvider.make()));
 
   it.skip('should have one uncovered code regions editor in the collection that is a virtual read only text editor', async () => {
     // TODO: duplicated 2 tests above

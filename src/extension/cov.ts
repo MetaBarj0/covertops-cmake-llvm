@@ -1,20 +1,21 @@
-// TODO: put those in imports.ts
-import { Uri, CancellationToken, ProviderResult } from 'vscode';
 import * as Imports from './imports';
 
-export function make() {
-  return new Cov();
+import * as vscode from 'vscode';
+
+export function make(decorationLocationsProvider: Imports.Domain.Abstractions.DecorationLocationsProvider) {
+  return new Cov(decorationLocationsProvider);
 }
 
 class Cov {
-  constructor() {
-    this.output = Imports.Adapters.Implementations.vscode.window.createOutputChannel(Imports.Extension.Definitions.extensionId);
-    this.command = Imports.Adapters.Implementations.vscode.commands.registerCommand(`${Imports.Extension.Definitions.extensionId}.reportUncoveredCodeRegionsInFile`, this.run, this);
+  constructor(decorationLocationsProvider: Imports.Domain.Abstractions.DecorationLocationsProvider) {
+    this.output = vscode.window.createOutputChannel(Imports.Extension.Definitions.extensionId);
+    this.command = vscode.commands.registerCommand(`${Imports.Extension.Definitions.extensionId}.reportUncoveredCodeRegionsInFile`, this.run, this);
     this.textDocumentProvider = this.createUncoveredCodeRegionsDocumentProvider();
+    this.decorationLocationsProvider = decorationLocationsProvider;
   }
 
   get asDisposable() {
-    return Imports.Adapters.Implementations.vscode.Disposable.from(this);
+    return vscode.Disposable.from(this);
   }
 
   get outputChannel() {
@@ -34,7 +35,7 @@ class Cov {
 
   }
 
-  get uncoveredCodeRegionsEditors(): ReadonlyArray<Imports.Adapters.Abstractions.vscode.TextEditor> {
+  get uncoveredCodeRegionsEditors(): ReadonlyArray<vscode.TextEditor> {
     return [];
   }
 
@@ -44,13 +45,13 @@ class Cov {
 
   private createUncoveredCodeRegionsDocumentProvider() {
     // TODO: new named class in a new file, keep cov dumb
-    const provider = new class implements Imports.Adapters.Abstractions.vscode.TextDocumentContentProvider {
-      provideTextDocumentContent(_uri: Uri, _token: CancellationToken): ProviderResult<string> {
+    const documentContentProvider = new class implements vscode.TextDocumentContentProvider {
+      provideTextDocumentContent(_uri: vscode.Uri, _token: vscode.CancellationToken): vscode.ProviderResult<string> {
         throw new Error('Method not implemented.');
       }
     };
 
-    return Imports.Adapters.Implementations.vscode.workspace.registerTextDocumentContentProvider(Imports.Extension.Definitions.extensionId, provider);
+    return vscode.workspace.registerTextDocumentContentProvider(Imports.Extension.Definitions.extensionId, documentContentProvider);
   }
 
   private reportStartInOutputChannel() {
@@ -60,55 +61,12 @@ class Cov {
   }
 
   // TODO: move close to document provider
-  private getCoverageInfoForFile(path: string) {
-    return Imports.Adapters.Implementations.vscode.window.withProgress({
-      location: Imports.Adapters.Implementations.vscode.ProgressLocation.Notification,
-      title: 'Computing uncovered code region locations',
-      cancellable: false
-    }, async progressReporter => {
-
-      const workspace = Imports.Adapters.Implementations.vscode.workspace;
-      const errorChannel = this.output;
-
-      const settings = Imports.Domain.Implementations.SettingsProvider.make({ workspace, errorChannel }).settings;
-      const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({
-        errorChannel,
-        progressReporter,
-        settings,
-        mkdir: Imports.Adapters.Implementations.fileSystem.mkdir,
-        stat: Imports.Adapters.Implementations.fileSystem.stat
-      });
-      const cmake = Imports.Domain.Implementations.Cmake.make({
-        settings,
-        execFile: Imports.Adapters.Implementations.processControl.execFile,
-        errorChannel: this.output,
-        progressReporter: progressReporter
-      });
-      const coverageInfoFileResolver = Imports.Domain.Implementations.CoverageInfoFileResolver.make({
-        errorChannel,
-        globSearch: Imports.Adapters.Implementations.fileSystem.globSearch,
-        progressReporter,
-        settings
-      });
-      const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({
-        coverageInfoFileResolver,
-        progressReporter,
-        errorChannel,
-        createReadStream: Imports.Adapters.Implementations.fileSystem.createReadStream
-      });
-
-      const provider = Imports.Domain.Implementations.DecorationLocationProvider.make({
-        settings,
-        buildTreeDirectoryResolver,
-        cmake,
-        coverageInfoCollector
-      });
-
-      return await provider.getDecorationLocationsForUncoveredCodeRegions(path);
-    });
+  private async getCoverageInfoForFile(path: string) {
+    return await this.decorationLocationsProvider.getDecorationLocationsForUncoveredCodeRegions(path);
   }
 
-  private readonly output: Imports.Adapters.Abstractions.vscode.OutputChannel;
-  private readonly command: Imports.Adapters.Abstractions.vscode.DisposableLike;
-  private readonly textDocumentProvider: Imports.Adapters.Abstractions.vscode.DisposableLike;
+  private readonly output: vscode.OutputChannel;
+  private readonly command: vscode.Disposable;
+  private readonly textDocumentProvider: vscode.Disposable;
+  private readonly decorationLocationsProvider: Imports.Domain.Abstractions.DecorationLocationsProvider;
 }

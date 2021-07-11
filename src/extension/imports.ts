@@ -1,5 +1,5 @@
+// TODO - check usage and clean consequently
 import * as DefinitionsModule from './definitions';
-
 import * as VscodeModule from '../adapters/vscode';
 import * as SettingsProviderModule from '../modules/settings-provider/domain/implementations/settings-provider';
 import * as BuildTreeDirectoryResolverModule from '../modules/build-tree-directory-resolver/domain/implementations/build-tree-directory-resolver';
@@ -9,6 +9,7 @@ import * as processControlModule from '../adapters/process-control';
 import * as CoverageInfoCollectorModule from '../modules/coverage-info-collector/domain/implementations/coverage-info-collector';
 import * as DecorationLocationProviderModule from '../modules/decoration-locations-provider/domain/implementations/decoration-locations-provider';
 import * as CoverageInfoFileResolverModule from '../modules/coverage-info-file-resolver/domain/implementations/coverage-info-file-resolver';
+import * as AbstractDecorationLocationsProvider from '../modules/decoration-locations-provider/domain/abstractions/decoration-locations-provider';
 
 export namespace Extension {
   export namespace Definitions {
@@ -84,5 +85,9 @@ export namespace Domain {
     export namespace CoverageInfoFileResolver {
       export const make = CoverageInfoFileResolverModule.make;
     }
+  }
+
+  export namespace Abstractions {
+    export type DecorationLocationsProvider = AbstractDecorationLocationsProvider.DecorationLocationsProvider;
   }
 }
