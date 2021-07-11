@@ -13,7 +13,7 @@ import * as UncoveredCodeRegionsDocumentContentProvider from '../../../src/exten
 import * as vscode from 'vscode';
 import * as path from 'path';
 
-// TODO: all test suites - attempt to use hooks to refacto before, after, ...
+// TODO(wip): all test suites - attempt to use hooks to refacto before, after, ...
 describe('Extension test suite', () => {
   describe('The cov extension behavior', () => {
     describe('The instantiation of the extension as a vscode disposable', covShouldBeDisposable);
