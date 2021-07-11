@@ -10,6 +10,10 @@ import * as DecorationLocationsProviderModule from '../../../src/modules/decorat
 import * as CoverageInfoFileResolverModule from '../../../src/modules/coverage-info-file-resolver/domain/implementations/coverage-info-file-resolver';
 import * as ExtensionModule from '../../../src/extension/definitions';
 import * as RegionCoverageInfoModule from '../../../src/modules/coverage-info-collector/domain/abstractions/region-coverage-info';
+import * as AbstractSettingsProvider from '../../../src/modules/settings-provider/domain/abstractions/settings';
+import * as AbstractBuildTreeDirectoryResolver from '../../../src/modules/build-tree-directory-resolver/domain/abstractions/build-tree-directory-resolver';
+import * as AbstractCmake from '../../../src/modules/cmake/domain/abstractions/cmake';
+import * as AbstractCoverageInfoCollector from '../../../src/modules/coverage-info-collector/domain/abstractions/coverage-info-collector';
 
 export namespace Fakes {
   export namespace Adapters {
@@ -69,6 +73,10 @@ export namespace Domain {
 
   export namespace Abstractions {
     export type RegionCoverageInfo = RegionCoverageInfoModule.RegionCoverageInfo;
+    export type Settings = AbstractSettingsProvider.Settings;
+    export type BuildTreeDirectoryResolver = AbstractBuildTreeDirectoryResolver.BuildTreeDirectoryResolver;
+    export type Cmake = AbstractCmake.Cmake;
+    export type CoverageInfoCollector = AbstractCoverageInfoCollector.CoverageInfoCollector;
   }
 }
 

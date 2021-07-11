@@ -21,43 +21,19 @@ describe('acceptance suite of tests', () => {
 
 function instantiateService() {
   it('should not throw when instantiated with faked adapters.', () => {
-    const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
-    const errorChannel = Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
-    const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
-    const mkdir = Imports.Fakes.Adapters.FileSystem.buildFakeFailingMkDir();
-    const stat = Imports.Fakes.Adapters.FileSystem.buildFakeFailingStatFile();
-    const execFile = Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess();
-    const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForNoMatch();
-    const createReadStream = Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(Imports.Fakes.Adapters.FileSystem.buildEmptyReadableStream);
-
-    const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
-    const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
-    const cmake = Imports.Domain.Implementations.Cmake.make({
-      settings,
-      execFile,
-      errorChannel,
-      progressReporter
-    });
-    const coverageInfoFileResolver = Imports.Domain.Implementations.CoverageInfoFileResolver.make({
-      errorChannel,
-      globSearch,
-      progressReporter,
-      settings
-    });
-    const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({
-      coverageInfoFileResolver,
-      createReadStream,
-      errorChannel,
-      progressReporter
-    });
+    const adapters = {
+      workspace: Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
+      errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel(),
+      progressReporter: Imports.Fakes.Adapters.vscode.buildFakeProgressReporter(),
+      mkdir: Imports.Fakes.Adapters.FileSystem.buildFakeFailingMkDir(),
+      stat: Imports.Fakes.Adapters.FileSystem.buildFakeFailingStatFile(),
+      execFile: Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess(),
+      globSearch: Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForNoMatch(),
+      createReadStream: Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(Imports.Fakes.Adapters.FileSystem.buildEmptyReadableStream)
+    };
 
     const instantiation = () => {
-      Imports.Domain.Implementations.DecorationLocationsProvider.make({
-        settings,
-        buildTreeDirectoryResolver,
-        cmake,
-        coverageInfoCollector
-      });
+      Imports.Domain.Implementations.DecorationLocationsProvider.make({ ...buildContextFromAdapters(adapters) });
     };
 
     instantiation.should.not.throw();
@@ -67,40 +43,18 @@ function instantiateService() {
 function failBecauseOfIssuesWithBuildTreeDirectoryAccess() {
   it('should not be able to provide any decoration for uncovered code regions ' +
     'when the build tree directory can not be found and / or created', () => {
-      const errorChannel = Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
-      const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
-      const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
-      const mkdir = Imports.Fakes.Adapters.FileSystem.buildFakeFailingMkDir();
-      const stat = Imports.Fakes.Adapters.FileSystem.buildFakeFailingStatFile();
-      const execFile = Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess();
-      const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForNoMatch();
-      const createReadStream = Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(Imports.Fakes.Adapters.FileSystem.buildEmptyReadableStream);
-      const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
-      const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
-      const cmake = Imports.Domain.Implementations.Cmake.make({
-        settings,
-        execFile,
-        errorChannel,
-        progressReporter
-      });
-      const coverageInfoFileResolver = Imports.Domain.Implementations.CoverageInfoFileResolver.make({
-        errorChannel,
-        globSearch,
-        progressReporter,
-        settings
-      });
-      const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({
-        coverageInfoFileResolver,
-        createReadStream,
-        errorChannel,
-        progressReporter,
-      });
-      const provider = Imports.Domain.Implementations.DecorationLocationsProvider.make({
-        settings,
-        buildTreeDirectoryResolver,
-        cmake,
-        coverageInfoCollector
-      });
+      const adapters = {
+        errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel(),
+        workspace: Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
+        progressReporter: Imports.Fakes.Adapters.vscode.buildFakeProgressReporter(),
+        mkdir: Imports.Fakes.Adapters.FileSystem.buildFakeFailingMkDir(),
+        stat: Imports.Fakes.Adapters.FileSystem.buildFakeFailingStatFile(),
+        execFile: Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess(),
+        globSearch: Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForNoMatch(),
+        createReadStream: Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(Imports.Fakes.Adapters.FileSystem.buildEmptyReadableStream)
+      };
+
+      const provider = Imports.Domain.Implementations.DecorationLocationsProvider.make({ ...buildContextFromAdapters(adapters) });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejected;
     });
@@ -109,41 +63,18 @@ function failBecauseOfIssuesWithBuildTreeDirectoryAccess() {
 function failBecauseOfIssuesWithCmakeTargetBuilding() {
   it('should not be able to provide any decoration for uncovered code regions ' +
     'when the cmake command cannot be reached.', () => {
-      const errorChannel = Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
-      const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ cmakeCommand: '' });
-      const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
-      const mkdir = Imports.Fakes.Adapters.FileSystem.buildFakeFailingMkDir();
-      const stat = Imports.Fakes.Adapters.FileSystem.buildFakeSucceedingStatFile();
-      const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForNoMatch();
-      const createReadStream = Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(Imports.Fakes.Adapters.FileSystem.buildEmptyReadableStream);
-      const execFile = Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess();
-      const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
-      const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
-      const cmake = Imports.Domain.Implementations.Cmake.make({
-        errorChannel,
-        execFile,
-        progressReporter,
-        settings
-      });
-      const coverageInfoFileResolver = Imports.Domain.Implementations.CoverageInfoFileResolver.make({
-        errorChannel,
-        globSearch,
-        progressReporter,
-        settings
-      });
-      const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({
-        coverageInfoFileResolver,
-        createReadStream,
-        errorChannel,
-        progressReporter,
-      });
+      const adapters = {
+        errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel(),
+        workspace: Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ cmakeCommand: '' }),
+        progressReporter: Imports.Fakes.Adapters.vscode.buildFakeProgressReporter(),
+        mkdir: Imports.Fakes.Adapters.FileSystem.buildFakeFailingMkDir(),
+        stat: Imports.Fakes.Adapters.FileSystem.buildFakeSucceedingStatFile(),
+        globSearch: Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForNoMatch(),
+        createReadStream: Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(Imports.Fakes.Adapters.FileSystem.buildEmptyReadableStream),
+        execFile: Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess()
+      };
 
-      const provider = Imports.Domain.Implementations.DecorationLocationsProvider.make({
-        settings,
-        buildTreeDirectoryResolver,
-        cmake,
-        coverageInfoCollector
-      });
+      const provider = Imports.Domain.Implementations.DecorationLocationsProvider.make({ ...buildContextFromAdapters(adapters) });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejected;
     });
@@ -152,40 +83,18 @@ function failBecauseOfIssuesWithCmakeTargetBuilding() {
 function failBecauseCoverageInfoFileResolutionIssue() {
   it('should not be able to provide any decoration for uncovered code regions ' +
     'when the coverage info file name cannot be found', () => {
-      const errorChannel = Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
-      const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ coverageInfoFileName: 'baadf00d' });
-      const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
-      const mkdir = Imports.Fakes.Adapters.FileSystem.buildFakeFailingMkDir();
-      const stat = Imports.Fakes.Adapters.FileSystem.buildFakeSucceedingStatFile();
-      const execFile = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
-      const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForSeveralMatch();
-      const createReadStream = Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(Imports.Fakes.Adapters.FileSystem.buildEmptyReadableStream);
-      const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
-      const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
-      const cmake = Imports.Domain.Implementations.Cmake.make({
-        settings,
-        execFile,
-        errorChannel,
-        progressReporter
-      });
-      const coverageInfoFileResolver = Imports.Domain.Implementations.CoverageInfoFileResolver.make({
-        errorChannel,
-        globSearch,
-        progressReporter,
-        settings
-      });
-      const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({
-        coverageInfoFileResolver,
-        createReadStream,
-        errorChannel,
-        progressReporter,
-      });
-      const provider = Imports.Domain.Implementations.DecorationLocationsProvider.make({
-        settings,
-        buildTreeDirectoryResolver,
-        cmake,
-        coverageInfoCollector
-      });
+      const adapters = {
+        errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel(),
+        workspace: Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ coverageInfoFileName: 'baadf00d' }),
+        progressReporter: Imports.Fakes.Adapters.vscode.buildFakeProgressReporter(),
+        mkdir: Imports.Fakes.Adapters.FileSystem.buildFakeFailingMkDir(),
+        stat: Imports.Fakes.Adapters.FileSystem.buildFakeSucceedingStatFile(),
+        execFile: Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess(),
+        globSearch: Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForSeveralMatch(),
+        createReadStream: Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(Imports.Fakes.Adapters.FileSystem.buildEmptyReadableStream)
+      };
+
+      const provider = Imports.Domain.Implementations.DecorationLocationsProvider.make({ ...buildContextFromAdapters(adapters) });
 
       return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejected;
     });
@@ -194,40 +103,19 @@ function failBecauseCoverageInfoFileResolutionIssue() {
 function succeedWithCorrectSettingsAndFakeAdapters() {
   it('should succed to collect correct coverage information for the requested file in x discrete steps.', async () => {
     const progressReporterSpy = Imports.Fakes.Adapters.vscode.buildSpyOfProgressReporter(Imports.Fakes.Adapters.vscode.buildFakeProgressReporter());
-    const errorChannel = Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
-    const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
-    const progressReporter = progressReporterSpy.object;
-    const mkdir = Imports.Fakes.Adapters.FileSystem.buildFakeSucceedingMkDir();
-    const stat = Imports.Fakes.Adapters.FileSystem.buildFakeSucceedingStatFile();
-    const execFile = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
-    const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForExactlyOneMatch();
-    const createReadStream = Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(Imports.Fakes.Adapters.FileSystem.buildValidLlvmCoverageJsonObjectStream);
-    const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
-    const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
-    const cmake = Imports.Domain.Implementations.Cmake.make({
-      settings,
-      execFile,
-      errorChannel,
-      progressReporter
-    });
-    const coverageInfoFileResolver = Imports.Domain.Implementations.CoverageInfoFileResolver.make({
-      errorChannel,
-      globSearch,
-      progressReporter,
-      settings
-    });
-    const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({
-      coverageInfoFileResolver,
-      createReadStream,
-      errorChannel,
-      progressReporter,
-    });
-    const provider = Imports.Domain.Implementations.DecorationLocationsProvider.make({
-      settings,
-      buildTreeDirectoryResolver,
-      cmake,
-      coverageInfoCollector
-    });
+
+    const adapters = {
+      errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel(),
+      workspace: Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
+      progressReporter: progressReporterSpy.object,
+      mkdir: Imports.Fakes.Adapters.FileSystem.buildFakeSucceedingMkDir(),
+      stat: Imports.Fakes.Adapters.FileSystem.buildFakeSucceedingStatFile(),
+      execFile: Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess(),
+      globSearch: Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForExactlyOneMatch(),
+      createReadStream: Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(Imports.Fakes.Adapters.FileSystem.buildValidLlvmCoverageJsonObjectStream)
+    };
+
+    const provider = Imports.Domain.Implementations.DecorationLocationsProvider.make({ ...buildContextFromAdapters(adapters) });
 
     const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions('/a/source/file.cpp');
 
@@ -259,3 +147,54 @@ function succeedWithCorrectSettingsAndFakeAdapters() {
     progressReporterSpy.countFor('report').should.be.equal(6);
   });
 }
+
+function buildContextFromAdapters(adapters: Adapters): DecorationLocationsProviderContext {
+  const {
+    createReadStream,
+    errorChannel,
+    execFile,
+    globSearch,
+    mkdir,
+    stat,
+    progressReporter,
+    workspace
+  } = adapters;
+
+  const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
+  const coverageInfoFileResolver = Imports.Domain.Implementations.CoverageInfoFileResolver.make({
+    errorChannel,
+    globSearch,
+    progressReporter,
+    settings
+  });
+
+  return {
+    settings,
+    buildTreeDirectoryResolver: Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter }),
+    cmake: Imports.Domain.Implementations.Cmake.make({
+      settings,
+      execFile,
+      errorChannel,
+      progressReporter
+    }),
+    coverageInfoCollector: Imports.Domain.Implementations.CoverageInfoCollector.make({
+      coverageInfoFileResolver,
+      createReadStream,
+      errorChannel,
+      progressReporter
+    })
+  };
+}
+
+type Adapters = {
+  workspace: ReturnType<typeof Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings>,
+  errorChannel: ReturnType<typeof Imports.Fakes.Adapters.vscode.buildFakeErrorChannel>,
+  progressReporter: ReturnType<typeof Imports.Fakes.Adapters.vscode.buildFakeProgressReporter>,
+  mkdir: ReturnType<typeof Imports.Fakes.Adapters.FileSystem.buildFakeFailingMkDir>,
+  stat: ReturnType<typeof Imports.Fakes.Adapters.FileSystem.buildFakeFailingStatFile>,
+  execFile: ReturnType<typeof Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess>,
+  globSearch: ReturnType<typeof Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForNoMatch>,
+  createReadStream: ReturnType<typeof Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder>
+};
+
+type DecorationLocationsProviderContext = typeof Imports.Domain.Implementations.DecorationLocationsProvider.make extends (context: infer T) => any ? T : never;
