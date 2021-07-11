@@ -5,14 +5,12 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 chai.should();
 
-// TODO: imports idiom, or not??
 import * as Cov from '../../../src/extension/cov';
-import { extensionId } from '../../../src/extension/definitions';
-import { DisposableLike, OutputChannelLike } from '../../../src/shared-kernel/abstractions/vscode';
+import * as Definitions from '../../../src/extension/definitions';
 import * as DecorationLocationsProvider from '../../../src/extension/factories/decoration-locations-provider';
 import * as UncoveredCodeRegionsDocumentContentProvider from '../../../src/extension/uncovered-code-regions-document-content-provider';
 
-import { commands, window, Uri, workspace, TextEditor } from 'vscode';
+import * as vscode from 'vscode';
 import * as path from 'path';
 
 // TODO: all test suites - attempt to use hooks to refacto before, after, ...
@@ -36,7 +34,7 @@ function covShouldBeDisposable() {
     UncoveredCodeRegionsDocumentContentProvider.make()));
 
   it('should succeed when instantiating the extension as a vscode disposable', () => {
-    const covIsADisposableResource = ((_: DisposableLike): _ is DisposableLike => true)(cov.asDisposable);
+    const covIsADisposableResource = ((_: vscode.Disposable): _ is vscode.Disposable => true)(cov.asDisposable);
 
     covIsADisposableResource.should.be.true;
   });
@@ -52,7 +50,7 @@ function covShouldHaveAnOutputChannel() {
     UncoveredCodeRegionsDocumentContentProvider.make()));
 
   it('should expose a vscode output channel', () => {
-    const covExposesAVscodeOutputChannel = ((_: OutputChannelLike): _ is OutputChannelLike => true)(cov.outputChannel);
+    const covExposesAVscodeOutputChannel = ((_: vscode.OutputChannel): _ is vscode.OutputChannel => true)(cov.outputChannel);
 
     covExposesAVscodeOutputChannel.should.be.equal(true);
   });
@@ -68,12 +66,12 @@ function covCanExecuteCommand() {
     UncoveredCodeRegionsDocumentContentProvider.make()));
 
   it('should run the command successfully', async () => {
-    const workspaceRootFolder = workspace.workspaceFolders?.[0].uri.fsPath;
+    const workspaceRootFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
     const cppFilePath = path.join(<string>workspaceRootFolder, 'src', 'partiallyCovered', 'partiallyCoveredLib.cpp');
 
-    await window.showTextDocument(Uri.file(cppFilePath), { preserveFocus: false });
+    await vscode.window.showTextDocument(vscode.Uri.file(cppFilePath), { preserveFocus: false });
 
-    return commands.executeCommand(`${extensionId}.reportUncoveredCodeRegionsInFile`).should.eventually.be.fulfilled;
+    return vscode.commands.executeCommand(`${Definitions.extensionId}.reportUncoveredCodeRegionsInFile`).should.eventually.be.fulfilled;
   });
 
   after('Disposing of cov instance', () => cov.dispose());
@@ -87,7 +85,7 @@ function covShouldHaveAnEmptyUncoveredCodeRegionsEditorsCollection() {
     UncoveredCodeRegionsDocumentContentProvider.make()));
 
   it('should contain an empty collection of uncovered code regions read only editors', () => {
-    const covExposesReadonlyArrayOfTextEditors = ((_: ReadonlyArray<TextEditor>): _ is ReadonlyArray<TextEditor> => true)(cov.uncoveredCodeRegionsEditors);
+    const covExposesReadonlyArrayOfTextEditors = ((_: ReadonlyArray<vscode.TextEditor>): _ is ReadonlyArray<vscode.TextEditor> => true)(cov.uncoveredCodeRegionsEditors);
 
     covExposesReadonlyArrayOfTextEditors.should.be.true;
     cov.uncoveredCodeRegionsEditors.should.be.empty;
@@ -104,7 +102,7 @@ function covShouldHaveDisposableTextDocumentProviderForUncoveredCodeRegionsDispl
     UncoveredCodeRegionsDocumentContentProvider.make()));
 
   it('should create and expose a disposable text document provider', () => {
-    const covExposesDisposableTextDocumentProvider = ((_: DisposableLike): _ is DisposableLike => true)(cov.uncoveredCodeRegionsDocumentProvider);
+    const covExposesDisposableTextDocumentProvider = ((_: vscode.Disposable): _ is vscode.Disposable => true)(cov.uncoveredCodeRegionsDocumentProvider);
 
     covExposesDisposableTextDocumentProvider.should.be.true;
   });
@@ -121,14 +119,14 @@ function covShouldHaveOneUncoveredCodeRegionsEditorOpenedAfterCommandExecution()
 
   it.skip('should have one uncovered code regions editor in the collection that is a virtual read only text editor', async () => {
     // TODO: duplicated 2 tests above
-    const workspaceRootFolder = workspace.workspaceFolders?.[0].uri.fsPath;
+    const workspaceRootFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
     const cppFilePath = path.join(<string>workspaceRootFolder, 'src', 'partiallyCovered', 'partiallyCoveredLib.cpp');
 
-    const currentEditor = await window.showTextDocument(Uri.file(cppFilePath), { preserveFocus: false });
-    await commands.executeCommand(`${extensionId}.reportUncoveredCodeRegionsInFile`);
+    const currentEditor = await vscode.window.showTextDocument(vscode.Uri.file(cppFilePath), { preserveFocus: false });
+    await vscode.commands.executeCommand(`${Definitions.extensionId}.reportUncoveredCodeRegionsInFile`);
 
     cov.uncoveredCodeRegionsEditors.length.should.equal(1);
-    cov.uncoveredCodeRegionsEditors[0].document.uri.scheme.should.be.equal(extensionId);
+    cov.uncoveredCodeRegionsEditors[0].document.uri.scheme.should.be.equal(Definitions.extensionId);
     cov.uncoveredCodeRegionsEditors[0].document.uri.fsPath.should.be.equal(currentEditor.document.uri.fsPath);
   });
 
