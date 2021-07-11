@@ -1,18 +1,18 @@
-// TODO: perhaps not necessary anymore
-import * as Imports from './imports';
+import * as Definitions from './definitions';
+import { DecorationLocationsProvider } from '../modules/decoration-locations-provider/domain/abstractions/decoration-locations-provider';
 
 import * as vscode from 'vscode';
 
-export function make(decorationLocationsProvider: Imports.Domain.Abstractions.DecorationLocationsProvider,
+export function make(decorationLocationsProvider: DecorationLocationsProvider,
   uncoveredCodeRegionsDocumentContentProvider: vscode.Disposable) {
   return new Cov(decorationLocationsProvider, uncoveredCodeRegionsDocumentContentProvider);
 }
 
 class Cov {
-  constructor(decorationLocationsProvider: Imports.Domain.Abstractions.DecorationLocationsProvider,
+  constructor(decorationLocationsProvider: DecorationLocationsProvider,
     uncoveredCodeRegionsDocumentContentProvider: vscode.Disposable) {
-    this.output = vscode.window.createOutputChannel(Imports.Extension.Definitions.extensionId);
-    this.command = vscode.commands.registerCommand(`${Imports.Extension.Definitions.extensionId}.reportUncoveredCodeRegionsInFile`, this.run, this);
+    this.output = vscode.window.createOutputChannel(Definitions.extensionId);
+    this.command = vscode.commands.registerCommand(`${Definitions.extensionId}.reportUncoveredCodeRegionsInFile`, this.run, this);
     this.textDocumentProvider = uncoveredCodeRegionsDocumentContentProvider;
     this.decorationLocationsProvider = decorationLocationsProvider;
   }
@@ -49,12 +49,12 @@ class Cov {
   private reportStartInOutputChannel() {
     this.output.show(false);
     this.output.clear();
-    this.output.appendLine(`starting ${Imports.Extension.Definitions.extensionDisplayName}`);
+    this.output.appendLine(`starting ${Definitions.extensionDisplayName}`);
   }
 
   private readonly output: vscode.OutputChannel;
   private readonly command: vscode.Disposable;
   private readonly textDocumentProvider: vscode.Disposable;
   // TODO: not used here, maybe misplaced?
-  private readonly decorationLocationsProvider: Imports.Domain.Abstractions.DecorationLocationsProvider;
+  private readonly decorationLocationsProvider: DecorationLocationsProvider;
 }
