@@ -35,15 +35,17 @@ function shouldSucceedAndExposeDefaultSettings() {
     'settings with correct default values', () => {
       const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
       const errorChannel = Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
+      const expectedSettings = {
+        additionalCmakeOptions: <Array<string>>[],
+        buildTreeDirectory: Imports.TestUtils.defaultSetting('buildTreeDirectory'),
+        cmakeCommand: Imports.TestUtils.defaultSetting('cmakeCommand'),
+        cmakeTarget: Imports.TestUtils.defaultSetting('cmakeTarget'),
+        coverageInfoFileName: Imports.TestUtils.defaultSetting('coverageInfoFileName'),
+        rootDirectory: Imports.TestUtils.defaultSetting('rootDirectory')
+      } as const;
 
       const settings = Imports.Domain.Implementations.SettingsProvider.make({ workspace, errorChannel }).settings;
 
-      settings.additionalCmakeOptions.should.be.empty;
-      settings.buildTreeDirectory.should.be.equal(Imports.TestUtils.defaultSetting('buildTreeDirectory'));
-      settings.cmakeCommand.should.be.equal(Imports.TestUtils.defaultSetting('cmakeCommand'));
-      settings.cmakeTarget.should.be.equal(Imports.TestUtils.defaultSetting('cmakeTarget'));
-      settings.coverageInfoFileName.should.be.equal(Imports.TestUtils.defaultSetting('coverageInfoFileName'));
-
-      settings.rootDirectory.should.be.equal(Imports.TestUtils.defaultSetting('rootDirectory'));
+      settings.should.be.deep.equal(expectedSettings);
     });
 }
