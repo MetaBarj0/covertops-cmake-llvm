@@ -43,8 +43,9 @@ function shouldFailToCollectCoverageInfoSummaryBecauseOfInvalidStream() {
       const coverageInfo = await collector.collectFor('');
 
       return coverageInfo.summary
-        .catch((error: Error) => {
-          error.message.should.contain('Invalid coverage information file have been found in the build tree directory. ' +
+        .catch((error: Error) => error)
+        .then(error => {
+          (<Error>error).message.should.contain('Invalid coverage information file have been found in the build tree directory. ' +
             'Coverage information file must contain llvm coverage report in json format. ' +
             'Ensure that both ' +
             `'${Imports.Extension.Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
@@ -73,8 +74,9 @@ function shouldFailToCollectUncoveredRegionsBecauseOfInvalidStream() {
       const iterateOnUncoveredRegions = async () => { for await (const _region of coverageInfo.uncoveredRegions); };
 
       return iterateOnUncoveredRegions()
-        .catch((error: Error) => {
-          error.message.should.contain('Invalid coverage information file have been found in the build tree directory. ' +
+        .catch((error: Error) => error)
+        .then(error => {
+          (<Error>error).message.should.contain('Invalid coverage information file have been found in the build tree directory. ' +
             'Coverage information file must contain llvm coverage report in json format. ' +
             'Ensure that both ' +
             `'${Imports.Extension.Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
@@ -98,8 +100,9 @@ function shouldFailToCollectCoverageInfoSummaryBecauseOfUnhandledSourceFile() {
     const coverageInfo = await collector.collectFor(sourceFilePath);
 
     return coverageInfo.summary
-      .catch((error: Error) => {
-        error.message.should.contain('Cannot find any summary coverage info for the file ' +
+      .catch((error: Error) => error)
+      .then(error => {
+        (<Error>error).message.should.contain('Cannot find any summary coverage info for the file ' +
           `${sourceFilePath}. Ensure this source file is covered by a test in your project.`);
 
         errorChannelSpy.countFor('appendLine').should.be.equal(1);
@@ -118,8 +121,9 @@ function shouldFailToCollectUncoveredRegionsBecauseOfUnhandledSourceFile() {
     const iterateOnUncoveredRegions = async () => { for await (const _region of coverageInfo.uncoveredRegions); };
 
     return iterateOnUncoveredRegions()
-      .catch((error: Error) => {
-        error.message.should.contain('Cannot find any uncovered code regions for the file ' +
+      .catch((error: Error) => error)
+      .then(error => {
+        (<Error>error).message.should.contain('Cannot find any uncovered code regions for the file ' +
           `${sourceFilePath}. Ensure this source file is covered by a test in your project.`);
 
         errorChannelSpy.countFor('appendLine').should.be.equal(1);
