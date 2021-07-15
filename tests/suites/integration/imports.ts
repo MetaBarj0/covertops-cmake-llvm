@@ -8,10 +8,10 @@ import * as CmakeModule from '../../../src/modules/cmake/domain/implementations/
 import * as DecorationLocationsProviderModule from '../../../src/modules/decoration-locations-provider/domain/implementations/decoration-locations-provider';
 import * as TestUtilsModule from '../../utils/settings';
 import * as DefinitionsModule from '../../../src/extension/definitions';
-import * as VscodeModule from '../../../src/adapters/vscode';
-import * as FileSystemModule from '../../../src/adapters/file-system';
-import * as ProcessControlModule from '../../../src/adapters/process-control';
-import * as AbstractVscodeModule from '../../../src/shared-kernel/abstractions/vscode';
+import * as VscodeModule from '../../../src/adapters/implementations/vscode';
+import * as FileSystemModule from '../../../src/adapters/implementations/file-system';
+import * as ProcessControlModule from '../../../src/adapters/implementations/process-control';
+import * as AbstractVscodeModule from '../../../src/adapters/abstractions/vscode';
 import { Settings as AbstractSettings } from '../../../src/modules/settings-provider/domain/abstractions/settings';
 
 export namespace Fakes {

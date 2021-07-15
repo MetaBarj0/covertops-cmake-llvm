@@ -9,8 +9,8 @@ import * as BuildTreeDirectoryResolverModule from '../../../src/modules/build-tr
 import * as CmakeModule from '../../../src/modules/cmake/domain/implementations/cmake';
 import * as TestUtilsModule from '../../utils/settings';
 import * as DefinitionsModule from '../../../src/extension/definitions';
-import * as VscodeAbstractions from '../../../src/shared-kernel/abstractions/vscode';
-import * as FileSystemAbstractions from '../../../src/shared-kernel/abstractions/file-system';
+import * as VscodeAbstractions from '../../../src/adapters/abstractions/vscode';
+import * as FileSystemAbstractions from '../../../src/adapters/abstractions/file-system';
 
 export namespace Fakes {
   export namespace Adapters {

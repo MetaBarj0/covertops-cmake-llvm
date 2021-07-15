@@ -1,4 +1,4 @@
-import * as Abstractions from '../shared-kernel/abstractions/vscode';
+import * as Abstractions from '../abstractions/vscode';
 
 import * as vscode from 'vscode';
 

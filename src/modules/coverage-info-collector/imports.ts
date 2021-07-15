@@ -1,6 +1,6 @@
 import * as AbstractRegionCoverageInfoModule from './domain/abstractions/region-coverage-info';
 import * as AbstractCoverageSummaryModule from './domain/abstractions/coverage-summary';
-import * as VscodeModule from '../../shared-kernel/abstractions/vscode';
+import * as VscodeModule from '../../adapters/abstractions/vscode';
 import * as AbstractCoverageInfoModule from '../coverage-info-collector/domain/abstractions/coverage-info';
 import * as CoverageSummaryModule from '../coverage-info-collector/domain/implementations/coverage-summary';
 import * as RegionCoverageInfoModule from './domain/implementations/region-coverage-info';
@@ -9,7 +9,7 @@ import * as CoverageInfoCollectorModule from './domain/abstractions/coverage-inf
 import * as CoverageInfoFileResolverModule from '../coverage-info-file-resolver/domain/implementations/coverage-info-file-resolver';
 import * as CoverageInfoModule from './domain/implementations/coverage-info';
 import * as SettingsModule from '../settings-provider/domain/abstractions/settings';
-import * as FileSystemModule from '../../shared-kernel/abstractions/file-system';
+import * as FileSystemModule from '../../adapters/abstractions/file-system';
 import * as AbstractCoverageInfoFileResolverModule from '../coverage-info-file-resolver/domain/abstractions/coverage-info-file-resolver';
 
 export namespace Domain {

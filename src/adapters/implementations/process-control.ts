@@ -1,4 +1,4 @@
-import * as Abstractions from '../shared-kernel/abstractions/process-control';
+import * as Abstractions from '../abstractions/process-control';
 
 import * as cp from 'child_process';
 

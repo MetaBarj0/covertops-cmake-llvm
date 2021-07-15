@@ -1,5 +1,5 @@
 import * as DefinitionsModule from '../../extension/definitions';
-import * as VscodeModule from '../../shared-kernel/abstractions/vscode';
+import * as VscodeModule from '../../adapters/abstractions/vscode';
 
 import { Settings as SettingsType } from './domain/abstractions/settings';
 import { SettingsProvider as SettingsProviderType } from './domain/abstractions/settings-provider';

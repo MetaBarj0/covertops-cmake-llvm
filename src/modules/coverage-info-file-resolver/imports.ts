@@ -1,7 +1,7 @@
 import * as CoverageInfoFileResolverModule from './domain/abstractions/coverage-info-file-resolver';
 import * as SettingsModule from '../settings-provider/domain/abstractions/settings';
-import * as FileSystemModule from '../../shared-kernel/abstractions/file-system';
-import * as VscodeModule from '../../shared-kernel/abstractions/vscode';
+import * as FileSystemModule from '../../adapters/abstractions/file-system';
+import * as VscodeModule from '../../adapters/abstractions/vscode';
 import * as DefinitionsModule from '../../extension/definitions';
 
 export namespace Domain {

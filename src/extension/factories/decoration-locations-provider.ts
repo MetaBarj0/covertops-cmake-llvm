@@ -7,8 +7,8 @@ import * as Cmake from '../../modules/cmake/domain/implementations/cmake';
 import * as CoverageInfoFileResolver from '../../modules/coverage-info-file-resolver/domain/implementations/coverage-info-file-resolver';
 import * as CoverageInfoCollector from '../../modules/coverage-info-collector/domain/implementations/coverage-info-collector';
 import * as DecorationLocationsProvider from '../../modules/decoration-locations-provider/domain/implementations/decoration-locations-provider';
-import * as fileSystem from '../../adapters/file-system';
-import * as processControl from '../../adapters/process-control';
+import * as fileSystem from '../../adapters/implementations/file-system';
+import * as processControl from '../../adapters/implementations/process-control';
 
 export async function make() {
   const errorChannel = vscode.window.createOutputChannel(Definitions.extensionId);;
