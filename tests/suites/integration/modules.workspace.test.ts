@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import { describe, it, before, after } from 'mocha';
+import { describe, it, before, after, beforeEach, afterEach } from 'mocha';
 import * as chaiAsPromised from 'chai-as-promised';
 
 chai.use(chaiAsPromised);
@@ -19,10 +19,16 @@ describe('integration test suite', () => {
         describe('with a valid build tree directory setting', buildTreeDirectoryResolverShouldSucceed);
       });
       describe('the behavior of cmake', () => {
+        const originalPath = <string>env['PATH'];
+
+        beforeEach('Adding LLVM binary directory to PATH', () => { prependLlvmBinDirToPathEnvironmentVariable(); });
+
         describe('with an unreachable cmake command', cmakeInvocationShouldFail);
         describe('with a fail in cmake project generation', cmakeProjectGenerationShouldFail);
         describe('with a fail in cmake target building', cmakeTargetBuildingShouldFail);
         describe('with valid cmake comand and cmake target settings', cmakeTargetBuildingShouldSucceed);
+
+        afterEach('Restoring original PATH', () => { env['PATH'] = originalPath; });
       });
     });
   });
