@@ -25,15 +25,14 @@ describe('Extension test suite', () => {
   });
 });
 
-// TODO: global - duplication in before sections to remove
 function covShouldBeDisposable() {
   let cov: ReturnType<typeof Cov.make>;
 
-  before('Instantiating Cov', async () => cov = Cov.make(
-    await DecorationLocationsProvider.make(),
-    UncoveredCodeRegionsDocumentContentProvider.make()));
+  it('should succeed when instantiating the extension as a vscode disposable', async () => {
+    cov = Cov.make(
+      await DecorationLocationsProvider.make(),
+      UncoveredCodeRegionsDocumentContentProvider.make());
 
-  it('should succeed when instantiating the extension as a vscode disposable', () => {
     const covIsADisposableResource = ((_: vscode.Disposable): _ is vscode.Disposable => true)(cov.asDisposable);
 
     covIsADisposableResource.should.be.true;
