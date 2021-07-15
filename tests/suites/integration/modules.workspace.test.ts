@@ -85,12 +85,8 @@ function cmakeInvocationShouldFail() {
 }
 
 function cmakeProjectGenerationShouldFail() {
-  let originalEnvPath: string;
-
   before('Modifying additional cmake command options, PATH environment variable ', async () => {
     await extensionConfiguration.update('additionalCmakeOptions', ['-DCMAKE_CXX_COMPILER=clang++', '-G', 'Ninjaz']);
-
-    originalEnvPath = prependLlvmBinDirToPathEnvironmentVariable();
   });
 
   it('should fail when attempting to generate the project', () => {
@@ -103,21 +99,15 @@ function cmakeProjectGenerationShouldFail() {
 
   after('restoring additional cmake command options and PATH environment variable', async () => {
     await extensionConfiguration.update('additionalCmakeOptions', []);
-
-    env['PATH'] = originalEnvPath;
   });
 }
 
 function cmakeTargetBuildingShouldFail() {
-  let originalEnvPath: string;
-
   before('Modifying cmake target and additional options settings and PATH environment variable', async () => {
     await Promise.all([
       extensionConfiguration.update('cmakeTarget', 'Oh my god! This is clearly an invalid cmake target'),
       extensionConfiguration.update('additionalCmakeOptions', ['-DCMAKE_CXX_COMPILER=clang++', '-G', 'Ninja'])
     ]);
-
-    originalEnvPath = prependLlvmBinDirToPathEnvironmentVariable();
   });
 
   it('should fail in attempting to build an invalid cmake target', () => {
@@ -136,8 +126,6 @@ function cmakeTargetBuildingShouldFail() {
       extensionConfiguration.update('cmakeTarget', Imports.TestUtils.defaultSetting('cmakeTarget')),
       extensionConfiguration.update('additionalCmakeOptions', Imports.TestUtils.defaultSetting('additionalCmakeOptions'))
     ]);
-
-    env['PATH'] = originalEnvPath;
   });
 }
 
@@ -148,12 +136,8 @@ function buildTreeDirectoryResolverShouldSucceed() {
 }
 
 function cmakeTargetBuildingShouldSucceed() {
-  let originalEnvPath: string;
-
   before('Modifying additional cmake command options, PATH environment variable ', async () => {
     await extensionConfiguration.update('additionalCmakeOptions', ['-DCMAKE_CXX_COMPILER=clang++', '-G', 'Ninja']);
-
-    originalEnvPath = prependLlvmBinDirToPathEnvironmentVariable();
   });
 
   it('should not throw when attempting to build a valid cmake target specified in settings', () => {
@@ -162,21 +146,15 @@ function cmakeTargetBuildingShouldSucceed() {
 
   after('restoring additional cmake command options and PATH environment variable', async () => {
     await extensionConfiguration.update('additionalCmakeOptions', []);
-
-    env['PATH'] = originalEnvPath;
   });
 }
 
 function prependLlvmBinDirToPathEnvironmentVariable() {
-  const oldPath = <string>env['PATH'];
-
   if (env['LLVM_DIR']) {
     const binDir = path.join(env['LLVM_DIR'], 'bin');
     const currentPath = <string>env['PATH'];
     env['PATH'] = `${binDir}${path.delimiter}${currentPath}`;
   }
-
-  return oldPath;
 }
 
 const extensionConfiguration = Imports.Adapters.vscode.workspace.getConfiguration(Imports.Extension.Definitions.extensionId);
