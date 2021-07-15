@@ -13,7 +13,6 @@ import * as UncoveredCodeRegionsDocumentContentProvider from '../../../src/exten
 import * as vscode from 'vscode';
 import * as path from 'path';
 
-// TODO(wip): all test suites - attempt to use hooks to refacto before, after, ...
 describe('Extension test suite', () => {
   describe('The cov extension behavior', () => {
     describe('The instantiation of the extension as a vscode disposable', covShouldBeDisposable);
@@ -21,7 +20,7 @@ describe('Extension test suite', () => {
     describe('The extension have a disposable text document provider for uncovered code regions display', covShouldHaveDisposableTextDocumentProviderForUncoveredCodeRegionsDisplay);
     describe('The extension can leverage vscode api adapters when executing the reportUncoveredRegionsInFile command', covCanExecuteCommand);
     describe('The freshly instantiated extension have an empty uncovered code regions editors collection', covShouldHaveAnEmptyUncoveredCodeRegionsEditorsCollection);
-    describe('The cov extension having one virtual readonly editor showing uncovered code regions', covShouldHaveOneUncoveredCodeRegionsEditorOpenedAfterCommandExecution);
+    describe.skip('The cov extension having one virtual readonly editor showing uncovered code regions', covShouldHaveOneUncoveredCodeRegionsEditorOpenedAfterCommandExecution);
   });
 });
 
@@ -29,8 +28,7 @@ function covShouldBeDisposable() {
   let cov: ReturnType<typeof Cov.make>;
 
   it('should succeed when instantiating the extension as a vscode disposable', async () => {
-    cov = Cov.make(
-      await DecorationLocationsProvider.make(),
+    cov = Cov.make(await DecorationLocationsProvider.make(),
       UncoveredCodeRegionsDocumentContentProvider.make());
 
     const covIsADisposableResource = ((_: vscode.Disposable): _ is vscode.Disposable => true)(cov.asDisposable);
@@ -44,11 +42,10 @@ function covShouldBeDisposable() {
 function covShouldHaveAnOutputChannel() {
   let cov: ReturnType<typeof Cov.make>;
 
-  before('Instantiating Cov', async () => cov = Cov.make(
-    await DecorationLocationsProvider.make(),
-    UncoveredCodeRegionsDocumentContentProvider.make()));
+  it('should expose a vscode output channel', async () => {
+    cov = Cov.make(await DecorationLocationsProvider.make(),
+      UncoveredCodeRegionsDocumentContentProvider.make());
 
-  it('should expose a vscode output channel', () => {
     const covExposesAVscodeOutputChannel = ((_: vscode.OutputChannel): _ is vscode.OutputChannel => true)(cov.outputChannel);
 
     covExposesAVscodeOutputChannel.should.be.equal(true);
@@ -60,11 +57,10 @@ function covShouldHaveAnOutputChannel() {
 function covCanExecuteCommand() {
   let cov: ReturnType<typeof Cov.make>;
 
-  before('Instantiating Cov', async () => cov = Cov.make(
-    await DecorationLocationsProvider.make(),
-    UncoveredCodeRegionsDocumentContentProvider.make()));
-
   it('should run the command successfully', async () => {
+    cov = Cov.make(await DecorationLocationsProvider.make(),
+      UncoveredCodeRegionsDocumentContentProvider.make());
+
     const workspaceRootFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
     const cppFilePath = path.join(<string>workspaceRootFolder, 'src', 'partiallyCovered', 'partiallyCoveredLib.cpp');
 
@@ -79,11 +75,10 @@ function covCanExecuteCommand() {
 function covShouldHaveAnEmptyUncoveredCodeRegionsEditorsCollection() {
   let cov: ReturnType<typeof Cov.make>;
 
-  before('Instantiating Cov', async () => cov = Cov.make(
-    await DecorationLocationsProvider.make(),
-    UncoveredCodeRegionsDocumentContentProvider.make()));
+  it('should contain an empty collection of uncovered code regions read only editors', async () => {
+    cov = Cov.make(await DecorationLocationsProvider.make(),
+      UncoveredCodeRegionsDocumentContentProvider.make());
 
-  it('should contain an empty collection of uncovered code regions read only editors', () => {
     const covExposesReadonlyArrayOfTextEditors = ((_: ReadonlyArray<vscode.TextEditor>): _ is ReadonlyArray<vscode.TextEditor> => true)(cov.uncoveredCodeRegionsEditors);
 
     covExposesReadonlyArrayOfTextEditors.should.be.true;
@@ -96,11 +91,10 @@ function covShouldHaveAnEmptyUncoveredCodeRegionsEditorsCollection() {
 function covShouldHaveDisposableTextDocumentProviderForUncoveredCodeRegionsDisplay() {
   let cov: ReturnType<typeof Cov.make>;
 
-  before('Instantiating Cov', async () => cov = Cov.make(
-    await DecorationLocationsProvider.make(),
-    UncoveredCodeRegionsDocumentContentProvider.make()));
+  it('should create and expose a disposable text document provider', async () => {
+    cov = Cov.make(await DecorationLocationsProvider.make(),
+      UncoveredCodeRegionsDocumentContentProvider.make());
 
-  it('should create and expose a disposable text document provider', () => {
     const covExposesDisposableTextDocumentProvider = ((_: vscode.Disposable): _ is vscode.Disposable => true)(cov.uncoveredCodeRegionsDocumentProvider);
 
     covExposesDisposableTextDocumentProvider.should.be.true;
@@ -112,12 +106,10 @@ function covShouldHaveDisposableTextDocumentProviderForUncoveredCodeRegionsDispl
 function covShouldHaveOneUncoveredCodeRegionsEditorOpenedAfterCommandExecution() {
   let cov: ReturnType<typeof Cov.make>;
 
-  before('Instantiating Cov', async () => cov = Cov.make(
-    await DecorationLocationsProvider.make(),
-    UncoveredCodeRegionsDocumentContentProvider.make()));
+  it('should have one uncovered code regions editor in the collection that is a virtual read only text editor', async () => {
+    cov = Cov.make(await DecorationLocationsProvider.make(),
+      UncoveredCodeRegionsDocumentContentProvider.make());
 
-  it.skip('should have one uncovered code regions editor in the collection that is a virtual read only text editor', async () => {
-    // TODO: duplicated 2 tests above
     const workspaceRootFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
     const cppFilePath = path.join(<string>workspaceRootFolder, 'src', 'partiallyCovered', 'partiallyCoveredLib.cpp');
 
