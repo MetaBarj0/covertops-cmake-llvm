@@ -1,4 +1,4 @@
-import * as Imports from '../../imports';
+import * as Imports from '../imports';
 
 export abstract class BasicCmake implements Imports.Domain.Abstractions.Cmake {
   constructor(errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike,

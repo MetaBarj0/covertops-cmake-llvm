@@ -1,4 +1,4 @@
-import { Settings } from '../../modules/settings-provider/domain/abstractions/settings';
+import { Settings } from '../../modules/settings-provider/abstractions/settings';
 
 export type VscodeWorkspaceLike = {
   readonly workspaceFolders: ReadonlyArray<VscodeWorkspaceFolderLike> | undefined;

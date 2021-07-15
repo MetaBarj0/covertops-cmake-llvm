@@ -1,18 +1,18 @@
 import * as VscodeFakes from '../../fakes/adapters/vscode';
-import * as SettingsProviderModule from '../../../src/modules/settings-provider/domain/implementations/settings-provider';
-import * as RegionCoverageInfoModule from '../../../src/modules/coverage-info-collector/domain/abstractions/region-coverage-info';
-import * as CoverageInfoCollectorModule from '../../../src/modules/coverage-info-collector/domain/implementations/coverage-info-collector';
-import * as BuildTreeDirectoryResolverModule from '../../../src/modules/build-tree-directory-resolver/domain/implementations/build-tree-directory-resolver';
-import * as CoverageInfoFileResolverModule from '../../../src/modules/coverage-info-file-resolver/domain/implementations/coverage-info-file-resolver';
-import * as CmakeModule from '../../../src/modules/cmake/domain/implementations/cmake';
-import * as DecorationLocationsProviderModule from '../../../src/modules/decoration-locations-provider/domain/implementations/decoration-locations-provider';
+import * as SettingsProviderModule from '../../../src/modules/settings-provider/implementations/settings-provider';
+import * as RegionCoverageInfoModule from '../../../src/modules/coverage-info-collector/abstractions/region-coverage-info';
+import * as CoverageInfoCollectorModule from '../../../src/modules/coverage-info-collector/implementations/coverage-info-collector';
+import * as BuildTreeDirectoryResolverModule from '../../../src/modules/build-tree-directory-resolver/implementations/build-tree-directory-resolver';
+import * as CoverageInfoFileResolverModule from '../../../src/modules/coverage-info-file-resolver/implementations/coverage-info-file-resolver';
+import * as CmakeModule from '../../../src/modules/cmake/implementations/cmake';
+import * as DecorationLocationsProviderModule from '../../../src/modules/decoration-locations-provider/implementations/decoration-locations-provider';
 import * as TestUtilsModule from '../../utils/settings';
 import * as DefinitionsModule from '../../../src/extension/definitions';
 import * as VscodeModule from '../../../src/adapters/implementations/vscode';
 import * as FileSystemModule from '../../../src/adapters/implementations/file-system';
 import * as ProcessControlModule from '../../../src/adapters/implementations/process-control';
 import * as AbstractVscodeModule from '../../../src/adapters/abstractions/vscode';
-import { Settings as AbstractSettings } from '../../../src/modules/settings-provider/domain/abstractions/settings';
+import { Settings as AbstractSettings } from '../../../src/modules/settings-provider/abstractions/settings';
 
 export namespace Fakes {
   export namespace Adapters {

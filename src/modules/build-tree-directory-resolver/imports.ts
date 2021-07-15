@@ -1,5 +1,5 @@
-import * as BuildTreeDirectoryResolverModule from '../build-tree-directory-resolver/domain/abstractions/build-tree-directory-resolver';
-import * as SettingsModule from '../settings-provider/domain/abstractions/settings';
+import * as BuildTreeDirectoryResolverModule from './abstractions/build-tree-directory-resolver';
+import * as SettingsModule from '../settings-provider/abstractions/settings';
 import * as FileSytemModule from '../../adapters/abstractions/file-system';
 import * as VscodeModule from '../../adapters/abstractions/vscode';
 import * as DefinitionsModule from '../../extension/definitions';

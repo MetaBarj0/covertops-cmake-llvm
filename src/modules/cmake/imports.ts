@@ -1,6 +1,6 @@
 import * as VscodeModule from '../../adapters/abstractions/vscode';
-import { Cmake as AbstractCmake } from '../cmake/domain/abstractions/cmake';
-import * as SettingsProviderModule from '../settings-provider/domain/abstractions/settings';
+import { Cmake as AbstractCmake } from './abstractions/cmake';
+import * as SettingsProviderModule from '../settings-provider/abstractions/settings';
 import * as AbstractProcessControl from '../../adapters/abstractions/process-control';
 import * as ConcreteProcessControl from '../../adapters/implementations/process-control';
 import * as DefinitionsModule from '../../extension/definitions';

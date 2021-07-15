@@ -1,5 +1,5 @@
 import * as Definitions from './definitions';
-import { DecorationLocationsProvider } from '../modules/decoration-locations-provider/domain/abstractions/decoration-locations-provider';
+import { DecorationLocationsProvider } from '../modules/decoration-locations-provider/abstractions/decoration-locations-provider';
 
 import * as vscode from 'vscode';
 

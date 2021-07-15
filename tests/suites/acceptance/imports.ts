@@ -2,18 +2,18 @@ import * as FileSystemFakes from '../../fakes/adapters/file-system';
 
 import * as VscodeFakes from '../../fakes/adapters/vscode';
 import * as ProcessControlFakes from '../../fakes/adapters/process-control';
-import * as SettingsProviderModule from '../../../src/modules/settings-provider/domain/implementations/settings-provider';
-import * as BuildTreeDirectoryResolverModule from '../../../src/modules/build-tree-directory-resolver/domain/implementations/build-tree-directory-resolver';
-import * as CmakeModule from '../../../src/modules/cmake/domain/implementations/cmake';
-import * as CoverageInfoCollectorModule from '../../../src/modules/coverage-info-collector/domain/implementations/coverage-info-collector';
-import * as DecorationLocationsProviderModule from '../../../src/modules/decoration-locations-provider/domain/implementations/decoration-locations-provider';
-import * as CoverageInfoFileResolverModule from '../../../src/modules/coverage-info-file-resolver/domain/implementations/coverage-info-file-resolver';
+import * as SettingsProviderModule from '../../../src/modules/settings-provider/implementations/settings-provider';
+import * as BuildTreeDirectoryResolverModule from '../../../src/modules/build-tree-directory-resolver/implementations/build-tree-directory-resolver';
+import * as CmakeModule from '../../../src/modules/cmake/implementations/cmake';
+import * as CoverageInfoCollectorModule from '../../../src/modules/coverage-info-collector/implementations/coverage-info-collector';
+import * as DecorationLocationsProviderModule from '../../../src/modules/decoration-locations-provider/implementations/decoration-locations-provider';
+import * as CoverageInfoFileResolverModule from '../../../src/modules/coverage-info-file-resolver/implementations/coverage-info-file-resolver';
 import * as ExtensionModule from '../../../src/extension/definitions';
-import * as RegionCoverageInfoModule from '../../../src/modules/coverage-info-collector/domain/abstractions/region-coverage-info';
-import * as AbstractSettingsProvider from '../../../src/modules/settings-provider/domain/abstractions/settings';
-import * as AbstractBuildTreeDirectoryResolver from '../../../src/modules/build-tree-directory-resolver/domain/abstractions/build-tree-directory-resolver';
-import * as AbstractCmake from '../../../src/modules/cmake/domain/abstractions/cmake';
-import * as AbstractCoverageInfoCollector from '../../../src/modules/coverage-info-collector/domain/abstractions/coverage-info-collector';
+import * as RegionCoverageInfoModule from '../../../src/modules/coverage-info-collector/abstractions/region-coverage-info';
+import * as AbstractSettingsProvider from '../../../src/modules/settings-provider/abstractions/settings';
+import * as AbstractBuildTreeDirectoryResolver from '../../../src/modules/build-tree-directory-resolver/abstractions/build-tree-directory-resolver';
+import * as AbstractCmake from '../../../src/modules/cmake/abstractions/cmake';
+import * as AbstractCoverageInfoCollector from '../../../src/modules/coverage-info-collector/abstractions/coverage-info-collector';
 
 export namespace Fakes {
   export namespace Adapters {

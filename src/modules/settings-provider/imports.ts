@@ -1,10 +1,10 @@
 import * as DefinitionsModule from '../../extension/definitions';
 import * as VscodeModule from '../../adapters/abstractions/vscode';
 
-import { Settings as SettingsType } from './domain/abstractions/settings';
-import { SettingsProvider as SettingsProviderType } from './domain/abstractions/settings-provider';
+import { Settings as SettingsType } from './abstractions/settings';
+import { SettingsProvider as SettingsProviderType } from './abstractions/settings-provider';
 
-import * as SettingModule from './domain/implementations/settings';
+import * as SettingModule from './implementations/settings';
 
 export namespace Extension {
   export namespace Definitions {

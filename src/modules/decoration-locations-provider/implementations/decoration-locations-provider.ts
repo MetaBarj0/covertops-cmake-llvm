@@ -1,4 +1,4 @@
-import * as Imports from '../../imports';
+import * as Imports from '../imports';
 
 export function make(context: Context): Imports.Domain.Abstractions.DecorationLocationsProvider {
   return new DecorationLocationsProvider({
