@@ -36,8 +36,7 @@ function shouldSucceedAndExposeDefaultSettings() {
       const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
       const errorChannel = Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
 
-      const provider = Imports.Domain.Implementations.SettingsProvider.make({ workspace, errorChannel });
-      const settings = provider.settings;
+      const settings = Imports.Domain.Implementations.SettingsProvider.make({ workspace, errorChannel }).settings;
 
       settings.additionalCmakeOptions.should.be.empty;
       settings.buildTreeDirectory.should.be.equal(Imports.TestUtils.defaultSetting('buildTreeDirectory'));

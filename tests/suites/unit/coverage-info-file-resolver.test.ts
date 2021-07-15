@@ -87,6 +87,7 @@ function buildCoverageInfoFileResolver(optionalSpiesAndAdapters: OptionalSpiesAn
   const adapters = buildAdapters(optionalSpiesAndAdapters);
 
   const settings = Imports.Domain.Implementations.SettingsProvider.make({ ...adapters }).settings;
+
   return Imports.Domain.Implementations.CoverageInfoFileResolver.make({ ...adapters, settings });
 }
 
