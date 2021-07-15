@@ -35,14 +35,16 @@ function settingsProviderGivesDefaultSettings() {
       errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel()
     }).settings;
 
-    settings.buildTreeDirectory.should.be.equal('build');
-    settings.cmakeCommand.should.be.equal('cmake');
-    settings.cmakeTarget.should.be.equal('coverage');
-    settings.coverageInfoFileName.should.be.equal('coverage.json');
-    settings.additionalCmakeOptions.should.be.empty;
+    const expectedSettings = {
+      additionalCmakeOptions: <Array<string>>[],
+      buildTreeDirectory: Imports.TestUtils.defaultSetting('buildTreeDirectory'),
+      cmakeCommand: Imports.TestUtils.defaultSetting('cmakeCommand'),
+      cmakeTarget: Imports.TestUtils.defaultSetting('cmakeTarget'),
+      coverageInfoFileName: Imports.TestUtils.defaultSetting('coverageInfoFileName'),
+      rootDirectory: (Imports.Adapters.vscode.workspace.workspaceFolders as Array<Imports.SharedKernel.vscode.VscodeWorkspaceFolderLike>)[0].uri.fsPath
+    } as const;
 
-    const rootFolder = (Imports.Adapters.vscode.workspace.workspaceFolders as Array<Imports.SharedKernel.vscode.VscodeWorkspaceFolderLike>)[0].uri.fsPath;
-    settings.rootDirectory.should.be.equal(rootFolder);
+    settings.should.be.deep.equal(expectedSettings);
   });
 }
 
