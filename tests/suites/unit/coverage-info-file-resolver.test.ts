@@ -6,6 +6,7 @@ chai.use(chaiAsPromised);
 chai.should();
 
 import * as Imports from './imports';
+import { Spy } from '../../utils/spy';
 
 describe('Unit test suite', () => {
   describe('the behavior of the coverage info file resolver', () => {
@@ -17,14 +18,9 @@ describe('Unit test suite', () => {
 
 function shouldFailWhenNoFileIsFound() {
   it('should fail and report in error channel if the recursive search from the build tree directory does not find one file', () => {
-    const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
     const errorChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfErrorChannel(Imports.Fakes.Adapters.vscode.buildFakeErrorChannel());
-    const errorChannel = errorChannelSpy.object;
-    const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
     const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForNoMatch();
-    const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
-
-    const resolver = Imports.Domain.Implementations.CoverageInfoFileResolver.make({ settings, globSearch, progressReporter, errorChannel });
+    const resolver = buildCoverageInfoFileResolver({ errorChannelSpy, globSearch });
 
     return resolver.resolveCoverageInfoFileFullPath()
       .catch((error: Error) => {
@@ -41,19 +37,15 @@ function shouldFailWhenNoFileIsFound() {
 }
 
 function shouldFailWhenMoreThanOneFileAreFound() {
-  it('should fail if the recursive search from the build tree directory does not find one file', () => {
-    const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+  it('should fail if the recursive search from the build tree directory finds more than one file', () => {
     const errorChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfErrorChannel(Imports.Fakes.Adapters.vscode.buildFakeErrorChannel());
-    const errorChannel = errorChannelSpy.object;
-    const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
-    const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForNoMatch();
-    const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
+    const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForSeveralMatch();
 
-    const resolver = Imports.Domain.Implementations.CoverageInfoFileResolver.make({ settings, globSearch, progressReporter, errorChannel });
+    const resolver = buildCoverageInfoFileResolver({ errorChannelSpy, globSearch });
 
     return resolver.resolveCoverageInfoFileFullPath()
       .catch((error: Error) => {
-        const errorMessage = 'Cannot resolve the coverage info file path in the build tree directory. ' +
+        const errorMessage = 'More than one coverage information file have been found in the build tree directory. ' +
           'Ensure that both ' +
           `'${Imports.Extension.Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
           `'${Imports.Extension.Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
@@ -67,17 +59,39 @@ function shouldFailWhenMoreThanOneFileAreFound() {
 
 function shouldSucceedWhenExactlyOneFileIsFound() {
   it('should resolve correctly if the recursive search from the build tree directory find exactly one file in one discrete step.', async () => {
-    const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
-    const errorChannel = Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
-    const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
-    const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForExactlyOneMatch();
     const progressReporterSpy = Imports.Fakes.Adapters.vscode.buildSpyOfProgressReporter(Imports.Fakes.Adapters.vscode.buildFakeProgressReporter());
-    const progressReporter = progressReporterSpy.object;
-
-    const resolver = Imports.Domain.Implementations.CoverageInfoFileResolver.make({ settings, globSearch, progressReporter, errorChannel });
+    const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForExactlyOneMatch();
+    const resolver = buildCoverageInfoFileResolver({ progressReporterSpy, globSearch });
 
     await resolver.resolveCoverageInfoFileFullPath();
 
     progressReporterSpy.countFor('report').should.be.equal(1);
   });
 }
+
+
+function buildAdapters(optionalSpiesAndAdapters: OptionalSpiesAndAdapters) {
+  const errorChannel = optionalSpiesAndAdapters.errorChannelSpy ? optionalSpiesAndAdapters.errorChannelSpy.object : Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
+  const progressReporter = optionalSpiesAndAdapters.progressReporterSpy ? optionalSpiesAndAdapters.progressReporterSpy.object : Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
+  const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
+
+  return {
+    workspace,
+    errorChannel,
+    globSearch: optionalSpiesAndAdapters.globSearch,
+    progressReporter
+  };
+}
+
+function buildCoverageInfoFileResolver(optionalSpiesAndAdapters: OptionalSpiesAndAdapters) {
+  const adapters = buildAdapters(optionalSpiesAndAdapters);
+
+  const settings = Imports.Domain.Implementations.SettingsProvider.make({ ...adapters }).settings;
+  return Imports.Domain.Implementations.CoverageInfoFileResolver.make({ ...adapters, settings });
+}
+
+type OptionalSpiesAndAdapters = {
+  errorChannelSpy?: Spy<Imports.Adapters.Abstractions.vscode.OutputChannelLike>
+  progressReporterSpy?: Spy<Imports.Adapters.Abstractions.vscode.ProgressLike>,
+  globSearch: Imports.Adapters.Abstractions.FileSystem.GlobSearchCallable
+};

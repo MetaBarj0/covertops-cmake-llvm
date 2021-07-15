@@ -9,6 +9,8 @@ import * as BuildTreeDirectoryResolverModule from '../../../src/modules/build-tr
 import * as CmakeModule from '../../../src/modules/cmake/domain/implementations/cmake';
 import * as TestUtilsModule from '../../utils/settings';
 import * as DefinitionsModule from '../../../src/extension/definitions';
+import * as VscodeAbstractions from '../../../src/shared-kernel/abstractions/vscode';
+import * as FileSystemAbstractions from '../../../src/shared-kernel/abstractions/file-system';
 
 export namespace Fakes {
   export namespace Adapters {
@@ -24,6 +26,7 @@ export namespace Fakes {
     export namespace FileSystem {
       export const buildFakeGlobSearchForNoMatch = FileSystemFakes.buildFakeGlobSearchForNoMatch;
       export const buildFakeGlobSearchForExactlyOneMatch = FileSystemFakes.buildFakeGlobSearchForExactlyOneMatch;
+      export const buildFakeGlobSearchForSeveralMatch = FileSystemFakes.buildFakeGlobSearchForSeveralMatch;
       export const buildEmptyReadableStream = FileSystemFakes.buildEmptyReadableStream;
       export const buildInvalidLlvmCoverageJsonObjectStream = FileSystemFakes.buildInvalidLlvmCoverageJsonObjectStream;
       export const buildNotJsonStream = FileSystemFakes.buildNotJsonStream;
@@ -77,5 +80,18 @@ export namespace TestUtils {
 export namespace Extension {
   export namespace Definitions {
     export const extensionNameInSettings = DefinitionsModule.extensionNameInSettings;
+  }
+}
+
+export namespace Adapters {
+  export namespace Abstractions {
+    export namespace vscode {
+      export type OutputChannelLike = VscodeAbstractions.OutputChannelLike;
+      export type ProgressLike = VscodeAbstractions.ProgressLike;
+    }
+
+    export namespace FileSystem {
+      export type GlobSearchCallable = FileSystemAbstractions.GlobSearchCallable;
+    }
   }
 }
