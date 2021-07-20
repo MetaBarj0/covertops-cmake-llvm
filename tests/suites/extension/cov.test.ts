@@ -24,6 +24,7 @@ describe('Extension test suite', () => {
     describe('The opened virtual document contain the source code of the file for uncovered code regions request', virtualDocumentShouldContainSameSourceCode);
     describe('The Cov instance can expose the active editor if any', covShouldExposeAnActiveTextEditorProperty);
     describe('Querying for decorations on the cov active text editor targeting a real source file', activeTextEditorOnSourceFileShouldNotHaveAnyDecoration);
+    describe('Active text editor querying of some decorations on a virtual document', virtualDocumentShouldHaveSomeDecorationsAfterCommandExecutionOnAPartiallyCoveredFile);
     describe.skip('The opened virtual document has some decorations applied on it', virtualDocumentSHouldHaveDecorations);
   });
 });
@@ -177,7 +178,23 @@ function activeTextEditorOnSourceFileShouldNotHaveAnyDecoration() {
     await showSourceFileEditor();
 
     chai.assert.notStrictEqual(cov.activeTextEditor, undefined);
-    cov.activeTextEditor?.decorations.should.be.deep.equal({});
+    chai.assert.strictEqual(cov.activeTextEditor?.decorations, undefined);
+  });
+
+  after('Disposing of cov instance', () => cov.dispose());
+}
+
+function virtualDocumentShouldHaveSomeDecorationsAfterCommandExecutionOnAPartiallyCoveredFile() {
+  let cov: ReturnType<typeof Cov.make>;
+
+  it('is possible to query decorations for a virtual document editor that have some', async () => {
+    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
+
+    await showSourceFileEditor();
+    await executeCommand();
+
+    chai.assert.notStrictEqual(cov.activeTextEditor, undefined);
+    chai.assert.notStrictEqual(cov.activeTextEditor?.decorations, undefined);
   });
 
   after('Disposing of cov instance', () => cov.dispose());

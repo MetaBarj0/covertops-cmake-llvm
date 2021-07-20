@@ -39,6 +39,6 @@ export class TextEditorWithDecorations implements AbstractTextEditorWithDecorati
   hide: () => void;
 
   get decorations() {
-    return {};
+    return undefined;
   }
 }

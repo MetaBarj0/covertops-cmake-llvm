@@ -37,11 +37,11 @@ class Cov {
 
     const uri = this.buildVirtualDocumentUri();
 
-    const doc = await vscode.workspace.openTextDocument(uri);
+    const virtualDocument = await vscode.workspace.openTextDocument(uri);
 
-    this.addVirtualDocumentIfNotExist(uri, doc);
+    this.addVirtualDocumentIfNotExist(uri, virtualDocument);
 
-    await vscode.window.showTextDocument(doc, { preserveFocus: false });
+    await vscode.window.showTextDocument(virtualDocument, { preserveFocus: false });
   }
 
   get openedUncoveredCodeRegionsDocuments(): ReadonlyMap<string, vscode.TextDocument> {
