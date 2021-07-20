@@ -1,11 +1,14 @@
 import * as vscode from 'vscode';
+import * as fs from 'fs/promises';
 
 export function make() {
   return new UncoveredCodeRegionsDocumentContentProvider();
 }
 
 class UncoveredCodeRegionsDocumentContentProvider implements vscode.TextDocumentContentProvider {
-  provideTextDocumentContent(_uri: vscode.Uri, _token: vscode.CancellationToken): vscode.ProviderResult<string> {
-    return '';
+  async provideTextDocumentContent(uri: vscode.Uri, _token: vscode.CancellationToken) {
+    const content = await fs.readFile(uri.fsPath);
+
+    return content.toString();
   }
 }

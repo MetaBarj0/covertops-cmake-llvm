@@ -25,6 +25,7 @@ class CoverageInfoCollector implements Imports.Domain.Abstractions.CoverageInfoC
       message: 'Prepared summary and uncovered region of code information.'
     });
 
+    // TODO - rename all occurences of error channel whatever their form to respective output channel form
     return Imports.Domain.Implementations.CoverageInfo.make(() => this.createReadStream(path), sourceFilePath, this.errorChannel);
   }
 

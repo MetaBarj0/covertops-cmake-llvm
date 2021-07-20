@@ -50,10 +50,10 @@ class CoverageInfo implements Imports.Domain.Abstractions.CoverageInfo {
   };
 
   get uncoveredRegions() {
-    return this._uncoveredRegions();
+    return this.uncoveredRegions_();
   }
 
-  private async *_uncoveredRegions() {
+  private async *uncoveredRegions_() {
     for await (const rawRegionCoverageInfo of this.allRawRegionsCoverageInfoIn()) {
       const regionCoverageInfo = Imports.Domain.Implementations.RegionCoverageInfo.make(<Imports.Domain.Abstractions.RawLLVMRegionCoverageInfo>rawRegionCoverageInfo);
 
@@ -143,17 +143,17 @@ class RawLLVMCoverageSummary {
 
 class RegionCoverageInfoAsyncIterable {
   constructor(pipeline: Readable, sourceFilePath: string, errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike) {
-    this.iterator = new RegionCoverageInfoAsyncIteratorContract(pipeline, sourceFilePath, errorChannel);
+    this.iterator = new RegionCoverageInfoAsyncIterator(pipeline, sourceFilePath, errorChannel);
   }
 
   [Symbol.asyncIterator]() {
     return this.iterator;
   }
 
-  private readonly iterator: RegionCoverageInfoAsyncIteratorContract;
+  private readonly iterator: RegionCoverageInfoAsyncIterator;
 };
 
-class RegionCoverageInfoAsyncIteratorContract {
+class RegionCoverageInfoAsyncIterator {
   constructor(pipeline: Readable, sourceFilePath: string, errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike) {
     this.pipeline = pipeline;
     this.sourceFilePath = sourceFilePath;

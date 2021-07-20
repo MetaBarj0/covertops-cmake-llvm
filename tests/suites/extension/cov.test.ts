@@ -20,6 +20,7 @@ describe('Extension test suite', () => {
     describe('The extension can leverage vscode api adapters when executing the reportUncoveredRegionsInFile command', covCanExecuteCommand);
     describe('The freshly instantiated extension have an empty uncovered code regions editors collection', covShouldHaveAnEmptyUncoveredCodeRegionsEditorsCollection);
     describe('Running several time the same command on the virtual document editor does not create more virtual document editor', covShouldOpenOnlyOneVirtualDocumentEditorPerSourceFile);
+    describe('The opened virtual document contain the source code of the file for uncovered code regions request', virtualDocumentShouldContainSameSourceCode);
   });
 });
 
@@ -123,4 +124,21 @@ function covShouldOpenOnlyOneVirtualDocumentEditorPerSourceFile() {
 function buildCppAbsoluteFilePath() {
   const workspaceRootFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
   return path.join(<string>workspaceRootFolder, 'src', 'partiallyCovered', 'partiallyCoveredLib.cpp');
+}
+
+function virtualDocumentShouldContainSameSourceCode() {
+  let cov: ReturnType<typeof Cov.make>;
+
+  it('should show a virtual document having the same source code that the file on which request for uncovered regions has been done', async () => {
+    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
+    const cppFilePath = buildCppAbsoluteFilePath();
+    const cppFileEditor = await vscode.window.showTextDocument(vscode.Uri.file(cppFilePath), { preserveFocus: false });
+
+    await vscode.commands.executeCommand(`${Definitions.extensionId}.reportUncoveredCodeRegionsInFile`);
+
+    chai.assert.notStrictEqual(vscode.window.activeTextEditor, undefined);
+    const virtualEditor = <vscode.TextEditor>vscode.window.activeTextEditor;
+
+    virtualEditor.document.getText().should.be.equal(cppFileEditor.document.getText());
+  });
 }
