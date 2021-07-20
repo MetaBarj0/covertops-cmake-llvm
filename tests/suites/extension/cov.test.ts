@@ -21,6 +21,8 @@ describe('Extension test suite', () => {
     describe('The freshly instantiated extension have an empty uncovered code regions editors collection', covShouldHaveAnEmptyUncoveredCodeRegionsEditorsCollection);
     describe('Running several time the same command on the virtual document editor does not create more virtual document editor', covShouldOpenOnlyOneVirtualDocumentEditorPerSourceFile);
     describe('The opened virtual document contain the source code of the file for uncovered code regions request', virtualDocumentShouldContainSameSourceCode);
+    describe('The Cov instance can expose the active editor if any', test);
+    describe.skip('The opened virtual document has some decorations applied on it', virtualDocumentSHouldHaveDecorations);
   });
 });
 
@@ -63,7 +65,7 @@ function covCanExecuteCommand() {
 
     await vscode.window.showTextDocument(vscode.Uri.file(cppFilePath), { preserveFocus: false });
 
-    return vscode.commands.executeCommand(`${Definitions.extensionId}.reportUncoveredCodeRegionsInFile`).should.eventually.be.fulfilled;
+    return executeCommand().should.eventually.be.fulfilled;
   });
 
   after('Disposing of cov instance', () => cov.dispose());
@@ -104,12 +106,10 @@ function covShouldOpenOnlyOneVirtualDocumentEditorPerSourceFile() {
 
   it('should have one uncovered code regions editor in the collection that is a virtual read only text editor', async () => {
     cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
-    const cppFilePath = buildCppAbsoluteFilePath();
-    const currentEditor = await vscode.window.showTextDocument(vscode.Uri.file(cppFilePath), { preserveFocus: false });
+    const { cppFilePath, currentEditor } = await showSourceFileEditor();
 
-    for (const _ of Array<never>(10)) {
-      await vscode.commands.executeCommand(`${Definitions.extensionId}.reportUncoveredCodeRegionsInFile`);
-    }
+    for (const _ of Array<never>(10))
+      await executeCommand();
 
     cov.openedUncoveredCodeRegionsDocuments.size.should.be.equal(1);
     chai.assert.notStrictEqual(cov.openedUncoveredCodeRegionsDocuments.get(cppFilePath), undefined);
@@ -121,24 +121,62 @@ function covShouldOpenOnlyOneVirtualDocumentEditorPerSourceFile() {
   after('Disposing of cov instance', () => cov.dispose());
 }
 
-function buildCppAbsoluteFilePath() {
-  const workspaceRootFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
-  return path.join(<string>workspaceRootFolder, 'src', 'partiallyCovered', 'partiallyCoveredLib.cpp');
-}
-
 function virtualDocumentShouldContainSameSourceCode() {
   let cov: ReturnType<typeof Cov.make>;
 
   it('should show a virtual document having the same source code that the file on which request for uncovered regions has been done', async () => {
     cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
-    const cppFilePath = buildCppAbsoluteFilePath();
-    const cppFileEditor = await vscode.window.showTextDocument(vscode.Uri.file(cppFilePath), { preserveFocus: false });
+    const { currentEditor } = await showSourceFileEditor();
 
-    await vscode.commands.executeCommand(`${Definitions.extensionId}.reportUncoveredCodeRegionsInFile`);
+    await executeCommand();
 
     chai.assert.notStrictEqual(vscode.window.activeTextEditor, undefined);
     const virtualEditor = <vscode.TextEditor>vscode.window.activeTextEditor;
-
-    virtualEditor.document.getText().should.be.equal(cppFileEditor.document.getText());
+    virtualEditor.document.getText().should.be.equal(currentEditor.document.getText());
   });
+
+  after('Disposing of cov instance', () => cov.dispose());
+}
+
+function virtualDocumentSHouldHaveDecorations() {
+  let cov: ReturnType<typeof Cov.make>;
+
+  it('should be possible to query for decorations on the virtual document', async () => {
+    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
+    const { currentEditor } = await showSourceFileEditor();
+
+    await executeCommand();
+  });
+
+  after('Disposing of cov instance', () => cov.dispose());
+}
+
+function test() {
+  let cov: ReturnType<typeof Cov.make>;
+
+  it('should be possible to query for the potential active editor', () => {
+    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
+
+    type MaybeTextEditor = vscode.TextEditor | undefined;
+    const covExposesActiveEditor = ((_: MaybeTextEditor): _ is MaybeTextEditor => true)(cov.activeTextEditor);
+
+    covExposesActiveEditor.should.be.true;
+  });
+
+  after('Disposing of cov instance', () => cov.dispose());
+}
+
+function buildCppAbsoluteFilePath() {
+  const workspaceRootFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
+  return path.join(<string>workspaceRootFolder, 'src', 'partiallyCovered', 'partiallyCoveredLib.cpp');
+}
+
+async function showSourceFileEditor() {
+  const cppFilePath = buildCppAbsoluteFilePath();
+  const currentEditor = await vscode.window.showTextDocument(vscode.Uri.file(cppFilePath), { preserveFocus: false });
+  return { cppFilePath, currentEditor };
+}
+
+async function executeCommand() {
+  await vscode.commands.executeCommand(`${Definitions.extensionId}.reportUncoveredCodeRegionsInFile`);
 }

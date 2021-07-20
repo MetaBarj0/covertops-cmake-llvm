@@ -50,6 +50,10 @@ class Cov {
     return this.textDocumentProvider;
   }
 
+  get activeTextEditor() {
+    return vscode.window.activeTextEditor;
+  }
+
   private reportStartInOutputChannel() {
     this.output.show(true);
     this.output.clear();

@@ -105,8 +105,8 @@
     ],
     "colors": [
       {
-        "id": "covCmakeLlvm.uncoveredCodeRegionBackground",
-        "description": "Background decoration for an uncovered code region",
+        "id": "covCmakeLlvm.uncoveredCodeRegionColor",
+        "description": "Color for a decoration for an uncovered code region",
         "defaults": {
           "dark": "#ff7a7a",
           "light": "#FF000055",
