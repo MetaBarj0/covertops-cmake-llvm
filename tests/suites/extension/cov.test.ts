@@ -7,7 +7,6 @@ chai.should();
 
 import * as Cov from '../../../src/extension/cov';
 import * as Definitions from '../../../src/extension/definitions';
-import * as DecorationLocationsProvider from '../../../src/extension/factories/decoration-locations-provider';
 import * as UncoveredCodeRegionsDocumentContentProvider from '../../../src/extension/uncovered-code-regions-document-content-provider';
 
 import * as vscode from 'vscode';
