@@ -1,9 +1,7 @@
-import * as Definitions from './definitions';
-
 import * as vscode from 'vscode';
 
-export function make(): vscode.Disposable {
-  return vscode.workspace.registerTextDocumentContentProvider(Definitions.extensionId, new UncoveredCodeRegionsDocumentContentProvider());
+export function make() {
+  return new UncoveredCodeRegionsDocumentContentProvider();
 }
 
 class UncoveredCodeRegionsDocumentContentProvider implements vscode.TextDocumentContentProvider {

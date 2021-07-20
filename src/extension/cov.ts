@@ -1,20 +1,17 @@
 import * as Definitions from './definitions';
-import { DecorationLocationsProvider } from '../modules/decoration-locations-provider/abstractions/decoration-locations-provider';
 
 import * as vscode from 'vscode';
 
-export function make(decorationLocationsProvider: DecorationLocationsProvider,
-  uncoveredCodeRegionsDocumentContentProvider: vscode.Disposable) {
-  return new Cov(decorationLocationsProvider, uncoveredCodeRegionsDocumentContentProvider);
+export function make(uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider) {
+  return new Cov(uncoveredCodeRegionsDocumentContentProvider);
 }
 
 class Cov {
-  constructor(decorationLocationsProvider: DecorationLocationsProvider,
-    uncoveredCodeRegionsDocumentContentProvider: vscode.Disposable) {
+  constructor(uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider) {
     this.output = vscode.window.createOutputChannel(Definitions.extensionId);
     this.command = vscode.commands.registerCommand(`${Definitions.extensionId}.reportUncoveredCodeRegionsInFile`, this.run, this);
-    this.textDocumentProvider = uncoveredCodeRegionsDocumentContentProvider;
-    this.decorationLocationsProvider = decorationLocationsProvider;
+    this.textDocumentProvider = vscode.workspace.registerTextDocumentContentProvider(Definitions.extensionId, uncoveredCodeRegionsDocumentContentProvider);
+    this.openedUncoveredCodeRegionsDocuments = [];
   }
 
   get asDisposable() {
@@ -35,11 +32,10 @@ class Cov {
 
   async run() {
     this.reportStartInOutputChannel();
-
   }
 
-  get uncoveredCodeRegionsEditors(): ReadonlyArray<vscode.TextEditor> {
-    return [];
+  get uncoveredCodeRegionsEditors(): ReadonlyArray<vscode.TextDocument> {
+    return this.openedUncoveredCodeRegionsDocuments;
   }
 
   get uncoveredCodeRegionsDocumentProvider() {
@@ -55,6 +51,5 @@ class Cov {
   private readonly output: vscode.OutputChannel;
   private readonly command: vscode.Disposable;
   private readonly textDocumentProvider: vscode.Disposable;
-  // TODO: not used here, maybe misplaced?
-  private readonly decorationLocationsProvider: DecorationLocationsProvider;
+  private readonly openedUncoveredCodeRegionsDocuments: Array<vscode.TextDocument>;
 }

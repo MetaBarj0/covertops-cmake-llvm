@@ -28,8 +28,7 @@ function covShouldBeDisposable() {
   let cov: ReturnType<typeof Cov.make>;
 
   it('should succeed when instantiating the extension as a vscode disposable', async () => {
-    cov = Cov.make(await DecorationLocationsProvider.make(),
-      UncoveredCodeRegionsDocumentContentProvider.make());
+    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
 
     const covIsADisposableResource = ((_: vscode.Disposable): _ is vscode.Disposable => true)(cov.asDisposable);
 
@@ -43,8 +42,7 @@ function covShouldHaveAnOutputChannel() {
   let cov: ReturnType<typeof Cov.make>;
 
   it('should expose a vscode output channel', async () => {
-    cov = Cov.make(await DecorationLocationsProvider.make(),
-      UncoveredCodeRegionsDocumentContentProvider.make());
+    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
 
     const covExposesAVscodeOutputChannel = ((_: vscode.OutputChannel): _ is vscode.OutputChannel => true)(cov.outputChannel);
 
@@ -58,8 +56,7 @@ function covCanExecuteCommand() {
   let cov: ReturnType<typeof Cov.make>;
 
   it('should run the command successfully', async () => {
-    cov = Cov.make(await DecorationLocationsProvider.make(),
-      UncoveredCodeRegionsDocumentContentProvider.make());
+    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
 
     const workspaceRootFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
     const cppFilePath = path.join(<string>workspaceRootFolder, 'src', 'partiallyCovered', 'partiallyCoveredLib.cpp');
@@ -76,10 +73,10 @@ function covShouldHaveAnEmptyUncoveredCodeRegionsEditorsCollection() {
   let cov: ReturnType<typeof Cov.make>;
 
   it('should contain an empty collection of uncovered code regions read only editors', async () => {
-    cov = Cov.make(await DecorationLocationsProvider.make(),
-      UncoveredCodeRegionsDocumentContentProvider.make());
+    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
 
-    const covExposesReadonlyArrayOfTextEditors = ((_: ReadonlyArray<vscode.TextEditor>): _ is ReadonlyArray<vscode.TextEditor> => true)(cov.uncoveredCodeRegionsEditors);
+    const covExposesReadonlyArrayOfTextEditors =
+      ((_: ReadonlyArray<vscode.TextDocument>): _ is ReadonlyArray<vscode.TextDocument> => true)(cov.uncoveredCodeRegionsEditors);
 
     covExposesReadonlyArrayOfTextEditors.should.be.true;
     cov.uncoveredCodeRegionsEditors.should.be.empty;
@@ -92,8 +89,7 @@ function covShouldHaveDisposableTextDocumentProviderForUncoveredCodeRegionsDispl
   let cov: ReturnType<typeof Cov.make>;
 
   it('should create and expose a disposable text document provider', async () => {
-    cov = Cov.make(await DecorationLocationsProvider.make(),
-      UncoveredCodeRegionsDocumentContentProvider.make());
+    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
 
     const covExposesDisposableTextDocumentProvider = ((_: vscode.Disposable): _ is vscode.Disposable => true)(cov.uncoveredCodeRegionsDocumentProvider);
 
@@ -107,8 +103,7 @@ function covShouldHaveOneUncoveredCodeRegionsEditorOpenedAfterCommandExecution()
   let cov: ReturnType<typeof Cov.make>;
 
   it('should have one uncovered code regions editor in the collection that is a virtual read only text editor', async () => {
-    cov = Cov.make(await DecorationLocationsProvider.make(),
-      UncoveredCodeRegionsDocumentContentProvider.make());
+    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
 
     const workspaceRootFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
     const cppFilePath = path.join(<string>workspaceRootFolder, 'src', 'partiallyCovered', 'partiallyCoveredLib.cpp');
@@ -117,8 +112,8 @@ function covShouldHaveOneUncoveredCodeRegionsEditorOpenedAfterCommandExecution()
     await vscode.commands.executeCommand(`${Definitions.extensionId}.reportUncoveredCodeRegionsInFile`);
 
     cov.uncoveredCodeRegionsEditors.length.should.equal(1);
-    cov.uncoveredCodeRegionsEditors[0].document.uri.scheme.should.be.equal(Definitions.extensionId);
-    cov.uncoveredCodeRegionsEditors[0].document.uri.fsPath.should.be.equal(currentEditor.document.uri.fsPath);
+    cov.uncoveredCodeRegionsEditors[0].uri.scheme.should.be.equal(Definitions.extensionId);
+    cov.uncoveredCodeRegionsEditors[0].uri.fsPath.should.be.equal(currentEditor.document.uri.fsPath);
   });
 
   after('Disposing of cov instance', () => cov.dispose());
