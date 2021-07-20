@@ -12,6 +12,7 @@ import * as UncoveredCodeRegionsDocumentContentProvider from '../../../src/exten
 import * as vscode from 'vscode';
 import * as path from 'path';
 
+// TODO: reorganize test suite
 describe('Extension test suite', () => {
   describe('The cov extension behavior', () => {
     describe('The instantiation of the extension as a vscode disposable', covShouldBeDisposable);
@@ -21,7 +22,7 @@ describe('Extension test suite', () => {
     describe('The freshly instantiated extension have an empty uncovered code regions editors collection', covShouldHaveAnEmptyUncoveredCodeRegionsEditorsCollection);
     describe('Running several time the same command on the virtual document editor does not create more virtual document editor', covShouldOpenOnlyOneVirtualDocumentEditorPerSourceFile);
     describe('The opened virtual document contain the source code of the file for uncovered code regions request', virtualDocumentShouldContainSameSourceCode);
-    describe('The Cov instance can expose the active editor if any', test);
+    describe('The Cov instance can expose the active editor if any', covShouldExposeAnActiveTextEditorProperty);
     describe.skip('The opened virtual document has some decorations applied on it', virtualDocumentSHouldHaveDecorations);
   });
 });
@@ -115,7 +116,7 @@ function covShouldOpenOnlyOneVirtualDocumentEditorPerSourceFile() {
     chai.assert.notStrictEqual(cov.openedUncoveredCodeRegionsDocuments.get(cppFilePath), undefined);
     cov.openedUncoveredCodeRegionsDocuments.get(cppFilePath)?.uri.scheme.should.be.equal(Definitions.extensionId);
     cov.openedUncoveredCodeRegionsDocuments.get(cppFilePath)?.uri.fsPath.should.be.equal(currentEditor.document.uri.fsPath);
-    vscode.window.activeTextEditor?.document.uri.scheme.should.be.equal(Definitions.extensionId);
+    cov.activeTextEditor?.document.uri.scheme.should.be.equal(Definitions.extensionId);
   });
 
   after('Disposing of cov instance', () => cov.dispose());
@@ -130,8 +131,8 @@ function virtualDocumentShouldContainSameSourceCode() {
 
     await executeCommand();
 
-    chai.assert.notStrictEqual(vscode.window.activeTextEditor, undefined);
-    const virtualEditor = <vscode.TextEditor>vscode.window.activeTextEditor;
+    chai.assert.notStrictEqual(cov.activeTextEditor, undefined);
+    const virtualEditor = <vscode.TextEditor>cov.activeTextEditor;
     virtualEditor.document.getText().should.be.equal(currentEditor.document.getText());
   });
 
@@ -151,7 +152,7 @@ function virtualDocumentSHouldHaveDecorations() {
   after('Disposing of cov instance', () => cov.dispose());
 }
 
-function test() {
+function covShouldExposeAnActiveTextEditorProperty() {
   let cov: ReturnType<typeof Cov.make>;
 
   it('should be possible to query for the potential active editor', () => {
