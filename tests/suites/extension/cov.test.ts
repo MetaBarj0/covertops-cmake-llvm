@@ -23,6 +23,7 @@ describe('Extension test suite', () => {
     describe('Running several time the same command on the virtual document editor does not create more virtual document editor', covShouldOpenOnlyOneVirtualDocumentEditorPerSourceFile);
     describe('The opened virtual document contain the source code of the file for uncovered code regions request', virtualDocumentShouldContainSameSourceCode);
     describe('The Cov instance can expose the active editor if any', covShouldExposeAnActiveTextEditorProperty);
+    describe('Querying for decorations on the cov active text editor targeting a real source file', activeTextEditorOnSourceFileShouldNotHaveAnyDecoration);
     describe.skip('The opened virtual document has some decorations applied on it', virtualDocumentSHouldHaveDecorations);
   });
 });
@@ -162,6 +163,21 @@ function covShouldExposeAnActiveTextEditorProperty() {
     const covExposesActiveEditor = ((_: MaybeTextEditor): _ is MaybeTextEditor => true)(cov.activeTextEditor);
 
     covExposesActiveEditor.should.be.true;
+  });
+
+  after('Disposing of cov instance', () => cov.dispose());
+}
+
+function activeTextEditorOnSourceFileShouldNotHaveAnyDecoration() {
+  let cov: ReturnType<typeof Cov.make>;
+
+  it('should be possible to access decorations of the active text editor if any', async () => {
+    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
+
+    await showSourceFileEditor();
+
+    chai.assert.notStrictEqual(cov.activeTextEditor, undefined);
+    cov.activeTextEditor?.decorations.should.be.deep.equal({});
   });
 
   after('Disposing of cov instance', () => cov.dispose());

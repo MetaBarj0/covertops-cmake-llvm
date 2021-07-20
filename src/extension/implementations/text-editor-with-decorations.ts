@@ -1,0 +1,44 @@
+import { TextEditorWithDecorations as AbstractTextEditorWithDecorations } from '../abstractions/text-editor-with-decorations';
+
+import * as vscode from 'vscode';
+
+export class TextEditorWithDecorations implements AbstractTextEditorWithDecorations {
+  constructor(textEditor: vscode.TextEditor) {
+    this.document = textEditor.document;
+    this.selection = textEditor.selection;
+    this.selections = textEditor.selections;
+    this.visibleRanges = textEditor.visibleRanges;
+    this.options = textEditor.options;
+    this.viewColumn = textEditor.viewColumn;
+
+    this.edit = textEditor.edit;
+    this.insertSnippet = textEditor.insertSnippet;
+    this.setDecorations = textEditor.setDecorations;
+    this.revealRange = textEditor.revealRange;
+    this.show = textEditor.show;
+    this.hide = textEditor.hide;
+  }
+
+  readonly document: vscode.TextDocument;
+  selection: vscode.Selection;
+  selections: vscode.Selection[];
+  readonly visibleRanges: vscode.Range[];
+  options: vscode.TextEditorOptions;
+  readonly viewColumn?: vscode.ViewColumn | undefined;
+
+  edit: (callback: (editBuilder: vscode.TextEditorEdit) => void,
+    options?: { undoStopBefore: boolean; undoStopAfter: boolean; }) => Thenable<boolean>;
+  insertSnippet: (snippet: vscode.SnippetString,
+    location?: vscode.Range | vscode.Position | readonly vscode.Position[] | readonly vscode.Range[],
+    options?: { undoStopBefore: boolean; undoStopAfter: boolean; }) => Thenable<boolean>;
+  setDecorations: (decorationType: vscode.TextEditorDecorationType,
+    rangesOrOptions: readonly vscode.Range[] | readonly vscode.DecorationOptions[]) => void;
+  revealRange: (range: vscode.Range,
+    revealType?: vscode.TextEditorRevealType) => void;
+  show: (column?: vscode.ViewColumn) => void;
+  hide: () => void;
+
+  get decorations() {
+    return {};
+  }
+}

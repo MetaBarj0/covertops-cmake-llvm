@@ -1,4 +1,6 @@
 import * as Definitions from './definitions';
+import { TextEditorWithDecorations } from './abstractions/text-editor-with-decorations';
+import { TextEditorWithDecorations as ConcreteTextEditorWithDecorations } from './implementations/text-editor-with-decorations';
 
 import * as vscode from 'vscode';
 
@@ -50,8 +52,11 @@ class Cov {
     return this.textDocumentProvider;
   }
 
-  get activeTextEditor() {
-    return vscode.window.activeTextEditor;
+  get activeTextEditor(): TextEditorWithDecorations | undefined {
+    if (!vscode.window.activeTextEditor)
+      return;
+
+    return new ConcreteTextEditorWithDecorations(vscode.window.activeTextEditor);
   }
 
   private reportStartInOutputChannel() {
