@@ -24,7 +24,7 @@ describe('Extension test suite', () => {
     describe('The opened virtual document contain the source code of the file for uncovered code regions request', virtualDocumentShouldContainSameSourceCode);
     describe('The Cov instance can expose the active editor if any', covShouldExposeAnActiveTextEditorProperty);
     describe('Querying for decorations on the cov active text editor targeting a real source file', activeTextEditorOnSourceFileShouldNotHaveAnyDecoration);
-    describe('Active text editor querying of some decorations on a virtual document', virtualDocumentShouldHaveSomeDecorationsAfterCommandExecutionOnAPartiallyCoveredFile);
+    describe.skip('Active text editor querying of some decorations on a virtual document', virtualDocumentShouldHaveSomeDecorationsAfterCommandExecutionOnAPartiallyCoveredFile);
     describe.skip('The opened virtual document has some decorations applied on it', virtualDocumentSHouldHaveDecorations);
   });
 });

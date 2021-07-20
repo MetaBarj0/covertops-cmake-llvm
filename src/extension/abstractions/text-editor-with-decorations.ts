@@ -1,8 +1,6 @@
 import { TextEditor, TextEditorDecorationType } from 'vscode';
 
-type Decorations = {
-  decorationType: TextEditorDecorationType
-};
+type Decorations = {};
 
 type WithDecorations = {
   get decorations(): Decorations | undefined;
