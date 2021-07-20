@@ -112,13 +112,13 @@ function virtualDocumentShouldContainSameSourceCode() {
 function uncoveredCodeRegionsVirtualTextEditorOnSourceFileShouldNotExist() {
   let cov: ReturnType<typeof Cov.make>;
 
-  it('should be possible to access decorations of the active text editor if any', async () => {
+  it('should not exist any uncovered code regions virtual editor', async () => {
     cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
 
-    const { cppFilePath } = await showSourceFileEditor();
+    await showSourceFileEditor();
 
     chai.assert.notStrictEqual(vscode.window.activeTextEditor, undefined);
-    chai.assert.strictEqual(cov.uncoveredCodeRegionsVirtualTextEditors.get(cppFilePath)?.decorations, undefined);
+    cov.uncoveredCodeRegionsVirtualTextEditors.size.should.be.equal(0);
   });
 
   after('Disposing of cov instance', () => cov.dispose());
