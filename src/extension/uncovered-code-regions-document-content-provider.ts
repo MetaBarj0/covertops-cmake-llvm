@@ -6,6 +6,6 @@ export function make() {
 
 class UncoveredCodeRegionsDocumentContentProvider implements vscode.TextDocumentContentProvider {
   provideTextDocumentContent(_uri: vscode.Uri, _token: vscode.CancellationToken): vscode.ProviderResult<string> {
-    throw new Error('Method not implemented.');
+    return '';
   }
 }

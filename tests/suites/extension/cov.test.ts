@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import { describe, it, before, after, } from 'mocha';
+import { describe, it, after } from 'mocha';
 import * as chaiAsPromised from 'chai-as-promised';
 
 chai.use(chaiAsPromised);
@@ -19,7 +19,7 @@ describe('Extension test suite', () => {
     describe('The extension have a disposable text document provider for uncovered code regions display', covShouldHaveDisposableTextDocumentProviderForUncoveredCodeRegionsDisplay);
     describe('The extension can leverage vscode api adapters when executing the reportUncoveredRegionsInFile command', covCanExecuteCommand);
     describe('The freshly instantiated extension have an empty uncovered code regions editors collection', covShouldHaveAnEmptyUncoveredCodeRegionsEditorsCollection);
-    describe.skip('The cov extension having one virtual readonly editor showing uncovered code regions', covShouldHaveOneUncoveredCodeRegionsEditorOpenedAfterCommandExecution);
+    describe('The cov extension having one virtual readonly editor showing uncovered code regions', covShouldHaveOneUncoveredCodeRegionsEditorOpenedAfterCommandExecution);
   });
 });
 
@@ -113,6 +113,7 @@ function covShouldHaveOneUncoveredCodeRegionsEditorOpenedAfterCommandExecution()
     cov.uncoveredCodeRegionsEditors.length.should.equal(1);
     cov.uncoveredCodeRegionsEditors[0].uri.scheme.should.be.equal(Definitions.extensionId);
     cov.uncoveredCodeRegionsEditors[0].uri.fsPath.should.be.equal(currentEditor.document.uri.fsPath);
+    vscode.window.activeTextEditor?.document.uri.scheme.should.be.equal(Definitions.extensionId);
   });
 
   after('Disposing of cov instance', () => cov.dispose());

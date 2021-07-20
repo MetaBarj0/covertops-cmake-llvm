@@ -32,6 +32,20 @@ class Cov {
 
   async run() {
     this.reportStartInOutputChannel();
+
+    if (!vscode.window.activeTextEditor)
+      return;
+
+    const uri = vscode.Uri.from({
+      scheme: Definitions.extensionId,
+      path: vscode.window.activeTextEditor.document.uri.path
+    });
+
+    const doc = await vscode.workspace.openTextDocument(uri);
+
+    this.openedUncoveredCodeRegionsDocuments.push(doc);
+
+    await vscode.window.showTextDocument(doc);
   }
 
   get uncoveredCodeRegionsEditors(): ReadonlyArray<vscode.TextDocument> {
