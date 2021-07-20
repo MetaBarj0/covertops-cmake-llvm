@@ -13,7 +13,7 @@ class Cov {
     this.output = vscode.window.createOutputChannel(Definitions.extensionId);
     this.command = vscode.commands.registerCommand(`${Definitions.extensionId}.reportUncoveredCodeRegionsInFile`, this.run, this);
     this.textDocumentProvider = vscode.workspace.registerTextDocumentContentProvider(Definitions.extensionId, uncoveredCodeRegionsDocumentContentProvider);
-    this.openedUncoveredCodeRegionsDocuments_ = new Map<string, vscode.TextDocument>();
+    this.uncoveredCodeRegionsVirtualTextEditors_ = new Map<string, TextEditorWithDecorations>();
   }
 
   get asDisposable() {
@@ -38,25 +38,19 @@ class Cov {
     const uri = this.buildVirtualDocumentUri();
 
     const virtualDocument = await vscode.workspace.openTextDocument(uri);
+    const virtualTextEditor = await vscode.window.showTextDocument(virtualDocument, { preserveFocus: false });
+    const uncoveredCodeRegionsVirtualTextEditor = new ConcreteTextEditorWithDecorations(virtualTextEditor);
+    this.addUncoveredCodeRegionsVirtualEditorIfNotExist(uri, uncoveredCodeRegionsVirtualTextEditor);
 
-    this.addVirtualDocumentIfNotExist(uri, virtualDocument);
-
-    await vscode.window.showTextDocument(virtualDocument, { preserveFocus: false });
+    uncoveredCodeRegionsVirtualTextEditor.setDecorations(vscode.window.createTextEditorDecorationType({}), []);
   }
 
-  get openedUncoveredCodeRegionsDocuments(): ReadonlyMap<string, vscode.TextDocument> {
-    return this.openedUncoveredCodeRegionsDocuments_;
+  get uncoveredCodeRegionsVirtualTextEditors() {
+    return this.uncoveredCodeRegionsVirtualTextEditors_;
   }
 
   get uncoveredCodeRegionsDocumentProvider() {
     return this.textDocumentProvider;
-  }
-
-  get activeTextEditor(): TextEditorWithDecorations | undefined {
-    if (!vscode.window.activeTextEditor)
-      return;
-
-    return new ConcreteTextEditorWithDecorations(vscode.window.activeTextEditor);
   }
 
   private reportStartInOutputChannel() {
@@ -72,13 +66,13 @@ class Cov {
     });
   }
 
-  private addVirtualDocumentIfNotExist(uri: vscode.Uri, doc: vscode.TextDocument) {
-    if (!this.openedUncoveredCodeRegionsDocuments_.has(uri.fsPath))
-      this.openedUncoveredCodeRegionsDocuments_.set(uri.fsPath, doc);
+  private addUncoveredCodeRegionsVirtualEditorIfNotExist(uri: vscode.Uri, doc: TextEditorWithDecorations) {
+    if (!this.uncoveredCodeRegionsVirtualTextEditors_.has(uri.fsPath))
+      this.uncoveredCodeRegionsVirtualTextEditors_.set(uri.fsPath, doc);
   }
 
   private readonly output: vscode.OutputChannel;
   private readonly command: vscode.Disposable;
   private readonly textDocumentProvider: vscode.Disposable;
-  private readonly openedUncoveredCodeRegionsDocuments_: Map<string, vscode.TextDocument>;
+  private readonly uncoveredCodeRegionsVirtualTextEditors_: Map<string, TextEditorWithDecorations>;
 }

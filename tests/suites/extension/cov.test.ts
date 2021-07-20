@@ -8,6 +8,7 @@ chai.should();
 import * as Cov from '../../../src/extension/cov';
 import * as Definitions from '../../../src/extension/definitions';
 import * as UncoveredCodeRegionsDocumentContentProvider from '../../../src/extension/uncovered-code-regions-document-content-provider';
+import { TextEditorWithDecorations } from '../../../src/extension/abstractions/text-editor-with-decorations';
 
 import * as vscode from 'vscode';
 import * as path from 'path';
@@ -21,11 +22,9 @@ describe('Extension test suite', () => {
     describe('The extension can leverage vscode api adapters when executing the reportUncoveredRegionsInFile command', covCanExecuteCommand);
     describe('The freshly instantiated extension have an empty uncovered code regions editors collection', covShouldHaveAnEmptyUncoveredCodeRegionsEditorsCollection);
     describe('Running several time the same command on the virtual document editor does not create more virtual document editor', covShouldOpenOnlyOneVirtualDocumentEditorPerSourceFile);
-    describe('The opened virtual document contain the source code of the file for uncovered code regions request', virtualDocumentShouldContainSameSourceCode);
-    describe('The Cov instance can expose the active editor if any', covShouldExposeAnActiveTextEditorProperty);
-    describe('Querying for decorations on the cov active text editor targeting a real source file', activeTextEditorOnSourceFileShouldNotHaveAnyDecoration);
-    describe.skip('Active text editor querying of some decorations on a virtual document', virtualDocumentShouldHaveSomeDecorationsAfterCommandExecutionOnAPartiallyCoveredFile);
-    describe.skip('The opened virtual document has some decorations applied on it', virtualDocumentSHouldHaveDecorations);
+    describe('The opened virtual document contains the source code of the file for uncovered code regions request', virtualDocumentShouldContainSameSourceCode);
+    describe('Uncovered code regions virtual text editor existence when source file is open but command is not executed', uncoveredCodeRegionsVirtualTextEditorOnSourceFileShouldNotExist);
+    describe('Uncovered code regions virtual text editor exposing some decoration after the command execution', virtualDocumentShouldHaveSomeDecorationsAfterCommandExecutionOnAPartiallyCoveredFile);
   });
 });
 
@@ -81,15 +80,16 @@ function covShouldHaveAnEmptyUncoveredCodeRegionsEditorsCollection() {
     cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
 
     const covExposesReadonlyMapOfTextEditors =
-      ((_: ReadonlyMap<string, vscode.TextDocument>): _ is ReadonlyMap<string, vscode.TextDocument> => true)(cov.openedUncoveredCodeRegionsDocuments);
+      ((_: ReadonlyMap<string, TextEditorWithDecorations>): _ is ReadonlyMap<string, TextEditorWithDecorations> => true)(cov.uncoveredCodeRegionsVirtualTextEditors);
 
     covExposesReadonlyMapOfTextEditors.should.be.true;
-    cov.openedUncoveredCodeRegionsDocuments.should.be.empty;
+    cov.uncoveredCodeRegionsVirtualTextEditors.should.be.empty;
   });
 
   after('Disposing of cov instance', () => cov.dispose());
 }
 
+// TODO: may be disposed
 function covShouldHaveDisposableTextDocumentProviderForUncoveredCodeRegionsDisplay() {
   let cov: ReturnType<typeof Cov.make>;
 
@@ -114,11 +114,11 @@ function covShouldOpenOnlyOneVirtualDocumentEditorPerSourceFile() {
     for (const _ of Array<never>(10))
       await executeCommand();
 
-    cov.openedUncoveredCodeRegionsDocuments.size.should.be.equal(1);
-    chai.assert.notStrictEqual(cov.openedUncoveredCodeRegionsDocuments.get(cppFilePath), undefined);
-    cov.openedUncoveredCodeRegionsDocuments.get(cppFilePath)?.uri.scheme.should.be.equal(Definitions.extensionId);
-    cov.openedUncoveredCodeRegionsDocuments.get(cppFilePath)?.uri.fsPath.should.be.equal(currentEditor.document.uri.fsPath);
-    cov.activeTextEditor?.document.uri.scheme.should.be.equal(Definitions.extensionId);
+    cov.uncoveredCodeRegionsVirtualTextEditors.size.should.be.equal(1);
+    chai.assert.notStrictEqual(cov.uncoveredCodeRegionsVirtualTextEditors.get(cppFilePath), undefined);
+    cov.uncoveredCodeRegionsVirtualTextEditors.get(cppFilePath)?.document.uri.scheme.should.be.equal(Definitions.extensionId);
+    cov.uncoveredCodeRegionsVirtualTextEditors.get(cppFilePath)?.document.uri.fsPath.should.be.equal(currentEditor.document.uri.fsPath);
+    vscode.window.activeTextEditor?.document.uri.scheme.should.be.equal(Definitions.extensionId);
   });
 
   after('Disposing of cov instance', () => cov.dispose());
@@ -133,52 +133,24 @@ function virtualDocumentShouldContainSameSourceCode() {
 
     await executeCommand();
 
-    chai.assert.notStrictEqual(cov.activeTextEditor, undefined);
-    const virtualEditor = <vscode.TextEditor>cov.activeTextEditor;
+    chai.assert.notStrictEqual(vscode.window.activeTextEditor, undefined);
+    const virtualEditor = <vscode.TextEditor>vscode.window.activeTextEditor;
     virtualEditor.document.getText().should.be.equal(currentEditor.document.getText());
   });
 
   after('Disposing of cov instance', () => cov.dispose());
 }
 
-function virtualDocumentSHouldHaveDecorations() {
-  let cov: ReturnType<typeof Cov.make>;
-
-  it('should be possible to query for decorations on the virtual document', async () => {
-    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
-    const { currentEditor } = await showSourceFileEditor();
-
-    await executeCommand();
-  });
-
-  after('Disposing of cov instance', () => cov.dispose());
-}
-
-function covShouldExposeAnActiveTextEditorProperty() {
-  let cov: ReturnType<typeof Cov.make>;
-
-  it('should be possible to query for the potential active editor', () => {
-    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
-
-    type MaybeTextEditor = vscode.TextEditor | undefined;
-    const covExposesActiveEditor = ((_: MaybeTextEditor): _ is MaybeTextEditor => true)(cov.activeTextEditor);
-
-    covExposesActiveEditor.should.be.true;
-  });
-
-  after('Disposing of cov instance', () => cov.dispose());
-}
-
-function activeTextEditorOnSourceFileShouldNotHaveAnyDecoration() {
+function uncoveredCodeRegionsVirtualTextEditorOnSourceFileShouldNotExist() {
   let cov: ReturnType<typeof Cov.make>;
 
   it('should be possible to access decorations of the active text editor if any', async () => {
     cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
 
-    await showSourceFileEditor();
+    const { cppFilePath } = await showSourceFileEditor();
 
-    chai.assert.notStrictEqual(cov.activeTextEditor, undefined);
-    chai.assert.strictEqual(cov.activeTextEditor?.decorations, undefined);
+    chai.assert.notStrictEqual(vscode.window.activeTextEditor, undefined);
+    chai.assert.strictEqual(cov.uncoveredCodeRegionsVirtualTextEditors.get(cppFilePath)?.decorations, undefined);
   });
 
   after('Disposing of cov instance', () => cov.dispose());
@@ -190,11 +162,11 @@ function virtualDocumentShouldHaveSomeDecorationsAfterCommandExecutionOnAPartial
   it('is possible to query decorations for a virtual document editor that have some', async () => {
     cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
 
-    await showSourceFileEditor();
+    const { cppFilePath } = await showSourceFileEditor();
     await executeCommand();
 
-    chai.assert.notStrictEqual(cov.activeTextEditor, undefined);
-    chai.assert.notStrictEqual(cov.activeTextEditor?.decorations, undefined);
+    chai.assert.notStrictEqual(cov.uncoveredCodeRegionsVirtualTextEditors.get(cppFilePath)?.decorations, undefined);
+    cov.uncoveredCodeRegionsVirtualTextEditors.get(cppFilePath)?.decorations?.should.be.deep.equal({});
   });
 
   after('Disposing of cov instance', () => cov.dispose());
@@ -207,8 +179,8 @@ function buildCppAbsoluteFilePath() {
 
 async function showSourceFileEditor() {
   const cppFilePath = buildCppAbsoluteFilePath();
-  const currentEditor = await vscode.window.showTextDocument(vscode.Uri.file(cppFilePath), { preserveFocus: false });
-  return { cppFilePath, currentEditor };
+  const editor = await vscode.window.showTextDocument(vscode.Uri.file(cppFilePath), { preserveFocus: false });
+  return { cppFilePath, currentEditor: editor };
 }
 
 async function executeCommand() {

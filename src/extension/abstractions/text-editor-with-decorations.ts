@@ -1,6 +1,6 @@
-import { TextEditor, TextEditorDecorationType } from 'vscode';
+import { TextEditor } from 'vscode';
 
-type Decorations = {};
+export type Decorations = {};
 
 type WithDecorations = {
   get decorations(): Decorations | undefined;
