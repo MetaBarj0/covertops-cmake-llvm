@@ -26,7 +26,7 @@ class Cov {
 
   dispose() {
     [
-      this.output,
+      vscode.Disposable.from(this.output),
       this.command,
       this.textDocumentProvider
     ].forEach(disposable => disposable.dispose());
@@ -45,7 +45,7 @@ class Cov {
     uncoveredCodeRegionsVirtualTextEditor.setDecorations(vscode.window.createTextEditorDecorationType({}), []);
   }
 
-  get uncoveredCodeRegionsVirtualTextEditors() {
+  get uncoveredCodeRegionsVirtualTextEditors(): ReadonlyMap<string, TextEditorWithDecorations> {
     return this.uncoveredCodeRegionsVirtualTextEditors_;
   }
 

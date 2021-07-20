@@ -161,12 +161,13 @@ function virtualDocumentShouldHaveSomeDecorationsAfterCommandExecutionOnAPartial
 
   it('is possible to query decorations for a virtual document editor that have some', async () => {
     cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
+    const expectedDecorations = {};
 
     const { cppFilePath } = await showSourceFileEditor();
     await executeCommand();
 
     chai.assert.notStrictEqual(cov.uncoveredCodeRegionsVirtualTextEditors.get(cppFilePath)?.decorations, undefined);
-    cov.uncoveredCodeRegionsVirtualTextEditors.get(cppFilePath)?.decorations?.should.be.deep.equal({});
+    cov.uncoveredCodeRegionsVirtualTextEditors.get(cppFilePath)?.decorations?.should.be.deep.equal(expectedDecorations);
   });
 
   after('Disposing of cov instance', () => cov.dispose());
