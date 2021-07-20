@@ -33,14 +33,7 @@ class Cov {
   async run() {
     this.reportStartInOutputChannel();
 
-    if (!vscode.window.activeTextEditor)
-      return;
-
-    const uri = vscode.Uri.from({
-      scheme: Definitions.extensionId,
-      path: vscode.window.activeTextEditor.document.uri.path
-    });
-
+    const uri = this.buildVirtualDocumentUri();
     const doc = await vscode.workspace.openTextDocument(uri);
 
     this.openedUncoveredCodeRegionsDocuments.push(doc);
@@ -60,6 +53,13 @@ class Cov {
     this.output.show(false);
     this.output.clear();
     this.output.appendLine(`starting ${Definitions.extensionDisplayName}`);
+  }
+
+  private buildVirtualDocumentUri() {
+    return vscode.Uri.from({
+      scheme: Definitions.extensionId,
+      path: (<vscode.TextEditor>vscode.window.activeTextEditor).document.uri.path
+    });
   }
 
   private readonly output: vscode.OutputChannel;
