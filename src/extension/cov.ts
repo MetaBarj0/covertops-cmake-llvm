@@ -11,7 +11,7 @@ class Cov {
     this.output = vscode.window.createOutputChannel(Definitions.extensionId);
     this.command = vscode.commands.registerCommand(`${Definitions.extensionId}.reportUncoveredCodeRegionsInFile`, this.run, this);
     this.textDocumentProvider = vscode.workspace.registerTextDocumentContentProvider(Definitions.extensionId, uncoveredCodeRegionsDocumentContentProvider);
-    this.openedUncoveredCodeRegionsDocuments = [];
+    this.openedUncoveredCodeRegionsDocuments_ = new Map<string, vscode.TextDocument>();
   }
 
   get asDisposable() {
@@ -34,15 +34,16 @@ class Cov {
     this.reportStartInOutputChannel();
 
     const uri = this.buildVirtualDocumentUri();
+
     const doc = await vscode.workspace.openTextDocument(uri);
 
-    this.openedUncoveredCodeRegionsDocuments.push(doc);
+    this.addVirtualDocumentIfNotExist(uri, doc);
 
-    await vscode.window.showTextDocument(doc);
+    await vscode.window.showTextDocument(doc, { preserveFocus: false });
   }
 
-  get uncoveredCodeRegionsEditors(): ReadonlyArray<vscode.TextDocument> {
-    return this.openedUncoveredCodeRegionsDocuments;
+  get openedUncoveredCodeRegionsDocuments(): ReadonlyMap<string, vscode.TextDocument> {
+    return this.openedUncoveredCodeRegionsDocuments_;
   }
 
   get uncoveredCodeRegionsDocumentProvider() {
@@ -50,7 +51,7 @@ class Cov {
   }
 
   private reportStartInOutputChannel() {
-    this.output.show(false);
+    this.output.show(true);
     this.output.clear();
     this.output.appendLine(`starting ${Definitions.extensionDisplayName}`);
   }
@@ -62,8 +63,13 @@ class Cov {
     });
   }
 
+  private addVirtualDocumentIfNotExist(uri: vscode.Uri, doc: vscode.TextDocument) {
+    if (!this.openedUncoveredCodeRegionsDocuments_.has(uri.fsPath))
+      this.openedUncoveredCodeRegionsDocuments_.set(uri.fsPath, doc);
+  }
+
   private readonly output: vscode.OutputChannel;
   private readonly command: vscode.Disposable;
   private readonly textDocumentProvider: vscode.Disposable;
-  private readonly openedUncoveredCodeRegionsDocuments: Array<vscode.TextDocument>;
+  private readonly openedUncoveredCodeRegionsDocuments_: Map<string, vscode.TextDocument>;
 }
