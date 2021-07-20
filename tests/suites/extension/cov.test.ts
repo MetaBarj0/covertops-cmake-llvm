@@ -18,9 +18,7 @@ describe('Extension test suite', () => {
   describe('The cov extension behavior', () => {
     describe('The instantiation of the extension as a vscode disposable', covShouldBeDisposable);
     describe('The extension has a working vscode window output channel', covShouldHaveAnOutputChannel);
-    describe('The extension have a disposable text document provider for uncovered code regions display', covShouldHaveDisposableTextDocumentProviderForUncoveredCodeRegionsDisplay);
     describe('The extension can leverage vscode api adapters when executing the reportUncoveredRegionsInFile command', covCanExecuteCommand);
-    describe('The freshly instantiated extension have an empty uncovered code regions editors collection', covShouldHaveAnEmptyUncoveredCodeRegionsEditorsCollection);
     describe('Running several time the same command on the virtual document editor does not create more virtual document editor', covShouldOpenOnlyOneVirtualDocumentEditorPerSourceFile);
     describe('The opened virtual document contains the source code of the file for uncovered code regions request', virtualDocumentShouldContainSameSourceCode);
     describe('Uncovered code regions virtual text editor existence when source file is open but command is not executed', uncoveredCodeRegionsVirtualTextEditorOnSourceFileShouldNotExist);
@@ -42,6 +40,7 @@ function covShouldBeDisposable() {
   after('Disposing of cov instance', () => cov.dispose());
 }
 
+// TODO: may be disposed
 function covShouldHaveAnOutputChannel() {
   let cov: ReturnType<typeof Cov.make>;
 
@@ -68,37 +67,6 @@ function covCanExecuteCommand() {
     await vscode.window.showTextDocument(vscode.Uri.file(cppFilePath), { preserveFocus: false });
 
     return executeCommand().should.eventually.be.fulfilled;
-  });
-
-  after('Disposing of cov instance', () => cov.dispose());
-}
-
-function covShouldHaveAnEmptyUncoveredCodeRegionsEditorsCollection() {
-  let cov: ReturnType<typeof Cov.make>;
-
-  it('should contain an empty collection of uncovered code regions read only editors', async () => {
-    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
-
-    const covExposesReadonlyMapOfTextEditors =
-      ((_: ReadonlyMap<string, TextEditorWithDecorations>): _ is ReadonlyMap<string, TextEditorWithDecorations> => true)(cov.uncoveredCodeRegionsVirtualTextEditors);
-
-    covExposesReadonlyMapOfTextEditors.should.be.true;
-    cov.uncoveredCodeRegionsVirtualTextEditors.should.be.empty;
-  });
-
-  after('Disposing of cov instance', () => cov.dispose());
-}
-
-// TODO: may be disposed
-function covShouldHaveDisposableTextDocumentProviderForUncoveredCodeRegionsDisplay() {
-  let cov: ReturnType<typeof Cov.make>;
-
-  it('should create and expose a disposable text document provider', async () => {
-    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
-
-    const covExposesDisposableTextDocumentProvider = ((_: vscode.Disposable): _ is vscode.Disposable => true)(cov.uncoveredCodeRegionsDocumentProvider);
-
-    covExposesDisposableTextDocumentProvider.should.be.true;
   });
 
   after('Disposing of cov instance', () => cov.dispose());
