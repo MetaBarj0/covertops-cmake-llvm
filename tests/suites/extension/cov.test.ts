@@ -103,10 +103,7 @@ function covShouldOpenOnlyOneVirtualDocumentEditorPerSourceFile() {
 
   it('should have one uncovered code regions editor in the collection that is a virtual read only text editor', async () => {
     cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
-
-    const workspaceRootFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
-    const cppFilePath = path.join(<string>workspaceRootFolder, 'src', 'partiallyCovered', 'partiallyCoveredLib.cpp');
-
+    const cppFilePath = buildCppAbsoluteFilePath();
     const currentEditor = await vscode.window.showTextDocument(vscode.Uri.file(cppFilePath), { preserveFocus: false });
 
     for (const _ of Array<never>(10)) {
@@ -115,11 +112,15 @@ function covShouldOpenOnlyOneVirtualDocumentEditorPerSourceFile() {
 
     cov.openedUncoveredCodeRegionsDocuments.size.should.be.equal(1);
     chai.assert.notStrictEqual(cov.openedUncoveredCodeRegionsDocuments.get(cppFilePath), undefined);
-
     cov.openedUncoveredCodeRegionsDocuments.get(cppFilePath)?.uri.scheme.should.be.equal(Definitions.extensionId);
     cov.openedUncoveredCodeRegionsDocuments.get(cppFilePath)?.uri.fsPath.should.be.equal(currentEditor.document.uri.fsPath);
     vscode.window.activeTextEditor?.document.uri.scheme.should.be.equal(Definitions.extensionId);
   });
 
   after('Disposing of cov instance', () => cov.dispose());
+}
+
+function buildCppAbsoluteFilePath() {
+  const workspaceRootFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
+  return path.join(<string>workspaceRootFolder, 'src', 'partiallyCovered', 'partiallyCoveredLib.cpp');
 }
