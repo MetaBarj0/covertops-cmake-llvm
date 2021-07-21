@@ -1,6 +1,6 @@
 export abstract class Spy<T> {
-  constructor(decorated: T) {
-    this.decorated = decorated;
+  constructor(wrapped: T) {
+    this.wrapped = wrapped;
   }
 
   abstract get object(): T;
@@ -23,5 +23,5 @@ export abstract class Spy<T> {
     [P in keyof T]?: number
   } = {};
 
-  protected readonly decorated: T;
+  protected readonly wrapped: T;
 };

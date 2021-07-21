@@ -41,7 +41,6 @@ export function make(context: Context) {
     createReadStream: fileSystem.createReadStream
   });
 
-  // TODO(wip): rename from DecorationLocationsProvider to CoverageInfoProvider
   return CoverageInfoProvider.make({
     settings,
     buildTreeDirectoryResolver,

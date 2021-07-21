@@ -20,7 +20,7 @@ const configuration = packageJSON.contributes.configuration[0].properties;
 type Configuration = typeof configuration;
 
 type DefaultSettings = {
-  [P in keyof Configuration as P extends string & `${infer _}.${infer T}` ? `${T}` : never]: Configuration[P]['default'];
+  [P in keyof Configuration as P extends `${infer _}.${infer T}` ? `${T}` : never]: Configuration[P]['default'];
 };
 
 class DefaultSetting<T extends keyof DefaultSettings>{

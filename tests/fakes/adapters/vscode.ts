@@ -90,7 +90,7 @@ export function buildSpyOfErrorChannel(errorChannel: OutputChannelLike): Spy<Out
     }
 
     appendLine(line: string) {
-      this.decorated.appendLine(line);
+      this.wrapped.appendLine(line);
       this.incrementCallCountFor('appendLine');
     }
 
@@ -114,7 +114,7 @@ export function buildSpyOfProgressReporter(progressReporter: ProgressLike): Spy<
     }
 
     report(value: ProgressStep) {
-      this.decorated.report(value);
+      this.wrapped.report(value);
       super.incrementCallCountFor('report');
     }
 
