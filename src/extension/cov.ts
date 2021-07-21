@@ -46,14 +46,8 @@ class Cov {
     await this.displayUncoveredCodeRegions();
   }
 
-  // TODO: may be disposed of when tests will be exhaustive enough
   get uncoveredCodeRegionsVirtualTextEditors(): ReadonlyMap<string, TextEditorWithDecorations> {
     return this.uncoveredCodeRegionsVirtualTextEditors_;
-  }
-
-  // TODO: may be disposed of when tests will be exhaustive enough
-  get uncoveredCodeRegionsDocumentProvider() {
-    return this.textDocumentProvider;
   }
 
   private async displayUncoveredCodeRegions() {
