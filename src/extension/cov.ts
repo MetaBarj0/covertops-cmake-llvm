@@ -1,11 +1,11 @@
 import * as Definitions from './definitions';
+import * as Strings from './strings';
 import { TextEditorWithDecorations } from './abstractions/text-editor-with-decorations';
 import { DecorationLocationsProvider } from '../modules/decoration-locations-provider/abstractions/decoration-locations-provider';
 import { CoverageInfo } from '../modules/coverage-info-collector/abstractions/coverage-info';
 import { TextEditorWithDecorations as ConcreteTextEditorWithDecorations } from './implementations/text-editor-with-decorations';
 
 import * as vscode from 'vscode';
-import * as path from 'path';
 
 export function make(uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider,
   decorationLocationsProvider: DecorationLocationsProvider) {
@@ -83,7 +83,7 @@ class Cov {
             uncoveredRegion.range.start.character,
             uncoveredRegion.range.end.line,
             uncoveredRegion.range.end.character),
-          hoverMessage: 'This code region is not covered by a test known by cmake.'
+          hoverMessage: Strings.uncoveredCodeRegionHoverMessage
         });
 
     } catch (warning) {
