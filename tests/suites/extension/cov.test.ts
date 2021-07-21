@@ -8,7 +8,6 @@ chai.should();
 import * as Cov from '../../../src/extension/cov';
 import * as Definitions from '../../../src/extension/definitions';
 import * as UncoveredCodeRegionsDocumentContentProvider from '../../../src/extension/uncovered-code-regions-document-content-provider';
-import * as DecorationLocationsProvider from '../../../src/extension/factories/decoration-locations-provider';
 
 import * as vscode from 'vscode';
 import * as path from 'path';
@@ -29,7 +28,7 @@ function covShouldBeDisposable() {
   let cov: ReturnType<typeof Cov.make>;
 
   it('should succeed when instantiating the extension as a vscode disposable', async () => {
-    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), await DecorationLocationsProvider.make());
+    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
 
     const covIsADisposableResource = ((_: vscode.Disposable): _ is vscode.Disposable => true)(cov.asDisposable);
 
@@ -39,12 +38,11 @@ function covShouldBeDisposable() {
   after('Disposing of cov instance', () => cov.dispose());
 }
 
-// TODO: may be disposed
 function covShouldHaveAnOutputChannel() {
   let cov: ReturnType<typeof Cov.make>;
 
   it('should expose a vscode output channel', async () => {
-    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), await DecorationLocationsProvider.make());
+    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
 
     const covExposesAVscodeOutputChannel = ((_: vscode.OutputChannel): _ is vscode.OutputChannel => true)(cov.outputChannel);
 
@@ -58,7 +56,7 @@ function covCanExecuteCommand() {
   let cov: ReturnType<typeof Cov.make>;
 
   it('should run the command successfully', async () => {
-    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), await DecorationLocationsProvider.make());
+    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
 
     const workspaceRootFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
     const cppFilePath = path.join(<string>workspaceRootFolder, 'src', 'partiallyCovered', 'partiallyCoveredLib.cpp');
@@ -75,7 +73,7 @@ function covShouldOpenOnlyOneVirtualDocumentEditorPerSourceFile() {
   let cov: ReturnType<typeof Cov.make>;
 
   it('should have one uncovered code regions editor in the collection that is a virtual read only text editor', async () => {
-    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), await DecorationLocationsProvider.make());
+    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
     const { cppFilePath, currentEditor } = await showSourceFileEditor();
 
     for (const _ of Array<never>(3))
@@ -95,7 +93,7 @@ function virtualDocumentShouldContainSameSourceCode() {
   let cov: ReturnType<typeof Cov.make>;
 
   it('should show a virtual document having the same source code that the file on which request for uncovered regions has been done', async () => {
-    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), await DecorationLocationsProvider.make());
+    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
     const { currentEditor } = await showSourceFileEditor();
 
     await executeCommand();
@@ -112,7 +110,7 @@ function uncoveredCodeRegionsVirtualTextEditorOnSourceFileShouldNotExist() {
   let cov: ReturnType<typeof Cov.make>;
 
   it('should not exist any uncovered code regions virtual editor', async () => {
-    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), await DecorationLocationsProvider.make());
+    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
 
     await showSourceFileEditor();
 
@@ -127,7 +125,7 @@ function virtualDocumentShouldHaveSomeDecorationsAfterCommandExecutionOnAPartial
   let cov: ReturnType<typeof Cov.make>;
 
   it('is possible to query decorations for a virtual document editor that have some', async () => {
-    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), await DecorationLocationsProvider.make());
+    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
     const expectedRange = new vscode.Range(5, 52, 5, 70);
     const expectedDecorations = {
       decorationType: cov.decorationType,

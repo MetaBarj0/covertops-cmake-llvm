@@ -1,20 +1,18 @@
 import * as Definitions from './definitions';
 import * as Strings from './strings';
 import { TextEditorWithDecorations } from './abstractions/text-editor-with-decorations';
-import { DecorationLocationsProvider } from '../modules/decoration-locations-provider/abstractions/decoration-locations-provider';
+import * as DecorationLocationsProvider from './factories/decoration-locations-provider';
 import { CoverageInfo } from '../modules/coverage-info-collector/abstractions/coverage-info';
 import { TextEditorWithDecorations as ConcreteTextEditorWithDecorations } from './implementations/text-editor-with-decorations';
 
 import * as vscode from 'vscode';
 
-export function make(uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider,
-  decorationLocationsProvider: DecorationLocationsProvider) {
-  return new Cov(uncoveredCodeRegionsDocumentContentProvider, decorationLocationsProvider);
+export function make(uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider) {
+  return new Cov(uncoveredCodeRegionsDocumentContentProvider);
 }
 
 class Cov {
-  constructor(uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider,
-    decorationLocationsProvider: DecorationLocationsProvider) {
+  constructor(uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider) {
     this.outputChannel_ = vscode.window.createOutputChannel(Definitions.extensionId);
     this.command = vscode.commands.registerCommand(`${Definitions.extensionId}.reportUncoveredCodeRegionsInFile`, this.run, this);
     this.textDocumentProvider = vscode.workspace.registerTextDocumentContentProvider(Definitions.extensionId, uncoveredCodeRegionsDocumentContentProvider);
@@ -24,7 +22,6 @@ class Cov {
         id: Definitions.uncoveredCodeRegionDecorationBackgroundColor
       }
     });
-    this.decorationLocationsProvider = decorationLocationsProvider;
   }
 
   get asDisposable() {
@@ -85,7 +82,6 @@ class Cov {
             uncoveredRegion.range.end.character),
           hoverMessage: Strings.uncoveredCodeRegionHoverMessage
         });
-
     } catch (warning) {
       this.outputChannel_.appendLine(warning.message);
     }
@@ -94,15 +90,24 @@ class Cov {
   }
 
   private async queryUncoveredCodeInfo(uri: vscode.Uri) {
-    let uncoveredCodeInfo: CoverageInfo;
+    return vscode.window.withProgress({
+      location: vscode.ProgressLocation.Notification,
+      title: 'Computing uncovered code region locations',
+      cancellable: false
+    }, async progressReporter => {
 
-    try {
-      uncoveredCodeInfo = await this.decorationLocationsProvider.getDecorationLocationsForUncoveredCodeRegions(uri.fsPath);
-    } catch (error) {
-      this.outputChannel_.appendLine(error.message);
-      throw error;
-    }
-    return uncoveredCodeInfo;
+      const decorationLocationsProvider = DecorationLocationsProvider.make({ progressReporter, errorChannel: this.outputChannel_ });
+
+      let uncoveredCodeInfo: CoverageInfo;
+
+      try {
+        uncoveredCodeInfo = await decorationLocationsProvider.getDecorationLocationsForUncoveredCodeRegions(uri.fsPath);
+      } catch (error) {
+        this.outputChannel_.appendLine(error.message);
+        throw error;
+      }
+      return uncoveredCodeInfo;
+    });
   }
 
   private async buildUncoveredCodeRegionsVirtualTextEditor(uri: vscode.Uri) {
@@ -138,5 +143,4 @@ class Cov {
   private readonly textDocumentProvider: vscode.Disposable;
   private readonly uncoveredCodeRegionsVirtualTextEditors_: Map<string, TextEditorWithDecorations>;
   private readonly decorationType_: vscode.TextEditorDecorationType;
-  private readonly decorationLocationsProvider: DecorationLocationsProvider;
 }
