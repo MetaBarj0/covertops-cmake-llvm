@@ -108,8 +108,8 @@
         "id": "covCmakeLlvm.uncoveredCodeRegionColor",
         "description": "Color for a decoration for an uncovered code region",
         "defaults": {
-          "dark": "#ff7a7a",
-          "light": "#FF000055",
+          "dark": "#ff7a7a7f",
+          "light": "#FF00007f",
           "highContrast": "#ff0000"
         }
       }

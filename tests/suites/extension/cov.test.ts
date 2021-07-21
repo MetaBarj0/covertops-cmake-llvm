@@ -128,7 +128,7 @@ function virtualDocumentShouldHaveSomeDecorationsAfterCommandExecutionOnAPartial
 
   it('is possible to query decorations for a virtual document editor that have some', async () => {
     cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), await DecorationLocationsProvider.make());
-    const expectedRange = new vscode.Range(6, 53, 6, 71);
+    const expectedRange = new vscode.Range(5, 52, 5, 70);
     const expectedDecorations = {
       decorationType: cov.decorationType,
       rangesOrOptions: [expectedRange]

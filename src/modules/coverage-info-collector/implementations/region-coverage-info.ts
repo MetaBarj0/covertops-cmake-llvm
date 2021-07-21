@@ -10,14 +10,15 @@ class RegionCoverageInfo implements Imports.Domain.Abstractions.RegionCoverageIn
     this.kind = rawLLVMRegionCoverageInfo[7] === 0 ? 'Normal' : 'Other';
     this.executionCount = rawLLVMRegionCoverageInfo[4];
 
+    // vscode api accepts zero based indices for line and character positions. LLVM coverage info file contains one based position
     this.regionRange = {
       start: {
-        line: rawLLVMRegionCoverageInfo[0],
-        character: rawLLVMRegionCoverageInfo[1]
+        line: rawLLVMRegionCoverageInfo[0] - 1,
+        character: rawLLVMRegionCoverageInfo[1] - 1
       },
       end: {
-        line: rawLLVMRegionCoverageInfo[2],
-        character: rawLLVMRegionCoverageInfo[3]
+        line: rawLLVMRegionCoverageInfo[2] - 1,
+        character: rawLLVMRegionCoverageInfo[3] - 1
       }
     };
   }

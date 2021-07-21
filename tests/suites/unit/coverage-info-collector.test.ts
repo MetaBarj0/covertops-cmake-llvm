@@ -172,12 +172,12 @@ function shouldSucceedToCollectUncoveredRegions() {
 
     uncoveredRegion.range.should.be.deep.equal({
       start: {
-        line: 6,
-        character: 53
+        line: 5,
+        character: 52
       },
       end: {
-        line: 6,
-        character: 71
+        line: 5,
+        character: 70
       }
     });
 
