@@ -54,7 +54,7 @@ class CoverageInfo implements Imports.Domain.Abstractions.CoverageInfo {
   }
 
   private async *uncoveredRegions_() {
-    for await (const rawRegionCoverageInfo of this.allRawRegionsCoverageInfoIn()) {
+    for await (const rawRegionCoverageInfo of this.allRawRegionsCoverageInfo()) {
       const regionCoverageInfo = Imports.Domain.Implementations.RegionCoverageInfo.make(<Imports.Domain.Abstractions.RawLLVMRegionCoverageInfo>rawRegionCoverageInfo);
 
       if (regionCoverageInfo.isAnUncoveredRegion)
@@ -62,7 +62,7 @@ class CoverageInfo implements Imports.Domain.Abstractions.CoverageInfo {
     }
   }
 
-  private allRawRegionsCoverageInfoIn() {
+  private allRawRegionsCoverageInfo() {
     const pipeline = this.preparePipelineForRegionCoverageInfo();
 
     return new RegionCoverageInfoAsyncIterable(pipeline, this.sourceFilePath, this.errorChannel);
@@ -161,19 +161,19 @@ class RegionCoverageInfoAsyncIterator {
   }
 
   async next() {
-    await this.ensureInputReadableStreaIsValid();
+    await this.ensureInputReadableStreamIsValid();
 
     const regionCoverageInfo = <Imports.Domain.Abstractions.RawLLVMRegionCoverageInfo>this.pipeline.read(1);
 
     if (regionCoverageInfo === null)
       return this.terminateIteration();
 
-    this.last = regionCoverageInfo;
+    this.hasAtLeastOneElement = true;
 
     return new RegionCoverageInfoIterator({ done: false, value: regionCoverageInfo });
   }
 
-  private async ensureInputReadableStreaIsValid() {
+  private async ensureInputReadableStreamIsValid() {
     await new Promise<void>((resolve, reject) => {
       this.pipeline
         .once('readable', () => { resolve(); })
@@ -189,7 +189,7 @@ class RegionCoverageInfoAsyncIterator {
   }
 
   private terminateIteration() {
-    if (this.last)
+    if (this.hasAtLeastOneElement)
       return new RegionCoverageInfoIterator({ done: true });
 
     const errorMessage = 'Cannot find any uncovered code regions for the file ' +
@@ -202,7 +202,7 @@ class RegionCoverageInfoAsyncIterator {
 
   private readonly pipeline: Readable;
   private readonly sourceFilePath: string;
-  private last: Imports.Domain.Abstractions.RawLLVMRegionCoverageInfo | undefined = undefined;
+  private hasAtLeastOneElement: boolean = false;
   private readonly errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
 };
 
