@@ -10,6 +10,7 @@ import * as Imports from './imports';
 import { env } from 'process';
 import * as path from 'path';
 
+// TODO: refacto this like modules.workspace.tests.ts
 describe('integration test suite', () => {
   describe('The behavior of the decoration location provider using real world adapters', () => {
     describe('The coverage information collection for a partially covered file', () => {

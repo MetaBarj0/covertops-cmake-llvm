@@ -1,10 +1,11 @@
 import * as Definitions from './definitions';
 import { TextEditorWithDecorations } from './abstractions/text-editor-with-decorations';
 import { DecorationLocationsProvider } from '../modules/decoration-locations-provider/abstractions/decoration-locations-provider';
+import { CoverageInfo } from '../modules/coverage-info-collector/abstractions/coverage-info';
 import { TextEditorWithDecorations as ConcreteTextEditorWithDecorations } from './implementations/text-editor-with-decorations';
 
 import * as vscode from 'vscode';
-import { CoverageInfo } from '../modules/coverage-info-collector/abstractions/coverage-info';
+import * as path from 'path';
 
 export function make(uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider,
   decorationLocationsProvider: DecorationLocationsProvider) {
@@ -61,7 +62,20 @@ class Cov {
       throw error;
     }
 
-    uncoveredCodeRegionsVirtualTextEditor.setDecorations(this.decorationType, []);
+    let ranges: Array<vscode.Range> = [];
+
+    try {
+      for await (const uncoveredRegion of uncoveredCodeInfo.uncoveredRegions)
+        ranges.push(new vscode.Range(uncoveredRegion.range.start.line,
+          uncoveredRegion.range.start.character,
+          uncoveredRegion.range.end.line,
+          uncoveredRegion.range.end.character));
+
+    } catch (error) {
+      this.outputChannel_.appendLine(error.message);
+    }
+
+    uncoveredCodeRegionsVirtualTextEditor.setDecorations(this.decorationType_, ranges);
   }
 
   // TODO: may be disposed of when tests will be exhaustive enough
