@@ -131,7 +131,12 @@ function virtualDocumentShouldHaveSomeDecorationsAfterCommandExecutionOnAPartial
     const expectedRange = new vscode.Range(5, 52, 5, 70);
     const expectedDecorations = {
       decorationType: cov.decorationType,
-      rangesOrOptions: [expectedRange]
+      rangesOrOptions: [
+        {
+          range: expectedRange,
+          hoverMessage: 'This code region is not covered by a test known by cmake.'
+        }
+      ]
     };
 
     const { cppFilePath } = await showSourceFileEditor();

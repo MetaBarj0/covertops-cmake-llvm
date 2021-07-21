@@ -62,20 +62,23 @@ class Cov {
       throw error;
     }
 
-    let ranges: Array<vscode.Range> = [];
+    let options: Array<vscode.DecorationOptions> = [];
 
     try {
       for await (const uncoveredRegion of uncoveredCodeInfo.uncoveredRegions)
-        ranges.push(new vscode.Range(uncoveredRegion.range.start.line,
-          uncoveredRegion.range.start.character,
-          uncoveredRegion.range.end.line,
-          uncoveredRegion.range.end.character));
+        options.push({
+          range: new vscode.Range(uncoveredRegion.range.start.line,
+            uncoveredRegion.range.start.character,
+            uncoveredRegion.range.end.line,
+            uncoveredRegion.range.end.character),
+          hoverMessage: 'This code region is not covered by a test known by cmake.'
+        });
 
     } catch (error) {
       this.outputChannel_.appendLine(error.message);
     }
 
-    uncoveredCodeRegionsVirtualTextEditor.setDecorations(this.decorationType_, ranges);
+    uncoveredCodeRegionsVirtualTextEditor.setDecorations(this.decorationType_, options);
   }
 
   // TODO: may be disposed of when tests will be exhaustive enough

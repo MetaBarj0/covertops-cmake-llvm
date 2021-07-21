@@ -10,6 +10,7 @@ import * as DecorationLocationsProvider from '../../modules/decoration-locations
 import * as fileSystem from '../../adapters/implementations/file-system';
 import * as processControl from '../../adapters/implementations/process-control';
 
+// TODO: fix progress feature as it does not work as expected anymore because of early return in this factory
 export function make() {
   const errorChannel = vscode.window.createOutputChannel(Definitions.extensionId);;
 
