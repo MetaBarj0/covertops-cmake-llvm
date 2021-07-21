@@ -33,7 +33,9 @@ export class TextEditorWithDecorations implements AbstractTextEditorWithDecorati
   setDecorations(decorationType: vscode.TextEditorDecorationType,
     rangesOrOptions: readonly vscode.Range[] | readonly vscode.DecorationOptions[]) {
     this.textEditor.setDecorations(decorationType, rangesOrOptions);
-    this.decorations_ = {};
+    this.decorations_ = {
+      decorationType: decorationType
+    };
   }
 
   edit: (callback: (editBuilder: vscode.TextEditorEdit) => void,

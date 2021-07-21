@@ -14,6 +14,11 @@ class Cov {
     this.command = vscode.commands.registerCommand(`${Definitions.extensionId}.reportUncoveredCodeRegionsInFile`, this.run, this);
     this.textDocumentProvider = vscode.workspace.registerTextDocumentContentProvider(Definitions.extensionId, uncoveredCodeRegionsDocumentContentProvider);
     this.uncoveredCodeRegionsVirtualTextEditors_ = new Map<string, TextEditorWithDecorations>();
+    this.decorationType_ = vscode.window.createTextEditorDecorationType({
+      backgroundColor: {
+        id: Definitions.uncoveredCodeRegionDecorationBackgroundColor
+      }
+    });
   }
 
   get asDisposable() {
@@ -42,7 +47,7 @@ class Cov {
     const uncoveredCodeRegionsVirtualTextEditor = new ConcreteTextEditorWithDecorations(virtualTextEditor);
     this.addUncoveredCodeRegionsVirtualEditorIfNotExist(uri, uncoveredCodeRegionsVirtualTextEditor);
 
-    uncoveredCodeRegionsVirtualTextEditor.setDecorations(vscode.window.createTextEditorDecorationType({}), []);
+    uncoveredCodeRegionsVirtualTextEditor.setDecorations(this.decorationType, []);
   }
 
   get uncoveredCodeRegionsVirtualTextEditors(): ReadonlyMap<string, TextEditorWithDecorations> {
@@ -51,6 +56,11 @@ class Cov {
 
   get uncoveredCodeRegionsDocumentProvider() {
     return this.textDocumentProvider;
+  }
+
+  // maybe inject instead of take responsibility?
+  get decorationType() {
+    return this.decorationType_;
   }
 
   private reportStartInOutputChannel() {
@@ -75,4 +85,5 @@ class Cov {
   private readonly command: vscode.Disposable;
   private readonly textDocumentProvider: vscode.Disposable;
   private readonly uncoveredCodeRegionsVirtualTextEditors_: Map<string, TextEditorWithDecorations>;
+  private readonly decorationType_: vscode.TextEditorDecorationType;
 }

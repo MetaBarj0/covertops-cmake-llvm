@@ -13,7 +13,6 @@ import { TextEditorWithDecorations } from '../../../src/extension/abstractions/t
 import * as vscode from 'vscode';
 import * as path from 'path';
 
-// TODO: reorganize test suite
 describe('Extension test suite', () => {
   describe('The cov extension behavior', () => {
     describe('The instantiation of the extension as a vscode disposable', covShouldBeDisposable);
@@ -129,7 +128,9 @@ function virtualDocumentShouldHaveSomeDecorationsAfterCommandExecutionOnAPartial
 
   it('is possible to query decorations for a virtual document editor that have some', async () => {
     cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make());
-    const expectedDecorations = {};
+    const expectedDecorations = {
+      decorationType: cov.decorationType
+    };
 
     const { cppFilePath } = await showSourceFileEditor();
     await executeCommand();
