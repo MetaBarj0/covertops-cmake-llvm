@@ -20,7 +20,7 @@ describe('Extension test suite', () => {
     describe('Running several time the same command on the virtual document editor does not create more virtual document editor', covShouldOpenOnlyOneVirtualDocumentEditorPerSourceFile);
     describe('The opened virtual document contains the source code of the file for uncovered code regions request', virtualDocumentShouldContainSameSourceCode);
     describe('Uncovered code regions virtual text editor existence when source file is open but command is not executed', uncoveredCodeRegionsVirtualTextEditorOnSourceFileShouldNotExist);
-    describe('Uncovered code regions virtual text editor exposing some decoration after the command execution', virtualDocumentShouldHaveSomeDecorationsAfterCommandExecutionOnAPartiallyCoveredFile);
+    describe('Uncovered code regions virtual text editor showing decorations after the command execution', virtualDocumentShouldHaveSomeDecorationsAfterCommandExecutionOnAPartiallyCoveredFile);
   });
 });
 

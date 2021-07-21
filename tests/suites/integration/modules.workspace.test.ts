@@ -11,7 +11,7 @@ import { env } from 'process';
 import * as path from 'path';
 
 describe('integration test suite', () => {
-  describe('the behavior of all modules but decoration locations provider', () => {
+  describe('the behavior of all modules but coverage info provider', () => {
     describe('instantiating the setting provider with a real vscode workspace', settingsProviderGivesDefaultSettings);
     describe('with an initialized vscode workspace', () => {
       describe('the behavior of build tree directory resolver', () => {

@@ -1,21 +1,21 @@
 import * as Imports from '../imports';
 
-export function make(context: Context): Imports.Domain.Abstractions.DecorationLocationsProvider {
-  return new DecorationLocationsProvider({
+export function make(context: Context): Imports.Domain.Abstractions.CoverageInfoProvider {
+  return new CoverageInfoProvider({
     settings: context.settings,
     buildTreeDirectoryResolver: context.buildTreeDirectoryResolver,
     cmake: context.cmake,
     coverageInfoCollector: context.coverageInfoCollector
   });
 }
-class DecorationLocationsProvider implements Imports.Domain.Abstractions.DecorationLocationsProvider {
+class CoverageInfoProvider implements Imports.Domain.Abstractions.CoverageInfoProvider {
   constructor(context: Context) {
     this.buildTreeDirectoryResolver = context.buildTreeDirectoryResolver;
     this.cmake = context.cmake;
     this.coverageInfoCollector = context.coverageInfoCollector;
   }
 
-  async getDecorationLocationsForUncoveredCodeRegions(sourceFilePath: string) {
+  async getCoverageInfoForFile(sourceFilePath: string) {
     await this.buildTreeDirectoryResolver.resolve();
     await this.cmake.buildTarget();
 

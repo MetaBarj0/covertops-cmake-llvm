@@ -12,7 +12,7 @@ import * as path from 'path';
 
 // TODO: refacto this like modules.workspace.tests.ts
 describe('integration test suite', () => {
-  describe('The behavior of the decoration location provider using real world adapters', () => {
+  describe('The behavior of the coverage info provider using real world adapters', () => {
     describe('The coverage information collection for a partially covered file', () => {
       describe('Collecting summary coverage information should succeed', collectSummaryCoverageInfoFromPartiallyCoveredFileShouldSucceed);
       describe('Collecting uncovered region coverage information should succeed', collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced);
@@ -62,7 +62,7 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
       progressReporter,
     });
 
-    const provider = Imports.Domain.Implementations.DecorationLocationsProvider.make({
+    const provider = Imports.Domain.Implementations.CoverageInfoProvider.make({
       settings,
       buildTreeDirectoryResolver,
       cmake,
@@ -71,10 +71,10 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('partiallyCovered/partiallyCoveredLib.cpp');
 
-    const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions(sourceFilePath);
+    const coverageInfo = await provider.getCoverageInfoForFile(sourceFilePath);
 
     const uncoveredRegions: Array<Imports.Domain.Abstractions.RegionCoverageInfo> = [];
-    for await (const region of decorations.uncoveredRegions)
+    for await (const region of coverageInfo.uncoveredRegions)
       uncoveredRegions.push(region);
 
     uncoveredRegions.length.should.be.equal(1);
@@ -135,7 +135,7 @@ function collectSummaryCoverageInfoFromPartiallyCoveredFileShouldSucceed() {
       progressReporter,
     });
 
-    const provider = Imports.Domain.Implementations.DecorationLocationsProvider.make({
+    const provider = Imports.Domain.Implementations.CoverageInfoProvider.make({
       settings,
       buildTreeDirectoryResolver,
       cmake,
@@ -144,9 +144,9 @@ function collectSummaryCoverageInfoFromPartiallyCoveredFileShouldSucceed() {
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('partiallyCovered/partiallyCoveredLib.cpp');
 
-    const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions(sourceFilePath);
+    const coverageInfo = await provider.getCoverageInfoForFile(sourceFilePath);
 
-    const summary = await decorations.summary;
+    const summary = await coverageInfo.summary;
 
     summary.should.be.deep.equal({
       count: 2,
@@ -201,7 +201,7 @@ function collectSummaryCoverageInfoFromFullyCoveredFileShouldSucceed() {
       progressReporter
     });
 
-    const provider = Imports.Domain.Implementations.DecorationLocationsProvider.make({
+    const provider = Imports.Domain.Implementations.CoverageInfoProvider.make({
       settings,
       buildTreeDirectoryResolver,
       cmake,
@@ -210,9 +210,9 @@ function collectSummaryCoverageInfoFromFullyCoveredFileShouldSucceed() {
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('fullyCovered/fullyCoveredLib.cpp');
 
-    const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions(sourceFilePath);
+    const coverageInfo = await provider.getCoverageInfoForFile(sourceFilePath);
 
-    const summary = await decorations.summary;
+    const summary = await coverageInfo.summary;
 
     summary.should.be.deep.equal({
       count: 2,
@@ -267,7 +267,7 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
       progressReporter
     });
 
-    const provider = Imports.Domain.Implementations.DecorationLocationsProvider.make({
+    const provider = Imports.Domain.Implementations.CoverageInfoProvider.make({
       settings,
       buildTreeDirectoryResolver,
       cmake,
@@ -276,10 +276,10 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
 
     const sourceFilePath = createAbsoluteSourceFilePathFrom('fullyCovered/fullyCoveredLib.cpp');
 
-    const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions(sourceFilePath);
+    const coverageInfo = await provider.getCoverageInfoForFile(sourceFilePath);
 
     const uncoveredRegions: Array<Imports.Domain.Abstractions.RegionCoverageInfo> = [];
-    for await (const region of decorations.uncoveredRegions)
+    for await (const region of coverageInfo.uncoveredRegions)
       uncoveredRegions.push(region);
 
     uncoveredRegions.length.should.be.equal(0);

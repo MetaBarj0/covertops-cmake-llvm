@@ -1,7 +1,7 @@
 import * as Definitions from './definitions';
 import * as Strings from './strings';
 import { TextEditorWithDecorations } from './abstractions/text-editor-with-decorations';
-import * as DecorationLocationsProvider from './factories/decoration-locations-provider';
+import * as CoverageInfoProvider from './factories/coverage-info-provider';
 import { CoverageInfo } from '../modules/coverage-info-collector/abstractions/coverage-info';
 import { TextEditorWithDecorations as ConcreteTextEditorWithDecorations } from './implementations/text-editor-with-decorations';
 
@@ -19,7 +19,7 @@ class Cov {
     this.uncoveredCodeRegionsVirtualTextEditors_ = new Map<string, TextEditorWithDecorations>();
     this.decorationType = vscode.window.createTextEditorDecorationType({
       backgroundColor: {
-        id: Definitions.uncoveredCodeRegionDecorationBackgroundColor
+        id: Definitions.uncoveredCodeRegionDecorationBackgroundColorId
       }
     });
   }
@@ -85,12 +85,12 @@ class Cov {
       cancellable: false
     }, async progressReporter => {
 
-      const decorationLocationsProvider = DecorationLocationsProvider.make({ progressReporter, errorChannel: this.outputChannel_ });
+      const coverageInfoProvider = CoverageInfoProvider.make({ progressReporter, errorChannel: this.outputChannel_ });
 
       let uncoveredCodeInfo: CoverageInfo;
 
       try {
-        uncoveredCodeInfo = await decorationLocationsProvider.getDecorationLocationsForUncoveredCodeRegions(uri.fsPath);
+        uncoveredCodeInfo = await coverageInfoProvider.getCoverageInfoForFile(uri.fsPath);
       } catch (error) {
         this.outputChannel_.appendLine(error.message);
         throw error;

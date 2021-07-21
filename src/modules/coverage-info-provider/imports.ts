@@ -1,5 +1,5 @@
 import { Settings as SettingsType } from '../settings-provider/abstractions/settings';
-import { DecorationLocationsProvider as DecorationLocationsProviderType } from './abstractions/decoration-locations-provider';
+import { CoverageInfoProvider as AbstractCoverageInfoProvider } from './abstractions/coverage-info-provider';
 import { BuildTreeDirectoryResolver as BuildTreeDirectoryResolverType } from '../build-tree-directory-resolver/abstractions/build-tree-directory-resolver';
 import { Cmake as CmakeType } from '../cmake/abstractions/cmake';
 import { CoverageInfoCollector as CoverageInfoCollectorType } from '../coverage-info-collector/abstractions/coverage-info-collector';
@@ -7,7 +7,7 @@ import { CoverageInfoCollector as CoverageInfoCollectorType } from '../coverage-
 export namespace Domain {
   export namespace Abstractions {
     export type Settings = SettingsType;
-    export type DecorationLocationsProvider = DecorationLocationsProviderType;
+    export type CoverageInfoProvider = AbstractCoverageInfoProvider;
     export type BuildTreeDirectoryResolver = BuildTreeDirectoryResolverType;
     export type Cmake = CmakeType;
     export type CoverageInfoCollector = CoverageInfoCollectorType;

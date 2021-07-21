@@ -5,7 +5,7 @@ import * as CoverageInfoCollectorModule from '../../../src/modules/coverage-info
 import * as BuildTreeDirectoryResolverModule from '../../../src/modules/build-tree-directory-resolver/implementations/build-tree-directory-resolver';
 import * as CoverageInfoFileResolverModule from '../../../src/modules/coverage-info-file-resolver/implementations/coverage-info-file-resolver';
 import * as CmakeModule from '../../../src/modules/cmake/implementations/cmake';
-import * as DecorationLocationsProviderModule from '../../../src/modules/decoration-locations-provider/implementations/decoration-locations-provider';
+import * as CoverageInfoProviderModule from '../../../src/modules/coverage-info-provider/implementations/coverage-info-provider';
 import * as TestUtilsModule from '../../utils/settings';
 import * as DefinitionsModule from '../../../src/extension/definitions';
 import * as VscodeModule from '../../../src/adapters/implementations/vscode';
@@ -41,8 +41,8 @@ export namespace Domain {
       export const make = BuildTreeDirectoryResolverModule.make;
     }
 
-    export namespace DecorationLocationsProvider {
-      export const make = DecorationLocationsProviderModule.make;
+    export namespace CoverageInfoProvider {
+      export const make = CoverageInfoProviderModule.make;
     }
 
     export namespace CoverageInfoFileResolver {

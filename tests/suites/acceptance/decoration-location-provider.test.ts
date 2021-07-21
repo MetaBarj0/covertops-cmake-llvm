@@ -8,7 +8,7 @@ chai.should();
 import * as Imports from './imports';
 
 describe('acceptance suite of tests', () => {
-  describe('The decoration location provider service behavior', () => {
+  describe('The coverage info provider service behavior', () => {
     describe('The service being instantiated with faked adapters and domain sub modules', instantiateService);
     describe('The service failing because of incorrect settings leading to mis-behaving adapters', () => {
       describe('When issues arise with the build tree directory path resolution', failBecauseOfIssuesWithBuildTreeDirectoryAccess);
@@ -33,7 +33,7 @@ function instantiateService() {
     };
 
     const instantiation = () => {
-      Imports.Domain.Implementations.DecorationLocationsProvider.make({ ...buildContextFromAdapters(adapters) });
+      Imports.Domain.Implementations.CoverageInfoProvider.make({ ...buildContextFromAdapters(adapters) });
     };
 
     instantiation.should.not.throw();
@@ -41,7 +41,7 @@ function instantiateService() {
 }
 
 function failBecauseOfIssuesWithBuildTreeDirectoryAccess() {
-  it('should not be able to provide any decoration for uncovered code regions ' +
+  it('should not be able to provide any coverage info for a file ' +
     'when the build tree directory can not be found and / or created', () => {
       const adapters = {
         errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel(),
@@ -54,14 +54,14 @@ function failBecauseOfIssuesWithBuildTreeDirectoryAccess() {
         createReadStream: Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(Imports.Fakes.Adapters.FileSystem.buildEmptyReadableStream)
       };
 
-      const provider = Imports.Domain.Implementations.DecorationLocationsProvider.make({ ...buildContextFromAdapters(adapters) });
+      const provider = Imports.Domain.Implementations.CoverageInfoProvider.make({ ...buildContextFromAdapters(adapters) });
 
-      return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejected;
+      return provider.getCoverageInfoForFile('foo').should.eventually.be.rejected;
     });
 }
 
 function failBecauseOfIssuesWithCmakeTargetBuilding() {
-  it('should not be able to provide any decoration for uncovered code regions ' +
+  it('should not be able to provide any coverage info for a file ' +
     'when the cmake command cannot be reached.', () => {
       const adapters = {
         errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel(),
@@ -74,14 +74,14 @@ function failBecauseOfIssuesWithCmakeTargetBuilding() {
         execFile: Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess()
       };
 
-      const provider = Imports.Domain.Implementations.DecorationLocationsProvider.make({ ...buildContextFromAdapters(adapters) });
+      const provider = Imports.Domain.Implementations.CoverageInfoProvider.make({ ...buildContextFromAdapters(adapters) });
 
-      return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejected;
+      return provider.getCoverageInfoForFile('foo').should.eventually.be.rejected;
     });
 }
 
 function failBecauseCoverageInfoFileResolutionIssue() {
-  it('should not be able to provide any decoration for uncovered code regions ' +
+  it('should not be able to provide any coverage info for a file ' +
     'when the coverage info file name cannot be found', () => {
       const adapters = {
         errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel(),
@@ -94,9 +94,9 @@ function failBecauseCoverageInfoFileResolutionIssue() {
         createReadStream: Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(Imports.Fakes.Adapters.FileSystem.buildEmptyReadableStream)
       };
 
-      const provider = Imports.Domain.Implementations.DecorationLocationsProvider.make({ ...buildContextFromAdapters(adapters) });
+      const provider = Imports.Domain.Implementations.CoverageInfoProvider.make({ ...buildContextFromAdapters(adapters) });
 
-      return provider.getDecorationLocationsForUncoveredCodeRegions('foo').should.eventually.be.rejected;
+      return provider.getCoverageInfoForFile('foo').should.eventually.be.rejected;
     });
 }
 
@@ -115,15 +115,15 @@ function succeedWithCorrectSettingsAndFakeAdapters() {
       createReadStream: Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(Imports.Fakes.Adapters.FileSystem.buildValidLlvmCoverageJsonObjectStream)
     };
 
-    const provider = Imports.Domain.Implementations.DecorationLocationsProvider.make({ ...buildContextFromAdapters(adapters) });
+    const provider = Imports.Domain.Implementations.CoverageInfoProvider.make({ ...buildContextFromAdapters(adapters) });
 
-    const decorations = await provider.getDecorationLocationsForUncoveredCodeRegions('/a/source/file.cpp');
+    const coverageInfo = await provider.getCoverageInfoForFile('/a/source/file.cpp');
 
     const uncoveredRegions: Array<Imports.Domain.Abstractions.RegionCoverageInfo> = [];
-    for await (const region of decorations.uncoveredRegions)
+    for await (const region of coverageInfo.uncoveredRegions)
       uncoveredRegions.push(region);
 
-    const summary = await decorations.summary;
+    const summary = await coverageInfo.summary;
 
     summary.should.be.deep.equal({
       count: 2,
@@ -148,7 +148,7 @@ function succeedWithCorrectSettingsAndFakeAdapters() {
   });
 }
 
-function buildContextFromAdapters(adapters: Adapters): DecorationLocationsProviderContext {
+function buildContextFromAdapters(adapters: Adapters): CoverageInfoProviderContext {
   const {
     createReadStream,
     errorChannel,
@@ -197,4 +197,4 @@ type Adapters = {
   createReadStream: ReturnType<typeof Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder>
 };
 
-type DecorationLocationsProviderContext = typeof Imports.Domain.Implementations.DecorationLocationsProvider.make extends (context: infer T) => any ? T : never;
+type CoverageInfoProviderContext = typeof Imports.Domain.Implementations.CoverageInfoProvider.make extends (context: infer T) => any ? T : never;
