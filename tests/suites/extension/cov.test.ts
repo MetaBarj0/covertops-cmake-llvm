@@ -138,8 +138,8 @@ function virtualDocumentShouldHaveSomeDecorationsAfterCommandExecutionOnAPartial
         }
       ]
     };
-
     const { cppFilePath } = await showSourceFileEditor();
+
     await executeCommand();
 
     chai.assert.notStrictEqual(cov.uncoveredCodeRegionsVirtualTextEditors.get(cppFilePath)?.decorations, undefined);

@@ -46,39 +46,7 @@ class Cov {
   private async run() {
     this.reportStartInOutputChannel();
 
-    const uri = this.buildVirtualDocumentUri();
-
-    const virtualDocument = await vscode.workspace.openTextDocument(uri);
-    const virtualTextEditor = await vscode.window.showTextDocument(virtualDocument, { preserveFocus: false });
-    const uncoveredCodeRegionsVirtualTextEditor = new ConcreteTextEditorWithDecorations(virtualTextEditor);
-    this.addUncoveredCodeRegionsVirtualEditorIfNotExist(uri, uncoveredCodeRegionsVirtualTextEditor);
-
-    let uncoveredCodeInfo: CoverageInfo;
-
-    try {
-      uncoveredCodeInfo = await this.decorationLocationsProvider.getDecorationLocationsForUncoveredCodeRegions(uri.fsPath);
-    } catch (error) {
-      this.outputChannel_.appendLine(error.message);
-      throw error;
-    }
-
-    let options: Array<vscode.DecorationOptions> = [];
-
-    try {
-      for await (const uncoveredRegion of uncoveredCodeInfo.uncoveredRegions)
-        options.push({
-          range: new vscode.Range(uncoveredRegion.range.start.line,
-            uncoveredRegion.range.start.character,
-            uncoveredRegion.range.end.line,
-            uncoveredRegion.range.end.character),
-          hoverMessage: 'This code region is not covered by a test known by cmake.'
-        });
-
-    } catch (error) {
-      this.outputChannel_.appendLine(error.message);
-    }
-
-    uncoveredCodeRegionsVirtualTextEditor.setDecorations(this.decorationType_, options);
+    await this.displayUncoveredCodeRegions();
   }
 
   // TODO: may be disposed of when tests will be exhaustive enough
@@ -94,6 +62,57 @@ class Cov {
   // TODO: may be disposed of when tests will be exhaustive enough
   get decorationType() {
     return this.decorationType_;
+  }
+
+  private async displayUncoveredCodeRegions() {
+    const uri = this.buildVirtualDocumentUri();
+    const uncoveredCodeRegionsVirtualTextEditor = await this.buildUncoveredCodeRegionsVirtualTextEditor(uri);
+    const uncoveredCodeInfo: CoverageInfo = await this.queryUncoveredCodeInfo(uri);
+    const options: Array<vscode.DecorationOptions> = await this.buildDecorationOptions(uncoveredCodeInfo);
+
+    uncoveredCodeRegionsVirtualTextEditor.setDecorations(this.decorationType_, options);
+  }
+
+  private async buildDecorationOptions(uncoveredCodeInfo: CoverageInfo) {
+    let options: Array<vscode.DecorationOptions> = [];
+
+    try {
+      for await (const uncoveredRegion of uncoveredCodeInfo.uncoveredRegions)
+        options.push({
+          range: new vscode.Range(uncoveredRegion.range.start.line,
+            uncoveredRegion.range.start.character,
+            uncoveredRegion.range.end.line,
+            uncoveredRegion.range.end.character),
+          hoverMessage: 'This code region is not covered by a test known by cmake.'
+        });
+
+    } catch (warning) {
+      this.outputChannel_.appendLine(warning.message);
+    }
+
+    return options;
+  }
+
+  private async queryUncoveredCodeInfo(uri: vscode.Uri) {
+    let uncoveredCodeInfo: CoverageInfo;
+
+    try {
+      uncoveredCodeInfo = await this.decorationLocationsProvider.getDecorationLocationsForUncoveredCodeRegions(uri.fsPath);
+    } catch (error) {
+      this.outputChannel_.appendLine(error.message);
+      throw error;
+    }
+    return uncoveredCodeInfo;
+  }
+
+  private async buildUncoveredCodeRegionsVirtualTextEditor(uri: vscode.Uri) {
+    const virtualDocument = await vscode.workspace.openTextDocument(uri);
+    const virtualTextEditor = await vscode.window.showTextDocument(virtualDocument, { preserveFocus: false });
+    const uncoveredCodeRegionsVirtualTextEditor = new ConcreteTextEditorWithDecorations(virtualTextEditor);
+
+    this.addUncoveredCodeRegionsVirtualEditorIfNotExist(uri, uncoveredCodeRegionsVirtualTextEditor);
+
+    return uncoveredCodeRegionsVirtualTextEditor;
   }
 
   private reportStartInOutputChannel() {
