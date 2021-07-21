@@ -40,7 +40,7 @@ function shouldFailToCollectCoverageInfoSummaryBecauseOfInvalidStream() {
       const collector = collectorAndErrorChannelSpy.coverageInfoCollector;
       const errorChannelSpy = collectorAndErrorChannelSpy.errorChannelSpy;
 
-      const coverageInfo = await collector.collectFor('');
+      const coverageInfo = await collector.collectFor('a');
 
       return coverageInfo.summary
         .catch((error: Error) => error)
@@ -70,7 +70,7 @@ function shouldFailToCollectUncoveredRegionsBecauseOfInvalidStream() {
       const collector = collectorAndErrorChannelSpy.coverageInfoCollector;
       const errorChannelSpy = collectorAndErrorChannelSpy.errorChannelSpy;
 
-      const coverageInfo = await collector.collectFor('');
+      const coverageInfo = await collector.collectFor('a');
       const iterateOnUncoveredRegions = async () => { for await (const _region of coverageInfo.uncoveredRegions); };
 
       return iterateOnUncoveredRegions()

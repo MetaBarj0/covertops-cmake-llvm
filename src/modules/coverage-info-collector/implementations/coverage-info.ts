@@ -17,7 +17,7 @@ class CoverageInfo implements Imports.Domain.Abstractions.CoverageInfo {
     sourceFilePath: string,
     errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike) {
     this.llvmCoverageInfoStreamFactory = llvmCoverageInfoStreamFactory;
-    this.sourceFilePath = sourceFilePath;
+    this.sourceFilePath = this.fixPathForLlvmCoverageInfoFile(sourceFilePath);
     this.errorChannel = errorChannel;
   }
 
@@ -51,6 +51,10 @@ class CoverageInfo implements Imports.Domain.Abstractions.CoverageInfo {
 
   get uncoveredRegions() {
     return this.uncoveredRegions_();
+  }
+
+  private fixPathForLlvmCoverageInfoFile(sourceFilePath: string) {
+    return `${sourceFilePath[0].toUpperCase()}${sourceFilePath.slice(1)}`;
   }
 
   private async *uncoveredRegions_() {

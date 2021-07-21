@@ -294,9 +294,7 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
 function createAbsoluteSourceFilePathFrom(workspacePath: string) {
   const relative = path.join('..', '..', '..', 'workspace', 'src', workspacePath);
   const absolute = path.resolve(__dirname, relative);
-  const sourceFilePath = path.normalize(absolute);
-
-  return `${sourceFilePath[0].toUpperCase()}${sourceFilePath.slice(1)}`;
+  return path.normalize(absolute);
 }
 
 function prependLlvmBinDirToPathEnvironmentVariable() {
