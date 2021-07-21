@@ -10,10 +10,10 @@ import * as DecorationLocationsProvider from '../../modules/decoration-locations
 import * as fileSystem from '../../adapters/implementations/file-system';
 import * as processControl from '../../adapters/implementations/process-control';
 
-export async function make() {
+export function make() {
   const errorChannel = vscode.window.createOutputChannel(Definitions.extensionId);;
 
-  return await vscode.window.withProgress({
+  return vscode.window.withProgress({
     location: vscode.ProgressLocation.Notification,
     title: 'Computing uncovered code region locations',
     cancellable: false

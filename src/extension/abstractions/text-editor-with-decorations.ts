@@ -1,7 +1,8 @@
-import { TextEditor, TextEditorDecorationType } from 'vscode';
+import { TextEditor, TextEditorDecorationType, DecorationOptions, Range } from 'vscode';
 
 export type Decorations = {
-  decorationType: TextEditorDecorationType
+  decorationType: TextEditorDecorationType,
+  rangesOrOptions: ReadonlyArray<Range> | ReadonlyArray<DecorationOptions>
 };
 
 type WithDecorations = {
