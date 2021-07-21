@@ -17,7 +17,7 @@ class Cov {
     this.command = vscode.commands.registerCommand(`${Definitions.extensionId}.reportUncoveredCodeRegionsInFile`, this.run, this);
     this.textDocumentProvider = vscode.workspace.registerTextDocumentContentProvider(Definitions.extensionId, uncoveredCodeRegionsDocumentContentProvider);
     this.uncoveredCodeRegionsVirtualTextEditors_ = new Map<string, TextEditorWithDecorations>();
-    this.decorationType_ = vscode.window.createTextEditorDecorationType({
+    this.decorationType = vscode.window.createTextEditorDecorationType({
       backgroundColor: {
         id: Definitions.uncoveredCodeRegionDecorationBackgroundColor
       }
@@ -56,18 +56,13 @@ class Cov {
     return this.textDocumentProvider;
   }
 
-  // TODO: may be disposed of when tests will be exhaustive enough
-  get decorationType() {
-    return this.decorationType_;
-  }
-
   private async displayUncoveredCodeRegions() {
     const uri = this.buildVirtualDocumentUri();
     const uncoveredCodeRegionsVirtualTextEditor = await this.buildUncoveredCodeRegionsVirtualTextEditor(uri);
     const uncoveredCodeInfo: CoverageInfo = await this.queryUncoveredCodeInfo(uri);
     const options: Array<vscode.DecorationOptions> = await this.buildDecorationOptions(uncoveredCodeInfo);
 
-    uncoveredCodeRegionsVirtualTextEditor.setDecorations(this.decorationType_, options);
+    uncoveredCodeRegionsVirtualTextEditor.setDecorations(this.decorationType, options);
   }
 
   private async buildDecorationOptions(uncoveredCodeInfo: CoverageInfo) {
@@ -142,5 +137,5 @@ class Cov {
   private readonly command: vscode.Disposable;
   private readonly textDocumentProvider: vscode.Disposable;
   private readonly uncoveredCodeRegionsVirtualTextEditors_: Map<string, TextEditorWithDecorations>;
-  private readonly decorationType_: vscode.TextEditorDecorationType;
+  private readonly decorationType: vscode.TextEditorDecorationType;
 }
