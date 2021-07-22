@@ -1,6 +1,6 @@
-import * as Imports from "../imports";
+import * as Imports from "./imports";
 
-import * as Definitions from "../../../extension/definitions";
+import * as Definitions from "../../extension/definitions";
 
 import * as path from "path";
 

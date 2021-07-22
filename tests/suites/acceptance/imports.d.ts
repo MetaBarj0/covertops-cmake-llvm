@@ -1,8 +1,8 @@
-import * as RegionCoverageInfoModule from "../../../src/modules/coverage-info-collector/abstractions/region-coverage-info";
-import * as AbstractSettingsProvider from "../../../src/modules/settings-provider/abstractions/settings";
-import * as AbstractBuildTreeDirectoryResolver from "../../../src/modules/build-tree-directory-resolver/abstractions/build-tree-directory-resolver";
-import * as AbstractCmake from "../../../src/modules/cmake/abstractions/cmake";
-import * as AbstractCoverageInfoCollector from "../../../src/modules/coverage-info-collector/abstractions/coverage-info-collector";
+import * as RegionCoverageInfoModule from "../../../src/modules/abstractions/region-coverage-info";
+import * as AbstractSettingsProvider from "../../../src/modules/abstractions/settings";
+import * as AbstractBuildTreeDirectoryResolver from "../../../src/modules/abstractions/build-tree-directory-resolver";
+import * as AbstractCmake from "../../../src/modules/abstractions/cmake";
+import * as AbstractCoverageInfoCollector from "../../../src/modules/abstractions/coverage-info-collector";
 
 export namespace Domain {
   export namespace Abstractions {

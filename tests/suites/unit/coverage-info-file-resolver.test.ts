@@ -9,8 +9,8 @@ import * as Imports from "./imports";
 
 import * as VscodeFakes from "../../fakes/adapters/vscode";
 import * as FileSystemFakes from "../../fakes/adapters/file-system";
-import * as SettingsProvider from "../../../src/modules/settings-provider/implementations/settings-provider";
-import * as CoverageInfoFileResolver from "../../../src/modules/coverage-info-file-resolver/implementations/coverage-info-file-resolver";
+import * as SettingsProvider from "../../../src/modules/implementations/settings-provider";
+import * as CoverageInfoFileResolver from "../../../src/modules/implementations/coverage-info-file-resolver";
 import { Spy } from "../../utils/spy";
 import * as Definitions from "../../../src/extension/definitions";
 

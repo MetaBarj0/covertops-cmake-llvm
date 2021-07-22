@@ -1,4 +1,4 @@
-import * as Imports from "../imports";
+import * as Imports from "./imports";
 
 export function make(rawLLVMRegionCoverageInfo: Imports.Domain.Abstractions.RawLLVMRegionCoverageInfo): Imports.Domain.Abstractions.RegionCoverageInfo {
   return new RegionCoverageInfo(rawLLVMRegionCoverageInfo);

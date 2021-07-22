@@ -1,4 +1,4 @@
-import * as RegionCoverageInfoModule from "../../../src/modules/coverage-info-collector/abstractions/region-coverage-info";
+import * as RegionCoverageInfoModule from "../../../src/modules/abstractions/region-coverage-info";
 import * as VscodeAbstractions from "../../../src/adapters/abstractions/vscode";
 import * as FileSystemAbstractions from "../../../src/adapters/abstractions/file-system";
 

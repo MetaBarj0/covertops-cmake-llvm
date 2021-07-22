@@ -2,7 +2,7 @@ import * as Definitions from "./definitions";
 import * as Strings from "./strings";
 import { TextEditorWithDecorations } from "./abstractions/text-editor-with-decorations";
 import * as CoverageInfoProvider from "./factories/coverage-info-provider";
-import { CoverageInfo } from "../modules/coverage-info-collector/abstractions/coverage-info";
+import { CoverageInfo } from "../modules/abstractions/coverage-info";
 import { TextEditorWithDecorations as ConcreteTextEditorWithDecorations } from "./implementations/text-editor-with-decorations";
 
 import * as vscode from "vscode";

@@ -7,8 +7,8 @@ chai.should();
 
 import * as VscodeFakes from "../../fakes/adapters/vscode";
 import * as FileSystemFakes from "../../fakes/adapters/file-system";
-import * as SettingsProvider from "../../../src/modules/settings-provider/implementations/settings-provider";
-import * as BuildTreeDirectoryResolver from "../../../src/modules/build-tree-directory-resolver/implementations/build-tree-directory-resolver";
+import * as SettingsProvider from "../../../src/modules/implementations/settings-provider";
+import * as BuildTreeDirectoryResolver from "../../../src/modules/implementations/build-tree-directory-resolver";
 import * as Definitions from "../../../src/extension/definitions";
 
 import * as path from "path";

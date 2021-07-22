@@ -1,6 +1,6 @@
-import * as RegionCoverageInfoModule from "../../../src/modules/coverage-info-collector/abstractions/region-coverage-info";
+import * as RegionCoverageInfoModule from "../../../src/modules/abstractions/region-coverage-info";
 import * as AbstractVscodeModule from "../../../src/adapters/abstractions/vscode";
-import { Settings as AbstractSettings } from "../../../src/modules/settings-provider/abstractions/settings";
+import { Settings as AbstractSettings } from "../../../src/modules/abstractions/settings";
 
 export namespace Domain {
   export namespace Abstractions {

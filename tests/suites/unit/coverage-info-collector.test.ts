@@ -10,9 +10,9 @@ import * as Imports from "./imports";
 
 import * as VscodeFakes from "../../fakes/adapters/vscode";
 import * as FileSystemFakes from "../../fakes/adapters/file-system";
-import * as SettingsProvider from "../../../src/modules/settings-provider/implementations/settings-provider";
-import * as CoverageInfoFileResolver from "../../../src/modules/coverage-info-file-resolver/implementations/coverage-info-file-resolver";
-import * as CoverageInfoCollector from "../../../src/modules/coverage-info-collector/implementations/coverage-info-collector";
+import * as SettingsProvider from "../../../src/modules/implementations/settings-provider";
+import * as CoverageInfoFileResolver from "../../../src/modules/implementations/coverage-info-file-resolver";
+import * as CoverageInfoCollector from "../../../src/modules/implementations/coverage-info-collector";
 import * as Definitions from "../../../src/extension/definitions";
 
 import { Readable } from "stream";

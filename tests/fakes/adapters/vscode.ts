@@ -1,6 +1,6 @@
 import { defaultSetting } from "../../utils/settings";
 
-import { Settings } from "../../../src/modules/settings-provider/abstractions/settings";
+import { Settings } from "../../../src/modules/abstractions/settings";
 import {
   DisposableLike,
   TextDocumentContentProviderLike,

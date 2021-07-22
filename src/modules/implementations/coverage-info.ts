@@ -1,8 +1,8 @@
-import * as Imports from "../imports";
+import * as Imports from "./imports";
 
-import * as Definitions from "../../../extension/definitions";
-import * as RegionCoverageInfo from "../../coverage-info-collector/implementations/region-coverage-info";
-import { CoverageSummary } from "../../coverage-info-collector/implementations/coverage-summary";
+import * as Definitions from "../../extension/definitions";
+import * as RegionCoverageInfo from "./region-coverage-info";
+import { CoverageSummary } from "./coverage-summary";
 
 import { Readable } from "stream";
 import { chain } from "stream-chain";

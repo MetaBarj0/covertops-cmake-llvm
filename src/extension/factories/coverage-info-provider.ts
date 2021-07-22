@@ -1,13 +1,13 @@
 import * as vscode from "vscode";
 
 // TODO: imports? declarations? types?
-import * as SettingsProvider from "../../modules/settings-provider/implementations/settings-provider";
-import * as BuildTreeDirectoryResolver from "../../modules/build-tree-directory-resolver/implementations/build-tree-directory-resolver";
-import * as Cmake from "../../modules/cmake/implementations/cmake";
-import * as CoverageInfoFileResolver from "../../modules/coverage-info-file-resolver/implementations/coverage-info-file-resolver";
-import * as CoverageInfoCollector from "../../modules/coverage-info-collector/implementations/coverage-info-collector";
-import * as CoverageInfoProviderImplementations from "../../modules/coverage-info-provider/implementations/coverage-info-provider";
-import { CoverageInfoProvider } from "../../modules/coverage-info-provider/abstractions/coverage-info-provider";
+import * as SettingsProvider from "../../modules/implementations/settings-provider";
+import * as BuildTreeDirectoryResolver from "../../modules/implementations/build-tree-directory-resolver";
+import * as Cmake from "../../modules/implementations/cmake";
+import * as CoverageInfoFileResolver from "../../modules/implementations/coverage-info-file-resolver";
+import * as CoverageInfoCollector from "../../modules/implementations/coverage-info-collector";
+import * as CoverageInfoProviderImplementations from "../../modules/implementations/coverage-info-provider";
+import { CoverageInfoProvider } from "../../modules/abstractions/coverage-info-provider";
 import * as fileSystem from "../../adapters/implementations/file-system";
 import * as processControl from "../../adapters/implementations/process-control";
 import * as VscodeAbstractions from "../../adapters/abstractions/vscode";

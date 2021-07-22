@@ -1,4 +1,4 @@
-import { CoverageInfo } from "../../coverage-info-collector/abstractions/coverage-info";
+import { CoverageInfo } from "./coverage-info";
 
 export type CoverageInfoProvider = {
   getCoverageInfoForFile(sourceFilePath: string): Thenable<CoverageInfo>;
