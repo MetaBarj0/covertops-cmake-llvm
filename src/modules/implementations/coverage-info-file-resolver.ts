@@ -1,21 +1,21 @@
-import * as Imports from "./imports";
+import * as Imports from "./types";
 
 import * as Definitions from "../../extension/definitions";
 
 import * as path from "path";
 
-export function make(context: Context): Imports.Domain.Abstractions.CoverageInfoFileResolver {
+export function make(context: Context): Imports.Modules.Abstractions.CoverageInfoFileResolver {
   return new CoverageInfoFileResolver(context);
 }
 
 type Context = {
-  settings: Imports.Domain.Abstractions.Settings,
+  settings: Imports.Modules.Abstractions.Settings,
   globSearch: Imports.Adapters.Abstractions.fileSystem.GlobSearchCallable,
   progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike,
   outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike
 };
 
-class CoverageInfoFileResolver implements Imports.Domain.Abstractions.CoverageInfoFileResolver {
+class CoverageInfoFileResolver implements Imports.Modules.Abstractions.CoverageInfoFileResolver {
   constructor(context: Context) {
     this.globSearch = context.globSearch;
     this.settings = context.settings;
@@ -73,7 +73,7 @@ class CoverageInfoFileResolver implements Imports.Domain.Abstractions.CoverageIn
   }
 
   private readonly globSearch: Imports.Adapters.Abstractions.fileSystem.GlobSearchCallable;
-  private readonly settings: Imports.Domain.Abstractions.Settings;
+  private readonly settings: Imports.Modules.Abstractions.Settings;
   private readonly progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike;
   private readonly outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
 }

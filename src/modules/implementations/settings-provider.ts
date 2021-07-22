@@ -1,9 +1,9 @@
-import * as Imports from "./imports";
+import * as Imports from "./types";
 
 import * as Definitions from "../../extension/definitions";
 import * as Settings from "./settings";
 
-export function make(adapters: Adapters): Imports.Domain.Abstractions.SettingsProvider {
+export function make(adapters: Adapters): Imports.Modules.Abstractions.SettingsProvider {
   return new SettingsProvider(adapters);
 }
 
@@ -12,13 +12,13 @@ type Adapters = {
   outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike
 };
 
-class SettingsProvider implements Imports.Domain.Abstractions.SettingsProvider {
+class SettingsProvider implements Imports.Modules.Abstractions.SettingsProvider {
   constructor(adapters: Adapters) {
     this.workspace = adapters.workspace;
     this.outputChannel = adapters.outputChannel;
   }
 
-  get settings(): Imports.Domain.Abstractions.Settings {
+  get settings(): Imports.Modules.Abstractions.Settings {
     this.ensureWorkspaceIsLoaded();
 
     const workspaceSettings = this.workspace.getConfiguration(Definitions.extensionId);

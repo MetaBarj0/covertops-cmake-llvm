@@ -1,6 +1,6 @@
-import * as Imports from "./imports";
+import * as Imports from "./types";
 
-export function make(context: Context): Imports.Domain.Abstractions.CoverageInfoProvider {
+export function make(context: Context): Imports.Modules.Abstractions.CoverageInfoProvider {
   return new CoverageInfoProvider({
     settings: context.settings,
     buildTreeDirectoryResolver: context.buildTreeDirectoryResolver,
@@ -8,7 +8,7 @@ export function make(context: Context): Imports.Domain.Abstractions.CoverageInfo
     coverageInfoCollector: context.coverageInfoCollector
   });
 }
-class CoverageInfoProvider implements Imports.Domain.Abstractions.CoverageInfoProvider {
+class CoverageInfoProvider implements Imports.Modules.Abstractions.CoverageInfoProvider {
   constructor(context: Context) {
     this.buildTreeDirectoryResolver = context.buildTreeDirectoryResolver;
     this.cmake = context.cmake;
@@ -22,14 +22,14 @@ class CoverageInfoProvider implements Imports.Domain.Abstractions.CoverageInfoPr
     return this.coverageInfoCollector.collectFor(sourceFilePath);
   }
 
-  private readonly buildTreeDirectoryResolver: Imports.Domain.Abstractions.BuildTreeDirectoryResolver;
-  private readonly cmake: Imports.Domain.Abstractions.Cmake;
-  private readonly coverageInfoCollector: Imports.Domain.Abstractions.CoverageInfoCollector;
+  private readonly buildTreeDirectoryResolver: Imports.Modules.Abstractions.BuildTreeDirectoryResolver;
+  private readonly cmake: Imports.Modules.Abstractions.Cmake;
+  private readonly coverageInfoCollector: Imports.Modules.Abstractions.CoverageInfoCollector;
 }
 
 type Context = {
-  settings: Imports.Domain.Abstractions.Settings,
-  buildTreeDirectoryResolver: Imports.Domain.Abstractions.BuildTreeDirectoryResolver,
-  cmake: Imports.Domain.Abstractions.Cmake,
-  coverageInfoCollector: Imports.Domain.Abstractions.CoverageInfoCollector
+  settings: Imports.Modules.Abstractions.Settings,
+  buildTreeDirectoryResolver: Imports.Modules.Abstractions.BuildTreeDirectoryResolver,
+  cmake: Imports.Modules.Abstractions.Cmake,
+  coverageInfoCollector: Imports.Modules.Abstractions.CoverageInfoCollector
 };

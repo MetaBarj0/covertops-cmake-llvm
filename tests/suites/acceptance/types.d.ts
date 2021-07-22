@@ -4,7 +4,7 @@ import * as AbstractBuildTreeDirectoryResolver from "../../../src/modules/abstra
 import * as AbstractCmake from "../../../src/modules/abstractions/cmake";
 import * as AbstractCoverageInfoCollector from "../../../src/modules/abstractions/coverage-info-collector";
 
-export namespace Domain {
+export namespace Modules {
   export namespace Abstractions {
     export type RegionCoverageInfo = RegionCoverageInfoModule.RegionCoverageInfo;
     export type Settings = AbstractSettingsProvider.Settings;

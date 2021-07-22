@@ -6,7 +6,7 @@ chai.use(chaiAsPromised);
 chai.should();
 
 // TODO: renames imports to types
-import * as Imports from "./imports";
+import * as Imports from "./types";
 
 import * as VscodeFakes from "../../fakes/adapters/vscode";
 import * as FileSystemFakes from "../../fakes/adapters/file-system";
@@ -169,7 +169,7 @@ function shouldSucceedToCollectUncoveredRegions() {
     const coverageInfo = await collector.collectFor("/a/source/file.cpp");
     const regions = coverageInfo.uncoveredRegions;
 
-    const uncoveredRegions: Array<Imports.Domain.Abstractions.RegionCoverageInfo> = [];
+    const uncoveredRegions: Array<Imports.Modules.Abstractions.RegionCoverageInfo> = [];
 
     for await (const region of regions)
       uncoveredRegions.push(region);

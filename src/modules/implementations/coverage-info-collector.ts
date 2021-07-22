@@ -1,10 +1,10 @@
-import * as Imports from "./imports";
+import * as Imports from "./types";
 
 import * as CoverageInfo from "./coverage-info";
 
 import { Readable } from "stream";
 
-export function make(adapters: Context): Imports.Domain.Abstractions.CoverageInfoCollector {
+export function make(adapters: Context): Imports.Modules.Abstractions.CoverageInfoCollector {
   return new CoverageInfoCollector(adapters);
 }
 
@@ -12,7 +12,7 @@ export type LLVMCoverageInfoStreamBuilder = {
   createStream: (path: string) => Readable;
 };
 
-class CoverageInfoCollector implements Imports.Domain.Abstractions.CoverageInfoCollector {
+class CoverageInfoCollector implements Imports.Modules.Abstractions.CoverageInfoCollector {
   constructor(context: Context) {
     this.coverageInfoFileResolver = context.coverageInfoFileResolver;
     this.createReadStream = context.createReadStream;
@@ -30,7 +30,7 @@ class CoverageInfoCollector implements Imports.Domain.Abstractions.CoverageInfoC
     return CoverageInfo.make(() => this.createReadStream(path), sourceFilePath, this.outputChannel);
   }
 
-  private readonly coverageInfoFileResolver: Imports.Domain.Abstractions.CoverageInfoFileResolver;
+  private readonly coverageInfoFileResolver: Imports.Modules.Abstractions.CoverageInfoFileResolver;
   private readonly createReadStream: Imports.Adapters.Abstractions.fileSystem.CreateReadStreamCallable;
   private readonly progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike;
   private readonly outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
@@ -40,5 +40,5 @@ type Context = {
   createReadStream: Imports.Adapters.Abstractions.fileSystem.CreateReadStreamCallable,
   progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike,
   outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike,
-  coverageInfoFileResolver: Imports.Domain.Abstractions.CoverageInfoFileResolver;
+  coverageInfoFileResolver: Imports.Modules.Abstractions.CoverageInfoFileResolver;
 };

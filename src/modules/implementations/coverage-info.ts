@@ -1,4 +1,4 @@
-import * as Imports from "./imports";
+import * as Imports from "./types";
 
 import * as Definitions from "../../extension/definitions";
 import * as RegionCoverageInfo from "./region-coverage-info";
@@ -12,11 +12,11 @@ import { streamArray } from "stream-json/streamers/StreamArray";
 
 export function make(llvmCoverageInfoStreamFactory: StreamFactory,
   sourceFilePath: string,
-  outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike): Imports.Domain.Abstractions.CoverageInfo {
+  outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike): Imports.Modules.Abstractions.CoverageInfo {
   return new CoverageInfo(llvmCoverageInfoStreamFactory, sourceFilePath, outputChannel);
 }
 
-class CoverageInfo implements Imports.Domain.Abstractions.CoverageInfo {
+class CoverageInfo implements Imports.Modules.Abstractions.CoverageInfo {
   constructor(llvmCoverageInfoStreamFactory: StreamFactory,
     sourceFilePath: string,
     outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike) {
@@ -28,7 +28,7 @@ class CoverageInfo implements Imports.Domain.Abstractions.CoverageInfo {
   get summary() {
     const pipeline = this.preparePipelineForSummary();
 
-    return new Promise<Imports.Domain.Abstractions.CoverageSummary>((resolve, reject) => {
+    return new Promise<Imports.Modules.Abstractions.CoverageSummary>((resolve, reject) => {
       let s: RawLLVMCoverageSummary;
 
       pipeline.
@@ -63,7 +63,7 @@ class CoverageInfo implements Imports.Domain.Abstractions.CoverageInfo {
 
   private async * uncoveredRegions_() {
     for await (const rawRegionCoverageInfo of this.allRawRegionsCoverageInfo()) {
-      const regionCoverageInfo = RegionCoverageInfo.make(<Imports.Domain.Abstractions.RawLLVMRegionCoverageInfo>rawRegionCoverageInfo);
+      const regionCoverageInfo = RegionCoverageInfo.make(<Imports.Modules.Abstractions.RawLLVMRegionCoverageInfo>rawRegionCoverageInfo);
 
       if (regionCoverageInfo.isAnUncoveredRegion)
         yield regionCoverageInfo;
@@ -88,8 +88,8 @@ class CoverageInfo implements Imports.Domain.Abstractions.CoverageInfo {
       const functionsForSourceFilePath = functions.filter((f: { filenames: ReadonlyArray<string> }) => f.filenames[0] === self.sourceFilePath);
 
       const regionsForSourceFilePath =
-        functionsForSourceFilePath.map((fn: Imports.Domain.Abstractions.RawLLVMFunctionCoverageInfo) =>
-          <Imports.Domain.Abstractions.RawLLVMRegionsCoverageInfo>fn.regions);
+        functionsForSourceFilePath.map((fn: Imports.Modules.Abstractions.RawLLVMFunctionCoverageInfo) =>
+          <Imports.Modules.Abstractions.RawLLVMRegionsCoverageInfo>fn.regions);
 
       for (const region of regionsForSourceFilePath)
         yield region;
@@ -105,11 +105,11 @@ class CoverageInfo implements Imports.Domain.Abstractions.CoverageInfo {
 
       const files = dataItem.value.files;
 
-      return files.find((file: Imports.Domain.Abstractions.RawLLVMFileCoverageInfo) => file.filename === this.sourceFilePath);
+      return files.find((file: Imports.Modules.Abstractions.RawLLVMFileCoverageInfo) => file.filename === this.sourceFilePath);
     });
   }
 
-  private extendBasicPipelineWith<T>(fn: (dataItem: Imports.Domain.Abstractions.RawLLVMStreamedDataItemCoverageInfo) => T) {
+  private extendBasicPipelineWith<T>(fn: (dataItem: Imports.Modules.Abstractions.RawLLVMStreamedDataItemCoverageInfo) => T) {
     return chain([
       this.llvmCoverageInfoStreamFactory(),
       parser({ streamValues: true }),
@@ -171,7 +171,7 @@ class RegionCoverageInfoAsyncIterator {
   async next() {
     await this.ensureInputReadableStreamIsValid();
 
-    const regionCoverageInfo = <Imports.Domain.Abstractions.RawLLVMRegionCoverageInfo>this.pipeline.read(1);
+    const regionCoverageInfo = <Imports.Modules.Abstractions.RawLLVMRegionCoverageInfo>this.pipeline.read(1);
 
     if (regionCoverageInfo === null)
       return this.terminateIteration();
@@ -221,5 +221,5 @@ class RegionCoverageInfoIterator {
   }
 
   readonly done: boolean;
-  readonly value?: Imports.Domain.Abstractions.RawLLVMRegionCoverageInfo;
+  readonly value?: Imports.Modules.Abstractions.RawLLVMRegionCoverageInfo;
 }

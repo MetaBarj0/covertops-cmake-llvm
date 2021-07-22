@@ -1,11 +1,11 @@
-import * as Imports from "./imports";
+import * as Imports from "./types";
 
 import * as Definitions from "../../extension/definitions";
 
-export abstract class BasicCmake implements Imports.Domain.Abstractions.Cmake {
+export abstract class BasicCmake implements Imports.Modules.Abstractions.Cmake {
   constructor(outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike,
     progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike,
-    settings: Imports.Domain.Abstractions.Settings) {
+    settings: Imports.Modules.Abstractions.Settings) {
     this.outputChannel = outputChannel;
     this.progressReporter = progressReporter;
     this.settings = settings;
@@ -56,7 +56,7 @@ export abstract class BasicCmake implements Imports.Domain.Abstractions.Cmake {
   protected abstract generateProject(): Thenable<void>;
   protected abstract build(): Thenable<void>;
 
-  protected readonly settings: Imports.Domain.Abstractions.Settings;
+  protected readonly settings: Imports.Modules.Abstractions.Settings;
 
   private handleErrorWithMessage(error: Error, message: string) {
     const errorMessage = `${message}${(<Error>error).message}`;
@@ -70,11 +70,11 @@ export abstract class BasicCmake implements Imports.Domain.Abstractions.Cmake {
   private readonly outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
 }
 
-export function make(context: Context): Imports.Domain.Abstractions.Cmake {
+export function make(context: Context): Imports.Modules.Abstractions.Cmake {
   return new Cmake(context);
 }
 
-class Cmake extends BasicCmake implements Imports.Domain.Abstractions.Cmake {
+class Cmake extends BasicCmake implements Imports.Modules.Abstractions.Cmake {
   constructor(context: Context) {
     super(context.outputChannel, context.progressReporter, context.settings);
 
@@ -132,7 +132,7 @@ class Cmake extends BasicCmake implements Imports.Domain.Abstractions.Cmake {
 }
 
 type Context = {
-  settings: Imports.Domain.Abstractions.Settings,
+  settings: Imports.Modules.Abstractions.Settings,
   progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike,
   outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike,
   execFile: Imports.Adapters.Abstractions.processControl.ExecFileCallable,

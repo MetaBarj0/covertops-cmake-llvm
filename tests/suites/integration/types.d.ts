@@ -1,11 +1,11 @@
 import * as RegionCoverageInfoModule from "../../../src/modules/abstractions/region-coverage-info";
 import * as AbstractVscodeModule from "../../../src/adapters/abstractions/vscode";
-import { Settings as AbstractSettings } from "../../../src/modules/abstractions/settings";
+import * as SettingsModule from "../../../src/modules/abstractions/settings";
 
-export namespace Domain {
+export namespace Modules {
   export namespace Abstractions {
     export type RegionCoverageInfo = RegionCoverageInfoModule.RegionCoverageInfo;
-    export type Settings = AbstractSettings;
+    export type Settings = SettingsModule.Settings;
   }
 }
 

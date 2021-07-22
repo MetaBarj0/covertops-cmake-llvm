@@ -13,7 +13,7 @@ import * as AbstractCoverageSummaryModule from "../abstractions/coverage-summary
 import * as AbstractCoverageInfoModule from "../abstractions/coverage-info";
 import * as SettingsProviderModule from "../abstractions/settings-provider";
 
-export namespace Domain {
+export namespace Modules {
   export namespace Abstractions {
     export type BuildTreeDirectoryResolver = BuildTreeDirectoryResolverModule.BuildTreeDirectoryResolver;
     export type Cmake = CmakeModule.Cmake;

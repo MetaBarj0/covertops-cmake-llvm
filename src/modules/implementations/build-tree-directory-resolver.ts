@@ -1,22 +1,22 @@
-import * as Imports from "./imports";
+import * as Imports from "./types";
 
 import * as Definitions from "../../extension/definitions";
 
 import * as path from "path";
 
-export function make(adapters: Adapters): Imports.Domain.Abstractions.BuildTreeDirectoryResolver {
+export function make(adapters: Adapters): Imports.Modules.Abstractions.BuildTreeDirectoryResolver {
   return new BuildTreeDirectoryResolver(adapters);
 }
 
 type Adapters = {
-  settings: Imports.Domain.Abstractions.Settings,
+  settings: Imports.Modules.Abstractions.Settings,
   stat: Imports.Adapters.Abstractions.fileSystem.StatCallable,
   mkdir: Imports.Adapters.Abstractions.fileSystem.MkdirCallable,
   progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike,
   outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike
 };
 
-class BuildTreeDirectoryResolver implements Imports.Domain.Abstractions.BuildTreeDirectoryResolver {
+class BuildTreeDirectoryResolver implements Imports.Modules.Abstractions.BuildTreeDirectoryResolver {
   constructor(adapters: Adapters) {
     this.settings = adapters.settings;
     this.stat = adapters.stat;
@@ -64,7 +64,7 @@ class BuildTreeDirectoryResolver implements Imports.Domain.Abstractions.BuildTre
   }
 
   private readonly stat: Imports.Adapters.Abstractions.fileSystem.StatCallable;
-  private readonly settings: Imports.Domain.Abstractions.Settings;
+  private readonly settings: Imports.Modules.Abstractions.Settings;
   private readonly mkdir: Imports.Adapters.Abstractions.fileSystem.MkdirCallable;
   private readonly progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike;
   private readonly outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;

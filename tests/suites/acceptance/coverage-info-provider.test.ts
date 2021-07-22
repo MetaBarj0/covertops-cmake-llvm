@@ -5,7 +5,7 @@ import * as chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 chai.should();
 
-import * as Imports from "./imports";
+import * as Imports from "./types";
 
 import * as FileSystemFakes from "../../fakes/adapters/file-system";
 import * as VscodeFakes from "../../fakes/adapters/vscode";
@@ -129,7 +129,7 @@ function succeedWithCorrectSettingsAndFakeAdapters() {
 
     const coverageInfo = await provider.getCoverageInfoForFile("/a/source/file.cpp");
 
-    const uncoveredRegions: Array<Imports.Domain.Abstractions.RegionCoverageInfo> = [];
+    const uncoveredRegions: Array<Imports.Modules.Abstractions.RegionCoverageInfo> = [];
     for await (const region of coverageInfo.uncoveredRegions)
       uncoveredRegions.push(region);
 

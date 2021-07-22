@@ -5,7 +5,7 @@ import * as chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 chai.should();
 
-import * as Imports from "./imports";
+import * as Imports from "./types";
 
 import * as vscode from "../../../src/adapters/implementations/vscode";
 import * as FileSystem from "../../../src/adapters/implementations/file-system";
@@ -50,7 +50,7 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
 
     const coverageInfo = await coverageInfoProvider.getCoverageInfoForFile(sourceFilePath);
 
-    const uncoveredRegions: Array<Imports.Domain.Abstractions.RegionCoverageInfo> = [];
+    const uncoveredRegions: Array<Imports.Modules.Abstractions.RegionCoverageInfo> = [];
     for await (const region of coverageInfo.uncoveredRegions)
       uncoveredRegions.push(region);
 
@@ -148,7 +148,7 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
   it("should report correct coverage information for a specific file", async () => {
     const coverageInfoProvider = makeCoverageInfoProvider();
     const sourceFilePath = createAbsoluteSourceFilePathFrom("fullyCovered/fullyCoveredLib.cpp");
-    const uncoveredRegions: Array<Imports.Domain.Abstractions.RegionCoverageInfo> = [];
+    const uncoveredRegions: Array<Imports.Modules.Abstractions.RegionCoverageInfo> = [];
 
     const coverageInfo = await coverageInfoProvider.getCoverageInfoForFile(sourceFilePath);
     for await (const region of coverageInfo.uncoveredRegions)
