@@ -137,7 +137,7 @@
   },
   "scripts": {
     "package": "npm run compile && vsce package",
-    "precompile": "node ./package.json.ts.mjs",
+    "precompile": "node ./npm-scripts/package.json.ts.mjs",
     "compile": "npm run precompile && tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",

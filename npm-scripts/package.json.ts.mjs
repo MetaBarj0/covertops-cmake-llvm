@@ -5,7 +5,7 @@ import { normalize, join } from 'path';
 
 (async () => {
   const sourceFilePath = normalize(join('.', 'package.json'));
-  const targetFilePath = normalize(join('./src', 'package.json.ts'));
+  const targetFilePath = normalize(join('.', 'src', 'package.json.ts'));
 
   const prelude = 'const packageJSON = ';
 
