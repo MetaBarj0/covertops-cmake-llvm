@@ -1,9 +1,9 @@
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
-import * as Cov from './extension/cov';
-import * as UncoveredCodeRegionsDocumentContentProvider from './extension/uncovered-code-regions-document-content-provider';
+import * as Cov from "./extension/cov";
+import * as UncoveredCodeRegionsDocumentContentProvider from "./extension/uncovered-code-regions-document-content-provider";
 
-export async function activate(context: vscode.ExtensionContext) {
+export function activate(context: vscode.ExtensionContext) {
   const uncoveredCodeRegionsDocumentContentProvider = UncoveredCodeRegionsDocumentContentProvider.make();
 
   const cov = Cov.make(uncoveredCodeRegionsDocumentContentProvider);

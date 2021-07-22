@@ -1,6 +1,6 @@
-import * as Imports from '../imports';
+import * as Imports from "../imports";
 
-import { Readable } from 'stream';
+import { Readable } from "stream";
 
 export function make(adapters: Context): Imports.Domain.Abstractions.CoverageInfoCollector {
   return new CoverageInfoCollector(adapters);
@@ -22,7 +22,7 @@ class CoverageInfoCollector implements Imports.Domain.Abstractions.CoverageInfoC
     const path = await this.coverageInfoFileResolver.resolveCoverageInfoFileFullPath();
 
     this.progressReporter.report({
-      message: 'Prepared summary and uncovered region of code information.'
+      message: "Prepared summary and uncovered region of code information."
     });
 
     return Imports.Domain.Implementations.CoverageInfo.make(() => this.createReadStream(path), sourceFilePath, this.outputChannel);

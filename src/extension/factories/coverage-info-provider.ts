@@ -1,14 +1,14 @@
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
-import * as SettingsProvider from '../../modules/settings-provider/implementations/settings-provider';
-import * as BuildTreeDirectoryResolver from '../../modules/build-tree-directory-resolver/implementations/build-tree-directory-resolver';
-import * as Cmake from '../../modules/cmake/implementations/cmake';
-import * as CoverageInfoFileResolver from '../../modules/coverage-info-file-resolver/implementations/coverage-info-file-resolver';
-import * as CoverageInfoCollector from '../../modules/coverage-info-collector/implementations/coverage-info-collector';
-import * as CoverageInfoProvider from '../../modules/coverage-info-provider/implementations/coverage-info-provider';
-import * as fileSystem from '../../adapters/implementations/file-system';
-import * as processControl from '../../adapters/implementations/process-control';
-import * as VscodeAbstractions from '../../adapters/abstractions/vscode';
+import * as SettingsProvider from "../../modules/settings-provider/implementations/settings-provider";
+import * as BuildTreeDirectoryResolver from "../../modules/build-tree-directory-resolver/implementations/build-tree-directory-resolver";
+import * as Cmake from "../../modules/cmake/implementations/cmake";
+import * as CoverageInfoFileResolver from "../../modules/coverage-info-file-resolver/implementations/coverage-info-file-resolver";
+import * as CoverageInfoCollector from "../../modules/coverage-info-collector/implementations/coverage-info-collector";
+import * as CoverageInfoProvider from "../../modules/coverage-info-provider/implementations/coverage-info-provider";
+import * as fileSystem from "../../adapters/implementations/file-system";
+import * as processControl from "../../adapters/implementations/process-control";
+import * as VscodeAbstractions from "../../adapters/abstractions/vscode";
 
 export function make(context: Context) {
   const workspace = vscode.workspace;

@@ -1,6 +1,6 @@
-import * as Imports from '../imports';
+import * as Imports from "../imports";
 
-import * as path from 'path';
+import * as path from "path";
 
 export function make(adapters: Adapters): Imports.Domain.Abstractions.BuildTreeDirectoryResolver {
   return new BuildTreeDirectoryResolver(adapters);
@@ -31,7 +31,7 @@ class BuildTreeDirectoryResolver implements Imports.Domain.Abstractions.BuildTre
     await this.statAndCreateIfNeeded(buildTreeDirectory);
 
     this.progressReporter.report({
-      message: 'Resolved build tree directory path.'
+      message: "Resolved build tree directory path."
     });
   }
 
@@ -47,11 +47,11 @@ class BuildTreeDirectoryResolver implements Imports.Domain.Abstractions.BuildTre
   }
 
   private async statAndCreateIfNeeded(buildTreeDirectory: string) {
-    await this.stat(buildTreeDirectory)
-      .catch(async _ => {
-        await this.mkdir(buildTreeDirectory, { recursive: true })
-          .catch(_ => {
-            const errorMessage = 'Cannot find or create the build tree directory. Ensure the ' +
+    await this.stat(buildTreeDirectory).
+      catch(async _ => {
+        await this.mkdir(buildTreeDirectory, { recursive: true }).
+          catch(_ => {
+            const errorMessage = "Cannot find or create the build tree directory. Ensure the " +
               `'${Imports.Extension.Definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`;
 
             this.outputChannel.appendLine(errorMessage);

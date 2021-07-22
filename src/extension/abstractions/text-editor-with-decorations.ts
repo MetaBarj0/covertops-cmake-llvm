@@ -1,4 +1,4 @@
-import { TextEditor, TextEditorDecorationType, DecorationOptions, Range } from 'vscode';
+import { TextEditor, TextEditorDecorationType, DecorationOptions, Range } from "vscode";
 
 export type Decorations = {
   decorationType: TextEditorDecorationType,

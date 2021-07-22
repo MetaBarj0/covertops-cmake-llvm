@@ -1,6 +1,6 @@
-import * as Imports from '../imports';
+import * as Imports from "../imports";
 
-import * as path from 'path';
+import * as path from "path";
 
 export function make(context: Context): Imports.Domain.Abstractions.CoverageInfoFileResolver {
   return new CoverageInfoFileResolver(context);
@@ -28,7 +28,7 @@ class CoverageInfoFileResolver implements Imports.Domain.Abstractions.CoverageIn
     this.failsIfManyFilesAreFound(searchResult);
 
     this.progressReporter.report({
-      message: 'Resolved the LLVM coverage information file path.'
+      message: "Resolved the LLVM coverage information file path."
     });
 
     return searchResult[0];
@@ -38,11 +38,11 @@ class CoverageInfoFileResolver implements Imports.Domain.Abstractions.CoverageIn
     if (searchResult.length === 1)
       return;
 
-    const errorMessage = 'More than one coverage information file have been found in the build tree directory. ' +
-      'Ensure that both ' +
+    const errorMessage = "More than one coverage information file have been found in the build tree directory. " +
+      "Ensure that both " +
       `'${Imports.Extension.Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
       `'${Imports.Extension.Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
-      'settings are correctly set.';
+      "settings are correctly set.";
 
     this.outputChannel.appendLine(errorMessage);
 
@@ -53,11 +53,11 @@ class CoverageInfoFileResolver implements Imports.Domain.Abstractions.CoverageIn
     if (searchResult.length !== 0)
       return;
 
-    const errorMessage = 'Cannot resolve the coverage info file path in the build tree directory. ' +
-      'Ensure that both ' +
+    const errorMessage = "Cannot resolve the coverage info file path in the build tree directory. " +
+      "Ensure that both " +
       `'${Imports.Extension.Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
       `'${Imports.Extension.Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
-      'settings are correctly set.';
+      "settings are correctly set.";
 
     this.outputChannel.appendLine(errorMessage);
 

@@ -1,6 +1,6 @@
-import { Decorations, TextEditorWithDecorations as AbstractTextEditorWithDecorations } from '../abstractions/text-editor-with-decorations';
+import { Decorations, TextEditorWithDecorations as AbstractTextEditorWithDecorations } from "../abstractions/text-editor-with-decorations";
 
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
 export class TextEditorWithDecorations implements AbstractTextEditorWithDecorations {
   constructor(textEditor: vscode.TextEditor) {

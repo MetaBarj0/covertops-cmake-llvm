@@ -1,4 +1,4 @@
-import * as Imports from '../imports';
+import * as Imports from "../imports";
 
 export class CoverageSummary implements Imports.Domain.Abstractions.CoverageSummary {
   constructor(count: number, covered: number, notCovered: number, percent: number) {

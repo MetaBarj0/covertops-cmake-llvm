@@ -1,5 +1,5 @@
-import { BigIntStats, MakeDirectoryOptions, PathLike, StatOptions, Stats } from 'fs';
-import { Readable } from 'stream';
+import { BigIntStats, MakeDirectoryOptions, PathLike, StatOptions, Stats } from "fs";
+import { Readable } from "stream";
 
 export type StatCallable = (path: PathLike, opts?: StatOptions) => Promise<Stats | BigIntStats>;
 export type GlobSearchCallable = (pattern: string) => Promise<ReadonlyArray<string>>;

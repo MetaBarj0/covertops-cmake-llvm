@@ -1,7 +1,7 @@
-import * as Abstrations from '../abstractions/file-system';
+import * as Abstrations from "../abstractions/file-system";
 
-import * as fs from 'fs';
-import * as globby from 'globby';
+import * as fs from "fs";
+import * as globby from "globby";
 
 export const stat: Abstrations.StatCallable = fs.promises.stat;
 export const globSearch: Abstrations.GlobSearchCallable = globby;

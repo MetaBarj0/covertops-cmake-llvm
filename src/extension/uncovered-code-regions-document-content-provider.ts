@@ -1,5 +1,5 @@
-import * as vscode from 'vscode';
-import * as fs from 'fs/promises';
+import * as vscode from "vscode";
+import * as fs from "fs/promises";
 
 export function make() {
   return new UncoveredCodeRegionsDocumentContentProvider();

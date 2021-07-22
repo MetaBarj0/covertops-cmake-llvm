@@ -1,4 +1,4 @@
-import * as Abstractions from '../abstractions/settings';
+import * as Abstractions from "../abstractions/settings";
 
 export function make(cmakeCommand: string,
   buildTreeDirectory: string,

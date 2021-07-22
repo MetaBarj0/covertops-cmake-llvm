@@ -1,5 +1,5 @@
-import { CoverageSummary } from './coverage-summary';
-import { RegionCoverageInfo } from './region-coverage-info';
+import { CoverageSummary } from "./coverage-summary";
+import { RegionCoverageInfo } from "./region-coverage-info";
 
 export type CoverageInfo = {
   get summary(): Promise<CoverageSummary>;

@@ -1,11 +1,11 @@
-import * as Definitions from './definitions';
-import * as Strings from './strings';
-import { TextEditorWithDecorations } from './abstractions/text-editor-with-decorations';
-import * as CoverageInfoProvider from './factories/coverage-info-provider';
-import { CoverageInfo } from '../modules/coverage-info-collector/abstractions/coverage-info';
-import { TextEditorWithDecorations as ConcreteTextEditorWithDecorations } from './implementations/text-editor-with-decorations';
+import * as Definitions from "./definitions";
+import * as Strings from "./strings";
+import { TextEditorWithDecorations } from "./abstractions/text-editor-with-decorations";
+import * as CoverageInfoProvider from "./factories/coverage-info-provider";
+import { CoverageInfo } from "../modules/coverage-info-collector/abstractions/coverage-info";
+import { TextEditorWithDecorations as ConcreteTextEditorWithDecorations } from "./implementations/text-editor-with-decorations";
 
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
 export function make(uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider) {
   return new Cov(uncoveredCodeRegionsDocumentContentProvider);
@@ -60,7 +60,7 @@ class Cov {
   }
 
   private async buildDecorationOptions(uncoveredCodeInfo: CoverageInfo) {
-    let options: Array<vscode.DecorationOptions> = [];
+    const options: Array<vscode.DecorationOptions> = [];
 
     try {
       for await (const uncoveredRegion of uncoveredCodeInfo.uncoveredRegions)
@@ -78,24 +78,21 @@ class Cov {
     return options;
   }
 
-  private async queryUncoveredCodeInfo(uri: vscode.Uri) {
+  private queryUncoveredCodeInfo(uri: vscode.Uri) {
     return vscode.window.withProgress({
       location: vscode.ProgressLocation.Notification,
-      title: 'Computing uncovered code region locations',
+      title: "Computing uncovered code region locations",
       cancellable: false
     }, async progressReporter => {
 
       const coverageInfoProvider = CoverageInfoProvider.make({ progressReporter, outputChannel: this.outputChannel_ });
 
-      let uncoveredCodeInfo: CoverageInfo;
-
       try {
-        uncoveredCodeInfo = await coverageInfoProvider.getCoverageInfoForFile(uri.fsPath);
+        return  await coverageInfoProvider.getCoverageInfoForFile(uri.fsPath);
       } catch (error) {
         this.outputChannel_.appendLine(error.message);
         throw error;
       }
-      return uncoveredCodeInfo;
     });
   }
 

@@ -1,4 +1,4 @@
-import * as Imports from '../imports';
+import * as Imports from "../imports";
 
 export abstract class BasicCmake implements Imports.Domain.Abstractions.Cmake {
   constructor(outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike,
@@ -14,34 +14,34 @@ export abstract class BasicCmake implements Imports.Domain.Abstractions.Cmake {
       await this.reachCommand();
 
       this.progressReporter.report({
-        message: 'Found an invocable cmake command.'
+        message: "Found an invocable cmake command."
       });
     } catch (error) {
       return this.handleErrorWithMessage(error,
         `Cannot find the cmake command. Ensure the '${Imports.Extension.Definitions.extensionNameInSettings}: Cmake Command' ` +
-        'setting is correctly set. Have you verified your PATH environment variable?');
+        "setting is correctly set. Have you verified your PATH environment variable?");
     }
 
     try {
       await this.generateProject();
 
       this.progressReporter.report({
-        message: 'Generated the cmake project.'
+        message: "Generated the cmake project."
       });
     } catch (error) {
       return this.handleErrorWithMessage(error,
-        'Cannot generate the cmake project in the ' +
+        "Cannot generate the cmake project in the " +
         `${this.settings.rootDirectory} directory. ` +
-        'Ensure either you have opened a valid cmake project, or the cmake project has not already been generated using different options. ' +
+        "Ensure either you have opened a valid cmake project, or the cmake project has not already been generated using different options. " +
         `You may have to take a look in '${Imports.Extension.Definitions.extensionNameInSettings}: Additional Cmake Options' settings ` +
-        'and check the generator used is correct for instance.');
+        "and check the generator used is correct for instance.");
     }
 
     try {
       await this.build();
 
       this.progressReporter.report({
-        message: 'Built the target.'
+        message: "Built the target."
       });
     } catch (error) {
       return this.handleErrorWithMessage(error,
@@ -81,7 +81,7 @@ class Cmake extends BasicCmake implements Imports.Domain.Abstractions.Cmake {
 
   protected reachCommand() {
     return this.executeCommandWith({
-      arguments: ['--version']
+      arguments: ["--version"]
     });
   }
 
@@ -90,7 +90,7 @@ class Cmake extends BasicCmake implements Imports.Domain.Abstractions.Cmake {
     const source = this.settings.rootDirectory;
 
     return this.executeCommandWith({
-      arguments: ['-B', build, '-S', source, ...this.settings.additionalCmakeOptions]
+      arguments: ["-B", build, "-S", source, ...this.settings.additionalCmakeOptions]
     });
   }
 
@@ -99,7 +99,7 @@ class Cmake extends BasicCmake implements Imports.Domain.Abstractions.Cmake {
     const target = this.settings.cmakeTarget;
 
     return this.executeCommandWith({
-      arguments: ['--build', build, '--target', target]
+      arguments: ["--build", build, "--target", target]
     });
   }
 

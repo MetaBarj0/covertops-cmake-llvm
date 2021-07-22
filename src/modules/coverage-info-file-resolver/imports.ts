@@ -1,8 +1,8 @@
-import * as CoverageInfoFileResolverModule from './abstractions/coverage-info-file-resolver';
-import * as SettingsModule from '../settings-provider/abstractions/settings';
-import * as FileSystemModule from '../../adapters/abstractions/file-system';
-import * as VscodeModule from '../../adapters/abstractions/vscode';
-import * as DefinitionsModule from '../../extension/definitions';
+import * as CoverageInfoFileResolverModule from "./abstractions/coverage-info-file-resolver";
+import * as SettingsModule from "../settings-provider/abstractions/settings";
+import * as FileSystemModule from "../../adapters/abstractions/file-system";
+import * as VscodeModule from "../../adapters/abstractions/vscode";
+import * as DefinitionsModule from "../../extension/definitions";
 
 export namespace Domain {
   export namespace Abstractions {

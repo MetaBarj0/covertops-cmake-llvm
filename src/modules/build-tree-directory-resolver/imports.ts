@@ -1,8 +1,8 @@
-import * as BuildTreeDirectoryResolverModule from './abstractions/build-tree-directory-resolver';
-import * as SettingsModule from '../settings-provider/abstractions/settings';
-import * as FileSytemModule from '../../adapters/abstractions/file-system';
-import * as VscodeModule from '../../adapters/abstractions/vscode';
-import * as DefinitionsModule from '../../extension/definitions';
+import * as BuildTreeDirectoryResolverModule from "./abstractions/build-tree-directory-resolver";
+import * as SettingsModule from "../settings-provider/abstractions/settings";
+import * as FileSytemModule from "../../adapters/abstractions/file-system";
+import * as VscodeModule from "../../adapters/abstractions/vscode";
+import * as DefinitionsModule from "../../extension/definitions";
 
 export namespace Domain {
   export namespace Abstractions {

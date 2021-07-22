@@ -1,6 +1,6 @@
-import * as Abstractions from '../abstractions/vscode';
+import * as Abstractions from "../abstractions/vscode";
 
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
 export const workspace: Abstractions.VscodeWorkspaceLike = vscode.workspace;
 

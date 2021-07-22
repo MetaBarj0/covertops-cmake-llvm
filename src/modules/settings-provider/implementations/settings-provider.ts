@@ -1,4 +1,4 @@
-import * as Imports from '../imports';
+import * as Imports from "../imports";
 
 export function make(adapters: Adapters) {
   return new SettingsProvider(adapters);
@@ -23,11 +23,11 @@ class SettingsProvider implements Imports.Domain.Abstractions.SettingsProvider {
     const rootDirectory = workspaceFolders[0].uri.fsPath;
 
     return Imports.Domain.Implementations.Settings.make(
-      workspaceSettings.get('cmakeCommand') as string,
-      workspaceSettings.get('buildTreeDirectory') as string,
-      workspaceSettings.get('cmakeTarget') as string,
-      workspaceSettings.get('coverageInfoFileName') as string,
-      workspaceSettings.get('additionalCmakeOptions') as Array<string>,
+      workspaceSettings.get("cmakeCommand") as string,
+      workspaceSettings.get("buildTreeDirectory") as string,
+      workspaceSettings.get("cmakeTarget") as string,
+      workspaceSettings.get("coverageInfoFileName") as string,
+      workspaceSettings.get("additionalCmakeOptions") as Array<string>,
       rootDirectory
     );
   }
@@ -36,7 +36,7 @@ class SettingsProvider implements Imports.Domain.Abstractions.SettingsProvider {
     if (this.workspace.workspaceFolders)
       return;
 
-    const errorMessage = 'A workspace must be loaded to get coverage information.';
+    const errorMessage = "A workspace must be loaded to get coverage information.";
 
     this.outputChannel.appendLine(errorMessage);
 
