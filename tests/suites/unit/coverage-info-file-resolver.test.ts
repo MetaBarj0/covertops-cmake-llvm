@@ -17,10 +17,10 @@ describe('Unit test suite', () => {
 });
 
 function shouldFailWhenNoFileIsFound() {
-  it('should fail and report in error channel if the recursive search from the build tree directory does not find one file', () => {
-    const errorChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfErrorChannel(Imports.Fakes.Adapters.vscode.buildFakeErrorChannel());
+  it('should fail and report in output channel if the recursive search from the build tree directory does not find one file', () => {
+    const outputChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfOutputChannel(Imports.Fakes.Adapters.vscode.buildFakeOutputChannel());
     const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForNoMatch();
-    const resolver = buildCoverageInfoFileResolver({ errorChannelSpy, globSearch });
+    const resolver = buildCoverageInfoFileResolver({ outputChannelSpy: outputChannelSpy, globSearch });
 
     return resolver.resolveCoverageInfoFileFullPath()
       .catch((error: Error) => {
@@ -31,17 +31,17 @@ function shouldFailWhenNoFileIsFound() {
           'settings are correctly set.';
 
         error.message.should.contain(errorMessage);
-        errorChannelSpy.countFor('appendLine').should.be.equal(1);
+        outputChannelSpy.countFor('appendLine').should.be.equal(1);
       });
   });
 }
 
 function shouldFailWhenMoreThanOneFileAreFound() {
   it('should fail if the recursive search from the build tree directory finds more than one file', () => {
-    const errorChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfErrorChannel(Imports.Fakes.Adapters.vscode.buildFakeErrorChannel());
+    const outputChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfOutputChannel(Imports.Fakes.Adapters.vscode.buildFakeOutputChannel());
     const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForSeveralMatch();
 
-    const resolver = buildCoverageInfoFileResolver({ errorChannelSpy, globSearch });
+    const resolver = buildCoverageInfoFileResolver({ outputChannelSpy: outputChannelSpy, globSearch });
 
     return resolver.resolveCoverageInfoFileFullPath()
       .catch((error: Error) => {
@@ -52,7 +52,7 @@ function shouldFailWhenMoreThanOneFileAreFound() {
           'settings are correctly set.';
 
         error.message.should.contain(errorMessage);
-        errorChannelSpy.countFor('appendLine').should.be.equal(1);
+        outputChannelSpy.countFor('appendLine').should.be.equal(1);
       });
   });
 }
@@ -71,13 +71,13 @@ function shouldSucceedWhenExactlyOneFileIsFound() {
 
 
 function buildAdapters(optionalSpiesAndAdapters: OptionalSpiesAndAdapters) {
-  const errorChannel = optionalSpiesAndAdapters.errorChannelSpy ? optionalSpiesAndAdapters.errorChannelSpy.object : Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
+  const outputChannel = optionalSpiesAndAdapters.outputChannelSpy ? optionalSpiesAndAdapters.outputChannelSpy.object : Imports.Fakes.Adapters.vscode.buildFakeOutputChannel();
   const progressReporter = optionalSpiesAndAdapters.progressReporterSpy ? optionalSpiesAndAdapters.progressReporterSpy.object : Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
   const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
 
   return {
     workspace,
-    errorChannel,
+    outputChannel,
     globSearch: optionalSpiesAndAdapters.globSearch,
     progressReporter
   };
@@ -92,7 +92,7 @@ function buildCoverageInfoFileResolver(optionalSpiesAndAdapters: OptionalSpiesAn
 }
 
 type OptionalSpiesAndAdapters = {
-  errorChannelSpy?: Spy<Imports.Adapters.Abstractions.vscode.OutputChannelLike>
+  outputChannelSpy?: Spy<Imports.Adapters.Abstractions.vscode.OutputChannelLike>
   progressReporterSpy?: Spy<Imports.Adapters.Abstractions.vscode.ProgressLike>,
   globSearch: Imports.Adapters.Abstractions.FileSystem.GlobSearchCallable
 };

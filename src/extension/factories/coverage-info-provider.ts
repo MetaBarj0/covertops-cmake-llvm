@@ -12,11 +12,11 @@ import * as VscodeAbstractions from '../../adapters/abstractions/vscode';
 
 export function make(context: Context) {
   const workspace = vscode.workspace;
-  const { errorChannel, progressReporter } = context;
+  const { outputChannel, progressReporter } = context;
 
-  const settings = SettingsProvider.make({ workspace, errorChannel }).settings;
+  const settings = SettingsProvider.make({ workspace, outputChannel }).settings;
   const buildTreeDirectoryResolver = BuildTreeDirectoryResolver.make({
-    errorChannel,
+    outputChannel,
     progressReporter,
     settings,
     mkdir: fileSystem.mkdir,
@@ -25,11 +25,11 @@ export function make(context: Context) {
   const cmake = Cmake.make({
     settings,
     execFile: processControl.execFile,
-    errorChannel,
+    outputChannel,
     progressReporter
   });
   const coverageInfoFileResolver = CoverageInfoFileResolver.make({
-    errorChannel,
+    outputChannel,
     globSearch: fileSystem.globSearch,
     progressReporter,
     settings
@@ -37,7 +37,7 @@ export function make(context: Context) {
   const coverageInfoCollector = CoverageInfoCollector.make({
     coverageInfoFileResolver,
     progressReporter,
-    errorChannel,
+    outputChannel,
     createReadStream: fileSystem.createReadStream
   });
 
@@ -51,5 +51,5 @@ export function make(context: Context) {
 
 type Context = {
   progressReporter: VscodeAbstractions.ProgressLike,
-  errorChannel: VscodeAbstractions.OutputChannelLike
+  outputChannel: VscodeAbstractions.OutputChannelLike
 };

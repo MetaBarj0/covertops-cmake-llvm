@@ -18,11 +18,11 @@ describe('Unit test suite', () => {
 });
 
 function cmakeShouldFailBecauseCmakeCommandIsUnreachable() {
-  it('should fail and reports to error channel if the cmake command is not reachable', () => {
+  it('should fail and reports to output channel if the cmake command is not reachable', () => {
     const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ 'cmakeCommand': '' });
-    const errorChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfErrorChannel(Imports.Fakes.Adapters.vscode.buildFakeErrorChannel());
-    const errorChannel = errorChannelSpy.object;
-    const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
+    const outputChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfOutputChannel(Imports.Fakes.Adapters.vscode.buildFakeOutputChannel());
+    const outputChannel = outputChannelSpy.object;
+    const settings = Imports.Domain.Implementations.SettingsProvider.make({ outputChannel, workspace }).settings;
     const execFile = Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess(FailureStages.reach);
     const progressReporterSpy = Imports.Fakes.Adapters.vscode.buildSpyOfProgressReporter(Imports.Fakes.Adapters.vscode.buildFakeProgressReporter());
     const progressReporter = progressReporterSpy.object;
@@ -30,7 +30,7 @@ function cmakeShouldFailBecauseCmakeCommandIsUnreachable() {
     const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
       progressReporter,
-      errorChannel,
+      outputChannel,
       execFile
     });
 
@@ -42,17 +42,17 @@ function cmakeShouldFailBecauseCmakeCommandIsUnreachable() {
           'setting is correctly set. Have you verified your PATH environment variable?');
 
         progressReporterSpy.countFor('report').should.be.equal(0);
-        errorChannelSpy.countFor('appendLine').should.be.equal(1);
+        outputChannelSpy.countFor('appendLine').should.be.equal(1);
       });
   });
 }
 
 function cmakeShouldFailBecauseItCannotGenerateTheProject() {
-  it('should fail and report in error channel if a falure occurs at project generation stage', () => {
+  it('should fail and report in output channel if a falure occurs at project generation stage', () => {
     const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ 'rootDirectory': 'not a cmake project folder' });
-    const errorChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfErrorChannel(Imports.Fakes.Adapters.vscode.buildFakeErrorChannel());
-    const errorChannel = errorChannelSpy.object;
-    const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
+    const outputChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfOutputChannel(Imports.Fakes.Adapters.vscode.buildFakeOutputChannel());
+    const outputChannel = outputChannelSpy.object;
+    const settings = Imports.Domain.Implementations.SettingsProvider.make({ outputChannel, workspace }).settings;
     const execFile = Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess(FailureStages.generate);
     const progressReporterSpy = Imports.Fakes.Adapters.vscode.buildSpyOfProgressReporter(Imports.Fakes.Adapters.vscode.buildFakeProgressReporter());
     const progressReporter = progressReporterSpy.object;
@@ -60,7 +60,7 @@ function cmakeShouldFailBecauseItCannotGenerateTheProject() {
     const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
       progressReporter,
-      errorChannel,
+      outputChannel,
       execFile
     });
 
@@ -74,7 +74,7 @@ function cmakeShouldFailBecauseItCannotGenerateTheProject() {
           'and check the generator used is correct for instance.'
         );
 
-        errorChannelSpy.countFor('appendLine').should.be.equal(1);
+        outputChannelSpy.countFor('appendLine').should.be.equal(1);
         progressReporterSpy.countFor('report').should.be.equal(1);
       });
     ;
@@ -82,11 +82,11 @@ function cmakeShouldFailBecauseItCannotGenerateTheProject() {
 }
 
 function cmakeShouldFailBecauseItCannotBuildATarget() {
-  it('should fail and reports in error channel if a failure occurs in target building', () => {
+  it('should fail and reports in output channel if a failure occurs in target building', () => {
     const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ 'cmakeTarget': 'very bad target' });
-    const errorChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfErrorChannel(Imports.Fakes.Adapters.vscode.buildFakeErrorChannel());
-    const errorChannel = errorChannelSpy.object;
-    const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
+    const outputChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfOutputChannel(Imports.Fakes.Adapters.vscode.buildFakeOutputChannel());
+    const outputChannel = outputChannelSpy.object;
+    const settings = Imports.Domain.Implementations.SettingsProvider.make({ outputChannel, workspace }).settings;
     const execFile = Imports.Fakes.Adapters.ProcessControl.buildFakeFailingProcess(FailureStages.build);
     const progressReporterSpy = Imports.Fakes.Adapters.vscode.buildSpyOfProgressReporter(Imports.Fakes.Adapters.vscode.buildFakeProgressReporter());
     const progressReporter = progressReporterSpy.object;
@@ -94,7 +94,7 @@ function cmakeShouldFailBecauseItCannotBuildATarget() {
     const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
       progressReporter,
-      errorChannel,
+      outputChannel,
       execFile
     });
 
@@ -105,7 +105,7 @@ function cmakeShouldFailBecauseItCannotBuildATarget() {
           `Error: Could not build the specified cmake target ${settings.cmakeTarget}. ` +
           `Ensure '${Imports.Extension.Definitions.extensionNameInSettings}: Cmake Target' setting is properly set.`);
 
-        errorChannelSpy.countFor('appendLine').should.be.equal(1);
+        outputChannelSpy.countFor('appendLine').should.be.equal(1);
         progressReporterSpy.countFor('report').should.be.equal(2);
       });
     ;
@@ -115,9 +115,9 @@ function cmakeShouldFailBecauseItCannotBuildATarget() {
 function cmakeShouldSucceedWithCorrectSettings() {
   it('should be instantiated and succeed when asking for building a target in three discrete steps', async () => {
     const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
-    const errorChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfErrorChannel(Imports.Fakes.Adapters.vscode.buildFakeErrorChannel());
-    const errorChannel = errorChannelSpy.object;
-    const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
+    const outputChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfOutputChannel(Imports.Fakes.Adapters.vscode.buildFakeOutputChannel());
+    const outputChannel = outputChannelSpy.object;
+    const settings = Imports.Domain.Implementations.SettingsProvider.make({ outputChannel, workspace }).settings;
     const execFile = Imports.Fakes.Adapters.ProcessControl.buildFakeSucceedingProcess();
     const progressReporterSpy = Imports.Fakes.Adapters.vscode.buildSpyOfProgressReporter(Imports.Fakes.Adapters.vscode.buildFakeProgressReporter());
     const progressReporter = progressReporterSpy.object;
@@ -125,13 +125,13 @@ function cmakeShouldSucceedWithCorrectSettings() {
     const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
       progressReporter,
-      errorChannel,
+      outputChannel,
       execFile
     });
 
     await cmake.buildTarget();
 
     progressReporterSpy.countFor('report').should.be.equal(3);
-    errorChannelSpy.countFor('appendLine').should.be.equal(0);
+    outputChannelSpy.countFor('appendLine').should.be.equal(0);
   });
 }

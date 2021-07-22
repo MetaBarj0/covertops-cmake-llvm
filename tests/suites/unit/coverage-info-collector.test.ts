@@ -29,16 +29,16 @@ describe('Unit test suite', () => {
 });
 
 function shouldFailToCollectCoverageInfoSummaryBecauseOfInvalidStream() {
-  const collectorsAndErrorChannelSpies = buildCoverageInfoCollectorsAndErrorChannelSpiesUsingStreamFactories([
+  const collectorsAndOutputChannelSpies = buildCoverageInfoCollectorsAndOutputChannelSpiesUsingStreamFactories([
     Imports.Fakes.Adapters.FileSystem.buildEmptyReadableStream,
     Imports.Fakes.Adapters.FileSystem.buildInvalidLlvmCoverageJsonObjectStream,
     Imports.Fakes.Adapters.FileSystem.buildNotJsonStream
   ]);
 
-  collectorsAndErrorChannelSpies.forEach(async collectorAndErrorChannelSpy => {
-    it('should fail to access to coverage info summary and report to error channel', async () => {
-      const collector = collectorAndErrorChannelSpy.coverageInfoCollector;
-      const errorChannelSpy = collectorAndErrorChannelSpy.errorChannelSpy;
+  collectorsAndOutputChannelSpies.forEach(async collectorAndOutputChannelSpy => {
+    it('should fail to access to coverage info summary and report to output channel', async () => {
+      const collector = collectorAndOutputChannelSpy.coverageInfoCollector;
+      const outputChannelSpy = collectorAndOutputChannelSpy.outputChannelSpy;
 
       const coverageInfo = await collector.collectFor('a');
 
@@ -52,23 +52,23 @@ function shouldFailToCollectCoverageInfoSummaryBecauseOfInvalidStream() {
             `'${Imports.Extension.Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
             'settings are correctly set.');
 
-          errorChannelSpy.countFor('appendLine').should.be.equal(1);
+          outputChannelSpy.countFor('appendLine').should.be.equal(1);
         });
     });
   });
 }
 
 function shouldFailToCollectUncoveredRegionsBecauseOfInvalidStream() {
-  const collectorsAndErrorChannelSpies = buildCoverageInfoCollectorsAndErrorChannelSpiesUsingStreamFactories([
+  const collectorsAndOutputChannelSpies = buildCoverageInfoCollectorsAndOutputChannelSpiesUsingStreamFactories([
     Imports.Fakes.Adapters.FileSystem.buildEmptyReadableStream,
     Imports.Fakes.Adapters.FileSystem.buildInvalidLlvmCoverageJsonObjectStream,
     Imports.Fakes.Adapters.FileSystem.buildNotJsonStream
   ]);
 
-  collectorsAndErrorChannelSpies.forEach(async collectorAndErrorChannelSpy => {
-    it('should fail to access to uncovered regions and report in error channel', async () => {
-      const collector = collectorAndErrorChannelSpy.coverageInfoCollector;
-      const errorChannelSpy = collectorAndErrorChannelSpy.errorChannelSpy;
+  collectorsAndOutputChannelSpies.forEach(async collectorAndOutputChannelSpy => {
+    it('should fail to access to uncovered regions and report in output channel', async () => {
+      const collector = collectorAndOutputChannelSpy.coverageInfoCollector;
+      const outputChannelSpy = collectorAndOutputChannelSpy.outputChannelSpy;
 
       const coverageInfo = await collector.collectFor('a');
       const iterateOnUncoveredRegions = async () => { for await (const _region of coverageInfo.uncoveredRegions); };
@@ -83,17 +83,17 @@ function shouldFailToCollectUncoveredRegionsBecauseOfInvalidStream() {
             `'${Imports.Extension.Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
             'settings are correctly set.');
 
-          errorChannelSpy.countFor('appendLine').should.be.equal(1);
+          outputChannelSpy.countFor('appendLine').should.be.equal(1);
         });
     });
   });
 }
 
 function shouldFailToCollectCoverageInfoSummaryBecauseOfUnhandledSourceFile() {
-  it('should fail to provide coverage summary for an unhandled source file and report to error channel', async () => {
-    const collectorAndSpies = buildCoverageInfoCollectorAndSpiesForProgressReportAndErrorChannel();
+  it('should fail to provide coverage summary for an unhandled source file and report to output channel', async () => {
+    const collectorAndSpies = buildCoverageInfoCollectorAndSpiesForProgressReportAndOutputChannel();
     const collector = collectorAndSpies.coverageInfoCollector;
-    const errorChannelSpy = collectorAndSpies.errorChannelSpy;
+    const outputChannelSpy = collectorAndSpies.outputChannelSpy;
 
     const sourceFilePath = '/an/unhandled/source/file.cpp';
 
@@ -105,16 +105,16 @@ function shouldFailToCollectCoverageInfoSummaryBecauseOfUnhandledSourceFile() {
         (<Error>error).message.should.contain('Cannot find any summary coverage info for the file ' +
           `${sourceFilePath}. Ensure this source file is covered by a test in your project.`);
 
-        errorChannelSpy.countFor('appendLine').should.be.equal(1);
+        outputChannelSpy.countFor('appendLine').should.be.equal(1);
       });
   });
 }
 
 function shouldFailToCollectUncoveredRegionsBecauseOfUnhandledSourceFile() {
   it('should fail to provide uncovered code regions for an unhandled source file', async () => {
-    const collectorAndSpies = buildCoverageInfoCollectorAndSpiesForProgressReportAndErrorChannel();
+    const collectorAndSpies = buildCoverageInfoCollectorAndSpiesForProgressReportAndOutputChannel();
     const collector = collectorAndSpies.coverageInfoCollector;
-    const errorChannelSpy = collectorAndSpies.errorChannelSpy;
+    const outputChannelSpy = collectorAndSpies.outputChannelSpy;
 
     const sourceFilePath = '/an/unhandled/source/file.cpp';
     const coverageInfo = await collector.collectFor(sourceFilePath);
@@ -126,7 +126,7 @@ function shouldFailToCollectUncoveredRegionsBecauseOfUnhandledSourceFile() {
         (<Error>error).message.should.contain('Cannot find any uncovered code regions for the file ' +
           `${sourceFilePath}. Ensure this source file is covered by a test in your project.`);
 
-        errorChannelSpy.countFor('appendLine').should.be.equal(1);
+        outputChannelSpy.countFor('appendLine').should.be.equal(1);
       });
   });
 }
@@ -134,7 +134,7 @@ function shouldFailToCollectUncoveredRegionsBecauseOfUnhandledSourceFile() {
 function shouldSucceedToCollectCoverageInfoSummary() {
   it('should succeed in provided summary coverage info for handled source file in 2 discrete steps', async () => {
 
-    const collectorAndSpies = buildCoverageInfoCollectorAndSpiesForProgressReportAndErrorChannel();
+    const collectorAndSpies = buildCoverageInfoCollectorAndSpiesForProgressReportAndOutputChannel();
     const collector = collectorAndSpies.coverageInfoCollector;
     const progressReporterSpy = collectorAndSpies.progressReporterSpy;
 
@@ -154,7 +154,7 @@ function shouldSucceedToCollectCoverageInfoSummary() {
 function shouldSucceedToCollectUncoveredRegions() {
   it('should succeed to provide uncovered regions for a handled source file in 2 discrete steps', async () => {
 
-    const collectorAndSpies = buildCoverageInfoCollectorAndSpiesForProgressReportAndErrorChannel();
+    const collectorAndSpies = buildCoverageInfoCollectorAndSpiesForProgressReportAndOutputChannel();
     const collector = collectorAndSpies.coverageInfoCollector;
     const progressReporterSpy = collectorAndSpies.progressReporterSpy;
 
@@ -185,56 +185,56 @@ function shouldSucceedToCollectUncoveredRegions() {
   });
 }
 
-function buildCoverageInfoCollectorAndSpiesForProgressReportAndErrorChannel() {
+function buildCoverageInfoCollectorAndSpiesForProgressReportAndOutputChannel() {
   const progressReporterSpy = Imports.Fakes.Adapters.vscode.buildSpyOfProgressReporter(Imports.Fakes.Adapters.vscode.buildFakeProgressReporter());
   const progressReporter = progressReporterSpy.object;
-  const errorChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfErrorChannel(Imports.Fakes.Adapters.vscode.buildFakeErrorChannel());
-  const errorChannel = errorChannelSpy.object;
+  const outputChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfOutputChannel(Imports.Fakes.Adapters.vscode.buildFakeOutputChannel());
+  const outputChannel = outputChannelSpy.object;
   const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForExactlyOneMatch();
   const settings = buildSettings();
 
   const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({
     coverageInfoFileResolver: Imports.Domain.Implementations.CoverageInfoFileResolver.make({
-      errorChannel,
+      outputChannel,
       globSearch,
       progressReporter,
       settings
     }),
     createReadStream: Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(Imports.Fakes.Adapters.FileSystem.buildValidLlvmCoverageJsonObjectStream),
     progressReporter: progressReporterSpy.object,
-    errorChannel
+    outputChannel
   });
 
   return {
     coverageInfoCollector,
     progressReporterSpy,
-    errorChannelSpy
+    outputChannelSpy
   };
 }
 
-function buildCoverageInfoCollectorsAndErrorChannelSpiesUsingStreamFactories(streamFactories: ReadonlyArray<StreamFactory>) {
+function buildCoverageInfoCollectorsAndOutputChannelSpiesUsingStreamFactories(streamFactories: ReadonlyArray<StreamFactory>) {
   return streamFactories.map(streamFfactory => {
-    const errorChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfErrorChannel(Imports.Fakes.Adapters.vscode.buildFakeErrorChannel());
-    const errorChannel = errorChannelSpy.object;
+    const outputChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfOutputChannel(Imports.Fakes.Adapters.vscode.buildFakeOutputChannel());
+    const outputChannel = outputChannelSpy.object;
     const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForExactlyOneMatch();
     const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
     const settings = buildSettings();
 
     const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({
       coverageInfoFileResolver: Imports.Domain.Implementations.CoverageInfoFileResolver.make({
-        errorChannel,
+        outputChannel,
         globSearch,
         progressReporter,
         settings
       }),
       createReadStream: Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(streamFfactory),
       progressReporter: Imports.Fakes.Adapters.vscode.buildFakeProgressReporter(),
-      errorChannel
+      outputChannel
     });
 
     return {
       coverageInfoCollector,
-      errorChannelSpy
+      outputChannelSpy
     };
   });
 }
@@ -243,7 +243,7 @@ type StreamFactory = () => Readable;
 
 function buildSettings() {
   return Imports.Domain.Implementations.SettingsProvider.make({
-    errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel(),
+    outputChannel: Imports.Fakes.Adapters.vscode.buildFakeOutputChannel(),
     workspace: Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings()
   }).settings;
 }

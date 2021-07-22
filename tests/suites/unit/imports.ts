@@ -16,8 +16,8 @@ export namespace Fakes {
   export namespace Adapters {
     export namespace vscode {
       export const buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings = VscodeFakes.buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings;
-      export const buildSpyOfErrorChannel = VscodeFakes.buildSpyOfErrorChannel;
-      export const buildFakeErrorChannel = VscodeFakes.buildFakeErrorChannel;
+      export const buildSpyOfOutputChannel = VscodeFakes.buildSpyOfOutputChannel;
+      export const buildFakeOutputChannel = VscodeFakes.buildFakeOutputChannel;
       export const buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings = VscodeFakes.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings;
       export const buildFakeProgressReporter = VscodeFakes.buildFakeProgressReporter;
       export const buildSpyOfProgressReporter = VscodeFakes.buildSpyOfProgressReporter;

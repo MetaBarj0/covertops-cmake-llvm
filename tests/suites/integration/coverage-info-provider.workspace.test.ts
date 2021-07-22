@@ -34,23 +34,24 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
   });
 
   it('should report correct coverage information for a specific cpp file', async () => {
-    const errorChannel = Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
-    const settings = Imports.Domain.Implementations.SettingsProvider.make({ workspace: Imports.Adapters.vscode.workspace, errorChannel }).settings;
+    const outputChannel = Imports.Fakes.Adapters.vscode.buildFakeOutputChannel();
+    const workspace = Imports.Adapters.vscode.workspace;
+    const settings = Imports.Domain.Implementations.SettingsProvider.make({ workspace, outputChannel }).settings;
     const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
     const mkdir = Imports.Adapters.FileSystem.mkdir;
     const stat = Imports.Adapters.FileSystem.stat;
-    const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
+    const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ outputChannel, settings, mkdir, stat, progressReporter });
     const execFile = Imports.Adapters.ProcessControl.execFile;
     const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
       execFile,
-      errorChannel,
+      outputChannel,
       progressReporter
     });
     const createReadStream = Imports.Adapters.FileSystem.createReadStream;
     const globSearch = Imports.Adapters.FileSystem.globSearch;
     const coverageInfoFileResolver = Imports.Domain.Implementations.CoverageInfoFileResolver.make({
-      errorChannel,
+      outputChannel,
       globSearch,
       progressReporter,
       settings
@@ -58,7 +59,7 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
     const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({
       coverageInfoFileResolver,
       createReadStream,
-      errorChannel,
+      outputChannel,
       progressReporter,
     });
 
@@ -107,23 +108,24 @@ function collectSummaryCoverageInfoFromPartiallyCoveredFileShouldSucceed() {
   });
 
   it('should report correct coverage information for a specific cpp file', async () => {
-    const errorChannel = Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
-    const settings = Imports.Domain.Implementations.SettingsProvider.make({ workspace: Imports.Adapters.vscode.workspace, errorChannel }).settings;
+    const outputChannel = Imports.Fakes.Adapters.vscode.buildFakeOutputChannel();
+    const workspace = Imports.Adapters.vscode.workspace;
+    const settings = Imports.Domain.Implementations.SettingsProvider.make({ workspace, outputChannel }).settings;
     const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
     const mkdir = Imports.Adapters.FileSystem.mkdir;
     const stat = Imports.Adapters.FileSystem.stat;
-    const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
+    const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ outputChannel, settings, mkdir, stat, progressReporter });
     const execFile = Imports.Adapters.ProcessControl.execFile;
     const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
       execFile,
-      errorChannel,
+      outputChannel,
       progressReporter
     });
     const createReadStream = Imports.Adapters.FileSystem.createReadStream;
     const globSearch = Imports.Adapters.FileSystem.globSearch;
     const coverageInfoFileResolver = Imports.Domain.Implementations.CoverageInfoFileResolver.make({
-      errorChannel,
+      outputChannel,
       globSearch,
       progressReporter,
       settings
@@ -131,7 +133,7 @@ function collectSummaryCoverageInfoFromPartiallyCoveredFileShouldSucceed() {
     const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({
       coverageInfoFileResolver,
       createReadStream,
-      errorChannel,
+      outputChannel,
       progressReporter,
     });
 
@@ -173,23 +175,24 @@ function collectSummaryCoverageInfoFromFullyCoveredFileShouldSucceed() {
   });
 
   it('should report correct coverage information for a specific file', async () => {
-    const errorChannel = Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
-    const settings = Imports.Domain.Implementations.SettingsProvider.make({ workspace: Imports.Adapters.vscode.workspace, errorChannel }).settings;
+    const outputChannel = Imports.Fakes.Adapters.vscode.buildFakeOutputChannel();
+    const workspace = Imports.Adapters.vscode.workspace;
+    const settings = Imports.Domain.Implementations.SettingsProvider.make({ workspace, outputChannel }).settings;
     const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
     const mkdir = Imports.Adapters.FileSystem.mkdir;
     const stat = Imports.Adapters.FileSystem.stat;
-    const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
+    const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ outputChannel, settings, mkdir, stat, progressReporter });
     const execFile = Imports.Adapters.ProcessControl.execFile;
     const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
       execFile,
-      errorChannel,
+      outputChannel,
       progressReporter
     });
     const createReadStream = Imports.Adapters.FileSystem.createReadStream;
     const globSearch = Imports.Adapters.FileSystem.globSearch;
     const coverageInfoFileResolver = Imports.Domain.Implementations.CoverageInfoFileResolver.make({
-      errorChannel,
+      outputChannel,
       globSearch,
       progressReporter,
       settings
@@ -197,7 +200,7 @@ function collectSummaryCoverageInfoFromFullyCoveredFileShouldSucceed() {
     const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({
       coverageInfoFileResolver,
       createReadStream,
-      errorChannel,
+      outputChannel,
       progressReporter
     });
 
@@ -239,22 +242,23 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
   });
 
   it('should report correct coverage information for a specific file', async () => {
-    const errorChannel = Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
-    const settings = Imports.Domain.Implementations.SettingsProvider.make({ workspace: Imports.Adapters.vscode.workspace, errorChannel }).settings;
+    const outputChannel = Imports.Fakes.Adapters.vscode.buildFakeOutputChannel();
+    const workspace = Imports.Adapters.vscode.workspace;
+    const settings = Imports.Domain.Implementations.SettingsProvider.make({ workspace, outputChannel }).settings;
     const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
     const mkdir = Imports.Adapters.FileSystem.mkdir;
     const stat = Imports.Adapters.FileSystem.stat;
-    const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter });
+    const buildTreeDirectoryResolver = Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ outputChannel, settings, mkdir, stat, progressReporter });
     const execFile = Imports.Adapters.ProcessControl.execFile;
     const globSearch = Imports.Adapters.FileSystem.globSearch;
     const cmake = Imports.Domain.Implementations.Cmake.make({
       settings,
       execFile,
-      errorChannel,
+      outputChannel,
       progressReporter
     });
     const coverageInfoFileResolver = Imports.Domain.Implementations.CoverageInfoFileResolver.make({
-      errorChannel,
+      outputChannel,
       progressReporter,
       settings,
       globSearch
@@ -263,7 +267,7 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
     const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({
       coverageInfoFileResolver,
       createReadStream,
-      errorChannel,
+      outputChannel,
       progressReporter
     });
 

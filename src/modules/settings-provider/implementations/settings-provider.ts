@@ -6,13 +6,13 @@ export function make(adapters: Adapters) {
 
 type Adapters = {
   workspace: Imports.Adapters.Abstractions.vscode.VscodeWorkspaceLike,
-  errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike
+  outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike
 };
 
 class SettingsProvider implements Imports.Domain.Abstractions.SettingsProvider {
   constructor(adapters: Adapters) {
     this.workspace = adapters.workspace;
-    this.errorChannel = adapters.errorChannel;
+    this.outputChannel = adapters.outputChannel;
   }
 
   get settings(): Imports.Domain.Abstractions.Settings {
@@ -38,11 +38,11 @@ class SettingsProvider implements Imports.Domain.Abstractions.SettingsProvider {
 
     const errorMessage = 'A workspace must be loaded to get coverage information.';
 
-    this.errorChannel.appendLine(errorMessage);
+    this.outputChannel.appendLine(errorMessage);
 
     throw new Error(errorMessage);
   }
 
   private readonly workspace: Imports.Adapters.Abstractions.vscode.VscodeWorkspaceLike;
-  private readonly errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
+  private readonly outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
 }

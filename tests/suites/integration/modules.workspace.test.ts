@@ -38,7 +38,7 @@ function settingsProviderGivesDefaultSettings() {
   it('should not throw any exception when instantiating settings provider and settings should be set with default values', () => {
     const settings = Imports.Domain.Implementations.SettingsProvider.make({
       workspace: Imports.Adapters.vscode.workspace,
-      errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel()
+      outputChannel: Imports.Fakes.Adapters.vscode.buildFakeOutputChannel()
     }).settings;
 
     const expectedSettings = {
@@ -113,7 +113,7 @@ function cmakeTargetBuildingShouldFail() {
   it('should fail in attempting to build an invalid cmake target', () => {
     const settings = Imports.Domain.Implementations.SettingsProvider.make({
       workspace: Imports.Adapters.vscode.workspace,
-      errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel()
+      outputChannel: Imports.Fakes.Adapters.vscode.buildFakeOutputChannel()
     }).settings;
 
     return makeCmake().buildTarget().should.eventually.be.rejectedWith(
@@ -164,27 +164,27 @@ function makeCmake() {
     settings: buildSettings(),
     execFile: Imports.Adapters.ProcessControl.execFile,
     progressReporter: Imports.Fakes.Adapters.vscode.buildFakeProgressReporter(),
-    errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel()
+    outputChannel: Imports.Fakes.Adapters.vscode.buildFakeOutputChannel()
   });
 }
 
 function makeBuildTreeDirectoryResolver() {
-  const errorChannel = Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
+  const outputChannel = Imports.Fakes.Adapters.vscode.buildFakeOutputChannel();
   const workspace = Imports.Adapters.vscode.workspace;
-  const settings = Imports.Domain.Implementations.SettingsProvider.make({ workspace, errorChannel }).settings;
+  const settings = Imports.Domain.Implementations.SettingsProvider.make({ workspace, outputChannel }).settings;
 
   return Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({
     settings,
     stat: Imports.Adapters.FileSystem.stat,
     mkdir: Imports.Adapters.FileSystem.mkdir,
     progressReporter: Imports.Fakes.Adapters.vscode.buildFakeProgressReporter(),
-    errorChannel
+    outputChannel
   });
 }
 
 function buildSettings(): Imports.Domain.Abstractions.Settings {
   return Imports.Domain.Implementations.SettingsProvider.make({
-    errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel(),
+    outputChannel: Imports.Fakes.Adapters.vscode.buildFakeOutputChannel(),
     workspace: Imports.Adapters.vscode.workspace
   }).settings;
 }

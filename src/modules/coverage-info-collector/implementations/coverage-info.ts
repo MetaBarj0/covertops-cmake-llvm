@@ -8,17 +8,17 @@ import { streamArray } from 'stream-json/streamers/StreamArray';
 
 export function make(llvmCoverageInfoStreamFactory: StreamFactory,
   sourceFilePath: string,
-  errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike): Imports.Domain.Abstractions.CoverageInfo {
-  return new CoverageInfo(llvmCoverageInfoStreamFactory, sourceFilePath, errorChannel);
+  outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike): Imports.Domain.Abstractions.CoverageInfo {
+  return new CoverageInfo(llvmCoverageInfoStreamFactory, sourceFilePath, outputChannel);
 }
 
 class CoverageInfo implements Imports.Domain.Abstractions.CoverageInfo {
   constructor(llvmCoverageInfoStreamFactory: StreamFactory,
     sourceFilePath: string,
-    errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike) {
+    outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike) {
     this.llvmCoverageInfoStreamFactory = llvmCoverageInfoStreamFactory;
     this.sourceFilePath = this.fixPathForLlvmCoverageInfoFile(sourceFilePath);
-    this.errorChannel = errorChannel;
+    this.outputChannel = outputChannel;
   }
 
   get summary() {
@@ -36,14 +36,14 @@ class CoverageInfo implements Imports.Domain.Abstractions.CoverageInfo {
           const errorMessage = 'Cannot find any summary coverage info for the file ' +
             `${this.sourceFilePath}. Ensure this source file is covered by a test in your project.`;
 
-          this.errorChannel.appendLine(errorMessage);
+          this.outputChannel.appendLine(errorMessage);
 
           reject(new Error(errorMessage));
         })
         .once('error', err => {
           const errorMessage = `${CoverageInfo.invalidInputReadableStreamMessage}${err.message}`;
 
-          this.errorChannel.appendLine(errorMessage);
+          this.outputChannel.appendLine(errorMessage);
           reject(new Error(errorMessage));
         });
     });
@@ -69,7 +69,7 @@ class CoverageInfo implements Imports.Domain.Abstractions.CoverageInfo {
   private allRawRegionsCoverageInfo() {
     const pipeline = this.preparePipelineForRegionCoverageInfo();
 
-    return new RegionCoverageInfoAsyncIterable(pipeline, this.sourceFilePath, this.errorChannel);
+    return new RegionCoverageInfoAsyncIterable(pipeline, this.sourceFilePath, this.outputChannel);
   }
 
   private preparePipelineForRegionCoverageInfo() {
@@ -117,7 +117,7 @@ class CoverageInfo implements Imports.Domain.Abstractions.CoverageInfo {
 
   private readonly llvmCoverageInfoStreamFactory: StreamFactory;
   private readonly sourceFilePath: string;
-  private readonly errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
+  private readonly outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
 
   static get invalidInputReadableStreamMessage() {
     return 'Invalid coverage information file have been found in the build tree directory. ' +
@@ -146,8 +146,8 @@ class RawLLVMCoverageSummary {
 };
 
 class RegionCoverageInfoAsyncIterable {
-  constructor(pipeline: Readable, sourceFilePath: string, errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike) {
-    this.iterator = new RegionCoverageInfoAsyncIterator(pipeline, sourceFilePath, errorChannel);
+  constructor(pipeline: Readable, sourceFilePath: string, outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike) {
+    this.iterator = new RegionCoverageInfoAsyncIterator(pipeline, sourceFilePath, outputChannel);
   }
 
   [Symbol.asyncIterator]() {
@@ -158,10 +158,10 @@ class RegionCoverageInfoAsyncIterable {
 };
 
 class RegionCoverageInfoAsyncIterator {
-  constructor(pipeline: Readable, sourceFilePath: string, errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike) {
+  constructor(pipeline: Readable, sourceFilePath: string, outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike) {
     this.pipeline = pipeline;
     this.sourceFilePath = sourceFilePath;
-    this.errorChannel = errorChannel;
+    this.outputChannel = outputChannel;
   }
 
   async next() {
@@ -185,7 +185,7 @@ class RegionCoverageInfoAsyncIterator {
         .once('error', err => {
           const errorMessage = CoverageInfo.invalidInputReadableStreamMessage + err.message;
 
-          this.errorChannel.appendLine(errorMessage);
+          this.outputChannel.appendLine(errorMessage);
 
           reject(new Error(errorMessage));
         });
@@ -199,7 +199,7 @@ class RegionCoverageInfoAsyncIterator {
     const errorMessage = 'Cannot find any uncovered code regions for the file ' +
       `${this.sourceFilePath}. Ensure this source file is covered by a test in your project.`;
 
-    this.errorChannel.appendLine(errorMessage);
+    this.outputChannel.appendLine(errorMessage);
 
     throw new Error(errorMessage);
   }
@@ -207,7 +207,7 @@ class RegionCoverageInfoAsyncIterator {
   private readonly pipeline: Readable;
   private readonly sourceFilePath: string;
   private hasAtLeastOneElement: boolean = false;
-  private readonly errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
+  private readonly outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
 };
 
 class RegionCoverageInfoIterator {

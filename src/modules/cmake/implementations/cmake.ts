@@ -1,10 +1,10 @@
 import * as Imports from '../imports';
 
 export abstract class BasicCmake implements Imports.Domain.Abstractions.Cmake {
-  constructor(errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike,
+  constructor(outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike,
     progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike,
     settings: Imports.Domain.Abstractions.Settings) {
-    this.errorChannel = errorChannel;
+    this.outputChannel = outputChannel;
     this.progressReporter = progressReporter;
     this.settings = settings;
   }
@@ -59,13 +59,13 @@ export abstract class BasicCmake implements Imports.Domain.Abstractions.Cmake {
   private handleErrorWithMessage(error: Error, message: string) {
     const errorMessage = `${message}${(<Error>error).message}`;
 
-    this.errorChannel.appendLine(errorMessage);
+    this.outputChannel.appendLine(errorMessage);
 
     return Promise.reject(new Error(errorMessage));
   }
 
   private readonly progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike;
-  private readonly errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
+  private readonly outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
 }
 
 export function make(context: Context): Imports.Domain.Abstractions.Cmake {
@@ -74,7 +74,7 @@ export function make(context: Context): Imports.Domain.Abstractions.Cmake {
 
 class Cmake extends BasicCmake implements Imports.Domain.Abstractions.Cmake {
   constructor(context: Context) {
-    super(context.errorChannel, context.progressReporter, context.settings);
+    super(context.outputChannel, context.progressReporter, context.settings);
 
     this.execFile = context.execFile;
   }
@@ -132,6 +132,6 @@ class Cmake extends BasicCmake implements Imports.Domain.Abstractions.Cmake {
 type Context = {
   settings: Imports.Domain.Abstractions.Settings,
   progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike,
-  errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike,
+  outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike,
   execFile: Imports.Adapters.Abstractions.processControl.ExecFileCallable,
 };

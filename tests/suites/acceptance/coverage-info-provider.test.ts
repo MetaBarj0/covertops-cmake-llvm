@@ -23,7 +23,7 @@ function instantiateService() {
   it('should not throw when instantiated with faked adapters.', () => {
     const adapters = {
       workspace: Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
-      errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel(),
+      outputChannel: Imports.Fakes.Adapters.vscode.buildFakeOutputChannel(),
       progressReporter: Imports.Fakes.Adapters.vscode.buildFakeProgressReporter(),
       mkdir: Imports.Fakes.Adapters.FileSystem.buildFakeFailingMkDir(),
       stat: Imports.Fakes.Adapters.FileSystem.buildFakeFailingStatFile(),
@@ -44,7 +44,7 @@ function failBecauseOfIssuesWithBuildTreeDirectoryAccess() {
   it('should not be able to provide any coverage info for a file ' +
     'when the build tree directory can not be found and / or created', () => {
       const adapters = {
-        errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel(),
+        outputChannel: Imports.Fakes.Adapters.vscode.buildFakeOutputChannel(),
         workspace: Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
         progressReporter: Imports.Fakes.Adapters.vscode.buildFakeProgressReporter(),
         mkdir: Imports.Fakes.Adapters.FileSystem.buildFakeFailingMkDir(),
@@ -64,7 +64,7 @@ function failBecauseOfIssuesWithCmakeTargetBuilding() {
   it('should not be able to provide any coverage info for a file ' +
     'when the cmake command cannot be reached.', () => {
       const adapters = {
-        errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel(),
+        outputChannel: Imports.Fakes.Adapters.vscode.buildFakeOutputChannel(),
         workspace: Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ cmakeCommand: '' }),
         progressReporter: Imports.Fakes.Adapters.vscode.buildFakeProgressReporter(),
         mkdir: Imports.Fakes.Adapters.FileSystem.buildFakeFailingMkDir(),
@@ -84,7 +84,7 @@ function failBecauseCoverageInfoFileResolutionIssue() {
   it('should not be able to provide any coverage info for a file ' +
     'when the coverage info file name cannot be found', () => {
       const adapters = {
-        errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel(),
+        outputChannel: Imports.Fakes.Adapters.vscode.buildFakeOutputChannel(),
         workspace: Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({ coverageInfoFileName: 'baadf00d' }),
         progressReporter: Imports.Fakes.Adapters.vscode.buildFakeProgressReporter(),
         mkdir: Imports.Fakes.Adapters.FileSystem.buildFakeFailingMkDir(),
@@ -105,7 +105,7 @@ function succeedWithCorrectSettingsAndFakeAdapters() {
     const progressReporterSpy = Imports.Fakes.Adapters.vscode.buildSpyOfProgressReporter(Imports.Fakes.Adapters.vscode.buildFakeProgressReporter());
 
     const adapters = {
-      errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel(),
+      outputChannel: Imports.Fakes.Adapters.vscode.buildFakeOutputChannel(),
       workspace: Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(),
       progressReporter: progressReporterSpy.object,
       mkdir: Imports.Fakes.Adapters.FileSystem.buildFakeSucceedingMkDir(),
@@ -151,7 +151,7 @@ function succeedWithCorrectSettingsAndFakeAdapters() {
 function buildContextFromAdapters(adapters: Adapters): CoverageInfoProviderContext {
   const {
     createReadStream,
-    errorChannel,
+    outputChannel,
     execFile,
     globSearch,
     mkdir,
@@ -160,9 +160,9 @@ function buildContextFromAdapters(adapters: Adapters): CoverageInfoProviderConte
     workspace
   } = adapters;
 
-  const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
+  const settings = Imports.Domain.Implementations.SettingsProvider.make({ outputChannel, workspace }).settings;
   const coverageInfoFileResolver = Imports.Domain.Implementations.CoverageInfoFileResolver.make({
-    errorChannel,
+    outputChannel,
     globSearch,
     progressReporter,
     settings
@@ -170,17 +170,17 @@ function buildContextFromAdapters(adapters: Adapters): CoverageInfoProviderConte
 
   return {
     settings,
-    buildTreeDirectoryResolver: Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ errorChannel, settings, mkdir, stat, progressReporter }),
+    buildTreeDirectoryResolver: Imports.Domain.Implementations.BuildTreeDirectoryResolver.make({ outputChannel, settings, mkdir, stat, progressReporter }),
     cmake: Imports.Domain.Implementations.Cmake.make({
       settings,
       execFile,
-      errorChannel,
+      outputChannel,
       progressReporter
     }),
     coverageInfoCollector: Imports.Domain.Implementations.CoverageInfoCollector.make({
       coverageInfoFileResolver,
       createReadStream,
-      errorChannel,
+      outputChannel,
       progressReporter
     })
   };
@@ -188,7 +188,7 @@ function buildContextFromAdapters(adapters: Adapters): CoverageInfoProviderConte
 
 type Adapters = {
   workspace: ReturnType<typeof Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings>,
-  errorChannel: ReturnType<typeof Imports.Fakes.Adapters.vscode.buildFakeErrorChannel>,
+  outputChannel: ReturnType<typeof Imports.Fakes.Adapters.vscode.buildFakeOutputChannel>,
   progressReporter: ReturnType<typeof Imports.Fakes.Adapters.vscode.buildFakeProgressReporter>,
   mkdir: ReturnType<typeof Imports.Fakes.Adapters.FileSystem.buildFakeFailingMkDir>,
   stat: ReturnType<typeof Imports.Fakes.Adapters.FileSystem.buildFakeFailingStatFile>,

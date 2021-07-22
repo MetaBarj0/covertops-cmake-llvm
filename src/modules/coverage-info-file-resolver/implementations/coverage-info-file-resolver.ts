@@ -10,7 +10,7 @@ type Context = {
   settings: Imports.Domain.Abstractions.Settings,
   globSearch: Imports.Adapters.Abstractions.fileSystem.GlobSearchCallable,
   progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike,
-  errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike
+  outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike
 };
 
 class CoverageInfoFileResolver implements Imports.Domain.Abstractions.CoverageInfoFileResolver {
@@ -18,7 +18,7 @@ class CoverageInfoFileResolver implements Imports.Domain.Abstractions.CoverageIn
     this.globSearch = context.globSearch;
     this.settings = context.settings;
     this.progressReporter = context.progressReporter;
-    this.errorChannel = context.errorChannel;
+    this.outputChannel = context.outputChannel;
   }
 
   async resolveCoverageInfoFileFullPath() {
@@ -44,7 +44,7 @@ class CoverageInfoFileResolver implements Imports.Domain.Abstractions.CoverageIn
       `'${Imports.Extension.Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
       'settings are correctly set.';
 
-    this.errorChannel.appendLine(errorMessage);
+    this.outputChannel.appendLine(errorMessage);
 
     throw new Error(errorMessage);
   }
@@ -59,7 +59,7 @@ class CoverageInfoFileResolver implements Imports.Domain.Abstractions.CoverageIn
       `'${Imports.Extension.Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
       'settings are correctly set.';
 
-    this.errorChannel.appendLine(errorMessage);
+    this.outputChannel.appendLine(errorMessage);
 
     throw new Error(errorMessage);
   }
@@ -73,5 +73,5 @@ class CoverageInfoFileResolver implements Imports.Domain.Abstractions.CoverageIn
   private readonly globSearch: Imports.Adapters.Abstractions.fileSystem.GlobSearchCallable;
   private readonly settings: Imports.Domain.Abstractions.Settings;
   private readonly progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike;
-  private readonly errorChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
+  private readonly outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
 };

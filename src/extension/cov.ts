@@ -85,7 +85,7 @@ class Cov {
       cancellable: false
     }, async progressReporter => {
 
-      const coverageInfoProvider = CoverageInfoProvider.make({ progressReporter, errorChannel: this.outputChannel_ });
+      const coverageInfoProvider = CoverageInfoProvider.make({ progressReporter, outputChannel: this.outputChannel_ });
 
       let uncoveredCodeInfo: CoverageInfo;
 

@@ -77,16 +77,16 @@ export function buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(): Vs
   };
 }
 
-export function buildFakeErrorChannel(): OutputChannelLike {
+export function buildFakeOutputChannel(): OutputChannelLike {
   return new class implements OutputChannelLike {
     appendLine(_line: string) { }
   };
 }
 
-export function buildSpyOfErrorChannel(errorChannel: OutputChannelLike): Spy<OutputChannelLike> {
+export function buildSpyOfOutputChannel(outputChannel: OutputChannelLike): Spy<OutputChannelLike> {
   return new class extends Spy<OutputChannelLike> implements OutputChannelLike {
-    constructor(errorChannel: OutputChannelLike) {
-      super(errorChannel);
+    constructor(outputChannel: OutputChannelLike) {
+      super(outputChannel);
     }
 
     appendLine(line: string) {
@@ -97,7 +97,7 @@ export function buildSpyOfErrorChannel(errorChannel: OutputChannelLike): Spy<Out
     get object() {
       return this;
     }
-  }(errorChannel);
+  }(outputChannel);
 }
 
 export function buildFakeProgressReporter(): ProgressLike {

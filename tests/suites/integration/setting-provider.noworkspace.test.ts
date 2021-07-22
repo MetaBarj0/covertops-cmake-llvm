@@ -12,7 +12,7 @@ describe('Querying settings from a setting provider initialized with a workspace
     (() => {
       Imports.Domain.Implementations.SettingsProvider.make({
         workspace: Imports.Adapters.vscode.workspace,
-        errorChannel: Imports.Fakes.Adapters.vscode.buildFakeErrorChannel()
+        outputChannel: Imports.Fakes.Adapters.vscode.buildFakeOutputChannel()
       }).settings;
     }).should.throw(
       'A workspace must be loaded to get coverage information.');

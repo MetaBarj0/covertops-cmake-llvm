@@ -19,13 +19,13 @@ describe('Unit test suite', () => {
 });
 
 function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryIsAnAbsolutePath() {
-  it('should fail to resolve and report to error channel when the build tree directory setting looks like an absolute path', () => {
+  it('should fail to resolve and report to output channel when the build tree directory setting looks like an absolute path', () => {
     const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings({
       buildTreeDirectory: path.normalize('/absolute/build')
     });
-    const errorChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfErrorChannel(Imports.Fakes.Adapters.vscode.buildFakeErrorChannel());
-    const errorChannel = errorChannelSpy.object;
-    const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
+    const outputChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfOutputChannel(Imports.Fakes.Adapters.vscode.buildFakeOutputChannel());
+    const outputChannel = outputChannelSpy.object;
+    const settings = Imports.Domain.Implementations.SettingsProvider.make({ outputChannel, workspace }).settings;
     const statFile = Imports.Fakes.Adapters.FileSystem.buildFakeFailingStatFile();
     const mkDir = Imports.Fakes.Adapters.FileSystem.buildFakeFailingMkDir();
     const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
@@ -35,7 +35,7 @@ function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryIsAnAbsoluteP
       stat: statFile,
       mkdir: mkDir,
       progressReporter,
-      errorChannel
+      outputChannel
     });
 
     return resolver.resolve()
@@ -43,17 +43,17 @@ function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryIsAnAbsoluteP
         error.message.should.contain(
           `Incorrect absolute path specified in '${Imports.Extension.Definitions.extensionNameInSettings}: Build Tree Directory'. It must be a relative path.`);
 
-        errorChannelSpy.countFor('appendLine').should.be.equal(1);
+        outputChannelSpy.countFor('appendLine').should.be.equal(1);
       });
   });
 }
 
 function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryDoesNotExistAndCannotBeCreated() {
-  it('should fail to resolve and report in error channel if specified relative path target does not exist and cannot be created', () => {
+  it('should fail to resolve and report in output channel if specified relative path target does not exist and cannot be created', () => {
     const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
-    const errorChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfErrorChannel(Imports.Fakes.Adapters.vscode.buildFakeErrorChannel());
-    const errorChannel = errorChannelSpy.object;
-    const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
+    const outputChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfOutputChannel(Imports.Fakes.Adapters.vscode.buildFakeOutputChannel());
+    const outputChannel = outputChannelSpy.object;
+    const settings = Imports.Domain.Implementations.SettingsProvider.make({ outputChannel, workspace }).settings;
     const statFile = Imports.Fakes.Adapters.FileSystem.buildFakeFailingStatFile();
     const mkDir = Imports.Fakes.Adapters.FileSystem.buildFakeFailingMkDir();
     const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
@@ -63,7 +63,7 @@ function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryDoesNotExistA
       stat: statFile,
       mkdir: mkDir,
       progressReporter,
-      errorChannel
+      outputChannel
     });
 
     return resolver.resolve()
@@ -72,7 +72,7 @@ function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryDoesNotExistA
           'Cannot find or create the build tree directory. Ensure the ' +
           `'${Imports.Extension.Definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`);
 
-        errorChannelSpy.countFor('appendLine').should.be.equal(1);
+        outputChannelSpy.countFor('appendLine').should.be.equal(1);
       });
   });
 }
@@ -80,8 +80,8 @@ function buildTreeDirectoryResolverShouldFailWhenBuildTreeDirectoryDoesNotExistA
 function buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryExists() {
   it('should resolve the full path of the build tree directory if the specified setting target an existing directory', async () => {
     const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
-    const errorChannel = Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
-    const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
+    const outputChannel = Imports.Fakes.Adapters.vscode.buildFakeOutputChannel();
+    const settings = Imports.Domain.Implementations.SettingsProvider.make({ outputChannel, workspace }).settings;
     const statFile = Imports.Fakes.Adapters.FileSystem.buildFakeSucceedingStatFile();
     const mkDir = Imports.Fakes.Adapters.FileSystem.buildFakeFailingMkDir();
     const progressReporterSpy = Imports.Fakes.Adapters.vscode.buildSpyOfProgressReporter(Imports.Fakes.Adapters.vscode.buildFakeProgressReporter());
@@ -92,7 +92,7 @@ function buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryExists() {
       stat: statFile,
       mkdir: mkDir,
       progressReporter,
-      errorChannel
+      outputChannel
     });
 
     await resolver.resolve();
@@ -105,8 +105,8 @@ function buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryDoesNotExi
   it('should resolve the full path of the build tree directory if the specified setting target ' +
     'an unexisting directory that can be created', async () => {
       const workspace = Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings();
-      const errorChannel = Imports.Fakes.Adapters.vscode.buildFakeErrorChannel();
-      const settings = Imports.Domain.Implementations.SettingsProvider.make({ errorChannel, workspace }).settings;
+      const outputChannel = Imports.Fakes.Adapters.vscode.buildFakeOutputChannel();
+      const settings = Imports.Domain.Implementations.SettingsProvider.make({ outputChannel, workspace }).settings;
       const statFile = Imports.Fakes.Adapters.FileSystem.buildFakeFailingStatFile();
       const mkDir = Imports.Fakes.Adapters.FileSystem.buildFakeSucceedingMkDir();
       const progressReporterSpy = Imports.Fakes.Adapters.vscode.buildSpyOfProgressReporter(Imports.Fakes.Adapters.vscode.buildFakeProgressReporter());
@@ -117,7 +117,7 @@ function buildTreeDirectoryResolverShouldSucceedWhenBuildTreeDirectoryDoesNotExi
         stat: statFile,
         mkdir: mkDir,
         progressReporter,
-        errorChannel
+        outputChannel
       });
 
       await resolver.resolve();

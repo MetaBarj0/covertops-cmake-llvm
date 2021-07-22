@@ -17,7 +17,7 @@ import { Settings as AbstractSettings } from '../../../src/modules/settings-prov
 export namespace Fakes {
   export namespace Adapters {
     export namespace vscode {
-      export const buildFakeErrorChannel = VscodeFakes.buildFakeErrorChannel;
+      export const buildFakeOutputChannel = VscodeFakes.buildFakeOutputChannel;
       export const buildFakeProgressReporter = VscodeFakes.buildFakeProgressReporter;
     }
   }
