@@ -1,5 +1,7 @@
 import * as Imports from "../imports";
 
+import * as Definitions from "../../../extension/definitions";
+
 import * as path from "path";
 
 export function make(adapters: Adapters): Imports.Domain.Abstractions.BuildTreeDirectoryResolver {
@@ -37,7 +39,7 @@ class BuildTreeDirectoryResolver implements Imports.Domain.Abstractions.BuildTre
 
   private ensurePathIsNotAbsolute(buildTreeDirectory: string) {
     if (path.isAbsolute(buildTreeDirectory)) {
-      const errorMessage = `Incorrect absolute path specified in '${Imports.Extension.Definitions.extensionNameInSettings}: ` +
+      const errorMessage = `Incorrect absolute path specified in '${Definitions.extensionNameInSettings}: ` +
         "Build Tree Directory'. It must be a relative path.";
 
       this.outputChannel.appendLine(errorMessage);
@@ -52,7 +54,7 @@ class BuildTreeDirectoryResolver implements Imports.Domain.Abstractions.BuildTre
         await this.mkdir(buildTreeDirectory, { recursive: true }).
           catch(_ => {
             const errorMessage = "Cannot find or create the build tree directory. Ensure the " +
-              `'${Imports.Extension.Definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`;
+              `'${Definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`;
 
             this.outputChannel.appendLine(errorMessage);
 
@@ -66,4 +68,4 @@ class BuildTreeDirectoryResolver implements Imports.Domain.Abstractions.BuildTre
   private readonly mkdir: Imports.Adapters.Abstractions.fileSystem.MkdirCallable;
   private readonly progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike;
   private readonly outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
-};
+}

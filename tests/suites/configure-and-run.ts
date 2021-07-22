@@ -1,17 +1,17 @@
-import * as path from 'path';
-import * as Mocha from 'mocha';
-import * as glob from 'glob';
+import * as path from "path";
+import * as Mocha from "mocha";
+import * as glob from "glob";
 
-export function configureAndRun(testsGlob: string, options: Mocha.MochaOptions = {}) {
+export function configureAndRun(testsGlob: string, options: Mocha.MochaOptions = {}): Promise<void> {
   return new Promise<void>((resolve, reject) => {
     // Create the mocha test
     const mocha = new Mocha({
-      ui: 'tdd',
+      ui: "tdd",
       color: true,
       ...options
     });
 
-    const testsRoot = path.resolve(__dirname, '.');
+    const testsRoot = path.resolve(__dirname, ".");
 
     glob(testsGlob, { cwd: testsRoot }, (error, files) => {
       if (error) {

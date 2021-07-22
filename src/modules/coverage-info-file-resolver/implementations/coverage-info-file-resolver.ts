@@ -1,5 +1,7 @@
 import * as Imports from "../imports";
 
+import * as Definitions from "../../../extension/definitions";
+
 import * as path from "path";
 
 export function make(context: Context): Imports.Domain.Abstractions.CoverageInfoFileResolver {
@@ -40,8 +42,8 @@ class CoverageInfoFileResolver implements Imports.Domain.Abstractions.CoverageIn
 
     const errorMessage = "More than one coverage information file have been found in the build tree directory. " +
       "Ensure that both " +
-      `'${Imports.Extension.Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
-      `'${Imports.Extension.Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
+      `'${Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+      `'${Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
       "settings are correctly set.";
 
     this.outputChannel.appendLine(errorMessage);
@@ -55,8 +57,8 @@ class CoverageInfoFileResolver implements Imports.Domain.Abstractions.CoverageIn
 
     const errorMessage = "Cannot resolve the coverage info file path in the build tree directory. " +
       "Ensure that both " +
-      `'${Imports.Extension.Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
-      `'${Imports.Extension.Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
+      `'${Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+      `'${Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
       "settings are correctly set.";
 
     this.outputChannel.appendLine(errorMessage);
@@ -74,4 +76,4 @@ class CoverageInfoFileResolver implements Imports.Domain.Abstractions.CoverageIn
   private readonly settings: Imports.Domain.Abstractions.Settings;
   private readonly progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike;
   private readonly outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
-};
+}

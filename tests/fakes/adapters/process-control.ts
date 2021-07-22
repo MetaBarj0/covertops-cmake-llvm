@@ -1,4 +1,4 @@
-import { ExecFileExceptionLike, ExecFileOptionsLike, ExecFileCallable } from '../../../src/adapters/abstractions/process-control';
+import { ExecFileExceptionLike, ExecFileOptionsLike, ExecFileCallable } from "../../../src/adapters/abstractions/process-control";
 
 export function buildFakeFailingProcess(failureStage?: FailureStages): ExecFileCallable {
   const maxSuccessfulCallCount = failureStage ? <number>failureStage : 0;
@@ -12,12 +12,12 @@ export function buildFakeFailingProcess(failureStage?: FailureStages): ExecFileC
     if (currentCallCount >= maxSuccessfulCallCount)
       callback(
         new class implements ExecFileExceptionLike {
-          message = 'Epic Fail!';
+          message = "Epic Fail!";
         },
-        'Epic Fail!',
-        'Epic Fail!');
+        "Epic Fail!",
+        "Epic Fail!");
     else
-      callback(null, 'Epic Success!', '');
+      callback(null, "Epic Success!", "");
 
     ++currentCallCount;
   };
@@ -29,7 +29,7 @@ export function buildFakeSucceedingProcess(): ExecFileCallable {
     _options: ExecFileOptionsLike,
     callback: (error: ExecFileExceptionLike | null,
       stdout: string, stderr: string) => void) => {
-    callback(null, 'Epic Success!', '');
+    callback(null, "Epic Success!", "");
   };
 }
 
@@ -37,4 +37,4 @@ export enum FailureStages {
   reach = 0,
   generate = 1,
   build = 2
-};
+}

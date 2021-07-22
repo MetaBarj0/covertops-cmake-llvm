@@ -1,6 +1,9 @@
 import * as Imports from "../imports";
 
-export function make(adapters: Adapters) {
+import * as Definitions from "../../../extension/definitions";
+import * as Settings from "./settings";
+
+export function make(adapters: Adapters): Imports.Domain.Abstractions.SettingsProvider {
   return new SettingsProvider(adapters);
 }
 
@@ -18,11 +21,11 @@ class SettingsProvider implements Imports.Domain.Abstractions.SettingsProvider {
   get settings(): Imports.Domain.Abstractions.Settings {
     this.ensureWorkspaceIsLoaded();
 
-    const workspaceSettings = this.workspace.getConfiguration(Imports.Extension.Definitions.extensionId);
+    const workspaceSettings = this.workspace.getConfiguration(Definitions.extensionId);
     const workspaceFolders = this.workspace.workspaceFolders as Array<Imports.Adapters.Abstractions.vscode.VscodeWorkspaceFolderLike>;
     const rootDirectory = workspaceFolders[0].uri.fsPath;
 
-    return Imports.Domain.Implementations.Settings.make(
+    return Settings.make(
       workspaceSettings.get("cmakeCommand") as string,
       workspaceSettings.get("buildTreeDirectory") as string,
       workspaceSettings.get("cmakeTarget") as string,

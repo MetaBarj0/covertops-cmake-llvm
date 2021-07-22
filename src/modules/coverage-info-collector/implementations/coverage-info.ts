@@ -1,5 +1,9 @@
 import * as Imports from "../imports";
 
+import * as Definitions from "../../../extension/definitions";
+import * as RegionCoverageInfo from "../../coverage-info-collector/implementations/region-coverage-info";
+import { CoverageSummary } from "../../coverage-info-collector/implementations/coverage-summary";
+
 import { Readable } from "stream";
 import { chain } from "stream-chain";
 import { parser } from "stream-json";
@@ -31,7 +35,7 @@ class CoverageInfo implements Imports.Domain.Abstractions.CoverageInfo {
         once("data", chunk => { s = <RawLLVMCoverageSummary>chunk.summary.regions; }).
         once("end", () => {
           if (s)
-            return resolve(new Imports.Domain.Implementations.CoverageSummary(s.count, s.covered, s.notcovered, s.percent));
+            return resolve(new CoverageSummary(s.count, s.covered, s.notcovered, s.percent));
 
           const errorMessage = "Cannot find any summary coverage info for the file " +
             `${this.sourceFilePath}. Ensure this source file is covered by a test in your project.`;
@@ -47,7 +51,7 @@ class CoverageInfo implements Imports.Domain.Abstractions.CoverageInfo {
           reject(new Error(errorMessage));
         });
     });
-  };
+  }
 
   get uncoveredRegions() {
     return this.uncoveredRegions_();
@@ -59,7 +63,7 @@ class CoverageInfo implements Imports.Domain.Abstractions.CoverageInfo {
 
   private async * uncoveredRegions_() {
     for await (const rawRegionCoverageInfo of this.allRawRegionsCoverageInfo()) {
-      const regionCoverageInfo = Imports.Domain.Implementations.RegionCoverageInfo.make(<Imports.Domain.Abstractions.RawLLVMRegionCoverageInfo>rawRegionCoverageInfo);
+      const regionCoverageInfo = RegionCoverageInfo.make(<Imports.Domain.Abstractions.RawLLVMRegionCoverageInfo>rawRegionCoverageInfo);
 
       if (regionCoverageInfo.isAnUncoveredRegion)
         yield regionCoverageInfo;
@@ -75,7 +79,7 @@ class CoverageInfo implements Imports.Domain.Abstractions.CoverageInfo {
   private preparePipelineForRegionCoverageInfo() {
     const self = this;
 
-    return this.extendBasicPipelineWith(function * (dataItem) {
+    return this.extendBasicPipelineWith(function* (dataItem) {
       if (dataItem.key !== 0)
         return null;
 
@@ -123,11 +127,11 @@ class CoverageInfo implements Imports.Domain.Abstractions.CoverageInfo {
     return "Invalid coverage information file have been found in the build tree directory. " +
       "Coverage information file must contain llvm coverage report in json format. " +
       "Ensure that both " +
-      `'${Imports.Extension.Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
-      `'${Imports.Extension.Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
+      `'${Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+      `'${Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
       "settings are correctly set.";
-  };
-};
+  }
+}
 
 type StreamFactory = () => Readable;
 
@@ -143,7 +147,7 @@ class RawLLVMCoverageSummary {
   readonly covered: number;
   readonly notcovered: number;
   readonly percent: number;
-};
+}
 
 class RegionCoverageInfoAsyncIterable {
   constructor(pipeline: Readable, sourceFilePath: string, outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike) {
@@ -155,7 +159,7 @@ class RegionCoverageInfoAsyncIterable {
   }
 
   private readonly iterator: RegionCoverageInfoAsyncIterator;
-};
+}
 
 class RegionCoverageInfoAsyncIterator {
   constructor(pipeline: Readable, sourceFilePath: string, outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike) {
@@ -167,7 +171,7 @@ class RegionCoverageInfoAsyncIterator {
   async next() {
     await this.ensureInputReadableStreamIsValid();
 
-    const regionCoverageInfo = <Imports.Domain.Abstractions.RawLLVMRegionCoverageInfo> this.pipeline.read(1);
+    const regionCoverageInfo = <Imports.Domain.Abstractions.RawLLVMRegionCoverageInfo>this.pipeline.read(1);
 
     if (regionCoverageInfo === null)
       return this.terminateIteration();
@@ -206,9 +210,9 @@ class RegionCoverageInfoAsyncIterator {
 
   private readonly pipeline: Readable;
   private readonly sourceFilePath: string;
-  private hasAtLeastOneElement: boolean = false;
+  private hasAtLeastOneElement = false;
   private readonly outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
-};
+}
 
 class RegionCoverageInfoIterator {
   constructor(other: RegionCoverageInfoIterator) {
@@ -218,4 +222,4 @@ class RegionCoverageInfoIterator {
 
   readonly done: boolean;
   readonly value?: Imports.Domain.Abstractions.RawLLVMRegionCoverageInfo;
-};
+}

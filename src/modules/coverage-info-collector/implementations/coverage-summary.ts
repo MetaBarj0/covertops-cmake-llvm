@@ -12,4 +12,4 @@ export class CoverageSummary implements Imports.Domain.Abstractions.CoverageSumm
   readonly covered: number;
   readonly notCovered: number;
   readonly percent: number;
-};
+}

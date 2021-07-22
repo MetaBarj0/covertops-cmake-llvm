@@ -26,12 +26,12 @@ export class TextEditorWithDecorations implements AbstractTextEditorWithDecorati
   options: vscode.TextEditorOptions;
   readonly viewColumn?: vscode.ViewColumn | undefined;
 
-  get decorations() {
+  get decorations(): Decorations | undefined {
     return this.decorations_;
   }
 
   setDecorations(decorationType: vscode.TextEditorDecorationType,
-    rangesOrOptions: readonly vscode.Range[] | readonly vscode.DecorationOptions[]) {
+    rangesOrOptions: readonly vscode.Range[] | readonly vscode.DecorationOptions[]): void {
     this.textEditor.setDecorations(decorationType, rangesOrOptions);
 
     this.decorations_ = {

@@ -1,7 +1,8 @@
-import packageJSON from '../../src/package.json';
+import packageJSON from "../../src/package.json";
 
-export function defaultSetting(setting: DefaultSettingsKey | 'rootDirectory') {
-  return isRootDirectory(setting) ? '.' : (() => {
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function defaultSetting(setting: DefaultSettingsKey | "rootDirectory") {
+  return isRootDirectory(setting) ? "." : (() => {
     type Setting = typeof setting;
     const name = packageJSON.name;
     type Name = typeof name;
@@ -20,7 +21,7 @@ const configuration = packageJSON.contributes.configuration[0].properties;
 type Configuration = typeof configuration;
 
 type DefaultSettings = {
-  [P in keyof Configuration as P extends `${infer _}.${infer T}` ? `${T}` : never]: Configuration[P]['default'];
+  [P in keyof Configuration as P extends `${infer _}.${infer T}` ? `${T}` : never]: Configuration[P]["default"];
 };
 
 class DefaultSetting<T extends keyof DefaultSettings>{
@@ -33,6 +34,6 @@ class DefaultSetting<T extends keyof DefaultSettings>{
 
 type DefaultSettingsKey = keyof DefaultSettings;
 
-function isRootDirectory(setting: DefaultSettingsKey | 'rootDirectory'): setting is 'rootDirectory' {
-  return (setting as 'rootDirectory') === 'rootDirectory';
+function isRootDirectory(setting: DefaultSettingsKey | "rootDirectory"): setting is "rootDirectory" {
+  return (setting as "rootDirectory") === "rootDirectory";
 }

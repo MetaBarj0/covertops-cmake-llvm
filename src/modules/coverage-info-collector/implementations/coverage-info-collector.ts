@@ -1,5 +1,7 @@
 import * as Imports from "../imports";
 
+import * as CoverageInfo from "./coverage-info";
+
 import { Readable } from "stream";
 
 export function make(adapters: Context): Imports.Domain.Abstractions.CoverageInfoCollector {
@@ -25,14 +27,14 @@ class CoverageInfoCollector implements Imports.Domain.Abstractions.CoverageInfoC
       message: "Prepared summary and uncovered region of code information."
     });
 
-    return Imports.Domain.Implementations.CoverageInfo.make(() => this.createReadStream(path), sourceFilePath, this.outputChannel);
+    return CoverageInfo.make(() => this.createReadStream(path), sourceFilePath, this.outputChannel);
   }
 
   private readonly coverageInfoFileResolver: Imports.Domain.Abstractions.CoverageInfoFileResolver;
   private readonly createReadStream: Imports.Adapters.Abstractions.fileSystem.CreateReadStreamCallable;
   private readonly progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike;
   private readonly outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
-};
+}
 
 type Context = {
   createReadStream: Imports.Adapters.Abstractions.fileSystem.CreateReadStreamCallable,

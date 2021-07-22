@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import * as fs from "fs/promises";
 
-export function make() {
+export function make(): vscode.TextDocumentContentProvider {
   return new UncoveredCodeRegionsDocumentContentProvider();
 }
 

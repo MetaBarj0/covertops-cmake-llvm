@@ -1,9 +1,11 @@
 import { Settings } from "../../modules/settings-provider/abstractions/settings";
 
+import * as vscode from "vscode";
+
 export type VscodeWorkspaceLike = {
   readonly workspaceFolders: ReadonlyArray<VscodeWorkspaceFolderLike> | undefined;
   getConfiguration(section?: string | undefined): VscodeWorkspaceConfigurationLike;
-  registerTextDocumentContentProvider(scheme: string, provider: TextDocumentContentProviderLike): DisposableLike;
+  registerTextDocumentContentProvider(scheme: string, provider: TextDocumentContentProviderLike): vscode.Disposable;
 };
 
 export type VscodeWorkspaceFolderLike = {
@@ -12,7 +14,7 @@ export type VscodeWorkspaceFolderLike = {
 
 export type VscodeWorkspaceConfigurationLike = {
   get(section: keyof Settings): Settings[typeof section];
-  update(section: string, value: any): Thenable<void>;
+  update(section: string, value: unknown): Thenable<void>;
 };
 
 export type VscodeUriLike = {
@@ -32,8 +34,10 @@ export type ProgressStep = {
   increment?: number
 };
 
-export type TextDocumentContentProviderLike = {};
+export type TextDocumentContentProviderLike = {
+  provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken): vscode.ProviderResult<string>;
+};
 
 export type DisposableLike = {
-  dispose(): any;
+  dispose(): unknown;
 };

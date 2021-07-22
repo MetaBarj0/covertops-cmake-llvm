@@ -29,4 +29,4 @@ class Settings implements Abstractions.Settings {
   readonly coverageInfoFileName: string;
   readonly additionalCmakeOptions: ReadonlyArray<string>;
   readonly rootDirectory: string;
-};
+}

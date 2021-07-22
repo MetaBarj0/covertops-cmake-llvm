@@ -1,28 +1,36 @@
-import * as chai from 'chai';
-import { describe, it } from 'mocha';
-import * as chaiAsPromised from 'chai-as-promised';
+import * as chai from "chai";
+import { describe, it } from "mocha";
+import * as chaiAsPromised from "chai-as-promised";
 
 chai.use(chaiAsPromised);
 chai.should();
 
-import * as Imports from './imports';
+// TODO: renames imports to types
+import * as Imports from "./imports";
 
-import { Readable } from 'stream';
+import * as VscodeFakes from "../../fakes/adapters/vscode";
+import * as FileSystemFakes from "../../fakes/adapters/file-system";
+import * as SettingsProvider from "../../../src/modules/settings-provider/implementations/settings-provider";
+import * as CoverageInfoFileResolver from "../../../src/modules/coverage-info-file-resolver/implementations/coverage-info-file-resolver";
+import * as CoverageInfoCollector from "../../../src/modules/coverage-info-collector/implementations/coverage-info-collector";
+import * as Definitions from "../../../src/extension/definitions";
 
-describe('Unit test suite', () => {
-  describe('the coverage info collector behavior', () => {
-    describe('with invalid input readable streams', () => {
-      describe('collect coverage info summary', shouldFailToCollectCoverageInfoSummaryBecauseOfInvalidStream);
-      describe('collect uncovered region coverage info', shouldFailToCollectUncoveredRegionsBecauseOfInvalidStream);
+import { Readable } from "stream";
+
+describe("Unit test suite", () => {
+  describe("the coverage info collector behavior", () => {
+    describe("with invalid input readable streams", () => {
+      describe("collect coverage info summary", shouldFailToCollectCoverageInfoSummaryBecauseOfInvalidStream);
+      describe("collect uncovered region coverage info", shouldFailToCollectUncoveredRegionsBecauseOfInvalidStream);
     });
-    describe('with a valid input readable stream', () => {
-      describe('for an unhandled source file', () => {
-        describe('collect coverage info summary', shouldFailToCollectCoverageInfoSummaryBecauseOfUnhandledSourceFile);
-        describe('collect uncovered region coverage info', shouldFailToCollectUncoveredRegionsBecauseOfUnhandledSourceFile);
+    describe("with a valid input readable stream", () => {
+      describe("for an unhandled source file", () => {
+        describe("collect coverage info summary", shouldFailToCollectCoverageInfoSummaryBecauseOfUnhandledSourceFile);
+        describe("collect uncovered region coverage info", shouldFailToCollectUncoveredRegionsBecauseOfUnhandledSourceFile);
       });
-      describe('for a handled source file', () => {
-        describe('collect coverage info summary', shouldSucceedToCollectCoverageInfoSummary);
-        describe('collect uncovered region coverage info', shouldSucceedToCollectUncoveredRegions);
+      describe("for a handled source file", () => {
+        describe("collect coverage info summary", shouldSucceedToCollectCoverageInfoSummary);
+        describe("collect uncovered region coverage info", shouldSucceedToCollectUncoveredRegions);
       });
     });
   });
@@ -30,29 +38,29 @@ describe('Unit test suite', () => {
 
 function shouldFailToCollectCoverageInfoSummaryBecauseOfInvalidStream() {
   const collectorsAndOutputChannelSpies = buildCoverageInfoCollectorsAndOutputChannelSpiesUsingStreamFactories([
-    Imports.Fakes.Adapters.FileSystem.buildEmptyReadableStream,
-    Imports.Fakes.Adapters.FileSystem.buildInvalidLlvmCoverageJsonObjectStream,
-    Imports.Fakes.Adapters.FileSystem.buildNotJsonStream
+    FileSystemFakes.buildEmptyReadableStream,
+    FileSystemFakes.buildInvalidLlvmCoverageJsonObjectStream,
+    FileSystemFakes.buildNotJsonStream
   ]);
 
   collectorsAndOutputChannelSpies.forEach(async collectorAndOutputChannelSpy => {
-    it('should fail to access to coverage info summary and report to output channel', async () => {
+    it("should fail to access to coverage info summary and report to output channel", async () => {
       const collector = collectorAndOutputChannelSpy.coverageInfoCollector;
       const outputChannelSpy = collectorAndOutputChannelSpy.outputChannelSpy;
 
-      const coverageInfo = await collector.collectFor('a');
+      const coverageInfo = await collector.collectFor("a");
 
       return coverageInfo.summary
         .catch((error: Error) => error)
-        .then(error => {
-          (<Error>error).message.should.contain('Invalid coverage information file have been found in the build tree directory. ' +
-            'Coverage information file must contain llvm coverage report in json format. ' +
-            'Ensure that both ' +
-            `'${Imports.Extension.Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
-            `'${Imports.Extension.Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
-            'settings are correctly set.');
+        .then((error: unknown) => {
+          (<Error>error).message.should.contain("Invalid coverage information file have been found in the build tree directory. " +
+            "Coverage information file must contain llvm coverage report in json format. " +
+            "Ensure that both " +
+            `'${Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+            `'${Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
+            "settings are correctly set.");
 
-          outputChannelSpy.countFor('appendLine').should.be.equal(1);
+          outputChannelSpy.countFor("appendLine").should.be.equal(1);
         });
     });
   });
@@ -60,85 +68,85 @@ function shouldFailToCollectCoverageInfoSummaryBecauseOfInvalidStream() {
 
 function shouldFailToCollectUncoveredRegionsBecauseOfInvalidStream() {
   const collectorsAndOutputChannelSpies = buildCoverageInfoCollectorsAndOutputChannelSpiesUsingStreamFactories([
-    Imports.Fakes.Adapters.FileSystem.buildEmptyReadableStream,
-    Imports.Fakes.Adapters.FileSystem.buildInvalidLlvmCoverageJsonObjectStream,
-    Imports.Fakes.Adapters.FileSystem.buildNotJsonStream
+    FileSystemFakes.buildEmptyReadableStream,
+    FileSystemFakes.buildInvalidLlvmCoverageJsonObjectStream,
+    FileSystemFakes.buildNotJsonStream
   ]);
 
   collectorsAndOutputChannelSpies.forEach(async collectorAndOutputChannelSpy => {
-    it('should fail to access to uncovered regions and report in output channel', async () => {
+    it("should fail to access to uncovered regions and report in output channel", async () => {
       const collector = collectorAndOutputChannelSpy.coverageInfoCollector;
       const outputChannelSpy = collectorAndOutputChannelSpy.outputChannelSpy;
 
-      const coverageInfo = await collector.collectFor('a');
+      const coverageInfo = await collector.collectFor("a");
       const iterateOnUncoveredRegions = async () => { for await (const _region of coverageInfo.uncoveredRegions); };
 
       return iterateOnUncoveredRegions()
         .catch((error: Error) => error)
         .then(error => {
-          (<Error>error).message.should.contain('Invalid coverage information file have been found in the build tree directory. ' +
-            'Coverage information file must contain llvm coverage report in json format. ' +
-            'Ensure that both ' +
-            `'${Imports.Extension.Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
-            `'${Imports.Extension.Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
-            'settings are correctly set.');
+          (<Error>error).message.should.contain("Invalid coverage information file have been found in the build tree directory. " +
+            "Coverage information file must contain llvm coverage report in json format. " +
+            "Ensure that both " +
+            `'${Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
+            `'${Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
+            "settings are correctly set.");
 
-          outputChannelSpy.countFor('appendLine').should.be.equal(1);
+          outputChannelSpy.countFor("appendLine").should.be.equal(1);
         });
     });
   });
 }
 
 function shouldFailToCollectCoverageInfoSummaryBecauseOfUnhandledSourceFile() {
-  it('should fail to provide coverage summary for an unhandled source file and report to output channel', async () => {
+  it("should fail to provide coverage summary for an unhandled source file and report to output channel", async () => {
     const collectorAndSpies = buildCoverageInfoCollectorAndSpiesForProgressReportAndOutputChannel();
     const collector = collectorAndSpies.coverageInfoCollector;
     const outputChannelSpy = collectorAndSpies.outputChannelSpy;
 
-    const sourceFilePath = '/an/unhandled/source/file.cpp';
+    const sourceFilePath = "/an/unhandled/source/file.cpp";
 
     const coverageInfo = await collector.collectFor(sourceFilePath);
 
     return coverageInfo.summary
       .catch((error: Error) => error)
-      .then(error => {
-        (<Error>error).message.should.contain('Cannot find any summary coverage info for the file ' +
+      .then((error: unknown) => {
+        (<Error>error).message.should.contain("Cannot find any summary coverage info for the file " +
           `${sourceFilePath}. Ensure this source file is covered by a test in your project.`);
 
-        outputChannelSpy.countFor('appendLine').should.be.equal(1);
+        outputChannelSpy.countFor("appendLine").should.be.equal(1);
       });
   });
 }
 
 function shouldFailToCollectUncoveredRegionsBecauseOfUnhandledSourceFile() {
-  it('should fail to provide uncovered code regions for an unhandled source file', async () => {
+  it("should fail to provide uncovered code regions for an unhandled source file", async () => {
     const collectorAndSpies = buildCoverageInfoCollectorAndSpiesForProgressReportAndOutputChannel();
     const collector = collectorAndSpies.coverageInfoCollector;
     const outputChannelSpy = collectorAndSpies.outputChannelSpy;
 
-    const sourceFilePath = '/an/unhandled/source/file.cpp';
+    const sourceFilePath = "/an/unhandled/source/file.cpp";
     const coverageInfo = await collector.collectFor(sourceFilePath);
     const iterateOnUncoveredRegions = async () => { for await (const _region of coverageInfo.uncoveredRegions); };
 
     return iterateOnUncoveredRegions()
       .catch((error: Error) => error)
       .then(error => {
-        (<Error>error).message.should.contain('Cannot find any uncovered code regions for the file ' +
+        (<Error>error).message.should.contain("Cannot find any uncovered code regions for the file " +
           `${sourceFilePath}. Ensure this source file is covered by a test in your project.`);
 
-        outputChannelSpy.countFor('appendLine').should.be.equal(1);
+        outputChannelSpy.countFor("appendLine").should.be.equal(1);
       });
   });
 }
 
 function shouldSucceedToCollectCoverageInfoSummary() {
-  it('should succeed in provided summary coverage info for handled source file in 2 discrete steps', async () => {
+  it("should succeed in provided summary coverage info for handled source file in 2 discrete steps", async () => {
 
     const collectorAndSpies = buildCoverageInfoCollectorAndSpiesForProgressReportAndOutputChannel();
     const collector = collectorAndSpies.coverageInfoCollector;
     const progressReporterSpy = collectorAndSpies.progressReporterSpy;
 
-    const coverageInfo = await collector.collectFor('/a/source/file.cpp');
+    const coverageInfo = await collector.collectFor("/a/source/file.cpp");
 
     const summary = await coverageInfo.summary;
 
@@ -147,18 +155,18 @@ function shouldSucceedToCollectCoverageInfoSummary() {
     summary.notCovered.should.be.equal(0);
     summary.percent.should.be.equal(100);
 
-    progressReporterSpy.countFor('report').should.be.equal(2);
+    progressReporterSpy.countFor("report").should.be.equal(2);
   });
 }
 
 function shouldSucceedToCollectUncoveredRegions() {
-  it('should succeed to provide uncovered regions for a handled source file in 2 discrete steps', async () => {
+  it("should succeed to provide uncovered regions for a handled source file in 2 discrete steps", async () => {
 
     const collectorAndSpies = buildCoverageInfoCollectorAndSpiesForProgressReportAndOutputChannel();
     const collector = collectorAndSpies.coverageInfoCollector;
     const progressReporterSpy = collectorAndSpies.progressReporterSpy;
 
-    const coverageInfo = await collector.collectFor('/a/source/file.cpp');
+    const coverageInfo = await collector.collectFor("/a/source/file.cpp");
     const regions = coverageInfo.uncoveredRegions;
 
     const uncoveredRegions: Array<Imports.Domain.Abstractions.RegionCoverageInfo> = [];
@@ -181,26 +189,26 @@ function shouldSucceedToCollectUncoveredRegions() {
       }
     });
 
-    progressReporterSpy.countFor('report').should.be.equal(2);
+    progressReporterSpy.countFor("report").should.be.equal(2);
   });
 }
 
 function buildCoverageInfoCollectorAndSpiesForProgressReportAndOutputChannel() {
-  const progressReporterSpy = Imports.Fakes.Adapters.vscode.buildSpyOfProgressReporter(Imports.Fakes.Adapters.vscode.buildFakeProgressReporter());
+  const progressReporterSpy = VscodeFakes.buildSpyOfProgressReporter(VscodeFakes.buildFakeProgressReporter());
   const progressReporter = progressReporterSpy.object;
-  const outputChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfOutputChannel(Imports.Fakes.Adapters.vscode.buildFakeOutputChannel());
+  const outputChannelSpy = VscodeFakes.buildSpyOfOutputChannel(VscodeFakes.buildFakeOutputChannel());
   const outputChannel = outputChannelSpy.object;
-  const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForExactlyOneMatch();
+  const globSearch = FileSystemFakes.buildFakeGlobSearchForExactlyOneMatch();
   const settings = buildSettings();
 
-  const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({
-    coverageInfoFileResolver: Imports.Domain.Implementations.CoverageInfoFileResolver.make({
+  const coverageInfoCollector = CoverageInfoCollector.make({
+    coverageInfoFileResolver: CoverageInfoFileResolver.make({
       outputChannel,
       globSearch,
       progressReporter,
       settings
     }),
-    createReadStream: Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(Imports.Fakes.Adapters.FileSystem.buildValidLlvmCoverageJsonObjectStream),
+    createReadStream: FileSystemFakes.buildFakeStreamBuilder(FileSystemFakes.buildValidLlvmCoverageJsonObjectStream),
     progressReporter: progressReporterSpy.object,
     outputChannel
   });
@@ -214,21 +222,21 @@ function buildCoverageInfoCollectorAndSpiesForProgressReportAndOutputChannel() {
 
 function buildCoverageInfoCollectorsAndOutputChannelSpiesUsingStreamFactories(streamFactories: ReadonlyArray<StreamFactory>) {
   return streamFactories.map(streamFfactory => {
-    const outputChannelSpy = Imports.Fakes.Adapters.vscode.buildSpyOfOutputChannel(Imports.Fakes.Adapters.vscode.buildFakeOutputChannel());
+    const outputChannelSpy = VscodeFakes.buildSpyOfOutputChannel(VscodeFakes.buildFakeOutputChannel());
     const outputChannel = outputChannelSpy.object;
-    const globSearch = Imports.Fakes.Adapters.FileSystem.buildFakeGlobSearchForExactlyOneMatch();
-    const progressReporter = Imports.Fakes.Adapters.vscode.buildFakeProgressReporter();
+    const globSearch = FileSystemFakes.buildFakeGlobSearchForExactlyOneMatch();
+    const progressReporter = VscodeFakes.buildFakeProgressReporter();
     const settings = buildSettings();
 
-    const coverageInfoCollector = Imports.Domain.Implementations.CoverageInfoCollector.make({
-      coverageInfoFileResolver: Imports.Domain.Implementations.CoverageInfoFileResolver.make({
+    const coverageInfoCollector = CoverageInfoCollector.make({
+      coverageInfoFileResolver: CoverageInfoFileResolver.make({
         outputChannel,
         globSearch,
         progressReporter,
         settings
       }),
-      createReadStream: Imports.Fakes.Adapters.FileSystem.buildFakeStreamBuilder(streamFfactory),
-      progressReporter: Imports.Fakes.Adapters.vscode.buildFakeProgressReporter(),
+      createReadStream: FileSystemFakes.buildFakeStreamBuilder(streamFfactory),
+      progressReporter: VscodeFakes.buildFakeProgressReporter(),
       outputChannel
     });
 
@@ -242,8 +250,8 @@ function buildCoverageInfoCollectorsAndOutputChannelSpiesUsingStreamFactories(st
 type StreamFactory = () => Readable;
 
 function buildSettings() {
-  return Imports.Domain.Implementations.SettingsProvider.make({
-    outputChannel: Imports.Fakes.Adapters.vscode.buildFakeOutputChannel(),
-    workspace: Imports.Fakes.Adapters.vscode.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings()
+  return SettingsProvider.make({
+    outputChannel: VscodeFakes.buildFakeOutputChannel(),
+    workspace: VscodeFakes.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings()
   }).settings;
 }

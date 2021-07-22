@@ -5,14 +5,14 @@ export abstract class Spy<T> {
 
   abstract get object(): T;
 
-  countFor(member: keyof T) {
+  countFor(member: keyof T): number {
     if (this.callCountMap[member] === undefined)
       return 0;
 
     return <number>this.callCountMap[member];
   }
 
-  protected incrementCallCountFor(member: keyof T) {
+  protected incrementCallCountFor(member: keyof T): void {
     if (this.callCountMap[member] === undefined)
       this.callCountMap[member] = 0;
 
@@ -24,4 +24,4 @@ export abstract class Spy<T> {
   } = {};
 
   protected readonly wrapped: T;
-};
+}

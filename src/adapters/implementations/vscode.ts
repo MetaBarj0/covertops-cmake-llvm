@@ -1,16 +1,14 @@
-import * as Abstractions from "../abstractions/vscode";
-
 import * as vscode from "vscode";
 
-export const workspace: Abstractions.VscodeWorkspaceLike = vscode.workspace;
+export const workspace = vscode.workspace;
 
-export namespace window {
-  export const createOutputChannel = vscode.window.createOutputChannel;
-  export const withProgress = vscode.window.withProgress;
+export const window = {
+  createOutputChannel: vscode.window.createOutputChannel,
+  withProgress: vscode.window.withProgress
 }
 
-export namespace commands {
-  export const registerCommand = vscode.commands.registerCommand;
+export const commands = {
+  registerCommand: vscode.commands.registerCommand
 }
 
 export class Disposable extends vscode.Disposable { }
@@ -23,5 +21,5 @@ export type TextEditor = vscode.TextEditor;
 export type TextDocumentContentProvider = vscode.TextDocumentContentProvider;
 
 export type DisposableLike = {
-  dispose(): any;
+  dispose(): unknown;
 };

@@ -8,54 +8,28 @@
   "plugins": [
     "@typescript-eslint"
   ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
   "rules": {
-    "@typescript-eslint/naming-convention": "warn",
-    "@typescript-eslint/semi": "warn",
-    "array-bracket-newline": [
-      "warn",
-      "consistent"
-    ],
-    "array-bracket-spacing": "warn",
-    "arrow-spacing": "warn",
-    "block-spacing": "warn",
-    "camelcase": "warn",
-    "comma-dangle": "warn",
-    "comma-spacing": "warn",
-    "comma-style": "warn",
-    "computed-property-spacing": "warn",
-    "dot-location": "warn",
-    "dot-notation": "warn",
-    "eol-last": "warn",
-    "eqeqeq": "warn",
-    "func-call-spacing": "warn",
-    "func-name-matching": "warn",
-    "generator-star-spacing": [
+    "@typescript-eslint/no-unused-vars": [
       "warn",
       {
-        "before": true,
-        "after": true
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
       }
     ],
-    "getter-return": "warn",
-    "indent": [
-      "warn",
-      2
-    ],
-    "key-spacing": "warn",
-    "keyword-spacing": [
+    "@typescript-eslint/no-this-alias": [
       "warn",
       {
-        "before": true
+        "allowedNames": [
+          "self"
+        ]
       }
     ],
-    "newline-before-return": "warn",
-    "no-const-assign": "warn",
-    "no-mixed-spaces-and-tabs": "warn",
-    "no-throw-literal": "warn",
-    "no-trailing-spaces": "warn",
-    "prefer-const": "warn",
-    "prefer-promise-reject-errors": "warn",
-    "quotes": "warn",
-    "require-await": "warn"
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/quotes": "warn"
   }
 }

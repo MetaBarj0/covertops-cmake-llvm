@@ -1,15 +1,15 @@
-import { defaultSetting } from '../../utils/settings';
+import { defaultSetting } from "../../utils/settings";
 
-import { Settings } from '../../../src/modules/settings-provider/abstractions/settings';
+import { Settings } from "../../../src/modules/settings-provider/abstractions/settings";
 import {
   DisposableLike,
   TextDocumentContentProviderLike,
   VscodeUriLike,
   VscodeWorkspaceConfigurationLike,
   VscodeWorkspaceFolderLike, VscodeWorkspaceLike
-} from '../../../src/adapters/abstractions/vscode';
+} from "../../../src/adapters/abstractions/vscode";
 
-import { OutputChannelLike, ProgressLike, ProgressStep } from '../../../src/adapters/abstractions/vscode';
+import { OutputChannelLike, ProgressLike, ProgressStep } from "../../../src/adapters/abstractions/vscode";
 
 import { Spy } from "../../utils/spy";
 
@@ -24,13 +24,13 @@ export function buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettin
     }
 
     registerTextDocumentContentProvider(_scheme: string, _provider: TextDocumentContentProviderLike): DisposableLike {
-      throw new Error('Method not implemented.');
+      throw new Error("Method not implemented.");
     }
 
     workspaceFolders = [
       new class implements VscodeWorkspaceFolderLike {
         uri = new class implements VscodeUriLike {
-          fsPath = defaultSetting('rootDirectory').toString();
+          fsPath = defaultSetting("rootDirectory").toString();
         };
       }];
 
@@ -47,7 +47,7 @@ export function buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettin
           return defaultSetting(section);
         }
 
-        async update(_section: string, _value: any) { }
+        async update(_section: string, _value: unknown) { }
 
         private overrides: Overrides;
       }(this.overrides);
@@ -61,7 +61,7 @@ export function buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(): Vs
   return new class implements VscodeWorkspaceLike {
 
     registerTextDocumentContentProvider(_scheme: string, _provider: TextDocumentContentProviderLike): DisposableLike {
-      throw new Error('Method not implemented.');
+      throw new Error("Method not implemented.");
     }
     workspaceFolders = undefined;
 
@@ -71,9 +71,9 @@ export function buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(): Vs
           return defaultSetting(section);
         }
 
-        async update(_section: string, _value: any) { }
+        async update(_section: string, _value: unknown) { }
       };
-    };
+    }
   };
 }
 
@@ -91,7 +91,7 @@ export function buildSpyOfOutputChannel(outputChannel: OutputChannelLike): Spy<O
 
     appendLine(line: string) {
       this.wrapped.appendLine(line);
-      this.incrementCallCountFor('appendLine');
+      this.incrementCallCountFor("appendLine");
     }
 
     get object() {
@@ -115,7 +115,7 @@ export function buildSpyOfProgressReporter(progressReporter: ProgressLike): Spy<
 
     report(value: ProgressStep) {
       this.wrapped.report(value);
-      super.incrementCallCountFor('report');
+      super.incrementCallCountFor("report");
     }
 
     get object() {

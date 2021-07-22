@@ -2,8 +2,6 @@ import * as VscodeModule from "../../adapters/abstractions/vscode";
 import { Cmake as AbstractCmake } from "./abstractions/cmake";
 import * as SettingsProviderModule from "../settings-provider/abstractions/settings";
 import * as AbstractProcessControl from "../../adapters/abstractions/process-control";
-import * as ConcreteProcessControl from "../../adapters/implementations/process-control";
-import * as DefinitionsModule from "../../extension/definitions";
 
 export namespace Adapters {
   export namespace Abstractions {
@@ -22,11 +20,5 @@ export namespace Domain {
   export namespace Abstractions {
     export type Cmake = AbstractCmake;
     export type Settings = SettingsProviderModule.Settings;
-  }
-}
-
-export namespace Extension {
-  export namespace Definitions {
-    export const extensionNameInSettings = DefinitionsModule.extensionNameInSettings;
   }
 }

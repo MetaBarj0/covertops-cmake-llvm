@@ -1,5 +1,5 @@
-import { configureAndRun } from '../configure-and-run';
+import { configureAndRun } from "../configure-and-run";
 
-export function run() {
-  return configureAndRun('./acceptance/**/**.test.js');
+export function run(): Promise<void> {
+  return configureAndRun("./acceptance/**/**.test.js");
 }

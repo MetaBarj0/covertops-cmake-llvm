@@ -7,7 +7,7 @@ import { TextEditorWithDecorations as ConcreteTextEditorWithDecorations } from "
 
 import * as vscode from "vscode";
 
-export function make(uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider) {
+export function make(uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider): Cov {
   return new Cov(uncoveredCodeRegionsDocumentContentProvider);
 }
 
@@ -88,7 +88,7 @@ class Cov {
       const coverageInfoProvider = CoverageInfoProvider.make({ progressReporter, outputChannel: this.outputChannel_ });
 
       try {
-        return  await coverageInfoProvider.getCoverageInfoForFile(uri.fsPath);
+        return await coverageInfoProvider.getCoverageInfoForFile(uri.fsPath);
       } catch (error) {
         this.outputChannel_.appendLine(error.message);
         throw error;

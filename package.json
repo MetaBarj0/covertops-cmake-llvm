@@ -141,7 +141,7 @@
     "compile": "npm run precompile && tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
-    "lint": "eslint src --ext ts",
+    "lint": "eslint . --ext ts",
     "test": "node ./out/tests/run-test.js",
     "deploy": "npm run package && vsce publish -p",
     "vscode:prepublish": "webpack --mode production",

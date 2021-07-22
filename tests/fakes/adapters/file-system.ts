@@ -3,43 +3,43 @@ import {
   StatCallable,
   CreateReadStreamCallable,
   GlobSearchCallable
-} from '../../../src/adapters/abstractions/file-system';
+} from "../../../src/adapters/abstractions/file-system";
 
-import { MakeDirectoryOptions, PathLike, StatOptions, Stats } from 'fs';
-import { Readable } from 'stream';
+import { MakeDirectoryOptions, PathLike, StatOptions, Stats } from "fs";
+import { Readable } from "stream";
 
 export function buildFakeGlobSearchForNoMatch(): GlobSearchCallable {
   return (_pattern: string) => Promise.resolve([]);
 }
 
 export function buildFakeGlobSearchForSeveralMatch(): GlobSearchCallable {
-  return (_pattern: string) => Promise.resolve(['', '']);
+  return (_pattern: string) => Promise.resolve(["", ""]);
 }
 
 export function buildFakeGlobSearchForExactlyOneMatch(): GlobSearchCallable {
-  return (_pattern: string) => Promise.resolve(['oneMatchShow']);
+  return (_pattern: string) => Promise.resolve(["oneMatchShow"]);
 }
 
-export function buildEmptyReadableStream() {
+export function buildEmptyReadableStream(): Readable {
   const empty = (function* () { })();
 
   return Readable.from(empty);
 }
 
-export function buildNotJsonStream() {
-  return Readable.from('foo');
+export function buildNotJsonStream(): Readable {
+  return Readable.from("foo");
 }
 
-export function buildInvalidLlvmCoverageJsonObjectStream() {
+export function buildInvalidLlvmCoverageJsonObjectStream(): Readable {
   return Readable.from(JSON.stringify({
     data: [
-      { foo: 'bar' },
+      { foo: "bar" },
       {}
     ]
   }));
 }
 
-export function buildValidLlvmCoverageJsonObjectStream() {
+export function buildValidLlvmCoverageJsonObjectStream(): Readable {
   return Readable.from(JSON.stringify({
     "data": [
       {
@@ -101,13 +101,13 @@ export function buildFakeFailingMkDir(): MkdirCallable {
 }
 
 export function buildFakeSucceedingMkDir(): MkdirCallable {
-  return (_path: PathLike, _options: MakeDirectoryOptions & { recursive: true; }): Promise<string | undefined> => Promise.resolve('/build/tree/directory');
+  return (_path: PathLike, _options: MakeDirectoryOptions & { recursive: true; }): Promise<string | undefined> => Promise.resolve("/build/tree/directory");
 }
 
 export function buildFakeFailingStatFile(): StatCallable {
   return (_path: PathLike, _opts?: StatOptions) => Promise.reject();
-};
+}
 
 export function buildFakeSucceedingStatFile(): StatCallable {
   return (_path: PathLike, _opts?: StatOptions) => Promise.resolve(new Stats());
-};
+}
