@@ -1,6 +1,6 @@
 import * as Types from "./types";
 
-export function make(context: Context): Types.Modules.Abstractions.CoverageInfoProvider {
+export function make(context: Context): Types.Modules.CoverageInfoProvider {
   return new CoverageInfoProvider({
     settings: context.settings,
     buildTreeDirectoryResolver: context.buildTreeDirectoryResolver,
@@ -8,7 +8,7 @@ export function make(context: Context): Types.Modules.Abstractions.CoverageInfoP
     coverageInfoCollector: context.coverageInfoCollector
   });
 }
-class CoverageInfoProvider implements Types.Modules.Abstractions.CoverageInfoProvider {
+class CoverageInfoProvider implements Types.Modules.CoverageInfoProvider {
   constructor(context: Context) {
     this.buildTreeDirectoryResolver = context.buildTreeDirectoryResolver;
     this.cmake = context.cmake;
@@ -22,14 +22,14 @@ class CoverageInfoProvider implements Types.Modules.Abstractions.CoverageInfoPro
     return this.coverageInfoCollector.collectFor(sourceFilePath);
   }
 
-  private readonly buildTreeDirectoryResolver: Types.Modules.Abstractions.BuildTreeDirectoryResolver;
-  private readonly cmake: Types.Modules.Abstractions.Cmake;
-  private readonly coverageInfoCollector: Types.Modules.Abstractions.CoverageInfoCollector;
+  private readonly buildTreeDirectoryResolver: Types.Modules.BuildTreeDirectoryResolver;
+  private readonly cmake: Types.Modules.Cmake;
+  private readonly coverageInfoCollector: Types.Modules.CoverageInfoCollector;
 }
 
 type Context = {
-  settings: Types.Modules.Abstractions.Settings,
-  buildTreeDirectoryResolver: Types.Modules.Abstractions.BuildTreeDirectoryResolver,
-  cmake: Types.Modules.Abstractions.Cmake,
-  coverageInfoCollector: Types.Modules.Abstractions.CoverageInfoCollector
+  settings: Types.Modules.Settings,
+  buildTreeDirectoryResolver: Types.Modules.BuildTreeDirectoryResolver,
+  cmake: Types.Modules.Cmake,
+  coverageInfoCollector: Types.Modules.CoverageInfoCollector
 };

@@ -1,11 +1,11 @@
 import * as Types from "./types";
 
-export function make(rawLLVMRegionCoverageInfo: Types.Modules.Abstractions.RawLLVMRegionCoverageInfo): Types.Modules.Abstractions.RegionCoverageInfo {
+export function make(rawLLVMRegionCoverageInfo: Types.Modules.RawLLVMRegionCoverageInfo): Types.Modules.RegionCoverageInfo {
   return new RegionCoverageInfo(rawLLVMRegionCoverageInfo);
 }
 
-class RegionCoverageInfo implements Types.Modules.Abstractions.RegionCoverageInfo {
-  constructor(rawLLVMRegionCoverageInfo: Types.Modules.Abstractions.RawLLVMRegionCoverageInfo) {
+class RegionCoverageInfo implements Types.Modules.RegionCoverageInfo {
+  constructor(rawLLVMRegionCoverageInfo: Types.Modules.RawLLVMRegionCoverageInfo) {
     // https://github.com/llvm/llvm-project/blob/21c18d5a04316891110cecc2bf37ce51533decba/llvm/tools/llvm-cov/CoverageExporterJson.cpp#L87
     this.kind = rawLLVMRegionCoverageInfo[7] === 0 ? "Normal" : "Other";
     this.executionCount = rawLLVMRegionCoverageInfo[4];
@@ -41,7 +41,7 @@ class RegionCoverageInfo implements Types.Modules.Abstractions.RegionCoverageInf
 
   private readonly kind: RegionKind;
   private readonly executionCount: number;
-  private readonly regionRange: Types.Modules.Abstractions.RegionRange;
+  private readonly regionRange: Types.Modules.RegionRange;
 }
 
 type RegionKind = "Normal" | "Other";

@@ -4,12 +4,9 @@ import * as VscodeModule from "../adapters/abstractions/vscode";
 import * as TextEditorWithDecorationsModule from "./abstractions/text-editor-with-decorations";
 
 export namespace Adapters {
-  // TODO, Abstractions sub namespace is not necessary anymore in all types.d.ts files
-  export namespace Abstractions {
-    export namespace vscode {
-      export type ProgressLike = VscodeModule.ProgressLike;
-      export type OutputChannelLike = VscodeModule.OutputChannelLike;
-    }
+  export namespace vscode {
+    export type ProgressLike = VscodeModule.ProgressLike;
+    export type OutputChannelLike = VscodeModule.OutputChannelLike;
   }
 }
 

@@ -5,11 +5,9 @@ import * as AbstractCmake from "../../../src/modules/abstractions/cmake";
 import * as AbstractCoverageInfoCollector from "../../../src/modules/abstractions/coverage-info-collector";
 
 export namespace Modules {
-  export namespace Abstractions {
-    export type RegionCoverageInfo = RegionCoverageInfoModule.RegionCoverageInfo;
-    export type Settings = AbstractSettingsProvider.Settings;
-    export type BuildTreeDirectoryResolver = AbstractBuildTreeDirectoryResolver.BuildTreeDirectoryResolver;
-    export type Cmake = AbstractCmake.Cmake;
-    export type CoverageInfoCollector = AbstractCoverageInfoCollector.CoverageInfoCollector;
-  }
+  export type RegionCoverageInfo = RegionCoverageInfoModule.RegionCoverageInfo;
+  export type Settings = AbstractSettingsProvider.Settings;
+  export type BuildTreeDirectoryResolver = AbstractBuildTreeDirectoryResolver.BuildTreeDirectoryResolver;
+  export type Cmake = AbstractCmake.Cmake;
+  export type CoverageInfoCollector = AbstractCoverageInfoCollector.CoverageInfoCollector;
 }

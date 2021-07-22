@@ -4,21 +4,16 @@ import * as FileSystemModule from "../../../src/adapters/abstractions/file-syste
 
 
 export namespace Modules {
-
-  export namespace Abstractions {
-    export type RegionCoverageInfo = RegionCoverageInfoModule.RegionCoverageInfo;
-  }
+  export type RegionCoverageInfo = RegionCoverageInfoModule.RegionCoverageInfo;
 }
 
 export namespace Adapters {
-  export namespace Abstractions {
-    export namespace vscode {
-      export type OutputChannelLike = VscodeModule.OutputChannelLike;
-      export type ProgressLike = VscodeModule.ProgressLike;
-    }
+  export namespace vscode {
+    export type OutputChannelLike = VscodeModule.OutputChannelLike;
+    export type ProgressLike = VscodeModule.ProgressLike;
+  }
 
-    export namespace FileSystem {
-      export type GlobSearchCallable = FileSystemModule.GlobSearchCallable;
-    }
+  export namespace FileSystem {
+    export type GlobSearchCallable = FileSystemModule.GlobSearchCallable;
   }
 }

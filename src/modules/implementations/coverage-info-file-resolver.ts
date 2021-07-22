@@ -4,18 +4,18 @@ import * as Definitions from "../../extension/implementations/definitions";
 
 import * as path from "path";
 
-export function make(context: Context): Types.Modules.Abstractions.CoverageInfoFileResolver {
+export function make(context: Context): Types.Modules.CoverageInfoFileResolver {
   return new CoverageInfoFileResolver(context);
 }
 
 type Context = {
-  settings: Types.Modules.Abstractions.Settings,
-  globSearch: Types.Adapters.Abstractions.fileSystem.GlobSearchCallable,
-  progressReporter: Types.Adapters.Abstractions.vscode.ProgressLike,
-  outputChannel: Types.Adapters.Abstractions.vscode.OutputChannelLike
+  settings: Types.Modules.Settings,
+  globSearch: Types.Adapters.fileSystem.GlobSearchCallable,
+  progressReporter: Types.Adapters.vscode.ProgressLike,
+  outputChannel: Types.Adapters.vscode.OutputChannelLike
 };
 
-class CoverageInfoFileResolver implements Types.Modules.Abstractions.CoverageInfoFileResolver {
+class CoverageInfoFileResolver implements Types.Modules.CoverageInfoFileResolver {
   constructor(context: Context) {
     this.globSearch = context.globSearch;
     this.settings = context.settings;
@@ -72,8 +72,8 @@ class CoverageInfoFileResolver implements Types.Modules.Abstractions.CoverageInf
     return `${posixRootPath}${path.posix.sep}**${path.posix.sep}${this.settings.coverageInfoFileName}`;
   }
 
-  private readonly globSearch: Types.Adapters.Abstractions.fileSystem.GlobSearchCallable;
-  private readonly settings: Types.Modules.Abstractions.Settings;
-  private readonly progressReporter: Types.Adapters.Abstractions.vscode.ProgressLike;
-  private readonly outputChannel: Types.Adapters.Abstractions.vscode.OutputChannelLike;
+  private readonly globSearch: Types.Adapters.fileSystem.GlobSearchCallable;
+  private readonly settings: Types.Modules.Settings;
+  private readonly progressReporter: Types.Adapters.vscode.ProgressLike;
+  private readonly outputChannel: Types.Adapters.vscode.OutputChannelLike;
 }

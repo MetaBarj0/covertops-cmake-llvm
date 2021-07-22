@@ -168,7 +168,7 @@ function shouldSucceedToCollectUncoveredRegions() {
     const coverageInfo = await collector.collectFor("/a/source/file.cpp");
     const regions = coverageInfo.uncoveredRegions;
 
-    const uncoveredRegions: Array<Types.Modules.Abstractions.RegionCoverageInfo> = [];
+    const uncoveredRegions: Array<Types.Modules.RegionCoverageInfo> = [];
 
     for await (const region of regions)
       uncoveredRegions.push(region);

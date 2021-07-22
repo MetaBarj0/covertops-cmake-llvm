@@ -2,10 +2,10 @@ import * as Types from "./types";
 
 import * as Definitions from "../../extension/implementations/definitions";
 
-export abstract class BasicCmake implements Types.Modules.Abstractions.Cmake {
-  constructor(outputChannel: Types.Adapters.Abstractions.vscode.OutputChannelLike,
-    progressReporter: Types.Adapters.Abstractions.vscode.ProgressLike,
-    settings: Types.Modules.Abstractions.Settings) {
+export abstract class BasicCmake implements Types.Modules.Cmake {
+  constructor(outputChannel: Types.Adapters.vscode.OutputChannelLike,
+    progressReporter: Types.Adapters.vscode.ProgressLike,
+    settings: Types.Modules.Settings) {
     this.outputChannel = outputChannel;
     this.progressReporter = progressReporter;
     this.settings = settings;
@@ -56,7 +56,7 @@ export abstract class BasicCmake implements Types.Modules.Abstractions.Cmake {
   protected abstract generateProject(): Thenable<void>;
   protected abstract build(): Thenable<void>;
 
-  protected readonly settings: Types.Modules.Abstractions.Settings;
+  protected readonly settings: Types.Modules.Settings;
 
   private handleErrorWithMessage(error: Error, message: string) {
     const errorMessage = `${message}${(<Error>error).message}`;
@@ -66,15 +66,15 @@ export abstract class BasicCmake implements Types.Modules.Abstractions.Cmake {
     return Promise.reject(new Error(errorMessage));
   }
 
-  private readonly progressReporter: Types.Adapters.Abstractions.vscode.ProgressLike;
-  private readonly outputChannel: Types.Adapters.Abstractions.vscode.OutputChannelLike;
+  private readonly progressReporter: Types.Adapters.vscode.ProgressLike;
+  private readonly outputChannel: Types.Adapters.vscode.OutputChannelLike;
 }
 
-export function make(context: Context): Types.Modules.Abstractions.Cmake {
+export function make(context: Context): Types.Modules.Cmake {
   return new Cmake(context);
 }
 
-class Cmake extends BasicCmake implements Types.Modules.Abstractions.Cmake {
+class Cmake extends BasicCmake implements Types.Modules.Cmake {
   constructor(context: Context) {
     super(context.outputChannel, context.progressReporter, context.settings);
 
@@ -128,12 +128,12 @@ class Cmake extends BasicCmake implements Types.Modules.Abstractions.Cmake {
     });
   }
 
-  private readonly execFile: Types.Adapters.Abstractions.processControl.ExecFileCallable;
+  private readonly execFile: Types.Adapters.processControl.ExecFileCallable;
 }
 
 type Context = {
-  settings: Types.Modules.Abstractions.Settings,
-  progressReporter: Types.Adapters.Abstractions.vscode.ProgressLike,
-  outputChannel: Types.Adapters.Abstractions.vscode.OutputChannelLike,
-  execFile: Types.Adapters.Abstractions.processControl.ExecFileCallable,
+  settings: Types.Modules.Settings,
+  progressReporter: Types.Adapters.vscode.ProgressLike,
+  outputChannel: Types.Adapters.vscode.OutputChannelLike,
+  execFile: Types.Adapters.processControl.ExecFileCallable,
 };

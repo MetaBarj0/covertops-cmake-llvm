@@ -4,7 +4,7 @@ import * as CoverageInfo from "./coverage-info";
 
 import { Readable } from "stream";
 
-export function make(adapters: Context): Types.Modules.Abstractions.CoverageInfoCollector {
+export function make(adapters: Context): Types.Modules.CoverageInfoCollector {
   return new CoverageInfoCollector(adapters);
 }
 
@@ -12,7 +12,7 @@ export type LLVMCoverageInfoStreamBuilder = {
   createStream: (path: string) => Readable;
 };
 
-class CoverageInfoCollector implements Types.Modules.Abstractions.CoverageInfoCollector {
+class CoverageInfoCollector implements Types.Modules.CoverageInfoCollector {
   constructor(context: Context) {
     this.coverageInfoFileResolver = context.coverageInfoFileResolver;
     this.createReadStream = context.createReadStream;
@@ -30,15 +30,15 @@ class CoverageInfoCollector implements Types.Modules.Abstractions.CoverageInfoCo
     return CoverageInfo.make(() => this.createReadStream(path), sourceFilePath, this.outputChannel);
   }
 
-  private readonly coverageInfoFileResolver: Types.Modules.Abstractions.CoverageInfoFileResolver;
-  private readonly createReadStream: Types.Adapters.Abstractions.fileSystem.CreateReadStreamCallable;
-  private readonly progressReporter: Types.Adapters.Abstractions.vscode.ProgressLike;
-  private readonly outputChannel: Types.Adapters.Abstractions.vscode.OutputChannelLike;
+  private readonly coverageInfoFileResolver: Types.Modules.CoverageInfoFileResolver;
+  private readonly createReadStream: Types.Adapters.fileSystem.CreateReadStreamCallable;
+  private readonly progressReporter: Types.Adapters.vscode.ProgressLike;
+  private readonly outputChannel: Types.Adapters.vscode.OutputChannelLike;
 }
 
 type Context = {
-  createReadStream: Types.Adapters.Abstractions.fileSystem.CreateReadStreamCallable,
-  progressReporter: Types.Adapters.Abstractions.vscode.ProgressLike,
-  outputChannel: Types.Adapters.Abstractions.vscode.OutputChannelLike,
-  coverageInfoFileResolver: Types.Modules.Abstractions.CoverageInfoFileResolver;
+  createReadStream: Types.Adapters.fileSystem.CreateReadStreamCallable,
+  progressReporter: Types.Adapters.vscode.ProgressLike,
+  outputChannel: Types.Adapters.vscode.OutputChannelLike,
+  coverageInfoFileResolver: Types.Modules.CoverageInfoFileResolver;
 };

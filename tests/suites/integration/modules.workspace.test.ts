@@ -192,7 +192,7 @@ function makeBuildTreeDirectoryResolver() {
   });
 }
 
-function buildSettings(): Types.Modules.Abstractions.Settings {
+function buildSettings(): Types.Modules.Settings {
   return SettingsProvider.make({
     outputChannel: Fakes.buildFakeOutputChannel(),
     workspace: vscode.workspace

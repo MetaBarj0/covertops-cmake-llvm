@@ -129,7 +129,7 @@ function succeedWithCorrectSettingsAndFakeAdapters() {
 
     const coverageInfo = await provider.getCoverageInfoForFile("/a/source/file.cpp");
 
-    const uncoveredRegions: Array<Types.Modules.Abstractions.RegionCoverageInfo> = [];
+    const uncoveredRegions: Array<Types.Modules.RegionCoverageInfo> = [];
     for await (const region of coverageInfo.uncoveredRegions)
       uncoveredRegions.push(region);
 

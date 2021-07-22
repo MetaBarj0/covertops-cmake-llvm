@@ -50,7 +50,7 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
 
     const coverageInfo = await coverageInfoProvider.getCoverageInfoForFile(sourceFilePath);
 
-    const uncoveredRegions: Array<Types.Modules.Abstractions.RegionCoverageInfo> = [];
+    const uncoveredRegions: Array<Types.Modules.RegionCoverageInfo> = [];
     for await (const region of coverageInfo.uncoveredRegions)
       uncoveredRegions.push(region);
 
@@ -148,7 +148,7 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
   it("should report correct coverage information for a specific file", async () => {
     const coverageInfoProvider = makeCoverageInfoProvider();
     const sourceFilePath = createAbsoluteSourceFilePathFrom("fullyCovered/fullyCoveredLib.cpp");
-    const uncoveredRegions: Array<Types.Modules.Abstractions.RegionCoverageInfo> = [];
+    const uncoveredRegions: Array<Types.Modules.RegionCoverageInfo> = [];
 
     const coverageInfo = await coverageInfoProvider.getCoverageInfoForFile(sourceFilePath);
     for await (const region of coverageInfo.uncoveredRegions)
