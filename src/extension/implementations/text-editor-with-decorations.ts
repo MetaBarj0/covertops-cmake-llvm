@@ -1,8 +1,8 @@
-import { Decorations, TextEditorWithDecorations as AbstractTextEditorWithDecorations } from "../abstractions/text-editor-with-decorations";
+import * as Types from "../types";
 
 import * as vscode from "vscode";
 
-export class TextEditorWithDecorations implements AbstractTextEditorWithDecorations {
+export class TextEditorWithDecorations implements Types.Extension.TextEditorWithDecorations {
   constructor(textEditor: vscode.TextEditor) {
     this.textEditor = textEditor;
     this.document = textEditor.document;
@@ -26,7 +26,7 @@ export class TextEditorWithDecorations implements AbstractTextEditorWithDecorati
   options: vscode.TextEditorOptions;
   readonly viewColumn?: vscode.ViewColumn | undefined;
 
-  get decorations(): Decorations | undefined {
+  get decorations(): Types.Extension.Decorations | undefined {
     return this.decorations_;
   }
 
@@ -51,5 +51,5 @@ export class TextEditorWithDecorations implements AbstractTextEditorWithDecorati
   hide: () => void;
 
   private readonly textEditor: vscode.TextEditor;
-  private decorations_?: Decorations;
+  private decorations_?: Types.Extension.Decorations;
 }

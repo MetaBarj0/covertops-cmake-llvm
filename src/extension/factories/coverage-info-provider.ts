@@ -1,5 +1,4 @@
-import * as VscodeModule from "../../adapters/abstractions/vscode";
-import * as CoverageInfoProviderModule from "../../modules/abstractions/coverage-info-provider";
+import * as Types from "../types";
 
 import * as SettingsProvider from "../../modules/implementations/settings-provider";
 import * as BuildTreeDirectoryResolver from "../../modules/implementations/build-tree-directory-resolver";
@@ -12,7 +11,7 @@ import * as processControl from "../../adapters/implementations/process-control"
 
 import * as vscode from "vscode";
 
-export function make(context: Context): CoverageInfoProviderModule.CoverageInfoProvider {
+export function make(context: Context): Types.Modules.CoverageInfoProvider {
   const workspace = vscode.workspace;
   const { outputChannel, progressReporter } = context;
 
@@ -52,6 +51,6 @@ export function make(context: Context): CoverageInfoProviderModule.CoverageInfoP
 }
 
 type Context = {
-  progressReporter: VscodeModule.ProgressLike,
-  outputChannel: VscodeModule.OutputChannelLike
+  progressReporter: Types.Adapters.Abstractions.vscode.ProgressLike,
+  outputChannel: Types.Adapters.Abstractions.vscode.OutputChannelLike
 };
