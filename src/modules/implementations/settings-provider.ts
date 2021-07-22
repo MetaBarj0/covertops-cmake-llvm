@@ -1,28 +1,28 @@
-import * as Imports from "./types";
+import * as Types from "./types";
 
-import * as Definitions from "../../extension/definitions";
+import * as Definitions from "../../extension/implementations/definitions";
 import * as Settings from "./settings";
 
-export function make(adapters: Adapters): Imports.Modules.Abstractions.SettingsProvider {
+export function make(adapters: Adapters): Types.Modules.Abstractions.SettingsProvider {
   return new SettingsProvider(adapters);
 }
 
 type Adapters = {
-  workspace: Imports.Adapters.Abstractions.vscode.VscodeWorkspaceLike,
-  outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike
+  workspace: Types.Adapters.Abstractions.vscode.VscodeWorkspaceLike,
+  outputChannel: Types.Adapters.Abstractions.vscode.OutputChannelLike
 };
 
-class SettingsProvider implements Imports.Modules.Abstractions.SettingsProvider {
+class SettingsProvider implements Types.Modules.Abstractions.SettingsProvider {
   constructor(adapters: Adapters) {
     this.workspace = adapters.workspace;
     this.outputChannel = adapters.outputChannel;
   }
 
-  get settings(): Imports.Modules.Abstractions.Settings {
+  get settings(): Types.Modules.Abstractions.Settings {
     this.ensureWorkspaceIsLoaded();
 
     const workspaceSettings = this.workspace.getConfiguration(Definitions.extensionId);
-    const workspaceFolders = this.workspace.workspaceFolders as Array<Imports.Adapters.Abstractions.vscode.VscodeWorkspaceFolderLike>;
+    const workspaceFolders = this.workspace.workspaceFolders as Array<Types.Adapters.Abstractions.vscode.VscodeWorkspaceFolderLike>;
     const rootDirectory = workspaceFolders[0].uri.fsPath;
 
     return Settings.make(
@@ -46,6 +46,6 @@ class SettingsProvider implements Imports.Modules.Abstractions.SettingsProvider 
     throw new Error(errorMessage);
   }
 
-  private readonly workspace: Imports.Adapters.Abstractions.vscode.VscodeWorkspaceLike;
-  private readonly outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
+  private readonly workspace: Types.Adapters.Abstractions.vscode.VscodeWorkspaceLike;
+  private readonly outputChannel: Types.Adapters.Abstractions.vscode.OutputChannelLike;
 }

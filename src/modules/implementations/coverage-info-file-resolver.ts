@@ -1,21 +1,21 @@
-import * as Imports from "./types";
+import * as Types from "./types";
 
-import * as Definitions from "../../extension/definitions";
+import * as Definitions from "../../extension/implementations/definitions";
 
 import * as path from "path";
 
-export function make(context: Context): Imports.Modules.Abstractions.CoverageInfoFileResolver {
+export function make(context: Context): Types.Modules.Abstractions.CoverageInfoFileResolver {
   return new CoverageInfoFileResolver(context);
 }
 
 type Context = {
-  settings: Imports.Modules.Abstractions.Settings,
-  globSearch: Imports.Adapters.Abstractions.fileSystem.GlobSearchCallable,
-  progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike,
-  outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike
+  settings: Types.Modules.Abstractions.Settings,
+  globSearch: Types.Adapters.Abstractions.fileSystem.GlobSearchCallable,
+  progressReporter: Types.Adapters.Abstractions.vscode.ProgressLike,
+  outputChannel: Types.Adapters.Abstractions.vscode.OutputChannelLike
 };
 
-class CoverageInfoFileResolver implements Imports.Modules.Abstractions.CoverageInfoFileResolver {
+class CoverageInfoFileResolver implements Types.Modules.Abstractions.CoverageInfoFileResolver {
   constructor(context: Context) {
     this.globSearch = context.globSearch;
     this.settings = context.settings;
@@ -72,8 +72,8 @@ class CoverageInfoFileResolver implements Imports.Modules.Abstractions.CoverageI
     return `${posixRootPath}${path.posix.sep}**${path.posix.sep}${this.settings.coverageInfoFileName}`;
   }
 
-  private readonly globSearch: Imports.Adapters.Abstractions.fileSystem.GlobSearchCallable;
-  private readonly settings: Imports.Modules.Abstractions.Settings;
-  private readonly progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike;
-  private readonly outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
+  private readonly globSearch: Types.Adapters.Abstractions.fileSystem.GlobSearchCallable;
+  private readonly settings: Types.Modules.Abstractions.Settings;
+  private readonly progressReporter: Types.Adapters.Abstractions.vscode.ProgressLike;
+  private readonly outputChannel: Types.Adapters.Abstractions.vscode.OutputChannelLike;
 }

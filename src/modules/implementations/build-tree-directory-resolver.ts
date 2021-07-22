@@ -1,22 +1,22 @@
-import * as Imports from "./types";
+import * as Types from "./types";
 
-import * as Definitions from "../../extension/definitions";
+import * as Definitions from "../../extension/implementations/definitions";
 
 import * as path from "path";
 
-export function make(adapters: Adapters): Imports.Modules.Abstractions.BuildTreeDirectoryResolver {
+export function make(adapters: Adapters): Types.Modules.Abstractions.BuildTreeDirectoryResolver {
   return new BuildTreeDirectoryResolver(adapters);
 }
 
 type Adapters = {
-  settings: Imports.Modules.Abstractions.Settings,
-  stat: Imports.Adapters.Abstractions.fileSystem.StatCallable,
-  mkdir: Imports.Adapters.Abstractions.fileSystem.MkdirCallable,
-  progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike,
-  outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike
+  settings: Types.Modules.Abstractions.Settings,
+  stat: Types.Adapters.Abstractions.fileSystem.StatCallable,
+  mkdir: Types.Adapters.Abstractions.fileSystem.MkdirCallable,
+  progressReporter: Types.Adapters.Abstractions.vscode.ProgressLike,
+  outputChannel: Types.Adapters.Abstractions.vscode.OutputChannelLike
 };
 
-class BuildTreeDirectoryResolver implements Imports.Modules.Abstractions.BuildTreeDirectoryResolver {
+class BuildTreeDirectoryResolver implements Types.Modules.Abstractions.BuildTreeDirectoryResolver {
   constructor(adapters: Adapters) {
     this.settings = adapters.settings;
     this.stat = adapters.stat;
@@ -63,9 +63,9 @@ class BuildTreeDirectoryResolver implements Imports.Modules.Abstractions.BuildTr
       });
   }
 
-  private readonly stat: Imports.Adapters.Abstractions.fileSystem.StatCallable;
-  private readonly settings: Imports.Modules.Abstractions.Settings;
-  private readonly mkdir: Imports.Adapters.Abstractions.fileSystem.MkdirCallable;
-  private readonly progressReporter: Imports.Adapters.Abstractions.vscode.ProgressLike;
-  private readonly outputChannel: Imports.Adapters.Abstractions.vscode.OutputChannelLike;
+  private readonly stat: Types.Adapters.Abstractions.fileSystem.StatCallable;
+  private readonly settings: Types.Modules.Abstractions.Settings;
+  private readonly mkdir: Types.Adapters.Abstractions.fileSystem.MkdirCallable;
+  private readonly progressReporter: Types.Adapters.Abstractions.vscode.ProgressLike;
+  private readonly outputChannel: Types.Adapters.Abstractions.vscode.OutputChannelLike;
 }

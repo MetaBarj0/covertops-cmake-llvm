@@ -5,15 +5,14 @@ import * as chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 chai.should();
 
-// TODO: renames imports to types
-import * as Imports from "./types";
+import * as Types from "./types";
 
 import * as VscodeFakes from "../../fakes/adapters/vscode";
 import * as FileSystemFakes from "../../fakes/adapters/file-system";
 import * as SettingsProvider from "../../../src/modules/implementations/settings-provider";
 import * as CoverageInfoFileResolver from "../../../src/modules/implementations/coverage-info-file-resolver";
 import * as CoverageInfoCollector from "../../../src/modules/implementations/coverage-info-collector";
-import * as Definitions from "../../../src/extension/definitions";
+import * as Definitions from "../../../src/extension/implementations/definitions";
 
 import { Readable } from "stream";
 
@@ -169,7 +168,7 @@ function shouldSucceedToCollectUncoveredRegions() {
     const coverageInfo = await collector.collectFor("/a/source/file.cpp");
     const regions = coverageInfo.uncoveredRegions;
 
-    const uncoveredRegions: Array<Imports.Modules.Abstractions.RegionCoverageInfo> = [];
+    const uncoveredRegions: Array<Types.Modules.Abstractions.RegionCoverageInfo> = [];
 
     for await (const region of regions)
       uncoveredRegions.push(region);

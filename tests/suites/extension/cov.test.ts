@@ -5,9 +5,9 @@ import * as chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 chai.should();
 
-import * as Cov from "../../../src/extension/cov";
-import * as Definitions from "../../../src/extension/definitions";
-import * as UncoveredCodeRegionsDocumentContentProvider from "../../../src/extension/uncovered-code-regions-document-content-provider";
+import * as Cov from "../../../src/extension/implementations/cov";
+import * as Definitions from "../../../src/extension/implementations/definitions";
+import * as UncoveredCodeRegionsDocumentContentProvider from "../../../src/extension/implementations/uncovered-code-regions-document-content-provider";
 
 import * as vscode from "vscode";
 import * as path from "path";

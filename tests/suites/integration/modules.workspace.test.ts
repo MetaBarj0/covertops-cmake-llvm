@@ -5,7 +5,8 @@ import * as chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 chai.should();
 
-import * as Imports from "./types";
+import * as Types from "./types";
+
 import * as vscode from "../../../src/adapters/implementations/vscode";
 import * as ProcessControl from "../../../src/adapters/implementations/process-control";
 import * as FileSystem from "../../../src/adapters/implementations/file-system";
@@ -14,7 +15,7 @@ import * as Cmake from "../../../src/modules/implementations/cmake";
 import * as BuildTreeDirectoryResolver from "../../../src/modules/implementations/build-tree-directory-resolver";
 import * as Fakes from "../../fakes/adapters/vscode";
 import * as TestUtils from "../../utils/settings";
-import * as Definitions from "../../../src/extension/definitions";
+import * as Definitions from "../../../src/extension/implementations/definitions";
 
 import { env } from "process";
 import * as path from "path";
@@ -191,7 +192,7 @@ function makeBuildTreeDirectoryResolver() {
   });
 }
 
-function buildSettings(): Imports.Modules.Abstractions.Settings {
+function buildSettings(): Types.Modules.Abstractions.Settings {
   return SettingsProvider.make({
     outputChannel: Fakes.buildFakeOutputChannel(),
     workspace: vscode.workspace

@@ -1,18 +1,18 @@
-import * as vscode from "vscode";
+import * as VscodeModule from "../../adapters/abstractions/vscode";
+import * as CoverageInfoProviderModule from "../../modules/abstractions/coverage-info-provider";
 
-// TODO: imports? declarations? types?
 import * as SettingsProvider from "../../modules/implementations/settings-provider";
 import * as BuildTreeDirectoryResolver from "../../modules/implementations/build-tree-directory-resolver";
 import * as Cmake from "../../modules/implementations/cmake";
 import * as CoverageInfoFileResolver from "../../modules/implementations/coverage-info-file-resolver";
 import * as CoverageInfoCollector from "../../modules/implementations/coverage-info-collector";
 import * as CoverageInfoProviderImplementations from "../../modules/implementations/coverage-info-provider";
-import { CoverageInfoProvider } from "../../modules/abstractions/coverage-info-provider";
 import * as fileSystem from "../../adapters/implementations/file-system";
 import * as processControl from "../../adapters/implementations/process-control";
-import * as VscodeAbstractions from "../../adapters/abstractions/vscode";
 
-export function make(context: Context): CoverageInfoProvider {
+import * as vscode from "vscode";
+
+export function make(context: Context): CoverageInfoProviderModule.CoverageInfoProvider {
   const workspace = vscode.workspace;
   const { outputChannel, progressReporter } = context;
 
@@ -52,6 +52,6 @@ export function make(context: Context): CoverageInfoProvider {
 }
 
 type Context = {
-  progressReporter: VscodeAbstractions.ProgressLike,
-  outputChannel: VscodeAbstractions.OutputChannelLike
+  progressReporter: VscodeModule.ProgressLike,
+  outputChannel: VscodeModule.OutputChannelLike
 };

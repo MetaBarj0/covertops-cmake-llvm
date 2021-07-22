@@ -1,6 +1,6 @@
-import * as Imports from "./types";
+import * as Types from "./types";
 
-export class CoverageSummary implements Imports.Modules.Abstractions.CoverageSummary {
+export class CoverageSummary implements Types.Modules.Abstractions.CoverageSummary {
   constructor(count: number, covered: number, notCovered: number, percent: number) {
     this.count = count;
     this.covered = covered;

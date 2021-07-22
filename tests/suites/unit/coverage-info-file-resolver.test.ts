@@ -5,14 +5,14 @@ import * as chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 chai.should();
 
-import * as Imports from "./types";
+import * as Types from "./types";
 
 import * as VscodeFakes from "../../fakes/adapters/vscode";
 import * as FileSystemFakes from "../../fakes/adapters/file-system";
 import * as SettingsProvider from "../../../src/modules/implementations/settings-provider";
 import * as CoverageInfoFileResolver from "../../../src/modules/implementations/coverage-info-file-resolver";
 import { Spy } from "../../utils/spy";
-import * as Definitions from "../../../src/extension/definitions";
+import * as Definitions from "../../../src/extension/implementations/definitions";
 
 describe("Unit test suite", () => {
   describe("the behavior of the coverage info file resolver", () => {
@@ -98,7 +98,7 @@ function buildCoverageInfoFileResolver(optionalSpiesAndAdapters: OptionalSpiesAn
 }
 
 type OptionalSpiesAndAdapters = {
-  outputChannelSpy?: Spy<Imports.Adapters.Abstractions.vscode.OutputChannelLike>
-  progressReporterSpy?: Spy<Imports.Adapters.Abstractions.vscode.ProgressLike>,
-  globSearch: Imports.Adapters.Abstractions.FileSystem.GlobSearchCallable
+  outputChannelSpy?: Spy<Types.Adapters.Abstractions.vscode.OutputChannelLike>
+  progressReporterSpy?: Spy<Types.Adapters.Abstractions.vscode.ProgressLike>,
+  globSearch: Types.Adapters.Abstractions.FileSystem.GlobSearchCallable
 };
