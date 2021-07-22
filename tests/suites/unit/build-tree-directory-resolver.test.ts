@@ -6,8 +6,7 @@ chai.use(chaiAsPromised);
 chai.should();
 
 import * as Imports from './imports';
-
-import path = require('path');
+import * as path from 'path';
 
 describe('Unit test suite', () => {
   describe('the build tree directory resolver behavior', () => {

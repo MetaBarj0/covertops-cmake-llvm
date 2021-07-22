@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "target": "es6",
+    "target": "ESNext",
     "outDir": "out",
     "lib": [
-      "es6"
+      "ESNext"
     ],
     "sourceMap": true,
     "rootDir": ".",

@@ -1,7 +1,7 @@
 name: ci/cd
 
 env:
-  NODE_VERSION: 16.4.2
+  NODE_VERSION: 16.5.0
   ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
 on:
