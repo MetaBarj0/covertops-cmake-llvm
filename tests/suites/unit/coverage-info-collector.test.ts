@@ -9,10 +9,12 @@ import * as Types from "./types";
 
 import * as VscodeFakes from "../../fakes/adapters/vscode";
 import * as FileSystemFakes from "../../fakes/adapters/file-system";
-import * as SettingsProvider from "../../../src/modules/implementations/settings-provider";
 import * as CoverageInfoFileResolver from "../../../src/modules/implementations/coverage-info-file-resolver";
 import * as CoverageInfoCollector from "../../../src/modules/implementations/coverage-info-collector";
 import * as Definitions from "../../../src/extension/implementations/definitions";
+
+import { buildCoverageInfoCollectorAndSpiesForProgressReportAndOutputChannel } from "../../builders/coverage-info-collector";
+import { buildSettings } from "../../builders/settings";
 
 import { Readable } from "stream";
 
@@ -127,14 +129,9 @@ function shouldFailToCollectUncoveredRegionsBecauseOfUnhandledSourceFile() {
     const coverageInfo = await collector.collectFor(sourceFilePath);
     const iterateOnUncoveredRegions = async () => { for await (const _region of coverageInfo.uncoveredRegions); };
 
-    return iterateOnUncoveredRegions()
-      .catch((error: Error) => error)
-      .then(error => {
-        (<Error>error).message.should.contain("Cannot find any uncovered code regions for the file " +
-          `${sourceFilePath}. Ensure this source file is covered by a test in your project.`);
+    await iterateOnUncoveredRegions();
 
-        outputChannelSpy.countFor("appendLine").should.be.equal(1);
-      });
+    outputChannelSpy.countFor("appendLine").should.be.equal(1);
   });
 }
 
@@ -192,33 +189,6 @@ function shouldSucceedToCollectUncoveredRegions() {
   });
 }
 
-function buildCoverageInfoCollectorAndSpiesForProgressReportAndOutputChannel() {
-  const progressReporterSpy = VscodeFakes.buildSpyOfProgressReporter(VscodeFakes.buildFakeProgressReporter());
-  const progressReporter = progressReporterSpy.object;
-  const outputChannelSpy = VscodeFakes.buildSpyOfOutputChannel(VscodeFakes.buildFakeOutputChannel());
-  const outputChannel = outputChannelSpy.object;
-  const globSearch = FileSystemFakes.buildFakeGlobSearchForExactlyOneMatch();
-  const settings = buildSettings();
-
-  const coverageInfoCollector = CoverageInfoCollector.make({
-    coverageInfoFileResolver: CoverageInfoFileResolver.make({
-      outputChannel,
-      globSearch,
-      progressReporter,
-      settings
-    }),
-    createReadStream: FileSystemFakes.buildFakeStreamBuilder(FileSystemFakes.buildValidLlvmCoverageJsonObjectStream),
-    progressReporter: progressReporterSpy.object,
-    outputChannel
-  });
-
-  return {
-    coverageInfoCollector,
-    progressReporterSpy,
-    outputChannelSpy
-  };
-}
-
 function buildCoverageInfoCollectorsAndOutputChannelSpiesUsingStreamFactories(streamFactories: ReadonlyArray<StreamFactory>) {
   return streamFactories.map(streamFfactory => {
     const outputChannelSpy = VscodeFakes.buildSpyOfOutputChannel(VscodeFakes.buildFakeOutputChannel());
@@ -247,10 +217,3 @@ function buildCoverageInfoCollectorsAndOutputChannelSpiesUsingStreamFactories(st
 }
 
 type StreamFactory = () => Readable;
-
-function buildSettings() {
-  return SettingsProvider.make({
-    outputChannel: VscodeFakes.buildFakeOutputChannel(),
-    workspace: VscodeFakes.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings()
-  }).settings;
-}

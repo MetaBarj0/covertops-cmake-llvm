@@ -62,18 +62,14 @@ class Cov {
   private async buildDecorationOptions(uncoveredCodeInfo: Types.Modules.CoverageInfo) {
     const options: Array<vscode.DecorationOptions> = [];
 
-    try {
-      for await (const uncoveredRegion of uncoveredCodeInfo.uncoveredRegions)
-        options.push({
-          range: new vscode.Range(uncoveredRegion.range.start.line,
-            uncoveredRegion.range.start.character,
-            uncoveredRegion.range.end.line,
-            uncoveredRegion.range.end.character),
-          hoverMessage: Strings.uncoveredCodeRegionHoverMessage
-        });
-    } catch (warning) {
-      this.outputChannel_.appendLine(warning.message);
-    }
+    for await (const uncoveredRegion of uncoveredCodeInfo.uncoveredRegions)
+      options.push({
+        range: new vscode.Range(uncoveredRegion.range.start.line,
+          uncoveredRegion.range.start.character,
+          uncoveredRegion.range.end.line,
+          uncoveredRegion.range.end.character),
+        hoverMessage: Strings.uncoveredCodeRegionHoverMessage
+      });
 
     return options;
   }

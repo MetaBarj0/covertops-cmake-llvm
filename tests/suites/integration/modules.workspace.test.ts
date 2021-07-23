@@ -14,7 +14,7 @@ import * as SettingsProvider from "../../../src/modules/implementations/settings
 import * as Cmake from "../../../src/modules/implementations/cmake";
 import * as BuildTreeDirectoryResolver from "../../../src/modules/implementations/build-tree-directory-resolver";
 import * as Fakes from "../../fakes/adapters/vscode";
-import * as TestUtils from "../../utils/settings";
+import * as TestUtils from "../../builders/settings";
 import * as Definitions from "../../../src/extension/implementations/definitions";
 
 import { env } from "process";

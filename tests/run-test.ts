@@ -9,6 +9,7 @@ import { runTests } from "vscode-test";
 
     await runAcceptanceTests(extensionDevelopmentPath);
     await runUnitTests(extensionDevelopmentPath);
+    await runRegressionTests(extensionDevelopmentPath);
     await runIntegrationTestsWithoutWorkspace(extensionDevelopmentPath);
     await runIntegrationTestsWithWorkspace(extensionDevelopmentPath);
     await runExtensionTests(extensionDevelopmentPath);
@@ -26,6 +27,12 @@ function runAcceptanceTests(extensionDevelopmentPath: string) {
 
 function runUnitTests(extensionDevelopmentPath: string) {
   const extensionTestsPath = path.resolve(__dirname, "./suites/unit/index");
+
+  return runTests({ extensionDevelopmentPath, extensionTestsPath });
+}
+
+function runRegressionTests(extensionDevelopmentPath: string) {
+  const extensionTestsPath = path.resolve(__dirname, "./suites/regression/index");
 
   return runTests({ extensionDevelopmentPath, extensionTestsPath });
 }

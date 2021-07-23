@@ -1,4 +1,4 @@
-import { defaultSetting } from "../../utils/settings";
+import { defaultSetting } from "../../builders/settings";
 
 import { Settings } from "../../../src/modules/abstractions/settings";
 import {

@@ -24,6 +24,7 @@ class CoverageInfoCollector implements Types.Modules.CoverageInfoCollector {
     const path = await this.coverageInfoFileResolver.resolveCoverageInfoFileFullPath();
 
     this.progressReporter.report({
+      // TODO: refacto magic strings
       message: "Prepared summary and uncovered region of code information."
     });
 

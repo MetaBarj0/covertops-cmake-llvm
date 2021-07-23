@@ -46,6 +46,20 @@
       "preLaunchTask": "npm: test-compile"
     },
     {
+      "name": "Regression Tests",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--disable-extensions",
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "--extensionTestsPath=${workspaceFolder}/out/tests/suites/regression/index"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/out/tests/suites/regression/**/*.js"
+      ],
+      "preLaunchTask": "npm: test-compile"
+    },
+    {
       "name": "No Workspace Integration Tests",
       "type": "extensionHost",
       "request": "launch",

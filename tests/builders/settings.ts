@@ -1,5 +1,9 @@
 import packageJSON from "../../src/package.json";
 
+import * as SettingsProvider from "../../src/modules/implementations/settings-provider";
+import * as VscodeFakes from "../fakes/adapters/vscode";
+import { Settings } from "../../src/modules/abstractions/settings";
+
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function defaultSetting(setting: DefaultSettingsKey | "rootDirectory") {
   return isRootDirectory(setting) ? "." : (() => {
@@ -36,4 +40,11 @@ type DefaultSettingsKey = keyof DefaultSettings;
 
 function isRootDirectory(setting: DefaultSettingsKey | "rootDirectory"): setting is "rootDirectory" {
   return (setting as "rootDirectory") === "rootDirectory";
+}
+
+export function buildSettings(): Settings {
+  return SettingsProvider.make({
+    outputChannel: VscodeFakes.buildFakeOutputChannel(),
+    workspace: VscodeFakes.buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings()
+  }).settings;
 }

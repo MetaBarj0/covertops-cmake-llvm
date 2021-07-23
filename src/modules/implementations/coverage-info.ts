@@ -197,15 +197,11 @@ class RegionCoverageInfoAsyncIterator {
   }
 
   private terminateIteration() {
-    if (this.hasAtLeastOneElement)
-      return new RegionCoverageInfoIterator({ done: true });
-
-    const errorMessage = "Cannot find any uncovered code regions for the file " +
-      `${this.sourceFilePath}. Ensure this source file is covered by a test in your project.`;
-
-    this.outputChannel.appendLine(errorMessage);
-
-    throw new Error(errorMessage);
+    if (!this.hasAtLeastOneElement)
+      this.outputChannel.appendLine("Cannot find any uncovered code regions for the file " +
+        `${this.sourceFilePath}. Ensure this source file is covered by a test in your project.`);
+    // TODO: eslint new line before return
+    return new RegionCoverageInfoIterator({ done: true });
   }
 
   private readonly pipeline: Readable;
