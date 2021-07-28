@@ -174,12 +174,14 @@ function shouldRefreshUncoveredCodeRegionInVirtualTextEditor() {
 
 function buildCppAbsoluteFilePath() {
   const workspaceRootFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
+
   return path.join(<string>workspaceRootFolder, "src", "partiallyCovered", "partiallyCoveredLib.cpp");
 }
 
 async function showSourceFileEditor() {
   const cppFilePath = buildCppAbsoluteFilePath();
   const editor = await vscode.window.showTextDocument(vscode.Uri.file(cppFilePath), { preserveFocus: false });
+
   return { cppFilePath, currentEditor: editor };
 }
 

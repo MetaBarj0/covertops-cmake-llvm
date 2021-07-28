@@ -200,7 +200,7 @@ class RegionCoverageInfoAsyncIterator {
     if (!this.hasAtLeastOneElement)
       this.outputChannel.appendLine("Cannot find any uncovered code regions for the file " +
         `${this.sourceFilePath}. Ensure this source file is covered by a test in your project.`);
-    // TODO: eslint new line before return
+
     return new RegionCoverageInfoIterator({ done: true });
   }
 

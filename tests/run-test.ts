@@ -55,6 +55,7 @@ async function runIntegrationTestsWithWorkspace(extensionDevelopmentPath: string
 function createCmakeProject() {
   const src = path.resolve(__dirname, "../../tests/suites/integration/data/workspace");
   const dst = path.resolve(__dirname, "../workspace");
+
   return fs.copy(src, dst, { recursive: true, overwrite: true });
 }
 

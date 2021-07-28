@@ -167,6 +167,7 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
 function createAbsoluteSourceFilePathFrom(workspacePath: string) {
   const relative = path.join("..", "..", "..", "workspace", "src", workspacePath);
   const absolute = path.resolve(__dirname, relative);
+
   return path.normalize(absolute);
 }
 

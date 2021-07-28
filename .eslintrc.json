@@ -30,6 +30,7 @@
       }
     ],
     "@typescript-eslint/no-empty-function": "off",
-    "@typescript-eslint/quotes": "warn"
+    "@typescript-eslint/quotes": "warn",
+    "newline-before-return": "warn"
   }
 }

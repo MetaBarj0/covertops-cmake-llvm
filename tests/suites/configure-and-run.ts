@@ -16,6 +16,7 @@ export function configureAndRun(testsGlob: string, options: Mocha.MochaOptions =
     glob(testsGlob, { cwd: testsRoot }, (error, files) => {
       if (error) {
         reject(error);
+
         return;
       }
 
