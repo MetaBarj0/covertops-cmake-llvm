@@ -1,6 +1,5 @@
 import * as Types from "./types";
 
-import * as Definitions from "../../extension/implementations/definitions";
 import * as Strings from "../../extension/implementations/strings";
 
 import * as path from "path";
@@ -41,11 +40,7 @@ class CoverageInfoFileResolver implements Types.Modules.CoverageInfoFileResolver
     if (searchResult.length === 1)
       return;
 
-    const errorMessage = "More than one coverage information file have been found in the build tree directory. " +
-      "Ensure that both " +
-      `'${Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
-      `'${Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
-      "settings are correctly set.";
+    const errorMessage = Strings.errorSeveralMatchForCoverageInfoFile;
 
     this.outputChannel.appendLine(errorMessage);
 
@@ -56,11 +51,7 @@ class CoverageInfoFileResolver implements Types.Modules.CoverageInfoFileResolver
     if (searchResult.length !== 0)
       return;
 
-    const errorMessage = "Cannot resolve the coverage info file path in the build tree directory. " +
-      "Ensure that both " +
-      `'${Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
-      `'${Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
-      "settings are correctly set.";
+    const errorMessage = Strings.errorNoMatchForCoverageInfoFile;
 
     this.outputChannel.appendLine(errorMessage);
 

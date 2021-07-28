@@ -15,7 +15,7 @@ class Cov {
   constructor(uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider,
     uncoveredCodeRegionsVirtualTextEditorFactory: (virtualTextEditor: vscode.TextEditor) => Types.Extension.UncoveredCodeRegionsVirtualTextEditor) {
     this.outputChannel_ = vscode.window.createOutputChannel(Definitions.extensionId);
-    this.command = vscode.commands.registerCommand(`${Definitions.extensionId}.reportUncoveredCodeRegionsInFile`, this.run, this);
+    this.command = vscode.commands.registerCommand(Strings.commandReportUncoveredCodeRegionsInFile, this.run, this);
     this.textDocumentProvider = vscode.workspace.registerTextDocumentContentProvider(Definitions.extensionId, uncoveredCodeRegionsDocumentContentProvider);
     this.uncoveredCodeRegionsVirtualTextEditors_ = new Map<string, Types.Extension.UncoveredCodeRegionsVirtualTextEditor>();
     this.decorationType = vscode.window.createTextEditorDecorationType({
@@ -107,7 +107,7 @@ class Cov {
   private reportStartInOutputChannel() {
     this.outputChannel_.show(true);
     this.outputChannel_.clear();
-    this.outputChannel_.appendLine(`starting ${Definitions.extensionDisplayName}`);
+    this.outputChannel_.appendLine(Strings.reportExtensionStarting);
   }
 
   private buildVirtualDocumentUri() {

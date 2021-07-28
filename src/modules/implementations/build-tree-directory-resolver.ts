@@ -1,6 +1,5 @@
 import * as Types from "./types";
 
-import * as Definitions from "../../extension/implementations/definitions";
 import * as Strings from "../../extension/implementations/strings";
 
 import * as path from "path";
@@ -40,9 +39,7 @@ class BuildTreeDirectoryResolver implements Types.Modules.BuildTreeDirectoryReso
 
   private ensurePathIsNotAbsolute(buildTreeDirectory: string) {
     if (path.isAbsolute(buildTreeDirectory)) {
-      // TODO: no magic format strings
-      const errorMessage = `Incorrect absolute path specified in '${Definitions.extensionNameInSettings}: ` +
-        "Build Tree Directory'. It must be a relative path.";
+      const errorMessage = Strings.errorBadAbsolutePathForBuildTreeDirectoryWithArg;
 
       this.outputChannel.appendLine(errorMessage);
 
@@ -55,8 +52,7 @@ class BuildTreeDirectoryResolver implements Types.Modules.BuildTreeDirectoryReso
       catch(async _ => {
         await this.mkdir(buildTreeDirectory, { recursive: true }).
           catch(_ => {
-            const errorMessage = "Cannot find or create the build tree directory. Ensure the " +
-              `'${Definitions.extensionNameInSettings}: Build Tree Directory' setting is a valid relative path.`;
+            const errorMessage = Strings.errorCannotStatCreateBuildTreeDirectory;
 
             this.outputChannel.appendLine(errorMessage);
 

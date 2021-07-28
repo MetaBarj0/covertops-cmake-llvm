@@ -1,6 +1,5 @@
 import * as Types from "./types";
 
-import * as Definitions from "../../extension/implementations/definitions";
 import * as Strings from "../../extension/implementations/strings";
 
 export abstract class BasicCmake implements Types.Modules.Cmake {
@@ -20,9 +19,7 @@ export abstract class BasicCmake implements Types.Modules.Cmake {
         message: Strings.progressFoundCMake
       });
     } catch (error) {
-      return this.handleErrorWithMessage(error,
-        `Cannot find the cmake command. Ensure the '${Definitions.extensionNameInSettings}: Cmake Command' ` +
-        "setting is correctly set. Have you verified your PATH environment variable?");
+      return this.handleErrorWithMessage(error, Strings.errorUnreachableCmake);
     }
 
     try {
@@ -32,12 +29,7 @@ export abstract class BasicCmake implements Types.Modules.Cmake {
         message: Strings.progressGeneratedCmakeProject
       });
     } catch (error) {
-      return this.handleErrorWithMessage(error,
-        "Cannot generate the cmake project in the " +
-        `${this.settings.rootDirectory} directory. ` +
-        "Ensure either you have opened a valid cmake project, or the cmake project has not already been generated using different options. " +
-        `You may have to take a look in '${Definitions.extensionNameInSettings}: Additional Cmake Options' settings ` +
-        "and check the generator used is correct for instance.");
+      return this.handleErrorWithMessage(error, Strings.errorWhenGeneratingCmakeProjectLocatedIn(this.settings.rootDirectory));
     }
 
     try {
@@ -47,9 +39,7 @@ export abstract class BasicCmake implements Types.Modules.Cmake {
         message: Strings.progressTargetBuilt
       });
     } catch (error) {
-      return this.handleErrorWithMessage(error,
-        `Error: Could not build the specified cmake target ${this.settings.cmakeTarget}. ` +
-        `Ensure '${Definitions.extensionNameInSettings}: Cmake Target' setting is properly set.`);
+      return this.handleErrorWithMessage(error, Strings.errorWhenBuildingTargetNamed(this.settings.cmakeTarget));
     }
   }
 

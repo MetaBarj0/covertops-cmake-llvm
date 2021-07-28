@@ -1,8 +1,10 @@
 import * as Types from "./types";
 
-import * as Definitions from "../../extension/implementations/definitions";
 import * as RegionCoverageInfo from "./region-coverage-info";
 import { CoverageSummary } from "./coverage-summary";
+
+// TODO: move strings from extension implementation to resources
+import * as Strings from "../../extension/implementations/strings";
 
 import { Readable } from "stream";
 import { chain } from "stream-chain";
@@ -37,17 +39,17 @@ class CoverageInfo implements Types.Modules.CoverageInfo {
           if (s)
             return resolve(new CoverageSummary(s.count, s.covered, s.notcovered, s.percent));
 
-          const errorMessage = "Cannot find any summary coverage info for the file " +
-            `${this.sourceFilePath}. Ensure this source file is covered by a test in your project.`;
+          const errorMessage = Strings.errorNoSummaryCoverageInfoFor(this.sourceFilePath);
 
           this.outputChannel.appendLine(errorMessage);
 
           reject(new Error(errorMessage));
         }).
         once("error", err => {
-          const errorMessage = `${CoverageInfo.invalidInputReadableStreamMessage}${err.message}`;
+          const errorMessage = `${Strings.errorInvalidCoverageInfoFileContent}${err.message}`;
 
           this.outputChannel.appendLine(errorMessage);
+          // TODO: eslint reject new line?
           reject(new Error(errorMessage));
         });
     });
@@ -122,15 +124,6 @@ class CoverageInfo implements Types.Modules.CoverageInfo {
   private readonly llvmCoverageInfoStreamFactory: StreamFactory;
   private readonly sourceFilePath: string;
   private readonly outputChannel: Types.Adapters.vscode.OutputChannelLike;
-
-  static get invalidInputReadableStreamMessage() {
-    return "Invalid coverage information file have been found in the build tree directory. " +
-      "Coverage information file must contain llvm coverage report in json format. " +
-      "Ensure that both " +
-      `'${Definitions.extensionNameInSettings}: Build Tree Directory' and ` +
-      `'${Definitions.extensionNameInSettings}: Coverage Info File Name' ` +
-      "settings are correctly set.";
-  }
 }
 
 type StreamFactory = () => Readable;
@@ -187,7 +180,7 @@ class RegionCoverageInfoAsyncIterator {
         once("readable", () => { resolve(); }).
         once("end", () => { resolve(); }).
         once("error", err => {
-          const errorMessage = CoverageInfo.invalidInputReadableStreamMessage + err.message;
+          const errorMessage = `${Strings.errorInvalidCoverageInfoFileContent}${err.message}`;
 
           this.outputChannel.appendLine(errorMessage);
 
@@ -198,8 +191,7 @@ class RegionCoverageInfoAsyncIterator {
 
   private terminateIteration() {
     if (!this.hasAtLeastOneElement)
-      this.outputChannel.appendLine("Cannot find any uncovered code regions for the file " +
-        `${this.sourceFilePath}. Ensure this source file is covered by a test in your project.`);
+      this.outputChannel.appendLine(Strings.reportNoUncoveredCodeRegionsInfoFor(this.sourceFilePath));
 
     return new RegionCoverageInfoIterator({ done: true });
   }
