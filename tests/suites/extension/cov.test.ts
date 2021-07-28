@@ -8,8 +8,7 @@ chai.should();
 import * as Cov from "../../../src/extension/implementations/cov";
 import * as Definitions from "../../../src/extension/implementations/definitions";
 import * as UncoveredCodeRegionsDocumentContentProvider from "../../../src/extension/implementations/uncovered-code-regions-document-content-provider";
-// TODO: rename text-editor-with-decoration to uncovered-code-region-virtual-editor
-import { TextEditorWithDecorations } from "../../../src/extension/implementations/text-editor-with-decorations";
+import * as UncoveredCodeRegionsVirtualTextEditor from "../../../src/extension/factories/uncovered-code-regions-virtual-text-editor";
 
 import * as vscode from "vscode";
 import * as path from "path";
@@ -31,7 +30,7 @@ function covShouldBeDisposable() {
   let cov: ReturnType<typeof Cov.make>;
 
   it("should succeed when instantiating the extension as a vscode disposable", async () => {
-    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), textEditor => new TextEditorWithDecorations(textEditor));
+    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), UncoveredCodeRegionsVirtualTextEditor.make());
 
     const covIsADisposableResource = ((_: vscode.Disposable): _ is vscode.Disposable => true)(cov.asDisposable);
 
@@ -45,7 +44,7 @@ function covShouldHaveAnOutputChannel() {
   let cov: ReturnType<typeof Cov.make>;
 
   it("should expose a vscode output channel", async () => {
-    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), textEditor => new TextEditorWithDecorations(textEditor));
+    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), UncoveredCodeRegionsVirtualTextEditor.make());
 
     const covExposesAVscodeOutputChannel = ((_: vscode.OutputChannel): _ is vscode.OutputChannel => true)(cov.outputChannel);
 
@@ -59,7 +58,7 @@ function covCanExecuteCommand() {
   let cov: ReturnType<typeof Cov.make>;
 
   it("should run the command successfully", async () => {
-    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), textEditor => new TextEditorWithDecorations(textEditor));
+    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), UncoveredCodeRegionsVirtualTextEditor.make());
 
     const workspaceRootFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
     const cppFilePath = path.join(<string>workspaceRootFolder, "src", "partiallyCovered", "partiallyCoveredLib.cpp");
@@ -76,7 +75,7 @@ function covShouldOpenOnlyOneVirtualDocumentEditorPerSourceFile() {
   let cov: ReturnType<typeof Cov.make>;
 
   it("should have one uncovered code regions editor in the collection that is a virtual read only text editor", async () => {
-    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), textEditor => new TextEditorWithDecorations(textEditor));
+    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), UncoveredCodeRegionsVirtualTextEditor.make());
     const { cppFilePath, currentEditor } = await showSourceFileEditor();
 
     for (const _ of Array<never>(3))
@@ -96,7 +95,7 @@ function virtualDocumentShouldContainSameSourceCode() {
   let cov: ReturnType<typeof Cov.make>;
 
   it("should show a virtual document having the same source code that the file on which request for uncovered regions has been done", async () => {
-    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), textEditor => new TextEditorWithDecorations(textEditor));
+    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), UncoveredCodeRegionsVirtualTextEditor.make());
     const { currentEditor } = await showSourceFileEditor();
 
     await executeCommand();
@@ -113,7 +112,7 @@ function uncoveredCodeRegionsVirtualTextEditorOnSourceFileShouldNotExist() {
   let cov: ReturnType<typeof Cov.make>;
 
   it("should not exist any uncovered code regions virtual editor", async () => {
-    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), textEditor => new TextEditorWithDecorations(textEditor));
+    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), UncoveredCodeRegionsVirtualTextEditor.make());
 
     await showSourceFileEditor();
 
@@ -128,7 +127,7 @@ function virtualDocumentShouldHaveSomeDecorationsAfterCommandExecutionOnAPartial
   let cov: ReturnType<typeof Cov.make>;
 
   it("is possible to query decorations for a virtual document editor that have some", async () => {
-    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), textEditor => new TextEditorWithDecorations(textEditor));
+    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), UncoveredCodeRegionsVirtualTextEditor.make());
     const expectedRange = new vscode.Range(5, 52, 5, 70);
     const expectedRangeOrOptions = [
       {
@@ -153,7 +152,7 @@ function shouldRefreshUncoveredCodeRegionInVirtualTextEditor() {
 
   before("Displaying decorations and showing source file editor", async () => {
 
-    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), textEditor => new TextEditorWithDecorations(textEditor));
+    cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), UncoveredCodeRegionsVirtualTextEditor.make());
     await showSourceFileEditor();
     await executeCommand();
     await showSourceFileEditor();

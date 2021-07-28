@@ -1,7 +1,7 @@
 import * as CoverageInfoProviderModule from "../modules/abstractions/coverage-info-provider";
 import * as CoverageInfoModule from "../modules/abstractions/coverage-info";
 import * as VscodeModule from "../adapters/abstractions/vscode";
-import * as TextEditorWithDecorationsModule from "./abstractions/text-editor-with-decorations";
+import * as UncoveredCodeRegionsVirtualTextEditorModule from "./abstractions/uncovered-code-regions-virtual-text-editor";
 
 export namespace Adapters {
   export namespace vscode {
@@ -16,6 +16,6 @@ export namespace Modules {
 }
 
 export namespace Extension {
-  export type TextEditorWithDecorations = TextEditorWithDecorationsModule.TextEditorWithDecorations;
-  export type Decorations = TextEditorWithDecorationsModule.Decorations;
+  export type UncoveredCodeRegionsVirtualTextEditor = UncoveredCodeRegionsVirtualTextEditorModule.UncoveredCodeRegionsVirtualTextEditor;
+  export type Decorations = UncoveredCodeRegionsVirtualTextEditorModule.Decorations;
 }

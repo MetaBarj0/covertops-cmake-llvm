@@ -7,17 +7,17 @@ import * as CoverageInfoProvider from "../factories/coverage-info-provider";
 import * as vscode from "vscode";
 
 export function make(uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider,
-  uncoveredCodeRegionsVirtualTextEditorFactory: (textEditor: vscode.TextEditor) => Types.Extension.TextEditorWithDecorations): Cov {
+  uncoveredCodeRegionsVirtualTextEditorFactory: (textEditor: vscode.TextEditor) => Types.Extension.UncoveredCodeRegionsVirtualTextEditor): Cov {
   return new Cov(uncoveredCodeRegionsDocumentContentProvider, uncoveredCodeRegionsVirtualTextEditorFactory);
 }
 
 class Cov {
   constructor(uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider,
-    uncoveredCodeRegionsVirtualTextEditorFactory: (virtualTextEditor: vscode.TextEditor) => Types.Extension.TextEditorWithDecorations) {
+    uncoveredCodeRegionsVirtualTextEditorFactory: (virtualTextEditor: vscode.TextEditor) => Types.Extension.UncoveredCodeRegionsVirtualTextEditor) {
     this.outputChannel_ = vscode.window.createOutputChannel(Definitions.extensionId);
     this.command = vscode.commands.registerCommand(`${Definitions.extensionId}.reportUncoveredCodeRegionsInFile`, this.run, this);
     this.textDocumentProvider = vscode.workspace.registerTextDocumentContentProvider(Definitions.extensionId, uncoveredCodeRegionsDocumentContentProvider);
-    this.uncoveredCodeRegionsVirtualTextEditors_ = new Map<string, Types.Extension.TextEditorWithDecorations>();
+    this.uncoveredCodeRegionsVirtualTextEditors_ = new Map<string, Types.Extension.UncoveredCodeRegionsVirtualTextEditor>();
     this.decorationType = vscode.window.createTextEditorDecorationType({
       backgroundColor: {
         id: Definitions.uncoveredCodeRegionDecorationBackgroundColorId
@@ -48,7 +48,7 @@ class Cov {
     await this.displayUncoveredCodeRegions();
   }
 
-  get uncoveredCodeRegionsVirtualTextEditors(): ReadonlyMap<string, Types.Extension.TextEditorWithDecorations> {
+  get uncoveredCodeRegionsVirtualTextEditors(): ReadonlyMap<string, Types.Extension.UncoveredCodeRegionsVirtualTextEditor> {
     return this.uncoveredCodeRegionsVirtualTextEditors_;
   }
 
@@ -117,7 +117,7 @@ class Cov {
     });
   }
 
-  private addUncoveredCodeRegionsVirtualEditorIfNotExist(uri: vscode.Uri, doc: Types.Extension.TextEditorWithDecorations) {
+  private addUncoveredCodeRegionsVirtualEditorIfNotExist(uri: vscode.Uri, doc: Types.Extension.UncoveredCodeRegionsVirtualTextEditor) {
     if (!this.uncoveredCodeRegionsVirtualTextEditors_.has(uri.fsPath))
       this.uncoveredCodeRegionsVirtualTextEditors_.set(uri.fsPath, doc);
   }
@@ -125,7 +125,7 @@ class Cov {
   private readonly outputChannel_: vscode.OutputChannel;
   private readonly command: vscode.Disposable;
   private readonly textDocumentProvider: vscode.Disposable;
-  private readonly uncoveredCodeRegionsVirtualTextEditors_: Map<string, Types.Extension.TextEditorWithDecorations>;
+  private readonly uncoveredCodeRegionsVirtualTextEditors_: Map<string, Types.Extension.UncoveredCodeRegionsVirtualTextEditor>;
   private readonly decorationType: vscode.TextEditorDecorationType;
-  private readonly uncoveredCodeRegionsVirtualTextEditorFactory: (textEditor: vscode.TextEditor) => Types.Extension.TextEditorWithDecorations;
+  private readonly uncoveredCodeRegionsVirtualTextEditorFactory: (textEditor: vscode.TextEditor) => Types.Extension.UncoveredCodeRegionsVirtualTextEditor;
 }

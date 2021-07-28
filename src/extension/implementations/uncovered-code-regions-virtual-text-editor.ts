@@ -2,7 +2,7 @@ import * as Types from "../types";
 
 import * as vscode from "vscode";
 
-export class TextEditorWithDecorations implements Types.Extension.TextEditorWithDecorations {
+export class UncoveredCodeRegionsTextEditor implements Types.Extension.UncoveredCodeRegionsVirtualTextEditor {
   constructor(textEditor: vscode.TextEditor) {
     this.textEditor = textEditor;
     this.document = textEditor.document;
