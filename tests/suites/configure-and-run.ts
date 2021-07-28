@@ -14,11 +14,8 @@ export function configureAndRun(testsGlob: string, options: Mocha.MochaOptions =
     const testsRoot = path.resolve(__dirname, ".");
 
     glob(testsGlob, { cwd: testsRoot }, (error, files) => {
-      if (error) {
-        reject(error);
-
-        return;
-      }
+      if (error)
+        return reject(error);
 
       // Add files to the test suite
       files.forEach(f => mocha.addFile(path.resolve(testsRoot, f)));
@@ -26,14 +23,14 @@ export function configureAndRun(testsGlob: string, options: Mocha.MochaOptions =
       try {
         // Run the mocha test
         mocha.run(failures => {
-          if (failures > 0) {
-            reject(new Error(`${failures} test(s) failed.`));
-          } else {
-            resolve();
-          }
+          if (failures > 0)
+            return reject(new Error(`${failures} test(s) failed.`));
+
+          return resolve();
         });
       } catch (error) {
         console.error(error);
+
         reject(error);
       }
     });
