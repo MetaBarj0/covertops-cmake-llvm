@@ -31,6 +31,10 @@
     ],
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/quotes": "warn",
-    "newline-before-return": "warn"
+    "newline-before-return": "warn",
+    "semi": [
+      "warn",
+      "always"
+    ]
   }
 }

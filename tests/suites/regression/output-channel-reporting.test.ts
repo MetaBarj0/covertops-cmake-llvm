@@ -21,7 +21,6 @@ function shouldNotThrowForUnhandledFileJustReport() {
     const coverageInfo = await collector.collectFor(sourceFilePath);
     const iterateOnUncoveredRegions = async () => { for await (const _region of coverageInfo.uncoveredRegions); };
 
-    // TODO: eslint semicolon consistency
     await iterateOnUncoveredRegions().should.not.eventually.be.rejected;
 
     outputChannelSpy.countFor("appendLine").should.be.equal(1);

@@ -5,11 +5,11 @@ export const workspace = vscode.workspace;
 export const window = {
   createOutputChannel: vscode.window.createOutputChannel,
   withProgress: vscode.window.withProgress
-}
+};
 
 export const commands = {
   registerCommand: vscode.commands.registerCommand
-}
+};
 
 export class Disposable extends vscode.Disposable { }
 
