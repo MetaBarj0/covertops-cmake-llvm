@@ -1,6 +1,7 @@
 import * as Types from "./types";
 
 import * as Definitions from "../../extension/implementations/definitions";
+import * as Strings from "../../extension/implementations/strings";
 
 import * as path from "path";
 
@@ -30,7 +31,7 @@ class CoverageInfoFileResolver implements Types.Modules.CoverageInfoFileResolver
     this.failsIfManyFilesAreFound(searchResult);
 
     this.progressReporter.report({
-      message: "Resolved the LLVM coverage information file path."
+      message: Strings.progressResolvedLLVMFile
     });
 
     return searchResult[0];

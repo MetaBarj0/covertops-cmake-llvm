@@ -1,6 +1,7 @@
 import * as Types from "./types";
 
 import * as Definitions from "../../extension/implementations/definitions";
+import * as Strings from "../../extension/implementations/strings";
 import * as Settings from "./settings";
 
 export function make(adapters: Adapters): Types.Modules.SettingsProvider {
@@ -39,7 +40,7 @@ class SettingsProvider implements Types.Modules.SettingsProvider {
     if (this.workspace.workspaceFolders)
       return;
 
-    const errorMessage = "A workspace must be loaded to get coverage information.";
+    const errorMessage = Strings.errorWorkspaceNotLoaded;
 
     this.outputChannel.appendLine(errorMessage);
 

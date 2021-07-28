@@ -1,6 +1,7 @@
 import * as Types from "./types";
 
 import * as Definitions from "../../extension/implementations/definitions";
+import * as Strings from "../../extension/implementations/strings";
 
 export abstract class BasicCmake implements Types.Modules.Cmake {
   constructor(outputChannel: Types.Adapters.vscode.OutputChannelLike,
@@ -16,7 +17,7 @@ export abstract class BasicCmake implements Types.Modules.Cmake {
       await this.reachCommand();
 
       this.progressReporter.report({
-        message: "Found an invocable cmake command."
+        message: Strings.progressFoundCMake
       });
     } catch (error) {
       return this.handleErrorWithMessage(error,
@@ -28,7 +29,7 @@ export abstract class BasicCmake implements Types.Modules.Cmake {
       await this.generateProject();
 
       this.progressReporter.report({
-        message: "Generated the cmake project."
+        message: Strings.progressGeneratedCmakeProject
       });
     } catch (error) {
       return this.handleErrorWithMessage(error,
@@ -43,7 +44,7 @@ export abstract class BasicCmake implements Types.Modules.Cmake {
       await this.build();
 
       this.progressReporter.report({
-        message: "Built the target."
+        message: Strings.progressTargetBuilt
       });
     } catch (error) {
       return this.handleErrorWithMessage(error,

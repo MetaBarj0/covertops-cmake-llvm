@@ -70,7 +70,7 @@ class Cov {
           uncoveredRegion.range.start.character,
           uncoveredRegion.range.end.line,
           uncoveredRegion.range.end.character),
-        hoverMessage: Strings.uncoveredCodeRegionHoverMessage
+        hoverMessage: Strings.decorationUncoveredCodeRegionHoverMessage
       });
 
     return options;
@@ -79,7 +79,7 @@ class Cov {
   private queryUncoveredCodeInfo(uri: vscode.Uri) {
     return vscode.window.withProgress({
       location: vscode.ProgressLocation.Notification,
-      title: "Computing uncovered code region locations",
+      title: Strings.progressComputingRegionsLocations,
       cancellable: false
     }, async progressReporter => {
 

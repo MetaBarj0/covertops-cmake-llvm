@@ -2,6 +2,8 @@ import * as Types from "./types";
 
 import * as CoverageInfo from "./coverage-info";
 
+import * as Strings from "../../extension/implementations/strings";
+
 import { Readable } from "stream";
 
 export function make(adapters: Context): Types.Modules.CoverageInfoCollector {
@@ -24,8 +26,8 @@ class CoverageInfoCollector implements Types.Modules.CoverageInfoCollector {
     const path = await this.coverageInfoFileResolver.resolveCoverageInfoFileFullPath();
 
     this.progressReporter.report({
-      // TODO: refacto magic strings
-      message: "Prepared summary and uncovered region of code information."
+      // TODO(wip): refacto magic strings
+      message: Strings.progressCoverageInfoReady
     });
 
     return CoverageInfo.make(() => this.createReadStream(path), sourceFilePath, this.outputChannel);
