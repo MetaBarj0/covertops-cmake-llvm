@@ -36,6 +36,7 @@
       "warn",
       "always"
     ],
-    "eol-last": "warn"
+    "eol-last": "warn",
+    "prefer-promise-reject-errors": "warn"
   }
 }

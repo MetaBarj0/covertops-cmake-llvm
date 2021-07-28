@@ -97,7 +97,7 @@ export function buildFakeStreamBuilder(factory: () => Readable): CreateReadStrea
 }
 
 export function buildFakeFailingMkDir(): MkdirCallable {
-  return (_path: PathLike, _options: MakeDirectoryOptions & { recursive: true; }): Promise<string | undefined> => Promise.reject();
+  return (_path: PathLike, _options: MakeDirectoryOptions & { recursive: true; }): Promise<string | undefined> => Promise.reject(new Error());
 }
 
 export function buildFakeSucceedingMkDir(): MkdirCallable {
@@ -105,7 +105,7 @@ export function buildFakeSucceedingMkDir(): MkdirCallable {
 }
 
 export function buildFakeFailingStatFile(): StatCallable {
-  return (_path: PathLike, _opts?: StatOptions) => Promise.reject();
+  return (_path: PathLike, _opts?: StatOptions) => Promise.reject(new Error());
 }
 
 export function buildFakeSucceedingStatFile(): StatCallable {

@@ -48,7 +48,7 @@ class CoverageInfo implements Types.Modules.CoverageInfo {
           const errorMessage = `${Strings.errorInvalidCoverageInfoFileContent}${err.message}`;
 
           this.outputChannel.appendLine(errorMessage);
-          // TODO: eslint reject new line?
+
           reject(new Error(errorMessage));
         });
     });
