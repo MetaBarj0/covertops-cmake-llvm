@@ -45,4 +45,3 @@ export const errorWhenGeneratingCmakeProjectLocatedIn = (rootDirectory: string):
     "and check the generator used is correct for instance.";
 export const reportNoUncoveredCodeRegionsInfoFor = (sourceFilePath: string): string => "Cannot find any uncovered code regions for the file " +
     `${sourceFilePath}. Ensure this source file is covered by a test in your project.`;
-// TODO: new line end of file consistency
