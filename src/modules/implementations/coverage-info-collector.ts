@@ -2,7 +2,7 @@ import * as Types from "./types";
 
 import * as CoverageInfo from "./coverage-info";
 
-import * as Strings from "../../extension/implementations/strings";
+import * as Strings from "../../strings";
 
 import { Readable } from "stream";
 

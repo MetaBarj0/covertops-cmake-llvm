@@ -1,6 +1,6 @@
 import * as Types from "./types";
 
-import * as Strings from "../../extension/implementations/strings";
+import * as Strings from "../../strings";
 
 import * as path from "path";
 

@@ -3,8 +3,7 @@ import * as Types from "./types";
 import * as RegionCoverageInfo from "./region-coverage-info";
 import { CoverageSummary } from "./coverage-summary";
 
-// TODO: move strings from extension implementation to resources
-import * as Strings from "../../extension/implementations/strings";
+import * as Strings from "../../strings";
 
 import { Readable } from "stream";
 import { chain } from "stream-chain";
