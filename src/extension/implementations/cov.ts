@@ -7,11 +7,11 @@ import * as CoverageInfoProvider from "../factories/coverage-info-provider";
 import * as vscode from "vscode";
 
 export function make(uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider,
-  uncoveredCodeRegionsVirtualTextEditorFactory: (textEditor: vscode.TextEditor) => Types.Extension.UncoveredCodeRegionsVirtualTextEditor): Cov {
+  uncoveredCodeRegionsVirtualTextEditorFactory: (textEditor: vscode.TextEditor) => Types.Extension.UncoveredCodeRegionsVirtualTextEditor): Types.Extension.Cov {
   return new Cov(uncoveredCodeRegionsDocumentContentProvider, uncoveredCodeRegionsVirtualTextEditorFactory);
 }
 
-class Cov {
+class Cov implements Types.Extension.Cov {
   constructor(uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider,
     uncoveredCodeRegionsVirtualTextEditorFactory: (virtualTextEditor: vscode.TextEditor) => Types.Extension.UncoveredCodeRegionsVirtualTextEditor) {
     this.outputChannel_ = vscode.window.createOutputChannel(Definitions.extensionId);
@@ -24,6 +24,7 @@ class Cov {
       }
     });
     this.uncoveredCodeRegionsVirtualTextEditorFactory = uncoveredCodeRegionsVirtualTextEditorFactory;
+    this.onDidChangeActiveTextEditorListenerDisposer = vscode.window.onDidChangeActiveTextEditor(this.onDidChangeActiveTextEditor, this);
   }
 
   get asDisposable() {
@@ -38,11 +39,12 @@ class Cov {
     [
       vscode.Disposable.from(this.outputChannel_),
       this.command,
-      this.textDocumentProvider
+      this.textDocumentProvider,
+      this.onDidChangeActiveTextEditorListenerDisposer
     ].forEach(disposable => disposable.dispose());
   }
 
-  private async run() {
+  async run() {
     this.reportStartInOutputChannel();
 
     await this.displayUncoveredCodeRegions();
@@ -122,10 +124,26 @@ class Cov {
       this.uncoveredCodeRegionsVirtualTextEditors_.set(uri.fsPath, doc);
   }
 
+  private onDidChangeActiveTextEditor(_textEditor?: vscode.TextEditor) {
+    const activeEditor = vscode.window.activeTextEditor;
+
+    if (!activeEditor)
+      return;
+
+    const uri = activeEditor.document.uri;
+
+    if (uri.scheme !== Definitions.extensionId)
+      return;
+
+    this.uncoveredCodeRegionsVirtualTextEditors.get(uri.fsPath)?.refreshDecorations();
+  }
+
   private readonly outputChannel_: vscode.OutputChannel;
   private readonly command: vscode.Disposable;
   private readonly textDocumentProvider: vscode.Disposable;
   private readonly uncoveredCodeRegionsVirtualTextEditors_: Map<string, Types.Extension.UncoveredCodeRegionsVirtualTextEditor>;
   private readonly decorationType: vscode.TextEditorDecorationType;
+  // TODO: type for this factory
   private readonly uncoveredCodeRegionsVirtualTextEditorFactory: (textEditor: vscode.TextEditor) => Types.Extension.UncoveredCodeRegionsVirtualTextEditor;
+  private readonly onDidChangeActiveTextEditorListenerDisposer: vscode.Disposable;
 }

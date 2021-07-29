@@ -7,6 +7,7 @@ export type Decorations = {
 
 type WithDecorations = {
   get decorations(): Decorations | undefined;
+  refreshDecorations(): void;
 };
 
 export type UncoveredCodeRegionsVirtualTextEditor = vscode.TextEditor & WithDecorations;

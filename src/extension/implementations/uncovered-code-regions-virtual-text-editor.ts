@@ -4,6 +4,7 @@ import * as vscode from "vscode";
 
 export class UncoveredCodeRegionsVirtualTextEditor implements Types.Extension.UncoveredCodeRegionsVirtualTextEditor {
   constructor(textEditor: vscode.TextEditor) {
+    // TODO: (heavy) TextEditorLike facade
     this.textEditor = textEditor;
     this.document = textEditor.document;
     this.selection = textEditor.selection;
@@ -11,12 +12,6 @@ export class UncoveredCodeRegionsVirtualTextEditor implements Types.Extension.Un
     this.visibleRanges = textEditor.visibleRanges;
     this.options = textEditor.options;
     this.viewColumn = textEditor.viewColumn;
-
-    this.edit = textEditor.edit;
-    this.insertSnippet = textEditor.insertSnippet;
-    this.revealRange = textEditor.revealRange;
-    this.show = textEditor.show;
-    this.hide = textEditor.hide;
   }
 
   readonly document: vscode.TextDocument;
@@ -40,15 +35,28 @@ export class UncoveredCodeRegionsVirtualTextEditor implements Types.Extension.Un
     };
   }
 
-  edit: (callback: (editBuilder: vscode.TextEditorEdit) => void,
-    options?: { undoStopBefore: boolean; undoStopAfter: boolean; }) => Thenable<boolean>;
-  insertSnippet: (snippet: vscode.SnippetString,
-    location?: vscode.Range | vscode.Position | readonly vscode.Position[] | readonly vscode.Range[],
-    options?: { undoStopBefore: boolean; undoStopAfter: boolean; }) => Thenable<boolean>;
-  revealRange: (range: vscode.Range,
-    revealType?: vscode.TextEditorRevealType) => void;
-  show: (column?: vscode.ViewColumn) => void;
-  hide: () => void;
+  refreshDecorations(): void {
+  }
+
+  edit(callback: (editBuilder: vscode.TextEditorEdit) => void, options?: { undoStopBefore: boolean; undoStopAfter: boolean; }): Thenable<boolean> {
+    return this.textEditor.edit(callback, options);
+  }
+
+  insertSnippet(snippet: vscode.SnippetString, location?: vscode.Range | vscode.Position | readonly vscode.Range[] | readonly vscode.Position[], options?: { undoStopBefore: boolean; undoStopAfter: boolean; }): Thenable<boolean> {
+    return this.textEditor.insertSnippet(snippet, location, options);
+  }
+
+  revealRange(range: vscode.Range, revealType?: vscode.TextEditorRevealType): void {
+    return this.textEditor.revealRange(range, revealType);
+  }
+
+  show(column?: vscode.ViewColumn): void {
+    return this.textEditor.show(column);
+  }
+
+  hide(): void {
+    return this.textEditor.hide();
+  }
 
   private readonly textEditor: vscode.TextEditor;
   private decorations_?: Types.Extension.Decorations;
