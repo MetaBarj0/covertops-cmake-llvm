@@ -47,7 +47,13 @@ class Cov implements Types.Extension.Cov {
   async run() {
     this.reportStartInOutputChannel();
 
-    await this.displayUncoveredCodeRegions();
+    try {
+      await this.displayUncoveredCodeRegions();
+    } catch (error) {
+      console.error(error.message);
+
+      throw error;
+    }
   }
 
   get uncoveredCodeRegionsVirtualTextEditors(): ReadonlyMap<string, Types.Extension.UncoveredCodeRegionsVirtualTextEditor> {
