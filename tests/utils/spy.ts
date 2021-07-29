@@ -1,6 +1,9 @@
+import { EventEmitter } from "events";
+
 export abstract class Spy<T> {
-  constructor(wrapped: T) {
+  constructor(wrapped: T, eventEmitter?: EventEmitter) {
     this.wrapped = wrapped;
+    this.eventEmitter = eventEmitter;
   }
 
   abstract get object(): T;
@@ -17,11 +20,15 @@ export abstract class Spy<T> {
       this.callCountMap[member] = 0;
 
     (<number>this.callCountMap[member])++;
+
+    this.eventEmitter?.emit("callCountIncremented", { member, count: this.callCountMap[member] });
   }
+
+  protected readonly wrapped: T;
 
   private callCountMap: {
     [P in keyof T]?: number
   } = {};
 
-  protected readonly wrapped: T;
+  private readonly eventEmitter?: EventEmitter;
 }
