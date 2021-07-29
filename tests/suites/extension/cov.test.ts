@@ -151,8 +151,8 @@ function shouldRefreshUncoveredCodeRegionInVirtualTextEditor() {
   let cov: ReturnType<typeof Cov.make>;
 
   before("Displaying decorations and showing source file editor", async () => {
-
     cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), UncoveredCodeRegionsVirtualTextEditor.make());
+
     await showSourceFileEditor();
     await executeCommand();
     await showSourceFileEditor();
@@ -186,5 +186,6 @@ async function showSourceFileEditor() {
 }
 
 async function executeCommand() {
+  // TODO: use Strings here
   await vscode.commands.executeCommand(`${Definitions.extensionId}.reportUncoveredCodeRegionsInFile`);
 }
