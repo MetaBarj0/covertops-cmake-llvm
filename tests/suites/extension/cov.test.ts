@@ -1,5 +1,5 @@
 import * as chai from "chai";
-import { describe, it, after } from "mocha";
+import { describe, it, before, after } from "mocha";
 import * as chaiAsPromised from "chai-as-promised";
 
 chai.use(chaiAsPromised);
@@ -67,10 +67,7 @@ function covCanExecuteCommand() {
   it("should run the command successfully", async () => {
     cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), UncoveredCodeRegionsVirtualTextEditorFactory.make());
 
-    const workspaceRootFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
-    const cppFilePath = path.join(<string>workspaceRootFolder, "src", "partiallyCovered", "partiallyCoveredLib.cpp");
-
-    await vscode.window.showTextDocument(vscode.Uri.file(cppFilePath), { preserveFocus: false });
+    await showSourceFileEditor();
 
     return executeCommand().should.eventually.be.fulfilled;
   });
@@ -157,11 +154,12 @@ function virtualDocumentShouldHaveSomeDecorationsAfterCommandExecutionOnAPartial
 function shouldRefreshUncoveredCodeRegionInVirtualTextEditor() {
   let cov: Types.Extension.Cov;
 
+  before("showing a source file editor beforehand", showSourceFileEditor);
+
   it("should auto refresh decorations in existing virtual text editor", async () => {
     const event = buildEventForUncoveredCodeRegionsVirtualTextEditorSpy();
     let callCount = 0;
-    // TODO: leverage args of event here instead of manually increment
-    event.on("incrementedCallCount", () => { callCount++; });
+    event.onIncrementedCallCount(count => { callCount = count; });
     cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), makeEventBasedSpyOfUncoveredCodeRegionsVirtualTextEditor(event));
 
     await executeCommandThenSwitchBetweenSourceFileAndUncoveredCodeRegionsVirtualTextEditor(cov);

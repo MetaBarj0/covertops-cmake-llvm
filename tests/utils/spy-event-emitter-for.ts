@@ -16,13 +16,26 @@ export class SpyEventEmitterFor<T> extends EventEmitter {
 
     this.emit(eventType, {
       member,
-      ...eventArgs
+      eventArgs
     });
   }
 
-  // TODO: more specific on* function (onIncrementedCallCount for instance)
   override on(eventType: EventTypes, listener: (...args: unknown[]) => void): this {
     return super.on(eventType, listener);
+  }
+
+  onIncrementedCallCount(listener: (count: number) => void): this {
+    return this.on("incrementedCallCount", (...args: unknown[]) => {
+      const eventArgs = args[0] as SpyEventArgs<T>;
+      const member = eventArgs.member;
+
+      if (member !== this.settings.member)
+        return;
+
+      const count = eventArgs.eventArgs[0] as number;
+
+      listener(count);
+    });
   }
 
   private settings: SpyEventEmitterOptions<T>;
@@ -36,3 +49,8 @@ type SpyEventEmitterOptions<T> = {
   eventType: EventTypes,
   member: keyof T
 };
+
+type SpyEventArgs<T> = {
+  member: keyof T,
+  eventArgs: unknown[]
+}
