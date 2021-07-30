@@ -7,13 +7,13 @@ import * as CoverageInfoProvider from "../factories/coverage-info-provider";
 import * as vscode from "vscode";
 
 export function make(uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider,
-  uncoveredCodeRegionsVirtualTextEditorFactory: (textEditor: vscode.TextEditor) => Types.Extension.UncoveredCodeRegionsVirtualTextEditor): Types.Extension.Cov {
+  uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory): Types.Extension.Cov {
   return new Cov(uncoveredCodeRegionsDocumentContentProvider, uncoveredCodeRegionsVirtualTextEditorFactory);
 }
 
 class Cov implements Types.Extension.Cov {
   constructor(uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider,
-    uncoveredCodeRegionsVirtualTextEditorFactory: (virtualTextEditor: vscode.TextEditor) => Types.Extension.UncoveredCodeRegionsVirtualTextEditor) {
+    uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory) {
     this.outputChannel_ = vscode.window.createOutputChannel(Definitions.extensionId);
     this.command = vscode.commands.registerCommand(Strings.commandReportUncoveredCodeRegionsInFile, this.run, this);
     this.textDocumentProvider = vscode.workspace.registerTextDocumentContentProvider(Definitions.extensionId, uncoveredCodeRegionsDocumentContentProvider);
@@ -143,7 +143,8 @@ class Cov implements Types.Extension.Cov {
   private readonly textDocumentProvider: vscode.Disposable;
   private readonly uncoveredCodeRegionsVirtualTextEditors_: Map<string, Types.Extension.UncoveredCodeRegionsVirtualTextEditor>;
   private readonly decorationType: vscode.TextEditorDecorationType;
-  // TODO: type for this factory
-  private readonly uncoveredCodeRegionsVirtualTextEditorFactory: (textEditor: vscode.TextEditor) => Types.Extension.UncoveredCodeRegionsVirtualTextEditor;
+  private readonly uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory;
   private readonly onDidChangeActiveTextEditorListenerDisposer: vscode.Disposable;
 }
+
+type UncoveredCodeRegionsVirtualTextEditorFactory = (textEditor: vscode.TextEditor) => Types.Extension.UncoveredCodeRegionsVirtualTextEditor;
