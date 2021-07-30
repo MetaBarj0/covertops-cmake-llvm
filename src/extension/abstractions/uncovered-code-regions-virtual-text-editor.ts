@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { TextEditorLike } from "./text-editor-like";
 
 export type Decorations = {
   decorationType: vscode.TextEditorDecorationType,
@@ -10,4 +11,4 @@ type WithDecorations = {
   refreshDecorations(): void;
 };
 
-export type UncoveredCodeRegionsVirtualTextEditor = vscode.TextEditor & WithDecorations;
+export type UncoveredCodeRegionsVirtualTextEditor = TextEditorLike & WithDecorations;

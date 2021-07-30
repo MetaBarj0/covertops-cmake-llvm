@@ -115,7 +115,7 @@ class Cov implements Types.Extension.Cov {
   private buildVirtualDocumentUri() {
     return vscode.Uri.from({
       scheme: Definitions.extensionId,
-      path: (<vscode.TextEditor>vscode.window.activeTextEditor).document.uri.path
+      path: (<Types.Extension.TextEditorLike>vscode.window.activeTextEditor).document.uri.path
     });
   }
 
@@ -124,7 +124,7 @@ class Cov implements Types.Extension.Cov {
       this.uncoveredCodeRegionsVirtualTextEditors_.set(uri.fsPath, doc);
   }
 
-  private onDidChangeActiveTextEditor(_textEditor?: vscode.TextEditor) {
+  private onDidChangeActiveTextEditor(_textEditor?: Types.Extension.TextEditorLike) {
     const activeEditor = vscode.window.activeTextEditor;
 
     if (!activeEditor)
@@ -147,4 +147,4 @@ class Cov implements Types.Extension.Cov {
   private readonly onDidChangeActiveTextEditorListenerDisposer: vscode.Disposable;
 }
 
-type UncoveredCodeRegionsVirtualTextEditorFactory = (textEditor: vscode.TextEditor) => Types.Extension.UncoveredCodeRegionsVirtualTextEditor;
+type UncoveredCodeRegionsVirtualTextEditorFactory = (textEditor: Types.Extension.TextEditorLike) => Types.Extension.UncoveredCodeRegionsVirtualTextEditor;

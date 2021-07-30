@@ -185,7 +185,7 @@ function buildEventForUncoveredCodeRegionsVirtualTextEditorSpy() {
 }
 
 function makeEventBasedSpyOfUncoveredCodeRegionsVirtualTextEditor(eventForSpy: SpyEventEmitterFor<Types.Extension.UncoveredCodeRegionsVirtualTextEditor>) {
-  return (textEditor: vscode.TextEditor) => {
+  return (textEditor: Types.Extension.TextEditorLike) => {
     const uncoveredCodeRegionsVirtualTextEditor = new UncoveredCodeRegionsVirtualTextEditor(textEditor);
 
     return ExtensionFakes.buildEventBasedSpyForUncoveredCodeRegionsVirtualTextEditor({

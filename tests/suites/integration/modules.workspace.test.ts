@@ -7,7 +7,6 @@ chai.should();
 
 import * as Types from "./types";
 
-import * as vscode from "../../../src/adapters/implementations/vscode";
 import * as ProcessControl from "../../../src/adapters/implementations/process-control";
 import * as FileSystem from "../../../src/adapters/implementations/file-system";
 import * as SettingsProvider from "../../../src/modules/implementations/settings-provider";
@@ -17,6 +16,7 @@ import * as Fakes from "../../fakes/adapters/vscode";
 import * as TestUtils from "../../builders/settings";
 import * as Definitions from "../../../src/extension/implementations/definitions";
 
+import * as vscode from "vscode";
 import { env } from "process";
 import * as path from "path";
 

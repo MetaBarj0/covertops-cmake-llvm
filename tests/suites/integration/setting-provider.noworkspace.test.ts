@@ -6,8 +6,9 @@ chai.use(chaiAsPromised);
 chai.should();
 
 import * as SettingsProvider from "../../../src/modules/implementations/settings-provider";
-import * as vscode from "../../../src/adapters/implementations/vscode";
 import * as Fakes from "../../fakes/adapters/vscode";
+
+import * as vscode from "vscode";
 
 describe("Querying settings from a setting provider initialized with a workspace that does not have a root folder.", () => {
   it("should throw an error when settings are queried from a setting provider", () => {

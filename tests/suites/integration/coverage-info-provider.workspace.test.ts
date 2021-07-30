@@ -7,7 +7,6 @@ chai.should();
 
 import * as Types from "./types";
 
-import * as vscode from "../../../src/adapters/implementations/vscode";
 import * as FileSystem from "../../../src/adapters/implementations/file-system";
 import * as ProcessControl from "../../../src/adapters/implementations/process-control";
 import * as Definitions from "../../../src/extension/implementations/definitions";
@@ -19,6 +18,7 @@ import * as CoverageInfoFileResolver from "../../../src/modules/implementations/
 import * as CoverageInfoCollector from "../../../src/modules/implementations/coverage-info-collector";
 import * as CoverageInfoProvider from "../../../src/modules/implementations/coverage-info-provider";
 
+import * as vscode from "vscode";
 import { env } from "process";
 import * as path from "path";
 

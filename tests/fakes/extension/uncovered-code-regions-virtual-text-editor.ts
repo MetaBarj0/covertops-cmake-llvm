@@ -15,11 +15,6 @@ export function buildEventBasedSpyForUncoveredCodeRegionsVirtualTextEditor(optio
       super(wrapped, eventForSpy);
 
       this.document = wrapped.document;
-      this.selection = wrapped.selection;
-      this.selections = wrapped.selections;
-      this.visibleRanges = wrapped.visibleRanges;
-      this.options = wrapped.options;
-      this.viewColumn = wrapped.viewColumn;
     }
 
     refreshDecorations(): void {
@@ -32,29 +27,8 @@ export function buildEventBasedSpyForUncoveredCodeRegionsVirtualTextEditor(optio
       return this;
     }
 
-    // TODO: (heavy) is it possible to create an adapter to only bother about setDecorations?
-    edit(callback: (editBuilder: vscode.TextEditorEdit) => void, options?: { undoStopBefore: boolean; undoStopAfter: boolean; }): Thenable<boolean> {
-      return this.wrapped.edit(callback, options);
-    }
-
-    insertSnippet(snippet: vscode.SnippetString, location?: vscode.Range | vscode.Position | readonly vscode.Range[] | readonly vscode.Position[], options?: { undoStopBefore: boolean; undoStopAfter: boolean; }): Thenable<boolean> {
-      return this.wrapped.insertSnippet(snippet, location, options);
-    }
-
     setDecorations(decorationType: vscode.TextEditorDecorationType, rangesOrOptions: readonly vscode.Range[] | readonly vscode.DecorationOptions[]): void {
       return this.wrapped.setDecorations(decorationType, rangesOrOptions);
-    }
-
-    revealRange(range: vscode.Range, revealType?: vscode.TextEditorRevealType): void {
-      return this.wrapped.revealRange(range, revealType);
-    }
-
-    show(column?: vscode.ViewColumn): void {
-      return this.wrapped.show(column);
-    }
-
-    hide(): void {
-      return this.wrapped.hide();
     }
 
     get decorations() {
@@ -62,10 +36,5 @@ export function buildEventBasedSpyForUncoveredCodeRegionsVirtualTextEditor(optio
     }
 
     document: vscode.TextDocument;
-    selection: vscode.Selection;
-    selections: vscode.Selection[];
-    visibleRanges: vscode.Range[];
-    options: vscode.TextEditorOptions;
-    viewColumn?: vscode.ViewColumn | undefined;
   }(options.uncoveredCodeRegionsVirtualTextEditor, options.eventForSpy);
 }
