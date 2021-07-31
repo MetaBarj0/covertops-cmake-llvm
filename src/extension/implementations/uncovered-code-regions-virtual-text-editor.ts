@@ -4,7 +4,6 @@ import * as vscode from "vscode";
 
 export class UncoveredCodeRegionsVirtualTextEditor implements Types.Extension.UncoveredCodeRegionsVirtualTextEditor {
   constructor(textEditor: Types.Extension.TextEditorLike) {
-    this.textEditor = textEditor;
     this.document = textEditor.document;
   }
 
@@ -16,7 +15,10 @@ export class UncoveredCodeRegionsVirtualTextEditor implements Types.Extension.Un
 
   setDecorations(decorationType: vscode.TextEditorDecorationType,
     rangesOrOptions: readonly vscode.Range[] | readonly vscode.DecorationOptions[]): void {
-    this.textEditor.setDecorations(decorationType, rangesOrOptions);
+    if (!vscode.window.activeTextEditor)
+      return;
+
+    vscode.window.activeTextEditor.setDecorations(decorationType, rangesOrOptions);
 
     this.decorations_ = {
       decorationType: decorationType,
@@ -25,8 +27,11 @@ export class UncoveredCodeRegionsVirtualTextEditor implements Types.Extension.Un
   }
 
   refreshDecorations(): void {
+    if (!this.decorations)
+      return;
+
+    vscode.window.activeTextEditor?.setDecorations(this.decorations.decorationType, this.decorations.rangesOrOptions);
   }
 
-  private readonly textEditor: Types.Extension.TextEditorLike;
   private decorations_?: Types.Extension.Decorations;
 }
