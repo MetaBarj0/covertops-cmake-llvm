@@ -1,13 +1,13 @@
 import * as vscode from "vscode";
 
-import * as Cov from "./extension/implementations/cov";
+import * as CovertOps from "./extension/implementations/covert-ops";
 import * as UncoveredCodeRegionsDocumentContentProvider from "./extension/implementations/uncovered-code-regions-document-content-provider";
 import * as UncoveredCodeRegionsVirtualTextEditor from "./extension/factories/uncovered-code-regions-virtual-text-editor";
 
 export function activate(context: vscode.ExtensionContext): void {
-  const cov = Cov.make(UncoveredCodeRegionsDocumentContentProvider.make(), UncoveredCodeRegionsVirtualTextEditor.make());
+  const covertOps = CovertOps.make(UncoveredCodeRegionsDocumentContentProvider.make(), UncoveredCodeRegionsVirtualTextEditor.make());
 
-  context.subscriptions.push(cov.asDisposable);
+  context.subscriptions.push(covertOps.asDisposable);
 }
 
 export function deactivate(): void { }

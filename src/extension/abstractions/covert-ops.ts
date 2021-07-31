@@ -3,7 +3,7 @@ import { OutputChannelLike } from "../../adapters/abstractions/vscode";
 import * as vscode from "vscode";
 import { UncoveredCodeRegionsVirtualTextEditor } from "./uncovered-code-regions-virtual-text-editor";
 
-export type Cov = {
+export type CovertOps = {
   run(): Thenable<void>;
   dispose(): void;
   get asDisposable(): vscode.Disposable;

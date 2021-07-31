@@ -1,6 +1,6 @@
-# Cov (with cmake and llvm flavour)
+# Covert Ops (with cmake and llvm flavour)
 
-![Continuous integration](https://github.com/metabarj0/cov-cmake-llvm/actions/workflows/cicd.yml/badge.svg)
+![Continuous integration](https://github.com/metabarj0/covertops-cmake-llvm/actions/workflows/cicd.yml/badge.svg)
 
 Get a precise report of uncovered regions of your code handled by cmake and
 using a recent version of the llvm toolchain as easy as **hello world!**
@@ -75,21 +75,21 @@ immoderatly to get proficient with C++ and Visual Studio Code.
 
 The behavior of this extension can be set thanks to the following settings:
 
-- `cov-cmake-llvm.cmakeCommand`: The command to invoke the build system
+- `covertops-cmake-llvm.cmakeCommand`: The command to invoke the build system
 generator (cmake). May be an absolute path on the file system or just `cmake` if
 this latter is in your `$PATH` environment variable.
-- `cov-cmake-llvm.buildTreeDirectory`: The build tree root directory of your
+- `covertops-cmake-llvm.buildTreeDirectory`: The build tree root directory of your
 project, relative to your workspace directory. Designed to be the target of the
 output of the build system generator.
-- `cov-cmake-llvm.cmakeTarget`: The target that generates coverage information
+- `covertops-cmake-llvm.cmakeTarget`: The target that generates coverage information
 in a json format file. This file may be generated in the build directory
 specified in the `Build Tree Directory` setting. The specified target must
 exist. It may actually have to be created by your hand intially (guide to
 achieve that is below)
-- `cov-cmake-llvm.coverageInfoFileName`: The name of the json file containing
+- `covertops-cmake-llvm.coverageInfoFileName`: The name of the json file containing
 coverage information. This file will be searched within the `buildTreeDirectory`
 hierarchy. This file must exist and be unique.
-- `cov-cmake-llvm.additionalCmakeOptions`: Additional options to pass to build
+- `covertops-cmake-llvm.additionalCmakeOptions`: Additional options to pass to build
 system generator (cmake), for instance, variable definitions indicating which
 compiler / generator to use, preprocessor defines, etc.
 

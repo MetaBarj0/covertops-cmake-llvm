@@ -1,6 +1,6 @@
 {
-  "name": "cov-cmake-llvm",
-  "displayName": "Cov (with cmake and llvm flavour).",
+  "name": "covertops-cmake-llvm",
+  "displayName": "CovertOps (with cmake and llvm flavour).",
   "description": "Get a precise report of uncovered regions of your code handled by cmake and the llvm as easy as hello world!",
   "version": "0.0.1",
   "engines": {
@@ -13,12 +13,12 @@
     "Visualization"
   ],
   "publisher": "SbastienLevy",
-  "homepage": "https://github.com/MetaBarj0/cov-cmake-llvm",
+  "homepage": "https://github.com/MetaBarj0/covertops-cmake-llvm",
   "repository": {
-    "url": "https://github.com/MetaBarj0/cov-cmake-llvm"
+    "url": "https://github.com/MetaBarj0/covertops-cmake-llvm"
   },
   "bugs": {
-    "url": "https://github.com/MetaBarj0/cov-cmake-llvm/issues"
+    "url": "https://github.com/MetaBarj0/covertops-cmake-llvm/issues"
   },
   "keywords": [
     "cmake",
@@ -32,43 +32,43 @@
     "lint"
   ],
   "activationEvents": [
-    "onCommand:cov-cmake-llvm.reportUncoveredCodeRegionsInFile"
+    "onCommand:covertops-cmake-llvm.reportUncoveredCodeRegionsInFile"
   ],
   "main": "./dist/main.js",
   "contributes": {
     "configuration": [
       {
-        "title": "Cov-Cmake-llvm",
+        "title": "CovertOps-Cmake-Llvm",
         "properties": {
-          "cov-cmake-llvm.cmakeCommand": {
+          "covertops-cmake-llvm.cmakeCommand": {
             "type": "string",
             "default": "cmake",
             "minLength": 1,
             "scope": "window",
             "description": "The command to invoke cmake. May be an absolute path on the file system or just `cmake` if this latter is in your `$PATH` environment variable."
           },
-          "cov-cmake-llvm.buildTreeDirectory": {
+          "covertops-cmake-llvm.buildTreeDirectory": {
             "type": "string",
             "default": "build",
             "minLength": 1,
             "scope": "window",
             "description": "The build tree root directory of your project, relative to your workspace directory. Designed to be the target of the output of cmake."
           },
-          "cov-cmake-llvm.cmakeTarget": {
+          "covertops-cmake-llvm.cmakeTarget": {
             "type": "string",
             "default": "coverage",
             "minLength": 1,
             "scope": "window",
             "description": "The target that generates coverage information in a json format file. This file may be generated in the build directory specified in the `Build Tree Directory` setting. The specified target must exist."
           },
-          "cov-cmake-llvm.coverageInfoFileName": {
+          "covertops-cmake-llvm.coverageInfoFileName": {
             "type": "string",
             "default": "coverage.json",
             "minLength": 1,
             "scope": "window",
             "description": "The name of the json file containing coverage information. This file will be searched within the `buildTreeDirectory` hierarchy. This file must exist and be unique."
           },
-          "cov-cmake-llvm.additionalCmakeOptions": {
+          "covertops-cmake-llvm.additionalCmakeOptions": {
             "type": "array",
             "items": {
               "type": "string",
@@ -86,19 +86,19 @@
         {
           "when": "resourceLangId == cpp",
           "group": "navigation",
-          "command": "cov-cmake-llvm.reportUncoveredCodeRegionsInFile"
+          "command": "covertops-cmake-llvm.reportUncoveredCodeRegionsInFile"
         }
       ],
       "commandPalette": [
         {
           "when": "resourceLangId == cpp",
-          "command": "cov-cmake-llvm.reportUncoveredCodeRegionsInFile"
+          "command": "covertops-cmake-llvm.reportUncoveredCodeRegionsInFile"
         }
       ]
     },
     "commands": [
       {
-        "command": "cov-cmake-llvm.reportUncoveredCodeRegionsInFile",
+        "command": "covertops-cmake-llvm.reportUncoveredCodeRegionsInFile",
         "title": "Display uncovered code regions",
         "enablement": "resourceLangId == cpp"
       }

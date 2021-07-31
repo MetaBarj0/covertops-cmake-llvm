@@ -7,11 +7,11 @@ import * as CoverageInfoProvider from "../factories/coverage-info-provider";
 import * as vscode from "vscode";
 
 export function make(uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider,
-  uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory): Types.Extension.Cov {
-  return new Cov(uncoveredCodeRegionsDocumentContentProvider, uncoveredCodeRegionsVirtualTextEditorFactory);
+  uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory): Types.Extension.CovertOps {
+  return new CovertOps(uncoveredCodeRegionsDocumentContentProvider, uncoveredCodeRegionsVirtualTextEditorFactory);
 }
 
-class Cov implements Types.Extension.Cov {
+class CovertOps implements Types.Extension.CovertOps {
   constructor(uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider,
     uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory) {
     this.outputChannel_ = vscode.window.createOutputChannel(Definitions.extensionId);
