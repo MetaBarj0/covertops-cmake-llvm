@@ -1,5 +1,4 @@
-// TODO: move to adapters implementations
-import * as Types from "../types";
+import * as Types from "../../extension/types";
 
 export function make(wrappedOutputChannel: Types.Adapters.vscode.OutputChannelLike): Types.Adapters.vscode.OutputChannelLikeWithLines {
   return new OutputChannel(wrappedOutputChannel);

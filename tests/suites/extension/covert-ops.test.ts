@@ -12,7 +12,7 @@ import * as Definitions from "../../../src/definitions";
 import * as UncoveredCodeRegionsDocumentContentProvider from "../../../src/extension/implementations/uncovered-code-regions-document-content-provider";
 import * as UncoveredCodeRegionsVirtualTextEditorFactory from "../../../src/factories/uncovered-code-regions-virtual-text-editor";
 import * as UncoveredCodeRegionsVirtualTextEditor from "../../../src/extension/implementations/uncovered-code-regions-virtual-text-editor";
-import * as OutputChannel from "../../../src/extension/implementations/output-channel";
+import * as OutputChannel from "../../../src/adapters/implementations/vscode";
 import * as Strings from "../../../src/strings";
 
 import { buildEventBasedSpyForUncoveredCodeRegionsVirtualTextEditor } from "../../fakes/extension/uncovered-code-regions-virtual-text-editor";

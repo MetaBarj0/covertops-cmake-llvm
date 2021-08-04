@@ -1,17 +1,16 @@
 import * as Types from "../../../src/extension/types";
 
-import { UncoveredCodeRegionsVirtualTextEditor } from "../../../src/extension/abstractions/uncovered-code-regions-virtual-text-editor";
 import { Spy } from "../../utils/spy";
 import { SpyEventEmitterFor } from "../../utils/spy-event-emitter-for";
 
 import * as vscode from "vscode";
 
 export function buildEventBasedSpyForUncoveredCodeRegionsVirtualTextEditor(options: {
-  uncoveredCodeRegionsVirtualTextEditor: UncoveredCodeRegionsVirtualTextEditor,
-  eventForSpy: SpyEventEmitterFor<UncoveredCodeRegionsVirtualTextEditor>
-}): Spy<UncoveredCodeRegionsVirtualTextEditor> {
+  uncoveredCodeRegionsVirtualTextEditor: Types.Adapters.vscode.UncoveredCodeRegionsVirtualTextEditor,
+  eventForSpy: SpyEventEmitterFor<Types.Adapters.vscode.UncoveredCodeRegionsVirtualTextEditor>
+}): Spy<Types.Adapters.vscode.UncoveredCodeRegionsVirtualTextEditor> {
   return new class extends Spy<Types.Extension.UncoveredCodeRegionsVirtualTextEditor> implements Types.Extension.UncoveredCodeRegionsVirtualTextEditor {
-    constructor(wrapped: Types.Extension.UncoveredCodeRegionsVirtualTextEditor, eventForSpy: SpyEventEmitterFor<UncoveredCodeRegionsVirtualTextEditor>) {
+    constructor(wrapped: Types.Extension.UncoveredCodeRegionsVirtualTextEditor, eventForSpy: SpyEventEmitterFor<Types.Adapters.vscode.UncoveredCodeRegionsVirtualTextEditor>) {
       super(wrapped, eventForSpy);
 
       this.document = wrapped.document;

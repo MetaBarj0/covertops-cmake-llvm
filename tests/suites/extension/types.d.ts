@@ -1,12 +1,10 @@
-import * as UncoveredCodeRegionsVirtualTextEditorModule from "../../../src/extension/abstractions/uncovered-code-regions-virtual-text-editor";
 import * as CovModule from "../../../src/extension/abstractions/covert-ops";
 import * as VscodeModule from "../../../src/adapters/abstractions/vscode";
-import * as TextEditorModule from "../../../src/extension/abstractions/text-editor-like";
 
 export namespace Extension {
-  export type UncoveredCodeRegionsVirtualTextEditor = UncoveredCodeRegionsVirtualTextEditorModule.UncoveredCodeRegionsVirtualTextEditor;
+  export type UncoveredCodeRegionsVirtualTextEditor = VscodeModule.UncoveredCodeRegionsVirtualTextEditor;
   export type CovertOps = CovModule.CovertOps;
-  export type TextEditorLike = TextEditorModule.TextEditorLike;
+  export type TextEditorLike = VscodeModule.TextEditorLike;
 }
 
 export namespace Adapters {
