@@ -150,5 +150,6 @@ type UncoveredCodeRegionsVirtualTextEditorFactory = (textEditor: Types.Extension
 
 type Context = {
   uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider,
-  uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory
+  uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory,
+  outputChannel: Types.Adapters.vscode.OutputChannelLike
 }
