@@ -1,11 +1,11 @@
-import * as Types from "../../types";
+import * as Types from "../../../types";
 
 import * as Strings from "../../../strings";
 
-export abstract class BasicCmake implements Types.Modules.Cmake {
-  constructor(outputChannel: Types.Adapters.vscode.OutputChannelLike,
-    progressReporter: Types.Adapters.vscode.ProgressLike,
-    settings: Types.Modules.Settings) {
+export abstract class BasicCmake implements Types.Modules.Cmake.Cmake {
+  constructor(outputChannel: Types.Adapters.Vscode.OutputChannelLike,
+    progressReporter: Types.Adapters.Vscode.ProgressLike,
+    settings: Types.Modules.SettingsProvider.Settings) {
     this.outputChannel = outputChannel;
     this.progressReporter = progressReporter;
     this.settings = settings;
@@ -47,7 +47,7 @@ export abstract class BasicCmake implements Types.Modules.Cmake {
   protected abstract generateProject(): Thenable<void>;
   protected abstract build(): Thenable<void>;
 
-  protected readonly settings: Types.Modules.Settings;
+  protected readonly settings: Types.Modules.SettingsProvider.Settings;
 
   private handleErrorWithMessage(error: Error, message: string) {
     const errorMessage = `${message}${(<Error>error).message}`;
@@ -57,15 +57,15 @@ export abstract class BasicCmake implements Types.Modules.Cmake {
     return Promise.reject(new Error(errorMessage));
   }
 
-  private readonly progressReporter: Types.Adapters.vscode.ProgressLike;
-  private readonly outputChannel: Types.Adapters.vscode.OutputChannelLike;
+  private readonly progressReporter: Types.Adapters.Vscode.ProgressLike;
+  private readonly outputChannel: Types.Adapters.Vscode.OutputChannelLike;
 }
 
-export function make(context: Context): Types.Modules.Cmake {
+export function make(context: Context): Types.Modules.Cmake.Cmake {
   return new Cmake(context);
 }
 
-class Cmake extends BasicCmake implements Types.Modules.Cmake {
+class Cmake extends BasicCmake implements Types.Modules.Cmake.Cmake {
   constructor(context: Context) {
     super(context.outputChannel, context.progressReporter, context.settings);
 
@@ -119,12 +119,12 @@ class Cmake extends BasicCmake implements Types.Modules.Cmake {
     });
   }
 
-  private readonly execFile: Types.Adapters.processControl.ExecFileCallable;
+  private readonly execFile: Types.Adapters.Node.ExecFileCallable;
 }
 
 type Context = {
-  settings: Types.Modules.Settings,
-  progressReporter: Types.Adapters.vscode.ProgressLike,
-  outputChannel: Types.Adapters.vscode.OutputChannelLike,
-  execFile: Types.Adapters.processControl.ExecFileCallable,
+  settings: Types.Modules.SettingsProvider.Settings,
+  progressReporter: Types.Adapters.Vscode.ProgressLike,
+  outputChannel: Types.Adapters.Vscode.OutputChannelLike,
+  execFile: Types.Adapters.Node.ExecFileCallable,
 };

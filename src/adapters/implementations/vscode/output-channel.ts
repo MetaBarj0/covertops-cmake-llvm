@@ -1,11 +1,11 @@
-import * as Types from "../../../modules/types";
+import * as Types from "../../../types";
 
-export function make(wrappedOutputChannel: Types.Adapters.vscode.OutputChannelLike): Types.Adapters.vscode.OutputChannelLikeWithLines {
+export function make(wrappedOutputChannel: Types.Adapters.Vscode.OutputChannelLike): Types.Adapters.Vscode.OutputChannelLikeWithLines {
   return new OutputChannel(wrappedOutputChannel);
 }
 
-class OutputChannel implements Types.Adapters.vscode.OutputChannelLikeWithLines {
-  constructor(wrappedOutputChannel: Types.Adapters.vscode.OutputChannelLike) {
+class OutputChannel implements Types.Adapters.Vscode.OutputChannelLikeWithLines {
+  constructor(wrappedOutputChannel: Types.Adapters.Vscode.OutputChannelLike) {
     this.wrapped = wrappedOutputChannel;
   }
 
@@ -31,6 +31,6 @@ class OutputChannel implements Types.Adapters.vscode.OutputChannelLikeWithLines 
     return this.lines_;
   }
 
-  private readonly wrapped: Types.Adapters.vscode.OutputChannelLike;
+  private readonly wrapped: Types.Adapters.Vscode.OutputChannelLike;
   private lines_: Array<string> = [];
 }

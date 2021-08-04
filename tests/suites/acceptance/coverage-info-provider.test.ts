@@ -5,7 +5,7 @@ import * as chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 chai.should();
 
-import * as Types from "./types";
+import * as Types from "../../../src/types";
 
 import * as FileSystemFakes from "../../fakes/adapters/file-system";
 import * as VscodeFakes from "../../fakes/adapters/vscode";
@@ -14,7 +14,7 @@ import * as SettingsProvider from "../../../src/modules/implementations/settings
 import * as BuildTreeDirectoryResolver from "../../../src/modules/implementations/build-tree-directory-resolver/build-tree-directory-resolver";
 import * as Cmake from "../../../src/modules/implementations/cmake/cmake";
 import * as CoverageInfoCollector from "../../../src/modules/implementations/coverage-info-collector/coverage-info-collector";
-import * as CoverageInfoProvider from "../../../src/modules/implementations/settings-provider/coverage-info-provider";
+import * as CoverageInfoProvider from "../../../src/modules/implementations/coverage-info-provider/coverage-info-provider";
 import * as CoverageInfoFileResolver from "../../../src/modules/implementations/coverage-info-file-resolver/coverage-info-file-resolver";
 
 describe("acceptance suite of tests", () => {
@@ -129,7 +129,7 @@ function succeedWithCorrectSettingsAndFakeAdapters() {
 
     const coverageInfo = await provider.getCoverageInfoForFile("/a/source/file.cpp");
 
-    const uncoveredRegions: Array<Types.Modules.RegionCoverageInfo> = [];
+    const uncoveredRegions: Array<Types.Modules.CoverageInfoCollector.RegionCoverageInfo> = [];
     for await (const region of coverageInfo.uncoveredRegions)
       uncoveredRegions.push(region);
 

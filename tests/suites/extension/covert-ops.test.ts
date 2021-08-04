@@ -1,3 +1,4 @@
+// TODO: move tests of extension suite in integration suite
 import * as chai from "chai";
 import { describe, it, before, after } from "mocha";
 import * as chaiAsPromised from "chai-as-promised";
@@ -5,7 +6,7 @@ import * as chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 chai.should();
 
-import * as Types from "./types";
+import * as Types from "../../../src/types";
 
 import * as CovertOps from "../../../src/modules/implementations/extension/covert-ops";
 import * as Definitions from "../../../src/definitions";
@@ -37,7 +38,7 @@ describe("Extension test suite", () => {
 });
 
 function covShouldBeDisposable() {
-  let covertOps: Types.Extension.CovertOps;
+  let covertOps: Types.Modules.Extension.CovertOps;
 
   it("should succeed when instantiating the extension as a vscode disposable", async () => {
     covertOps = CovertOps.make({
@@ -55,7 +56,7 @@ function covShouldBeDisposable() {
 }
 
 function covShouldHaveAnOutputChannel() {
-  let covertOps: Types.Extension.CovertOps;
+  let covertOps: Types.Modules.Extension.CovertOps;
 
   it("should expose a vscode output channel", async () => {
     covertOps = CovertOps.make({
@@ -64,7 +65,7 @@ function covShouldHaveAnOutputChannel() {
       outputChannel: OutputChannel.make(vscode.window.createOutputChannel(Definitions.extensionId))
     });
 
-    const covExposesAVscodeOutputChannel = ((_: Types.Adapters.vscode.OutputChannelLike): _ is Types.Adapters.vscode.OutputChannelLike => true)(covertOps.outputChannel);
+    const covExposesAVscodeOutputChannel = ((_: Types.Adapters.Vscode.OutputChannelLike): _ is Types.Adapters.Vscode.OutputChannelLike => true)(covertOps.outputChannel);
 
     covExposesAVscodeOutputChannel.should.be.equal(true);
   });
@@ -73,7 +74,7 @@ function covShouldHaveAnOutputChannel() {
 }
 
 function covCanExecuteCommand() {
-  let covertOps: Types.Extension.CovertOps;
+  let covertOps: Types.Modules.Extension.CovertOps;
 
   it("should run the command successfully", async () => {
     covertOps = CovertOps.make({
@@ -91,7 +92,7 @@ function covCanExecuteCommand() {
 }
 
 function covShouldOpenOnlyOneVirtualDocumentEditorPerSourceFile() {
-  let covertOps: Types.Extension.CovertOps;
+  let covertOps: Types.Modules.Extension.CovertOps;
 
   it("should have one uncovered code regions editor in the collection that is a virtual read only text editor", async () => {
     covertOps = CovertOps.make({
@@ -116,7 +117,7 @@ function covShouldOpenOnlyOneVirtualDocumentEditorPerSourceFile() {
 }
 
 function virtualDocumentShouldContainSameSourceCode() {
-  let covertOps: Types.Extension.CovertOps;
+  let covertOps: Types.Modules.Extension.CovertOps;
 
   it("should show a virtual document having the same source code that the file on which request for uncovered regions has been done", async () => {
     covertOps = CovertOps.make({
@@ -137,7 +138,7 @@ function virtualDocumentShouldContainSameSourceCode() {
 }
 
 function uncoveredCodeRegionsVirtualTextEditorOnSourceFileShouldNotExist() {
-  let covertOps: Types.Extension.CovertOps;
+  let covertOps: Types.Modules.Extension.CovertOps;
 
   it("should not exist any uncovered code regions virtual editor", async () => {
     covertOps = CovertOps.make({
@@ -156,7 +157,7 @@ function uncoveredCodeRegionsVirtualTextEditorOnSourceFileShouldNotExist() {
 }
 
 function virtualDocumentShouldHaveSomeDecorationsAfterCommandExecutionOnAPartiallyCoveredFile() {
-  let covertOps: Types.Extension.CovertOps;
+  let covertOps: Types.Modules.Extension.CovertOps;
 
   it("is possible to query decorations for a virtual document editor that have some", async () => {
     covertOps = CovertOps.make({
@@ -184,7 +185,7 @@ function virtualDocumentShouldHaveSomeDecorationsAfterCommandExecutionOnAPartial
 }
 
 function shouldRefreshUncoveredCodeRegionInVirtualTextEditor() {
-  let covertOps: Types.Extension.CovertOps;
+  let covertOps: Types.Modules.Extension.CovertOps;
 
   before("showing a source file editor beforehand", showSourceFileEditor);
 
@@ -207,7 +208,7 @@ function shouldRefreshUncoveredCodeRegionInVirtualTextEditor() {
 }
 
 function shouldShowSummaryCoverageInfoForFile() {
-  let covertOps: Types.Extension.CovertOps;
+  let covertOps: Types.Modules.Extension.CovertOps;
 
   it("should show the right summary info in the output window", async () => {
     const outputChannelSpy = buildSpyOfOutputChannel(OutputChannel.make(vscode.window.createOutputChannel(Definitions.extensionId)));
@@ -228,22 +229,22 @@ function shouldShowSummaryCoverageInfoForFile() {
   after("Disposing of covert ops instance", () => covertOps.dispose());
 }
 
-async function executeCommandThenSwitchBetweenSourceFileAndUncoveredCodeRegionsVirtualTextEditor(covertOps: Types.Extension.CovertOps) {
+async function executeCommandThenSwitchBetweenSourceFileAndUncoveredCodeRegionsVirtualTextEditor(covertOps: Types.Modules.Extension.CovertOps) {
   await executeCommand();
   const { cppFilePath } = await showSourceFileEditor();
-  const uncoveredCodeRegionsVirtualTextEditor = <Types.Extension.UncoveredCodeRegionsVirtualTextEditor>covertOps.uncoveredCodeRegionsVirtualTextEditors.get(cppFilePath);
+  const uncoveredCodeRegionsVirtualTextEditor = <Types.Modules.Extension.UncoveredCodeRegionsVirtualTextEditor>covertOps.uncoveredCodeRegionsVirtualTextEditors.get(cppFilePath);
   await vscode.window.showTextDocument(uncoveredCodeRegionsVirtualTextEditor.document);
 }
 
 function buildEventForUncoveredCodeRegionsVirtualTextEditorSpy() {
-  return new SpyEventEmitterFor<Types.Extension.UncoveredCodeRegionsVirtualTextEditor>({
+  return new SpyEventEmitterFor<Types.Modules.Extension.UncoveredCodeRegionsVirtualTextEditor>({
     eventType: "incrementedCallCount",
     member: "refreshDecorations"
   });
 }
 
-function makeEventBasedSpyOfUncoveredCodeRegionsVirtualTextEditor(eventForSpy: SpyEventEmitterFor<Types.Extension.UncoveredCodeRegionsVirtualTextEditor>) {
-  return (textEditor: Types.Extension.TextEditorLike) => {
+function makeEventBasedSpyOfUncoveredCodeRegionsVirtualTextEditor(eventForSpy: SpyEventEmitterFor<Types.Modules.Extension.UncoveredCodeRegionsVirtualTextEditor>) {
+  return (textEditor: Types.Modules.Extension.TextEditorLike) => {
     const uncoveredCodeRegionsVirtualTextEditor = UncoveredCodeRegionsVirtualTextEditor.make(textEditor);
 
     return buildEventBasedSpyForUncoveredCodeRegionsVirtualTextEditor({

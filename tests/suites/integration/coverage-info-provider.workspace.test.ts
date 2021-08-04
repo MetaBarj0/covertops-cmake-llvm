@@ -5,7 +5,7 @@ import * as chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 chai.should();
 
-import * as Types from "./types";
+import * as Types from "../../../src/types";
 
 import * as FileSystem from "../../../src/adapters/implementations/node/file-system";
 import * as ProcessControl from "../../../src/adapters/implementations/node/process-control";
@@ -16,7 +16,7 @@ import * as BuildTreeDirectoryResolver from "../../../src/modules/implementation
 import * as Cmake from "../../../src/modules/implementations/cmake/cmake";
 import * as CoverageInfoFileResolver from "../../../src/modules/implementations/coverage-info-file-resolver/coverage-info-file-resolver";
 import * as CoverageInfoCollector from "../../../src/modules/implementations/coverage-info-collector/coverage-info-collector";
-import * as CoverageInfoProvider from "../../../src/modules/implementations/settings-provider/coverage-info-provider";
+import * as CoverageInfoProvider from "../../../src/modules/implementations/coverage-info-provider/coverage-info-provider";
 
 import * as vscode from "vscode";
 import { env } from "process";
@@ -50,7 +50,7 @@ function collectUncoveredRegionsCoverageInfoFromPartiallyCoveredFileShouldSucced
 
     const coverageInfo = await coverageInfoProvider.getCoverageInfoForFile(sourceFilePath);
 
-    const uncoveredRegions: Array<Types.Modules.RegionCoverageInfo> = [];
+    const uncoveredRegions: Array<Types.Modules.CoverageInfoCollector.RegionCoverageInfo> = [];
     for await (const region of coverageInfo.uncoveredRegions)
       uncoveredRegions.push(region);
 
@@ -148,7 +148,7 @@ function collectUncoveredRegionsCoverageInfoFromFullyCoveredFileShouldSucced() {
   it("should report correct coverage information for a specific file", async () => {
     const coverageInfoProvider = makeCoverageInfoProvider();
     const sourceFilePath = createAbsoluteSourceFilePathFrom("fullyCovered/fullyCoveredLib.cpp");
-    const uncoveredRegions: Array<Types.Modules.RegionCoverageInfo> = [];
+    const uncoveredRegions: Array<Types.Modules.CoverageInfoCollector.RegionCoverageInfo> = [];
 
     const coverageInfo = await coverageInfoProvider.getCoverageInfoForFile(sourceFilePath);
     for await (const region of coverageInfo.uncoveredRegions)

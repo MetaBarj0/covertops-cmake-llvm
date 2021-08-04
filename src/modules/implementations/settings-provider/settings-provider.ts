@@ -1,29 +1,29 @@
-import * as Types from "../../types";
+import * as Types from "../../../types";
 
 import * as Definitions from "../../../definitions";
 import * as Strings from "../../../strings";
 import * as Settings from "./settings";
 
-export function make(adapters: Adapters): Types.Modules.SettingsProvider {
+export function make(adapters: Adapters): Types.Modules.SettingsProvider.SettingsProvider {
   return new SettingsProvider(adapters);
 }
 
 type Adapters = {
-  workspace: Types.Adapters.vscode.VscodeWorkspaceLike,
-  outputChannel: Types.Adapters.vscode.OutputChannelLike
+  workspace: Types.Adapters.Vscode.VscodeWorkspaceLike,
+  outputChannel: Types.Adapters.Vscode.OutputChannelLike
 };
 
-class SettingsProvider implements Types.Modules.SettingsProvider {
+class SettingsProvider implements Types.Modules.SettingsProvider.SettingsProvider {
   constructor(adapters: Adapters) {
     this.workspace = adapters.workspace;
     this.outputChannel = adapters.outputChannel;
   }
 
-  get settings(): Types.Modules.Settings {
+  get settings(): Types.Modules.SettingsProvider.Settings {
     this.ensureWorkspaceIsLoaded();
 
     const workspaceSettings = this.workspace.getConfiguration(Definitions.extensionId);
-    const workspaceFolders = this.workspace.workspaceFolders as Array<Types.Adapters.vscode.VscodeWorkspaceFolderLike>;
+    const workspaceFolders = this.workspace.workspaceFolders as Array<Types.Adapters.Vscode.VscodeWorkspaceFolderLike>;
     const rootDirectory = workspaceFolders[0].uri.fsPath;
 
     return Settings.make(
@@ -47,6 +47,6 @@ class SettingsProvider implements Types.Modules.SettingsProvider {
     throw new Error(errorMessage);
   }
 
-  private readonly workspace: Types.Adapters.vscode.VscodeWorkspaceLike;
-  private readonly outputChannel: Types.Adapters.vscode.OutputChannelLike;
+  private readonly workspace: Types.Adapters.Vscode.VscodeWorkspaceLike;
+  private readonly outputChannel: Types.Adapters.Vscode.OutputChannelLike;
 }

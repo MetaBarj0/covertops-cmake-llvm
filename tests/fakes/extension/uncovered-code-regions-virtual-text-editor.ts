@@ -1,4 +1,4 @@
-import * as Types from "../../../src/modules/types";
+import * as Types from "../../../src/types";
 
 import { Spy } from "../../utils/spy";
 import { SpyEventEmitterFor } from "../../utils/spy-event-emitter-for";
@@ -6,11 +6,11 @@ import { SpyEventEmitterFor } from "../../utils/spy-event-emitter-for";
 import * as vscode from "vscode";
 
 export function buildEventBasedSpyForUncoveredCodeRegionsVirtualTextEditor(options: {
-  uncoveredCodeRegionsVirtualTextEditor: Types.Adapters.vscode.UncoveredCodeRegionsVirtualTextEditor,
-  eventForSpy: SpyEventEmitterFor<Types.Adapters.vscode.UncoveredCodeRegionsVirtualTextEditor>
-}): Spy<Types.Adapters.vscode.UncoveredCodeRegionsVirtualTextEditor> {
-  return new class extends Spy<Types.Extension.UncoveredCodeRegionsVirtualTextEditor> implements Types.Extension.UncoveredCodeRegionsVirtualTextEditor {
-    constructor(wrapped: Types.Extension.UncoveredCodeRegionsVirtualTextEditor, eventForSpy: SpyEventEmitterFor<Types.Adapters.vscode.UncoveredCodeRegionsVirtualTextEditor>) {
+  uncoveredCodeRegionsVirtualTextEditor: Types.Adapters.Vscode.UncoveredCodeRegionsVirtualTextEditor,
+  eventForSpy: SpyEventEmitterFor<Types.Adapters.Vscode.UncoveredCodeRegionsVirtualTextEditor>
+}): Spy<Types.Adapters.Vscode.UncoveredCodeRegionsVirtualTextEditor> {
+  return new class extends Spy<Types.Modules.Extension.UncoveredCodeRegionsVirtualTextEditor> implements Types.Modules.Extension.UncoveredCodeRegionsVirtualTextEditor {
+    constructor(wrapped: Types.Modules.Extension.UncoveredCodeRegionsVirtualTextEditor, eventForSpy: SpyEventEmitterFor<Types.Adapters.Vscode.UncoveredCodeRegionsVirtualTextEditor>) {
       super(wrapped, eventForSpy);
 
       this.document = wrapped.document;
@@ -22,7 +22,7 @@ export function buildEventBasedSpyForUncoveredCodeRegionsVirtualTextEditor(optio
       this.incrementCallCountFor("refreshDecorations");
     }
 
-    get object(): Types.Extension.UncoveredCodeRegionsVirtualTextEditor {
+    get object(): Types.Modules.Extension.UncoveredCodeRegionsVirtualTextEditor {
       return this;
     }
 

@@ -1,22 +1,22 @@
-import * as Types from "../../types";
+import * as Types from "../../../types";
 
 import * as Strings from "../../../strings";
 
 import * as path from "path";
 
-export function make(adapters: Adapters): Types.Modules.BuildTreeDirectoryResolver {
+export function make(adapters: Adapters): Types.Modules.BuildTreeDirectoryResolver.BuildTreeDirectoryResolver {
   return new BuildTreeDirectoryResolver(adapters);
 }
 
 type Adapters = {
-  settings: Types.Modules.Settings,
-  stat: Types.Adapters.fileSystem.StatCallable,
-  mkdir: Types.Adapters.fileSystem.MkdirCallable,
-  progressReporter: Types.Adapters.vscode.ProgressLike,
-  outputChannel: Types.Adapters.vscode.OutputChannelLike
+  settings: Types.Modules.SettingsProvider.Settings,
+  stat: Types.Adapters.Node.StatCallable,
+  mkdir: Types.Adapters.Node.MkdirCallable,
+  progressReporter: Types.Adapters.Vscode.ProgressLike,
+  outputChannel: Types.Adapters.Vscode.OutputChannelLike
 };
 
-class BuildTreeDirectoryResolver implements Types.Modules.BuildTreeDirectoryResolver {
+class BuildTreeDirectoryResolver implements Types.Modules.BuildTreeDirectoryResolver.BuildTreeDirectoryResolver {
   constructor(adapters: Adapters) {
     this.settings = adapters.settings;
     this.stat = adapters.stat;
@@ -61,9 +61,9 @@ class BuildTreeDirectoryResolver implements Types.Modules.BuildTreeDirectoryReso
       });
   }
 
-  private readonly stat: Types.Adapters.fileSystem.StatCallable;
-  private readonly settings: Types.Modules.Settings;
-  private readonly mkdir: Types.Adapters.fileSystem.MkdirCallable;
-  private readonly progressReporter: Types.Adapters.vscode.ProgressLike;
-  private readonly outputChannel: Types.Adapters.vscode.OutputChannelLike;
+  private readonly stat: Types.Adapters.Node.StatCallable;
+  private readonly settings: Types.Modules.SettingsProvider.Settings;
+  private readonly mkdir: Types.Adapters.Node.MkdirCallable;
+  private readonly progressReporter: Types.Adapters.Vscode.ProgressLike;
+  private readonly outputChannel: Types.Adapters.Vscode.OutputChannelLike;
 }

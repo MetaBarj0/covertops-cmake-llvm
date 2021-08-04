@@ -1,4 +1,4 @@
-import * as Types from "../../types";
+import * as Types from "../../../types";
 
 import * as RegionCoverageInfo from "./region-coverage-info";
 import { CoverageSummary } from "./coverage-summary";
@@ -13,14 +13,14 @@ import { streamArray } from "stream-json/streamers/StreamArray";
 
 export function make(llvmCoverageInfoStreamFactory: StreamFactory,
   sourceFilePath: string,
-  outputChannel: Types.Adapters.vscode.OutputChannelLike): Types.Modules.CoverageInfo {
+  outputChannel: Types.Adapters.Vscode.OutputChannelLike): Types.Modules.CoverageInfoCollector.CoverageInfo {
   return new CoverageInfo(llvmCoverageInfoStreamFactory, sourceFilePath, outputChannel);
 }
 
-class CoverageInfo implements Types.Modules.CoverageInfo {
+class CoverageInfo implements Types.Modules.CoverageInfoCollector.CoverageInfo {
   constructor(llvmCoverageInfoStreamFactory: StreamFactory,
     sourceFilePath: string,
-    outputChannel: Types.Adapters.vscode.OutputChannelLike) {
+    outputChannel: Types.Adapters.Vscode.OutputChannelLike) {
     this.llvmCoverageInfoStreamFactory = llvmCoverageInfoStreamFactory;
     this.sourceFilePath = this.fixPathForLlvmCoverageInfoFile(sourceFilePath);
     this.outputChannel = outputChannel;
@@ -29,7 +29,7 @@ class CoverageInfo implements Types.Modules.CoverageInfo {
   get summary() {
     const pipeline = this.preparePipelineForSummary();
 
-    return new Promise<Types.Modules.CoverageSummary>((resolve, reject) => {
+    return new Promise<Types.Modules.CoverageInfoCollector.CoverageSummary>((resolve, reject) => {
       let s: RawLLVMCoverageSummary;
 
       pipeline.
@@ -64,7 +64,7 @@ class CoverageInfo implements Types.Modules.CoverageInfo {
 
   private async * uncoveredRegions_() {
     for await (const rawRegionCoverageInfo of this.allRawRegionsCoverageInfo()) {
-      const regionCoverageInfo = RegionCoverageInfo.make(<Types.Modules.RawLLVMRegionCoverageInfo>rawRegionCoverageInfo);
+      const regionCoverageInfo = RegionCoverageInfo.make(<Types.Modules.CoverageInfoCollector.RawLLVMRegionCoverageInfo>rawRegionCoverageInfo);
 
       if (regionCoverageInfo.isAnUncoveredRegion)
         yield regionCoverageInfo;
@@ -89,8 +89,8 @@ class CoverageInfo implements Types.Modules.CoverageInfo {
       const functionsForSourceFilePath = functions.filter((f: { filenames: ReadonlyArray<string> }) => f.filenames[0] === self.sourceFilePath);
 
       const regionsForSourceFilePath =
-        functionsForSourceFilePath.map((fn: Types.Modules.RawLLVMFunctionCoverageInfo) =>
-          <Types.Modules.RawLLVMRegionsCoverageInfo>fn.regions);
+        functionsForSourceFilePath.map((fn: Types.Modules.CoverageInfoCollector.RawLLVMFunctionCoverageInfo) =>
+          <Types.Modules.CoverageInfoCollector.RawLLVMRegionsCoverageInfo>fn.regions);
 
       for (const region of regionsForSourceFilePath)
         yield region;
@@ -106,11 +106,11 @@ class CoverageInfo implements Types.Modules.CoverageInfo {
 
       const files = dataItem.value.files;
 
-      return files.find((file: Types.Modules.RawLLVMFileCoverageInfo) => file.filename === this.sourceFilePath);
+      return files.find((file: Types.Modules.CoverageInfoCollector.RawLLVMFileCoverageInfo) => file.filename === this.sourceFilePath);
     });
   }
 
-  private extendBasicPipelineWith<T>(fn: (dataItem: Types.Modules.RawLLVMStreamedDataItemCoverageInfo) => T) {
+  private extendBasicPipelineWith<T>(fn: (dataItem: Types.Modules.CoverageInfoCollector.RawLLVMStreamedDataItemCoverageInfo) => T) {
     return chain([
       this.llvmCoverageInfoStreamFactory(),
       parser({ streamValues: true }),
@@ -122,7 +122,7 @@ class CoverageInfo implements Types.Modules.CoverageInfo {
 
   private readonly llvmCoverageInfoStreamFactory: StreamFactory;
   private readonly sourceFilePath: string;
-  private readonly outputChannel: Types.Adapters.vscode.OutputChannelLike;
+  private readonly outputChannel: Types.Adapters.Vscode.OutputChannelLike;
 }
 
 type StreamFactory = () => Readable;
@@ -142,7 +142,7 @@ class RawLLVMCoverageSummary {
 }
 
 class RegionCoverageInfoAsyncIterable {
-  constructor(pipeline: Readable, sourceFilePath: string, outputChannel: Types.Adapters.vscode.OutputChannelLike) {
+  constructor(pipeline: Readable, sourceFilePath: string, outputChannel: Types.Adapters.Vscode.OutputChannelLike) {
     this.iterator = new RegionCoverageInfoAsyncIterator(pipeline, sourceFilePath, outputChannel);
   }
 
@@ -154,7 +154,7 @@ class RegionCoverageInfoAsyncIterable {
 }
 
 class RegionCoverageInfoAsyncIterator {
-  constructor(pipeline: Readable, sourceFilePath: string, outputChannel: Types.Adapters.vscode.OutputChannelLike) {
+  constructor(pipeline: Readable, sourceFilePath: string, outputChannel: Types.Adapters.Vscode.OutputChannelLike) {
     this.pipeline = pipeline;
     this.sourceFilePath = sourceFilePath;
     this.outputChannel = outputChannel;
@@ -163,7 +163,7 @@ class RegionCoverageInfoAsyncIterator {
   async next() {
     await this.ensureInputReadableStreamIsValid();
 
-    const regionCoverageInfo = <Types.Modules.RawLLVMRegionCoverageInfo>this.pipeline.read(1);
+    const regionCoverageInfo = <Types.Modules.CoverageInfoCollector.RawLLVMRegionCoverageInfo>this.pipeline.read(1);
 
     if (regionCoverageInfo === null)
       return this.terminateIteration();
@@ -198,7 +198,7 @@ class RegionCoverageInfoAsyncIterator {
   private readonly pipeline: Readable;
   private readonly sourceFilePath: string;
   private hasAtLeastOneElement = false;
-  private readonly outputChannel: Types.Adapters.vscode.OutputChannelLike;
+  private readonly outputChannel: Types.Adapters.Vscode.OutputChannelLike;
 }
 
 class RegionCoverageInfoIterator {
@@ -208,5 +208,5 @@ class RegionCoverageInfoIterator {
   }
 
   readonly done: boolean;
-  readonly value?: Types.Modules.RawLLVMRegionCoverageInfo;
+  readonly value?: Types.Modules.CoverageInfoCollector.RawLLVMRegionCoverageInfo;
 }

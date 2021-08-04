@@ -5,7 +5,7 @@ import * as chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 chai.should();
 
-import * as Types from "./types";
+import * as Types from "../../../src/types";
 
 import * as ProcessControl from "../../../src/adapters/implementations/node/process-control";
 import * as FileSystem from "../../../src/adapters/implementations/node/file-system";
@@ -192,7 +192,7 @@ function makeBuildTreeDirectoryResolver() {
   });
 }
 
-function buildSettings(): Types.Modules.Settings {
+function buildSettings(): Types.Modules.SettingsProvider.Settings {
   return SettingsProvider.make({
     outputChannel: Fakes.buildFakeOutputChannel(),
     workspace: vscode.workspace

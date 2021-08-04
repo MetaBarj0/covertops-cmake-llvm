@@ -1,4 +1,4 @@
-import * as Types from "../../types";
+import * as Types from "../../../types";
 
 import * as Definitions from "../../../definitions";
 import * as Strings from "../../../strings";
@@ -7,18 +7,18 @@ import * as CoverageInfoProvider from "../../../factories/coverage-info-provider
 import * as vscode from "vscode";
 import { CoverageInfo } from "../../abstractions/coverage-info-collector/coverage-info";
 
-export function make(context: Context): Types.Extension.CovertOps {
+export function make(context: Context): Types.Modules.Extension.CovertOps {
   return new CovertOps(context.uncoveredCodeRegionsDocumentContentProvider, context.uncoveredCodeRegionsVirtualTextEditorFactory, context.outputChannel);
 }
 
-class CovertOps implements Types.Extension.CovertOps {
+class CovertOps implements Types.Modules.Extension.CovertOps {
   constructor(uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider,
     uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory,
-    outputChannel: Types.Adapters.vscode.OutputChannelLike) {
+    outputChannel: Types.Adapters.Vscode.OutputChannelLike) {
     this.outputChannel_ = outputChannel;
     this.command = vscode.commands.registerCommand(Strings.commandReportUncoveredCodeRegionsInFile, this.run, this);
     this.textDocumentProvider = vscode.workspace.registerTextDocumentContentProvider(Definitions.extensionId, uncoveredCodeRegionsDocumentContentProvider);
-    this.uncoveredCodeRegionsVirtualTextEditors_ = new Map<string, Types.Extension.UncoveredCodeRegionsVirtualTextEditor>();
+    this.uncoveredCodeRegionsVirtualTextEditors_ = new Map<string, Types.Modules.Extension.UncoveredCodeRegionsVirtualTextEditor>();
     this.decorationType = vscode.window.createTextEditorDecorationType({
       backgroundColor: {
         id: Definitions.uncoveredCodeRegionDecorationBackgroundColorId
@@ -54,7 +54,7 @@ class CovertOps implements Types.Extension.CovertOps {
     await this.displaySummaryCoverageInfo(uri, uncoveredCodeInfo);
   }
 
-  get uncoveredCodeRegionsVirtualTextEditors(): ReadonlyMap<string, Types.Extension.UncoveredCodeRegionsVirtualTextEditor> {
+  get uncoveredCodeRegionsVirtualTextEditors(): ReadonlyMap<string, Types.Modules.Extension.UncoveredCodeRegionsVirtualTextEditor> {
     return this.uncoveredCodeRegionsVirtualTextEditors_;
   }
 
@@ -71,7 +71,7 @@ class CovertOps implements Types.Extension.CovertOps {
     this.outputChannel.appendLine(`Coverage summary for ${uri.fsPath}: ${summary.count} regions, ${summary.covered} are covered and ${summary.notCovered} are not covered. This file is ${summary.percent}% covered.`);
   }
 
-  private async buildDecorationOptions(uncoveredCodeInfo: Types.Modules.CoverageInfo) {
+  private async buildDecorationOptions(uncoveredCodeInfo: Types.Modules.CoverageInfoCollector.CoverageInfo) {
     const options: Array<vscode.DecorationOptions> = [];
 
     for await (const uncoveredRegion of uncoveredCodeInfo.uncoveredRegions)
@@ -127,16 +127,16 @@ class CovertOps implements Types.Extension.CovertOps {
   private buildVirtualDocumentUri() {
     return vscode.Uri.from({
       scheme: Definitions.extensionId,
-      path: (<Types.Extension.TextEditorLike>vscode.window.activeTextEditor).document.uri.path
+      path: (<Types.Modules.Extension.TextEditorLike>vscode.window.activeTextEditor).document.uri.path
     });
   }
 
-  private addUncoveredCodeRegionsVirtualEditorIfNotExist(uri: vscode.Uri, doc: Types.Extension.UncoveredCodeRegionsVirtualTextEditor) {
+  private addUncoveredCodeRegionsVirtualEditorIfNotExist(uri: vscode.Uri, doc: Types.Modules.Extension.UncoveredCodeRegionsVirtualTextEditor) {
     if (!this.uncoveredCodeRegionsVirtualTextEditors_.has(uri.fsPath))
       this.uncoveredCodeRegionsVirtualTextEditors_.set(uri.fsPath, doc);
   }
 
-  private onDidChangeActiveTextEditor(_textEditor?: Types.Extension.TextEditorLike) {
+  private onDidChangeActiveTextEditor(_textEditor?: Types.Modules.Extension.TextEditorLike) {
     const activeEditor = vscode.window.activeTextEditor;
 
     if (!activeEditor)
@@ -150,19 +150,19 @@ class CovertOps implements Types.Extension.CovertOps {
     this.uncoveredCodeRegionsVirtualTextEditors.get(uri.fsPath)?.refreshDecorations();
   }
 
-  private readonly outputChannel_: Types.Adapters.vscode.OutputChannelLike;
+  private readonly outputChannel_: Types.Adapters.Vscode.OutputChannelLike;
   private readonly command: vscode.Disposable;
   private readonly textDocumentProvider: vscode.Disposable;
-  private readonly uncoveredCodeRegionsVirtualTextEditors_: Map<string, Types.Extension.UncoveredCodeRegionsVirtualTextEditor>;
+  private readonly uncoveredCodeRegionsVirtualTextEditors_: Map<string, Types.Modules.Extension.UncoveredCodeRegionsVirtualTextEditor>;
   private readonly decorationType: vscode.TextEditorDecorationType;
   private readonly uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory;
   private readonly onDidChangeActiveTextEditorListenerDisposer: vscode.Disposable;
 }
 
-type UncoveredCodeRegionsVirtualTextEditorFactory = (textEditor: Types.Extension.TextEditorLike) => Types.Extension.UncoveredCodeRegionsVirtualTextEditor;
+type UncoveredCodeRegionsVirtualTextEditorFactory = (textEditor: Types.Modules.Extension.TextEditorLike) => Types.Modules.Extension.UncoveredCodeRegionsVirtualTextEditor;
 
 type Context = {
   uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider,
   uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory,
-  outputChannel: Types.Adapters.vscode.OutputChannelLike
+  outputChannel: Types.Adapters.Vscode.OutputChannelLike
 }

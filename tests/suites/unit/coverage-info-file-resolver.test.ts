@@ -5,7 +5,7 @@ import * as chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 chai.should();
 
-import * as Types from "./types";
+import * as Types from "../../../src/types";
 
 import * as VscodeFakes from "../../fakes/adapters/vscode";
 import * as FileSystemFakes from "../../fakes/adapters/file-system";
@@ -98,7 +98,7 @@ function buildCoverageInfoFileResolver(optionalSpiesAndAdapters: OptionalSpiesAn
 }
 
 type OptionalSpiesAndAdapters = {
-  outputChannelSpy?: Spy<Types.Adapters.vscode.OutputChannelLikeWithLines>
-  progressReporterSpy?: Spy<Types.Adapters.vscode.ProgressLike>,
-  globSearch: Types.Adapters.FileSystem.GlobSearchCallable
+  outputChannelSpy?: Spy<Types.Adapters.Vscode.OutputChannelLikeWithLines>
+  progressReporterSpy?: Spy<Types.Adapters.Vscode.ProgressLike>,
+  globSearch: Types.Adapters.Node.GlobSearchCallable
 };
