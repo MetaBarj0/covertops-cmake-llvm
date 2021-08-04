@@ -1,7 +1,7 @@
 import * as RegionCoverageInfoModule from "../../../src/modules/abstractions/coverage-info-collector/region-coverage-info";
-import * as VscodeModule from "../../../src/adapters/abstractions/vscode/output-channel";
+import * as OutputChannelModule from "../../../src/adapters/abstractions/vscode/output-channel";
+import * as ProgressModule from "../../../src/adapters/abstractions/vscode/progress";
 import * as FileSystemModule from "../../../src/adapters/abstractions/node/file-system";
-
 
 export namespace Modules {
   export type RegionCoverageInfo = RegionCoverageInfoModule.RegionCoverageInfo;
@@ -9,9 +9,9 @@ export namespace Modules {
 
 export namespace Adapters {
   export namespace vscode {
-    export type OutputChannelLike = VscodeModule.OutputChannelLike;
-    export type OutputChannelLikeWithLines = VscodeModule.OutputChannelLikeWithLines;
-    export type ProgressLike = VscodeModule.ProgressLike;
+    export type OutputChannelLike = OutputChannelModule.OutputChannelLike;
+    export type OutputChannelLikeWithLines = OutputChannelModule.OutputChannelLikeWithLines;
+    export type ProgressLike = ProgressModule.ProgressLike;
   }
 
   export namespace FileSystem {

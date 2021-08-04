@@ -1,16 +1,26 @@
 import { defaultSetting } from "../../builders/settings";
 
+// TODO: Types for abstractions please
 import { Settings } from "../../../src/modules/abstractions/settings-provider/settings";
+
 import {
-  DisposableLike,
-  OutputChannelLikeWithLines,
-  TextDocumentContentProviderLike,
+  OutputChannelLikeWithLines
+} from "../../../src/adapters/abstractions/vscode/output-channel";
+
+import {
+  DisposableLike
+} from "../../../src/adapters/abstractions/vscode/disposable";
+
+import { TextDocumentContentProviderLike } from "../../../src/adapters/abstractions/vscode/text-document-content-provider";
+
+import {
   VscodeUriLike,
   VscodeWorkspaceConfigurationLike,
   VscodeWorkspaceFolderLike, VscodeWorkspaceLike
-} from "../../../src/adapters/abstractions/vscode/output-channel";
+} from "../../../src/adapters/abstractions/vscode/workspace";
 
-import { OutputChannelLike, ProgressLike, ProgressStep } from "../../../src/adapters/abstractions/vscode/output-channel";
+import { OutputChannelLike } from "../../../src/adapters/abstractions/vscode/output-channel";
+import { ProgressLike, ProgressStep } from "../../../src/adapters/abstractions/vscode/progress";
 
 import { Spy } from "../../utils/spy";
 

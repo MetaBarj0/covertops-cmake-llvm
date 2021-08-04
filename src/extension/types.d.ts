@@ -1,15 +1,17 @@
 // TODO: yet another pass on all types.d.ts
 import * as CoverageInfoProviderModule from "../modules/abstractions/coverage-info-provider/coverage-info-provider";
 import * as CoverageInfoModule from "../modules/abstractions/coverage-info-collector/coverage-info";
-import * as VscodeModule from "../adapters/abstractions/vscode/output-channel";
+import * as OutputChannelModule from "../adapters/abstractions/vscode/output-channel";
+import * as TextEditorModule from "../adapters/abstractions/vscode/text-editor";
+import * as ProgressModule from "../adapters/abstractions/vscode/progress";
 import * as CovertOpsModule from "./abstractions/covert-ops";
 
 export namespace Adapters {
   export namespace vscode {
-    export type ProgressLike = VscodeModule.ProgressLike;
-    export type OutputChannelLike = VscodeModule.OutputChannelLike;
-    export type OutputChannelLikeWithLines = VscodeModule.OutputChannelLikeWithLines;
-    export type UncoveredCodeRegionsVirtualTextEditor = VscodeModule.UncoveredCodeRegionsVirtualTextEditor;
+    export type ProgressLike = ProgressModule.ProgressLike;
+    export type OutputChannelLike = OutputChannelModule.OutputChannelLike;
+    export type OutputChannelLikeWithLines = OutputChannelModule.OutputChannelLikeWithLines;
+    export type UncoveredCodeRegionsVirtualTextEditor = TextEditorModule.UncoveredCodeRegionsVirtualTextEditor;
   }
 }
 
@@ -19,8 +21,8 @@ export namespace Modules {
 }
 
 export namespace Extension {
-  export type UncoveredCodeRegionsVirtualTextEditor = VscodeModule.UncoveredCodeRegionsVirtualTextEditor;
-  export type Decorations = VscodeModule.Decorations;
+  export type UncoveredCodeRegionsVirtualTextEditor = TextEditorModule.UncoveredCodeRegionsVirtualTextEditor;
+  export type Decorations = TextEditorModule.Decorations;
   export type CovertOps = CovertOpsModule.CovertOps;
-  export type TextEditorLike = VscodeModule.TextEditorLike;
+  export type TextEditorLike = TextEditorModule.TextEditorLike;
 }

@@ -1,14 +1,16 @@
+// TODO: only one types.d.ts at root src dir
 import * as CovModule from "../../../src/extension/abstractions/covert-ops";
-import * as VscodeModule from "../../../src/adapters/abstractions/vscode/output-channel";
+import * as TextEditorModule from "../../../src/adapters/abstractions/vscode/text-editor";
+import * as OutputChannelModule from "../../../src/adapters/abstractions/vscode/output-channel";
 
 export namespace Extension {
-  export type UncoveredCodeRegionsVirtualTextEditor = VscodeModule.UncoveredCodeRegionsVirtualTextEditor;
+  export type UncoveredCodeRegionsVirtualTextEditor = TextEditorModule.UncoveredCodeRegionsVirtualTextEditor;
   export type CovertOps = CovModule.CovertOps;
-  export type TextEditorLike = VscodeModule.TextEditorLike;
+  export type TextEditorLike = TextEditorModule.TextEditorLike;
 }
 
 export namespace Adapters {
   export namespace vscode {
-    export type OutputChannelLike = VscodeModule.OutputChannelLike;
+    export type OutputChannelLike = OutputChannelModule.OutputChannelLike;
   }
 }

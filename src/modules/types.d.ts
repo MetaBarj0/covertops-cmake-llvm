@@ -1,7 +1,9 @@
 import * as BuildTreeDirectoryResolverModule from "./abstractions/build-tree-directory-resolver/build-tree-directory-resolver";
 import * as SettingsModule from "./abstractions/settings-provider/settings";
 import * as FileSytemModule from "../adapters/abstractions/node/file-system";
-import * as VscodeModule from "../adapters/abstractions/vscode/output-channel";
+import * as OutputChannelModule from "../adapters/abstractions/vscode/output-channel";
+import * as WorkspaceModule from "../adapters/abstractions/vscode/workspace";
+import * as ProgressModule from "../adapters/abstractions/vscode/progress";
 import * as CmakeModule from "./abstractions/cmake/cmake";
 import * as AbstractProcessControl from "../adapters/abstractions/node/process-control";
 import * as CoverageInfoFileResolverModule from "./abstractions/coverage-info-file-resolver/coverage-info-file-resolver";
@@ -41,10 +43,10 @@ export namespace Adapters {
   }
 
   export namespace vscode {
-    export type ProgressLike = VscodeModule.ProgressLike;
-    export type OutputChannelLike = VscodeModule.OutputChannelLike;
-    export type VscodeWorkspaceLike = VscodeModule.VscodeWorkspaceLike;
-    export type VscodeWorkspaceFolderLike = VscodeModule.VscodeWorkspaceFolderLike;
+    export type ProgressLike = ProgressModule.ProgressLike;
+    export type OutputChannelLike = OutputChannelModule.OutputChannelLike;
+    export type VscodeWorkspaceLike = WorkspaceModule.VscodeWorkspaceLike;
+    export type VscodeWorkspaceFolderLike = WorkspaceModule.VscodeWorkspaceFolderLike;
   }
 
   export namespace processControl {
