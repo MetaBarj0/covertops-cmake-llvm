@@ -8,9 +8,9 @@ import {
   VscodeUriLike,
   VscodeWorkspaceConfigurationLike,
   VscodeWorkspaceFolderLike, VscodeWorkspaceLike
-} from "../../../src/adapters/abstractions/vscode";
+} from "../../../src/adapters/abstractions/vscode/output-channel";
 
-import { OutputChannelLike, ProgressLike, ProgressStep } from "../../../src/adapters/abstractions/vscode";
+import { OutputChannelLike, ProgressLike, ProgressStep } from "../../../src/adapters/abstractions/vscode/output-channel";
 
 import { Spy } from "../../utils/spy";
 

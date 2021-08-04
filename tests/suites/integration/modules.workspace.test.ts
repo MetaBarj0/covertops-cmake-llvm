@@ -7,8 +7,8 @@ chai.should();
 
 import * as Types from "./types";
 
-import * as ProcessControl from "../../../src/adapters/implementations/process-control";
-import * as FileSystem from "../../../src/adapters/implementations/file-system";
+import * as ProcessControl from "../../../src/adapters/implementations/node/process-control";
+import * as FileSystem from "../../../src/adapters/implementations/node/file-system";
 import * as SettingsProvider from "../../../src/modules/implementations/settings-provider/settings-provider";
 import * as Cmake from "../../../src/modules/implementations/cmake/cmake";
 import * as BuildTreeDirectoryResolver from "../../../src/modules/implementations/build-tree-directory-resolver/build-tree-directory-resolver";

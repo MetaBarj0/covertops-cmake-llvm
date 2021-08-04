@@ -6,8 +6,8 @@ import * as Cmake from "../modules/implementations/cmake/cmake";
 import * as CoverageInfoFileResolver from "../modules/implementations/coverage-info-file-resolver/coverage-info-file-resolver";
 import * as CoverageInfoCollector from "../modules/implementations/coverage-info-collector/coverage-info-collector";
 import * as CoverageInfoProviderImplementations from "../modules/implementations/settings-provider/coverage-info-provider";
-import * as fileSystem from "../adapters/implementations/file-system";
-import * as processControl from "../adapters/implementations/process-control";
+import * as fileSystem from "../adapters/implementations/node/file-system";
+import * as processControl from "../adapters/implementations/node/process-control";
 
 import * as vscode from "vscode";
 

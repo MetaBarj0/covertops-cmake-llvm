@@ -9,10 +9,10 @@ import * as Types from "./types";
 
 import * as CovertOps from "../../../src/extension/implementations/covert-ops";
 import * as Definitions from "../../../src/definitions";
-import * as UncoveredCodeRegionsDocumentContentProvider from "../../../src/extension/implementations/uncovered-code-regions-document-content-provider";
+import * as UncoveredCodeRegionsDocumentContentProvider from "../../../src/adapters/implementations/vscode/uncovered-code-regions-document-content-provider";
 import * as UncoveredCodeRegionsVirtualTextEditorFactory from "../../../src/factories/uncovered-code-regions-virtual-text-editor";
-import * as UncoveredCodeRegionsVirtualTextEditor from "../../../src/extension/implementations/uncovered-code-regions-virtual-text-editor";
-import * as OutputChannel from "../../../src/adapters/implementations/vscode";
+import * as UncoveredCodeRegionsVirtualTextEditor from "../../../src/adapters/implementations/vscode/uncovered-code-regions-virtual-text-editor";
+import * as OutputChannel from "../../../src/adapters/implementations/vscode/output-channel";
 import * as Strings from "../../../src/strings";
 
 import { buildEventBasedSpyForUncoveredCodeRegionsVirtualTextEditor } from "../../fakes/extension/uncovered-code-regions-virtual-text-editor";

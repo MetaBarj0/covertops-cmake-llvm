@@ -1,5 +1,4 @@
-// TODO: move to adapters implementations
-import * as Types from "../types";
+import * as Types from "../../../extension/types";
 
 import * as vscode from "vscode";
 

@@ -1,4 +1,4 @@
-import { ExecFileExceptionLike, ExecFileOptionsLike, ExecFileCallable } from "../../../src/adapters/abstractions/process-control";
+import { ExecFileExceptionLike, ExecFileOptionsLike, ExecFileCallable } from "../../../src/adapters/abstractions/node/process-control";
 
 export function buildFakeFailingProcess(failureStage?: FailureStages): ExecFileCallable {
   const maxSuccessfulCallCount = failureStage ? <number>failureStage : 0;

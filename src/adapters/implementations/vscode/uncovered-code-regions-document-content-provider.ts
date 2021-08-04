@@ -1,4 +1,3 @@
-// TODO: move to adapters implementations
 import * as vscode from "vscode";
 import * as fs from "fs/promises";
 

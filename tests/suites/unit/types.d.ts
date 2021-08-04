@@ -1,6 +1,6 @@
 import * as RegionCoverageInfoModule from "../../../src/modules/abstractions/coverage-info-collector/region-coverage-info";
-import * as VscodeModule from "../../../src/adapters/abstractions/vscode";
-import * as FileSystemModule from "../../../src/adapters/abstractions/file-system";
+import * as VscodeModule from "../../../src/adapters/abstractions/vscode/output-channel";
+import * as FileSystemModule from "../../../src/adapters/abstractions/node/file-system";
 
 
 export namespace Modules {

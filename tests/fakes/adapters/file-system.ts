@@ -3,7 +3,7 @@ import {
   StatCallable,
   CreateReadStreamCallable,
   GlobSearchCallable
-} from "../../../src/adapters/abstractions/file-system";
+} from "../../../src/adapters/abstractions/node/file-system";
 
 import { MakeDirectoryOptions, PathLike, StatOptions, Stats } from "fs";
 import { Readable } from "stream";

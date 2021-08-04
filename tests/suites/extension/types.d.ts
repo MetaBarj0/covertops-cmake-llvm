@@ -1,5 +1,5 @@
 import * as CovModule from "../../../src/extension/abstractions/covert-ops";
-import * as VscodeModule from "../../../src/adapters/abstractions/vscode";
+import * as VscodeModule from "../../../src/adapters/abstractions/vscode/output-channel";
 
 export namespace Extension {
   export type UncoveredCodeRegionsVirtualTextEditor = VscodeModule.UncoveredCodeRegionsVirtualTextEditor;

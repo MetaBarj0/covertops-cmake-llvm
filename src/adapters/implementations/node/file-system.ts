@@ -1,4 +1,4 @@
-import * as Abstrations from "../abstractions/file-system";
+import * as Abstrations from "../../abstractions/node/file-system";
 
 import * as fs from "fs";
 import * as globby from "globby";

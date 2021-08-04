@@ -7,8 +7,8 @@ chai.should();
 
 import * as Types from "./types";
 
-import * as FileSystem from "../../../src/adapters/implementations/file-system";
-import * as ProcessControl from "../../../src/adapters/implementations/process-control";
+import * as FileSystem from "../../../src/adapters/implementations/node/file-system";
+import * as ProcessControl from "../../../src/adapters/implementations/node/process-control";
 import * as Definitions from "../../../src/definitions";
 import * as Fakes from "../../fakes/adapters/vscode";
 import * as SettingsProvider from "../../../src/modules/implementations/settings-provider/settings-provider";
