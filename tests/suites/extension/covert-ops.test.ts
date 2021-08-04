@@ -213,7 +213,6 @@ function shouldShowSummaryCoverageInfoForFile() {
     const outputChannelSpy = buildSpyOfOutputChannel(OutputChannel.make(vscode.window.createOutputChannel(Definitions.extensionId)));
     const { cppFilePath } = await showSourceFileEditor();
     const expectedSummary = `Coverage summary for ${cppFilePath}: 2 regions, 1 are covered and 1 are not covered. This file is 50% covered.`;
-
     covertOps = CovertOps.make({
       uncoveredCodeRegionsDocumentContentProvider: UncoveredCodeRegionsDocumentContentProvider.make(),
       uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory.make(),

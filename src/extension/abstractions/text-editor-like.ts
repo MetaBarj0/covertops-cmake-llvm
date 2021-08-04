@@ -1,3 +1,4 @@
+// TODO: related to adapters for vscode
 import * as vscode from "vscode";
 
 export type TextEditorLike = {

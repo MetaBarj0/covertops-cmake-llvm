@@ -1,3 +1,4 @@
+// TODO: related to adapters for vscode
 import * as vscode from "vscode";
 import { TextEditorLike } from "./text-editor-like";
 
