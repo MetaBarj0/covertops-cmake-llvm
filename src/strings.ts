@@ -1,4 +1,4 @@
-import * as Definitions from "./extension/implementations/definitions";
+import * as Definitions from "./definitions";
 
 export const commandReportUncoveredCodeRegionsInFile = `${Definitions.extensionId}.reportUncoveredCodeRegionsInFile`;
 export const decorationUncoveredCodeRegionHoverMessage = "This code region is not covered by a test known by cmake." as const;

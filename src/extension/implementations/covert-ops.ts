@@ -1,6 +1,6 @@
 import * as Types from "../types";
 
-import * as Definitions from "./definitions";
+import * as Definitions from "../../definitions";
 import * as Strings from "../../strings";
 import * as CoverageInfoProvider from "../../factories/coverage-info-provider";
 

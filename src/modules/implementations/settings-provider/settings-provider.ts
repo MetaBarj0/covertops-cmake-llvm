@@ -1,6 +1,6 @@
 import * as Types from "../../types";
 
-import * as Definitions from "../../../extension/implementations/definitions";
+import * as Definitions from "../../../definitions";
 import * as Strings from "../../../strings";
 import * as Settings from "./settings";
 

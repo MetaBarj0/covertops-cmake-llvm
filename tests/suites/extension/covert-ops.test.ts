@@ -8,7 +8,7 @@ chai.should();
 import * as Types from "./types";
 
 import * as CovertOps from "../../../src/extension/implementations/covert-ops";
-import * as Definitions from "../../../src/extension/implementations/definitions";
+import * as Definitions from "../../../src/definitions";
 import * as UncoveredCodeRegionsDocumentContentProvider from "../../../src/extension/implementations/uncovered-code-regions-document-content-provider";
 import * as UncoveredCodeRegionsVirtualTextEditorFactory from "../../../src/factories/uncovered-code-regions-virtual-text-editor";
 import { UncoveredCodeRegionsVirtualTextEditor } from "../../../src/extension/implementations/uncovered-code-regions-virtual-text-editor";

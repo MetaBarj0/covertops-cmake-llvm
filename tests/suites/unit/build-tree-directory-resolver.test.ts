@@ -9,7 +9,7 @@ import * as VscodeFakes from "../../fakes/adapters/vscode";
 import * as FileSystemFakes from "../../fakes/adapters/file-system";
 import * as SettingsProvider from "../../../src/modules/implementations/settings-provider/settings-provider";
 import * as BuildTreeDirectoryResolver from "../../../src/modules/implementations/build-tree-directory-resolver/build-tree-directory-resolver";
-import * as Definitions from "../../../src/extension/implementations/definitions";
+import * as Definitions from "../../../src/definitions";
 
 import * as path from "path";
 

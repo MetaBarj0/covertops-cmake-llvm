@@ -9,7 +9,7 @@ import * as Types from "./types";
 
 import * as FileSystem from "../../../src/adapters/implementations/file-system";
 import * as ProcessControl from "../../../src/adapters/implementations/process-control";
-import * as Definitions from "../../../src/extension/implementations/definitions";
+import * as Definitions from "../../../src/definitions";
 import * as Fakes from "../../fakes/adapters/vscode";
 import * as SettingsProvider from "../../../src/modules/implementations/settings-provider/settings-provider";
 import * as BuildTreeDirectoryResolver from "../../../src/modules/implementations/build-tree-directory-resolver/build-tree-directory-resolver";

@@ -12,7 +12,7 @@ import * as FileSystemFakes from "../../fakes/adapters/file-system";
 import * as SettingsProvider from "../../../src/modules/implementations/settings-provider/settings-provider";
 import * as CoverageInfoFileResolver from "../../../src/modules/implementations/coverage-info-file-resolver/coverage-info-file-resolver";
 import { Spy } from "../../utils/spy";
-import * as Definitions from "../../../src/extension/implementations/definitions";
+import * as Definitions from "../../../src/definitions";
 
 describe("Unit test suite", () => {
   describe("the behavior of the coverage info file resolver", () => {

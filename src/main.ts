@@ -3,8 +3,7 @@ import * as vscode from "vscode";
 import * as CovertOps from "./extension/implementations/covert-ops";
 import * as UncoveredCodeRegionsDocumentContentProvider from "./extension/implementations/uncovered-code-regions-document-content-provider";
 import * as UncoveredCodeRegionsVirtualTextEditorFactory from "./factories/uncovered-code-regions-virtual-text-editor";
-// TODO: maybe move definitions the same as strings
-import * as Definitions from "./extension/implementations/definitions";
+import * as Definitions from "./definitions";
 
 export function activate(context: vscode.ExtensionContext): void {
   const covertOps = CovertOps.make({
