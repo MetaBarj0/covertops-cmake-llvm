@@ -7,8 +7,8 @@ chai.should();
 
 import * as VscodeFakes from "../../fakes/adapters/vscode";
 import * as ProcessControlFakes from "../../fakes/adapters/process-control";
-import * as SettingsProvider from "../../../src/modules/implementations/settings-provider";
-import * as Cmake from "../../../src/modules/implementations/cmake";
+import * as SettingsProvider from "../../../src/modules/implementations/settings-provider/settings-provider";
+import * as Cmake from "../../../src/modules/implementations/cmake/cmake";
 import * as Definitions from "../../../src/extension/implementations/definitions";
 
 describe("Unit test suite", () => {

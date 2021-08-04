@@ -1,17 +1,17 @@
-import * as BuildTreeDirectoryResolverModule from "../abstractions/build-tree-directory-resolver";
-import * as SettingsModule from "../abstractions/settings";
-import * as FileSytemModule from "../../adapters/abstractions/file-system";
-import * as VscodeModule from "../../adapters/abstractions/vscode";
-import * as CmakeModule from "../abstractions/cmake";
-import * as AbstractProcessControl from "../../adapters/abstractions/process-control";
-import * as CoverageInfoFileResolverModule from "../abstractions/coverage-info-file-resolver";
-import * as FileSystemModule from "../../adapters/abstractions/file-system";
-import * as CoverageInfoProviderModule from "../abstractions/coverage-info-provider";
-import * as CoverageInfoCollectorModule from "../abstractions/coverage-info-collector";
-import * as AbstractRegionCoverageInfoModule from "../abstractions/region-coverage-info";
-import * as AbstractCoverageSummaryModule from "../abstractions/coverage-summary";
-import * as AbstractCoverageInfoModule from "../abstractions/coverage-info";
-import * as SettingsProviderModule from "../abstractions/settings-provider";
+import * as BuildTreeDirectoryResolverModule from "./abstractions/build-tree-directory-resolver/build-tree-directory-resolver";
+import * as SettingsModule from "./abstractions/settings-provider/settings";
+import * as FileSytemModule from "../adapters/abstractions/file-system";
+import * as VscodeModule from "../adapters/abstractions/vscode";
+import * as CmakeModule from "./abstractions/cmake/cmake";
+import * as AbstractProcessControl from "../adapters/abstractions/process-control";
+import * as CoverageInfoFileResolverModule from "./abstractions/coverage-info-file-resolver/coverage-info-file-resolver";
+import * as FileSystemModule from "../adapters/abstractions/file-system";
+import * as CoverageInfoProviderModule from "./abstractions/coverage-info-provider/coverage-info-provider";
+import * as CoverageInfoCollectorModule from "./abstractions/coverage-info-collector/coverage-info-collector";
+import * as AbstractRegionCoverageInfoModule from "./abstractions/coverage-info-collector/region-coverage-info";
+import * as AbstractCoverageSummaryModule from "./abstractions/coverage-info-collector/coverage-summary";
+import * as AbstractCoverageInfoModule from "./abstractions/coverage-info-collector/coverage-info";
+import * as SettingsProviderModule from "./abstractions/settings-provider/settings-provider";
 
 export namespace Modules {
   export type BuildTreeDirectoryResolver = BuildTreeDirectoryResolverModule.BuildTreeDirectoryResolver;

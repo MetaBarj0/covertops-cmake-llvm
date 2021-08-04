@@ -1,4 +1,4 @@
-import * as Types from "./types";
+import * as Types from "../../types";
 
 export function make(rawLLVMRegionCoverageInfo: Types.Modules.RawLLVMRegionCoverageInfo): Types.Modules.RegionCoverageInfo {
   return new RegionCoverageInfo(rawLLVMRegionCoverageInfo);

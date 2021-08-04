@@ -9,9 +9,9 @@ import * as Types from "./types";
 
 import * as ProcessControl from "../../../src/adapters/implementations/process-control";
 import * as FileSystem from "../../../src/adapters/implementations/file-system";
-import * as SettingsProvider from "../../../src/modules/implementations/settings-provider";
-import * as Cmake from "../../../src/modules/implementations/cmake";
-import * as BuildTreeDirectoryResolver from "../../../src/modules/implementations/build-tree-directory-resolver";
+import * as SettingsProvider from "../../../src/modules/implementations/settings-provider/settings-provider";
+import * as Cmake from "../../../src/modules/implementations/cmake/cmake";
+import * as BuildTreeDirectoryResolver from "../../../src/modules/implementations/build-tree-directory-resolver/build-tree-directory-resolver";
 import * as Fakes from "../../fakes/adapters/vscode";
 import * as TestUtils from "../../builders/settings";
 import * as Definitions from "../../../src/extension/implementations/definitions";

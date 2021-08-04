@@ -1,4 +1,4 @@
-import * as Types from "./types";
+import * as Types from "../../types";
 
 export function make(context: Context): Types.Modules.CoverageInfoProvider {
   return new CoverageInfoProvider({

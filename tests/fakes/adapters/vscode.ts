@@ -1,6 +1,6 @@
 import { defaultSetting } from "../../builders/settings";
 
-import { Settings } from "../../../src/modules/abstractions/settings";
+import { Settings } from "../../../src/modules/abstractions/settings-provider/settings";
 import {
   DisposableLike,
   OutputChannelLikeWithLines,

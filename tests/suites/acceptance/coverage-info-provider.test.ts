@@ -10,12 +10,12 @@ import * as Types from "./types";
 import * as FileSystemFakes from "../../fakes/adapters/file-system";
 import * as VscodeFakes from "../../fakes/adapters/vscode";
 import * as ProcessControlFakes from "../../fakes/adapters/process-control";
-import * as SettingsProvider from "../../../src/modules/implementations/settings-provider";
-import * as BuildTreeDirectoryResolver from "../../../src/modules/implementations/build-tree-directory-resolver";
-import * as Cmake from "../../../src/modules/implementations/cmake";
-import * as CoverageInfoCollector from "../../../src/modules/implementations/coverage-info-collector";
-import * as CoverageInfoProvider from "../../../src/modules/implementations/coverage-info-provider";
-import * as CoverageInfoFileResolver from "../../../src/modules/implementations/coverage-info-file-resolver";
+import * as SettingsProvider from "../../../src/modules/implementations/settings-provider/settings-provider";
+import * as BuildTreeDirectoryResolver from "../../../src/modules/implementations/build-tree-directory-resolver/build-tree-directory-resolver";
+import * as Cmake from "../../../src/modules/implementations/cmake/cmake";
+import * as CoverageInfoCollector from "../../../src/modules/implementations/coverage-info-collector/coverage-info-collector";
+import * as CoverageInfoProvider from "../../../src/modules/implementations/settings-provider/coverage-info-provider";
+import * as CoverageInfoFileResolver from "../../../src/modules/implementations/coverage-info-file-resolver/coverage-info-file-resolver";
 
 describe("acceptance suite of tests", () => {
   describe("The coverage info provider service behavior", () => {

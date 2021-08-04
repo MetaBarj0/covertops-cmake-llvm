@@ -1,5 +1,5 @@
-import * as CoverageInfoProviderModule from "../modules/abstractions/coverage-info-provider";
-import * as CoverageInfoModule from "../modules/abstractions/coverage-info";
+import * as CoverageInfoProviderModule from "../modules/abstractions/coverage-info-provider/coverage-info-provider";
+import * as CoverageInfoModule from "../modules/abstractions/coverage-info-collector/coverage-info";
 import * as VscodeModule from "../adapters/abstractions/vscode";
 import * as UncoveredCodeRegionsVirtualTextEditorModule from "./abstractions/uncovered-code-regions-virtual-text-editor";
 import * as CovertOpsModule from "./abstractions/covert-ops";

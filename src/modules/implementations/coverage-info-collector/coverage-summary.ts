@@ -1,4 +1,4 @@
-import * as Types from "./types";
+import * as Types from "../../types";
 
 export class CoverageSummary implements Types.Modules.CoverageSummary {
   constructor(count: number, covered: number, notCovered: number, percent: number) {

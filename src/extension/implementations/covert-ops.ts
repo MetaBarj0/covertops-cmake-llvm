@@ -5,7 +5,7 @@ import * as Strings from "../../strings";
 import * as CoverageInfoProvider from "../factories/coverage-info-provider";
 
 import * as vscode from "vscode";
-import { CoverageInfo } from "../../modules/abstractions/coverage-info";
+import { CoverageInfo } from "../../modules/abstractions/coverage-info-collector/coverage-info";
 
 export function make(context: Context): Types.Extension.CovertOps {
   return new CovertOps(context.uncoveredCodeRegionsDocumentContentProvider, context.uncoveredCodeRegionsVirtualTextEditorFactory, context.outputChannel);

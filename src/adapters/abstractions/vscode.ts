@@ -1,4 +1,4 @@
-import { Settings } from "../../modules/abstractions/settings";
+import { Settings } from "../../modules/abstractions/settings-provider/settings";
 
 import * as vscode from "vscode";
 

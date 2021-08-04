@@ -1,8 +1,8 @@
 import packageJSON from "../../src/package.json";
 
-import * as SettingsProvider from "../../src/modules/implementations/settings-provider";
+import * as SettingsProvider from "../../src/modules/implementations/settings-provider/settings-provider";
 import * as VscodeFakes from "../fakes/adapters/vscode";
-import { Settings } from "../../src/modules/abstractions/settings";
+import { Settings } from "../../src/modules/abstractions/settings-provider/settings";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function defaultSetting(setting: DefaultSettingsKey | "rootDirectory") {

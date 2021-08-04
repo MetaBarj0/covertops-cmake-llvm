@@ -9,8 +9,8 @@ import * as Types from "./types";
 
 import * as VscodeFakes from "../../fakes/adapters/vscode";
 import * as FileSystemFakes from "../../fakes/adapters/file-system";
-import * as CoverageInfoFileResolver from "../../../src/modules/implementations/coverage-info-file-resolver";
-import * as CoverageInfoCollector from "../../../src/modules/implementations/coverage-info-collector";
+import * as CoverageInfoFileResolver from "../../../src/modules/implementations/coverage-info-file-resolver/coverage-info-file-resolver";
+import * as CoverageInfoCollector from "../../../src/modules/implementations/coverage-info-collector/coverage-info-collector";
 import * as Definitions from "../../../src/extension/implementations/definitions";
 
 import { buildCoverageInfoCollectorAndSpiesForProgressReportAndOutputChannel } from "../../builders/coverage-info-collector";

@@ -1,8 +1,8 @@
-import * as Types from "./types";
+import * as Types from "../../types";
 
 import * as CoverageInfo from "./coverage-info";
 
-import * as Strings from "../../strings";
+import * as Strings from "../../../strings";
 
 import { Readable } from "stream";
 

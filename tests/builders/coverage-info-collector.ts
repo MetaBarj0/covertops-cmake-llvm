@@ -2,8 +2,8 @@ import { buildSettings } from "./settings";
 
 import * as VscodeFakes from "../fakes/adapters/vscode";
 import * as FileSystemFakes from "../fakes/adapters/file-system";
-import * as CoverageInfoFileResolver from "../../src/modules/implementations/coverage-info-file-resolver";
-import * as CoverageInfoCollector from "../../src/modules/implementations/coverage-info-collector";
+import * as CoverageInfoFileResolver from "../../src/modules/implementations/coverage-info-file-resolver/coverage-info-file-resolver";
+import * as CoverageInfoCollector from "../../src/modules/implementations/coverage-info-collector/coverage-info-collector";
 
 export function buildCoverageInfoCollectorAndSpiesForProgressReportAndOutputChannel(): CoverageInfoCollectorAndSpies {
   const progressReporterSpy = VscodeFakes.buildSpyOfProgressReporter(VscodeFakes.buildFakeProgressReporter());

@@ -6,7 +6,7 @@ chai.use(chaiAsPromised);
 chai.should();
 
 import * as Fakes from "../../fakes/adapters/vscode";
-import * as SettingsProvider from "../../../src/modules/implementations/settings-provider";
+import * as SettingsProvider from "../../../src/modules/implementations/settings-provider/settings-provider";
 import { defaultSetting } from "../../builders/settings";
 
 describe("Unit test suite", () => {

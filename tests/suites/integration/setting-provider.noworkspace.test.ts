@@ -5,7 +5,7 @@ import * as chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 chai.should();
 
-import * as SettingsProvider from "../../../src/modules/implementations/settings-provider";
+import * as SettingsProvider from "../../../src/modules/implementations/settings-provider/settings-provider";
 import * as Fakes from "../../fakes/adapters/vscode";
 
 import * as vscode from "vscode";

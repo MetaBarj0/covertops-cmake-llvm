@@ -11,12 +11,12 @@ import * as FileSystem from "../../../src/adapters/implementations/file-system";
 import * as ProcessControl from "../../../src/adapters/implementations/process-control";
 import * as Definitions from "../../../src/extension/implementations/definitions";
 import * as Fakes from "../../fakes/adapters/vscode";
-import * as SettingsProvider from "../../../src/modules/implementations/settings-provider";
-import * as BuildTreeDirectoryResolver from "../../../src/modules/implementations/build-tree-directory-resolver";
-import * as Cmake from "../../../src/modules/implementations/cmake";
-import * as CoverageInfoFileResolver from "../../../src/modules/implementations/coverage-info-file-resolver";
-import * as CoverageInfoCollector from "../../../src/modules/implementations/coverage-info-collector";
-import * as CoverageInfoProvider from "../../../src/modules/implementations/coverage-info-provider";
+import * as SettingsProvider from "../../../src/modules/implementations/settings-provider/settings-provider";
+import * as BuildTreeDirectoryResolver from "../../../src/modules/implementations/build-tree-directory-resolver/build-tree-directory-resolver";
+import * as Cmake from "../../../src/modules/implementations/cmake/cmake";
+import * as CoverageInfoFileResolver from "../../../src/modules/implementations/coverage-info-file-resolver/coverage-info-file-resolver";
+import * as CoverageInfoCollector from "../../../src/modules/implementations/coverage-info-collector/coverage-info-collector";
+import * as CoverageInfoProvider from "../../../src/modules/implementations/settings-provider/coverage-info-provider";
 
 import * as vscode from "vscode";
 import { env } from "process";
