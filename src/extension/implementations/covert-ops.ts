@@ -5,6 +5,7 @@ import * as Strings from "../../strings";
 import * as CoverageInfoProvider from "../factories/coverage-info-provider";
 
 import * as vscode from "vscode";
+import { CoverageInfo } from "../../modules/abstractions/coverage-info";
 
 export function make(context: Context): Types.Extension.CovertOps {
   return new CovertOps(context.uncoveredCodeRegionsDocumentContentProvider, context.uncoveredCodeRegionsVirtualTextEditorFactory, context.outputChannel);
@@ -47,20 +48,27 @@ class CovertOps implements Types.Extension.CovertOps {
   async run() {
     this.reportStartInOutputChannel();
 
-    await this.displayUncoveredCodeRegions();
+    const { uri, uncoveredCodeInfo } = await this.queryUncoveredCodeInfo();
+
+    await this.displayUncoveredCodeRegions(uri, uncoveredCodeInfo);
+    await this.displaySummaryCoverageInfo(uri, uncoveredCodeInfo);
   }
 
   get uncoveredCodeRegionsVirtualTextEditors(): ReadonlyMap<string, Types.Extension.UncoveredCodeRegionsVirtualTextEditor> {
     return this.uncoveredCodeRegionsVirtualTextEditors_;
   }
 
-  private async displayUncoveredCodeRegions() {
-    const uri = this.buildVirtualDocumentUri();
+  private async displayUncoveredCodeRegions(uri: vscode.Uri, uncoveredCodeInfo: CoverageInfo) {
     const uncoveredCodeRegionsVirtualTextEditor = await this.buildUncoveredCodeRegionsVirtualTextEditor(uri);
-    const uncoveredCodeInfo: Types.Modules.CoverageInfo = await this.queryUncoveredCodeInfo(uri);
     const options: Array<vscode.DecorationOptions> = await this.buildDecorationOptions(uncoveredCodeInfo);
 
     uncoveredCodeRegionsVirtualTextEditor.setDecorations(this.decorationType, options);
+  }
+
+  private async displaySummaryCoverageInfo(uri: vscode.Uri, uncoveredCodeInfo: CoverageInfo) {
+    const summary = await uncoveredCodeInfo.summary;
+
+    this.outputChannel.appendLine(`Coverage summary for ${uri.fsPath}: ${summary.count} regions, ${summary.covered} are covered and ${summary.notCovered} are not covered. This file is ${summary.percent}% covered.`);
   }
 
   private async buildDecorationOptions(uncoveredCodeInfo: Types.Modules.CoverageInfo) {
@@ -78,8 +86,10 @@ class CovertOps implements Types.Extension.CovertOps {
     return options;
   }
 
-  private queryUncoveredCodeInfo(uri: vscode.Uri) {
-    return vscode.window.withProgress({
+  private async queryUncoveredCodeInfo() {
+    const uri = this.buildVirtualDocumentUri();
+
+    const uncoveredCodeInfo = await vscode.window.withProgress({
       location: vscode.ProgressLocation.Notification,
       title: Strings.progressComputingRegionsLocations,
       cancellable: false
@@ -94,6 +104,8 @@ class CovertOps implements Types.Extension.CovertOps {
         throw error;
       }
     });
+
+    return { uri, uncoveredCodeInfo };
   }
 
   private async buildUncoveredCodeRegionsVirtualTextEditor(uri: vscode.Uri) {

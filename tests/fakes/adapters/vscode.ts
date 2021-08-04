@@ -3,6 +3,7 @@ import { defaultSetting } from "../../builders/settings";
 import { Settings } from "../../../src/modules/abstractions/settings";
 import {
   DisposableLike,
+  OutputChannelLikeWithLines,
   TextDocumentContentProviderLike,
   VscodeUriLike,
   VscodeWorkspaceConfigurationLike,
@@ -77,7 +78,7 @@ export function buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(): Vs
   };
 }
 
-export function buildFakeOutputChannel(): OutputChannelLike {
+export function buildFakeOutputChannel(): OutputChannelLikeWithLines {
   return new class implements OutputChannelLike {
     appendLine(_line: string) { }
 
@@ -86,12 +87,16 @@ export function buildFakeOutputChannel(): OutputChannelLike {
     clear() { }
 
     show(_preserveFocus: boolean) { }
+
+    get lines() {
+      return [];
+    }
   };
 }
 
-export function buildSpyOfOutputChannel(outputChannel: OutputChannelLike): Spy<OutputChannelLike> {
-  return new class extends Spy<OutputChannelLike> implements OutputChannelLike {
-    constructor(outputChannel: OutputChannelLike) {
+export function buildSpyOfOutputChannel(outputChannel: OutputChannelLikeWithLines): Spy<OutputChannelLikeWithLines> {
+  return new class extends Spy<OutputChannelLikeWithLines> implements OutputChannelLikeWithLines {
+    constructor(outputChannel: OutputChannelLikeWithLines) {
       super(outputChannel);
     }
 
@@ -100,11 +105,26 @@ export function buildSpyOfOutputChannel(outputChannel: OutputChannelLike): Spy<O
       this.incrementCallCountFor("appendLine");
     }
 
-    dispose() { }
+    dispose() {
+      this.wrapped.dispose();
+      this.incrementCallCountFor("dispose");
+    }
 
-    clear() { }
+    clear() {
+      this.wrapped.clear();
+      this.incrementCallCountFor("clear");
+    }
 
-    show(_preserveFocus: boolean) { }
+    show(preserveFocus: boolean) {
+      this.wrapped.show(preserveFocus);
+      this.incrementCallCountFor("show");
+    }
+
+    get lines() {
+      this.incrementCallCountFor("lines");
+
+      return this.wrapped.lines;
+    }
 
     get object() {
       return this;

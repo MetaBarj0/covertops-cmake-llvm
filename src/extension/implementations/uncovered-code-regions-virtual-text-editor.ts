@@ -2,6 +2,7 @@ import * as Types from "../types";
 
 import * as vscode from "vscode";
 
+// TODO: factory here, hide class
 export class UncoveredCodeRegionsVirtualTextEditor implements Types.Extension.UncoveredCodeRegionsVirtualTextEditor {
   constructor(textEditor: Types.Extension.TextEditorLike) {
     this.document = textEditor.document;

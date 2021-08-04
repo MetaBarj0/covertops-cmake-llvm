@@ -10,6 +10,7 @@ export namespace Modules {
 export namespace Adapters {
   export namespace vscode {
     export type OutputChannelLike = VscodeModule.OutputChannelLike;
+    export type OutputChannelLikeWithLines = VscodeModule.OutputChannelLikeWithLines;
     export type ProgressLike = VscodeModule.ProgressLike;
   }
 

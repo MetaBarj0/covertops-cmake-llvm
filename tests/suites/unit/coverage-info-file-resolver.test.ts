@@ -98,7 +98,7 @@ function buildCoverageInfoFileResolver(optionalSpiesAndAdapters: OptionalSpiesAn
 }
 
 type OptionalSpiesAndAdapters = {
-  outputChannelSpy?: Spy<Types.Adapters.vscode.OutputChannelLike>
+  outputChannelSpy?: Spy<Types.Adapters.vscode.OutputChannelLikeWithLines>
   progressReporterSpy?: Spy<Types.Adapters.vscode.ProgressLike>,
   globSearch: Types.Adapters.FileSystem.GlobSearchCallable
 };

@@ -28,6 +28,12 @@ export type OutputChannelLike = {
   show(preserveFocus: boolean): void;
 };
 
+type WithLines = {
+  get lines(): ReadonlyArray<string>;
+}
+
+export type OutputChannelLikeWithLines = OutputChannelLike & WithLines;
+
 export type ProgressLike = {
   report(value: ProgressStep): void;
 };

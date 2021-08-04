@@ -12,10 +12,12 @@ import * as Definitions from "../../../src/extension/implementations/definitions
 import * as UncoveredCodeRegionsDocumentContentProvider from "../../../src/extension/implementations/uncovered-code-regions-document-content-provider";
 import * as UncoveredCodeRegionsVirtualTextEditorFactory from "../../../src/extension/factories/uncovered-code-regions-virtual-text-editor";
 import { UncoveredCodeRegionsVirtualTextEditor } from "../../../src/extension/implementations/uncovered-code-regions-virtual-text-editor";
+import * as OutputChannel from "../../../src/extension/implementations/output-channel";
 import * as Strings from "../../../src/strings";
 
-import { SpyEventEmitterFor } from "../../utils/spy-event-emitter-for";
 import { buildEventBasedSpyForUncoveredCodeRegionsVirtualTextEditor } from "../../fakes/extension/uncovered-code-regions-virtual-text-editor";
+import { buildSpyOfOutputChannel } from "../../fakes/adapters/vscode";
+import { SpyEventEmitterFor } from "../../utils/spy-event-emitter-for";
 
 import * as vscode from "vscode";
 import * as path from "path";
@@ -30,7 +32,7 @@ describe("Extension test suite", () => {
     describe("Uncovered code regions virtual text editor existence when source file is open but command is not executed", uncoveredCodeRegionsVirtualTextEditorOnSourceFileShouldNotExist);
     describe("Uncovered code regions virtual text editor showing decorations after the command execution", virtualDocumentShouldHaveSomeDecorationsAfterCommandExecutionOnAPartiallyCoveredFile);
     describe("Showing an uncovered code regions virtual text editor should automatically trigger a decorations refresh", shouldRefreshUncoveredCodeRegionInVirtualTextEditor);
-    describe.skip("Running the command to get coverage info shows summary info in the output window", shouldShowSummaryCoverageInfoForFile);
+    describe("Running the command to get coverage info shows summary info in the output window", shouldShowSummaryCoverageInfoForFile);
   });
 });
 
@@ -41,7 +43,7 @@ function covShouldBeDisposable() {
     covertOps = CovertOps.make({
       uncoveredCodeRegionsDocumentContentProvider: UncoveredCodeRegionsDocumentContentProvider.make(),
       uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory.make(),
-      outputChannel: vscode.window.createOutputChannel(Definitions.extensionId)
+      outputChannel: OutputChannel.make(vscode.window.createOutputChannel(Definitions.extensionId))
     });
 
     const covIsADisposableResource = ((_: vscode.Disposable): _ is vscode.Disposable => true)(covertOps.asDisposable);
@@ -59,7 +61,7 @@ function covShouldHaveAnOutputChannel() {
     covertOps = CovertOps.make({
       uncoveredCodeRegionsDocumentContentProvider: UncoveredCodeRegionsDocumentContentProvider.make(),
       uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory.make(),
-      outputChannel: vscode.window.createOutputChannel(Definitions.extensionId)
+      outputChannel: OutputChannel.make(vscode.window.createOutputChannel(Definitions.extensionId))
     });
 
     const covExposesAVscodeOutputChannel = ((_: Types.Adapters.vscode.OutputChannelLike): _ is Types.Adapters.vscode.OutputChannelLike => true)(covertOps.outputChannel);
@@ -77,7 +79,7 @@ function covCanExecuteCommand() {
     covertOps = CovertOps.make({
       uncoveredCodeRegionsDocumentContentProvider: UncoveredCodeRegionsDocumentContentProvider.make(),
       uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory.make(),
-      outputChannel: vscode.window.createOutputChannel(Definitions.extensionId)
+      outputChannel: OutputChannel.make(vscode.window.createOutputChannel(Definitions.extensionId))
     });
 
     await showSourceFileEditor();
@@ -95,7 +97,7 @@ function covShouldOpenOnlyOneVirtualDocumentEditorPerSourceFile() {
     covertOps = CovertOps.make({
       uncoveredCodeRegionsDocumentContentProvider: UncoveredCodeRegionsDocumentContentProvider.make(),
       uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory.make(),
-      outputChannel: vscode.window.createOutputChannel(Definitions.extensionId)
+      outputChannel: OutputChannel.make(vscode.window.createOutputChannel(Definitions.extensionId))
     });
     const { cppFilePath, currentEditor } = await showSourceFileEditor();
 
@@ -120,7 +122,7 @@ function virtualDocumentShouldContainSameSourceCode() {
     covertOps = CovertOps.make({
       uncoveredCodeRegionsDocumentContentProvider: UncoveredCodeRegionsDocumentContentProvider.make(),
       uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory.make(),
-      outputChannel: vscode.window.createOutputChannel(Definitions.extensionId)
+      outputChannel: OutputChannel.make(vscode.window.createOutputChannel(Definitions.extensionId))
     });
     const { currentEditor } = await showSourceFileEditor();
 
@@ -141,7 +143,7 @@ function uncoveredCodeRegionsVirtualTextEditorOnSourceFileShouldNotExist() {
     covertOps = CovertOps.make({
       uncoveredCodeRegionsDocumentContentProvider: UncoveredCodeRegionsDocumentContentProvider.make(),
       uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory.make(),
-      outputChannel: vscode.window.createOutputChannel(Definitions.extensionId)
+      outputChannel: OutputChannel.make(vscode.window.createOutputChannel(Definitions.extensionId))
     });
 
     await showSourceFileEditor();
@@ -160,7 +162,7 @@ function virtualDocumentShouldHaveSomeDecorationsAfterCommandExecutionOnAPartial
     covertOps = CovertOps.make({
       uncoveredCodeRegionsDocumentContentProvider: UncoveredCodeRegionsDocumentContentProvider.make(),
       uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory.make(),
-      outputChannel: vscode.window.createOutputChannel(Definitions.extensionId)
+      outputChannel: OutputChannel.make(vscode.window.createOutputChannel(Definitions.extensionId))
     });
     const expectedRange = new vscode.Range(5, 52, 5, 70);
     const expectedRangeOrOptions = [
@@ -193,7 +195,7 @@ function shouldRefreshUncoveredCodeRegionInVirtualTextEditor() {
     covertOps = CovertOps.make({
       uncoveredCodeRegionsDocumentContentProvider: UncoveredCodeRegionsDocumentContentProvider.make(),
       uncoveredCodeRegionsVirtualTextEditorFactory: makeEventBasedSpyOfUncoveredCodeRegionsVirtualTextEditor(event),
-      outputChannel: vscode.window.createOutputChannel(Definitions.extensionId)
+      outputChannel: OutputChannel.make(vscode.window.createOutputChannel(Definitions.extensionId))
     });
 
     await executeCommandThenSwitchBetweenSourceFileAndUncoveredCodeRegionsVirtualTextEditor(covertOps);
@@ -207,14 +209,21 @@ function shouldRefreshUncoveredCodeRegionInVirtualTextEditor() {
 function shouldShowSummaryCoverageInfoForFile() {
   let covertOps: Types.Extension.CovertOps;
 
-  it("should show the right summary info in the output window", () => {
+  it("should show the right summary info in the output window", async () => {
+    const outputChannelSpy = buildSpyOfOutputChannel(OutputChannel.make(vscode.window.createOutputChannel(Definitions.extensionId)));
+    const { cppFilePath } = await showSourceFileEditor();
+    const expectedSummary = `Coverage summary for ${cppFilePath}: 2 regions, 1 are covered and 1 are not covered. This file is 50% covered.`;
+
     covertOps = CovertOps.make({
       uncoveredCodeRegionsDocumentContentProvider: UncoveredCodeRegionsDocumentContentProvider.make(),
       uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory.make(),
-      outputChannel: vscode.window.createOutputChannel(Definitions.extensionId)
+      outputChannel: outputChannelSpy.object
     });
 
-    chai.assert(false, "This test is not implemented yet.");
+    await executeCommand();
+
+    outputChannelSpy.countFor("appendLine").should.be.equal(2);
+    outputChannelSpy.object.lines[1].should.be.equal(expectedSummary);
   });
 
   after("Disposing of covert ops instance", () => covertOps.dispose());
