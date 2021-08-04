@@ -1,5 +1,5 @@
 // TODO: only one types.d.ts at root src dir
-import * as CovModule from "../../../src/extension/abstractions/covert-ops";
+import * as CovModule from "../../../src/modules/abstractions/extension/covert-ops";
 import * as TextEditorModule from "../../../src/adapters/abstractions/vscode/text-editor";
 import * as OutputChannelModule from "../../../src/adapters/abstractions/vscode/output-channel";
 

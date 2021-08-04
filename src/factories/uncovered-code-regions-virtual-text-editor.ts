@@ -1,4 +1,4 @@
-import * as Types from "../extension/types";
+import * as Types from "../modules/types";
 
 import * as UncoveredCodeRegionsVirtualTextEditor from "../adapters/implementations/vscode/uncovered-code-regions-virtual-text-editor";
 

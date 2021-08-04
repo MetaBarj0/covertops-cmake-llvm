@@ -1,19 +1,29 @@
+// TODO: this one is a good candidate for the unique types.d.ts
 import * as BuildTreeDirectoryResolverModule from "./abstractions/build-tree-directory-resolver/build-tree-directory-resolver";
 import * as SettingsModule from "./abstractions/settings-provider/settings";
 import * as FileSytemModule from "../adapters/abstractions/node/file-system";
-import * as OutputChannelModule from "../adapters/abstractions/vscode/output-channel";
 import * as WorkspaceModule from "../adapters/abstractions/vscode/workspace";
-import * as ProgressModule from "../adapters/abstractions/vscode/progress";
 import * as CmakeModule from "./abstractions/cmake/cmake";
 import * as AbstractProcessControl from "../adapters/abstractions/node/process-control";
 import * as CoverageInfoFileResolverModule from "./abstractions/coverage-info-file-resolver/coverage-info-file-resolver";
 import * as FileSystemModule from "../adapters/abstractions/node/file-system";
-import * as CoverageInfoProviderModule from "./abstractions/coverage-info-provider/coverage-info-provider";
 import * as CoverageInfoCollectorModule from "./abstractions/coverage-info-collector/coverage-info-collector";
 import * as AbstractRegionCoverageInfoModule from "./abstractions/coverage-info-collector/region-coverage-info";
 import * as AbstractCoverageSummaryModule from "./abstractions/coverage-info-collector/coverage-summary";
 import * as AbstractCoverageInfoModule from "./abstractions/coverage-info-collector/coverage-info";
 import * as SettingsProviderModule from "./abstractions/settings-provider/settings-provider";
+import * as CoverageInfoProviderModule from "../modules/abstractions/coverage-info-provider/coverage-info-provider";
+import * as OutputChannelModule from "../adapters/abstractions/vscode/output-channel";
+import * as TextEditorModule from "../adapters/abstractions/vscode/text-editor";
+import * as ProgressModule from "../adapters/abstractions/vscode/progress";
+import * as CovertOpsModule from "../modules/abstractions/extension/covert-ops";
+
+export namespace Extension {
+  export type UncoveredCodeRegionsVirtualTextEditor = TextEditorModule.UncoveredCodeRegionsVirtualTextEditor;
+  export type Decorations = TextEditorModule.Decorations;
+  export type CovertOps = CovertOpsModule.CovertOps;
+  export type TextEditorLike = TextEditorModule.TextEditorLike;
+}
 
 export namespace Modules {
   export type BuildTreeDirectoryResolver = BuildTreeDirectoryResolverModule.BuildTreeDirectoryResolver;
@@ -47,6 +57,8 @@ export namespace Adapters {
     export type OutputChannelLike = OutputChannelModule.OutputChannelLike;
     export type VscodeWorkspaceLike = WorkspaceModule.VscodeWorkspaceLike;
     export type VscodeWorkspaceFolderLike = WorkspaceModule.VscodeWorkspaceFolderLike;
+    export type OutputChannelLikeWithLines = OutputChannelModule.OutputChannelLikeWithLines;
+    export type UncoveredCodeRegionsVirtualTextEditor = TextEditorModule.UncoveredCodeRegionsVirtualTextEditor;
   }
 
   export namespace processControl {

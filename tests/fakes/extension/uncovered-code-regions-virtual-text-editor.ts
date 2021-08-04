@@ -1,4 +1,4 @@
-import * as Types from "../../../src/extension/types";
+import * as Types from "../../../src/modules/types";
 
 import { Spy } from "../../utils/spy";
 import { SpyEventEmitterFor } from "../../utils/spy-event-emitter-for";

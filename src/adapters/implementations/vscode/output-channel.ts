@@ -1,4 +1,4 @@
-import * as Types from "../../../extension/types";
+import * as Types from "../../../modules/types";
 
 export function make(wrappedOutputChannel: Types.Adapters.vscode.OutputChannelLike): Types.Adapters.vscode.OutputChannelLikeWithLines {
   return new OutputChannel(wrappedOutputChannel);

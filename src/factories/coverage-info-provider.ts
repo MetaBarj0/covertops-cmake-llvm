@@ -1,4 +1,4 @@
-import * as Types from "../extension/types";
+import * as Types from "../modules/types";
 
 import * as SettingsProvider from "../modules/implementations/settings-provider/settings-provider";
 import * as BuildTreeDirectoryResolver from "../modules/implementations/build-tree-directory-resolver/build-tree-directory-resolver";

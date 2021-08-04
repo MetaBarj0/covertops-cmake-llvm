@@ -7,7 +7,7 @@ chai.should();
 
 import * as Types from "./types";
 
-import * as CovertOps from "../../../src/extension/implementations/covert-ops";
+import * as CovertOps from "../../../src/modules/implementations/extension/covert-ops";
 import * as Definitions from "../../../src/definitions";
 import * as UncoveredCodeRegionsDocumentContentProvider from "../../../src/adapters/implementations/vscode/uncovered-code-regions-document-content-provider";
 import * as UncoveredCodeRegionsVirtualTextEditorFactory from "../../../src/factories/uncovered-code-regions-virtual-text-editor";

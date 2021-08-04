@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-import * as CovertOps from "./extension/implementations/covert-ops";
+import * as CovertOps from "./modules/implementations/extension/covert-ops";
 import * as UncoveredCodeRegionsDocumentContentProvider from "./adapters/implementations/vscode/uncovered-code-regions-document-content-provider";
 import * as UncoveredCodeRegionsVirtualTextEditorFactory from "./factories/uncovered-code-regions-virtual-text-editor";
 import * as Definitions from "./definitions";
