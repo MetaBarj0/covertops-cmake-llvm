@@ -11,7 +11,7 @@ import * as CovertOps from "../../../src/extension/implementations/covert-ops";
 import * as Definitions from "../../../src/definitions";
 import * as UncoveredCodeRegionsDocumentContentProvider from "../../../src/extension/implementations/uncovered-code-regions-document-content-provider";
 import * as UncoveredCodeRegionsVirtualTextEditorFactory from "../../../src/factories/uncovered-code-regions-virtual-text-editor";
-import { UncoveredCodeRegionsVirtualTextEditor } from "../../../src/extension/implementations/uncovered-code-regions-virtual-text-editor";
+import * as UncoveredCodeRegionsVirtualTextEditor from "../../../src/extension/implementations/uncovered-code-regions-virtual-text-editor";
 import * as OutputChannel from "../../../src/extension/implementations/output-channel";
 import * as Strings from "../../../src/strings";
 
@@ -244,7 +244,7 @@ function buildEventForUncoveredCodeRegionsVirtualTextEditorSpy() {
 
 function makeEventBasedSpyOfUncoveredCodeRegionsVirtualTextEditor(eventForSpy: SpyEventEmitterFor<Types.Extension.UncoveredCodeRegionsVirtualTextEditor>) {
   return (textEditor: Types.Extension.TextEditorLike) => {
-    const uncoveredCodeRegionsVirtualTextEditor = new UncoveredCodeRegionsVirtualTextEditor(textEditor);
+    const uncoveredCodeRegionsVirtualTextEditor = UncoveredCodeRegionsVirtualTextEditor.make(textEditor);
 
     return buildEventBasedSpyForUncoveredCodeRegionsVirtualTextEditor({
       uncoveredCodeRegionsVirtualTextEditor,

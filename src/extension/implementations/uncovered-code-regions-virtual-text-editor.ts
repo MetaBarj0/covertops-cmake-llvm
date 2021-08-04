@@ -3,8 +3,11 @@ import * as Types from "../types";
 
 import * as vscode from "vscode";
 
-// TODO: factory here, hide class, actually a factory exists...
-export class UncoveredCodeRegionsVirtualTextEditor implements Types.Extension.UncoveredCodeRegionsVirtualTextEditor {
+export function make(textEditor: Types.Extension.TextEditorLike): Types.Extension.UncoveredCodeRegionsVirtualTextEditor {
+  return new UncoveredCodeRegionsVirtualTextEditor(textEditor);
+}
+
+class UncoveredCodeRegionsVirtualTextEditor implements Types.Extension.UncoveredCodeRegionsVirtualTextEditor {
   constructor(textEditor: Types.Extension.TextEditorLike) {
     this.document = textEditor.document;
   }
