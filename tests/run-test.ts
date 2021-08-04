@@ -12,7 +12,6 @@ import { runTests } from "vscode-test";
     await runRegressionTests(extensionDevelopmentPath);
     await runIntegrationTestsWithoutWorkspace(extensionDevelopmentPath);
     await runIntegrationTestsWithWorkspace(extensionDevelopmentPath);
-    await runExtensionTests(extensionDevelopmentPath);
   } catch (error) {
     console.error("Failed to run tests\n" + error);
     process.exit(1);
@@ -57,13 +56,4 @@ function createCmakeProject() {
   const dst = path.resolve(__dirname, "../workspace");
 
   return fs.copy(src, dst, { recursive: true, overwrite: true });
-}
-
-async function runExtensionTests(extensionDevelopmentPath: string) {
-  const extensionTestsPath = path.resolve(__dirname, "./suites/extension/index");
-  const workspaceDirectory = path.resolve(__dirname, "../workspace");
-
-  await createCmakeProject();
-
-  return runTests({ extensionDevelopmentPath, extensionTestsPath, launchArgs: [workspaceDirectory] });
 }

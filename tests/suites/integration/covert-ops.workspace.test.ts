@@ -1,4 +1,3 @@
-// TODO: move tests of extension suite in integration suite
 import * as chai from "chai";
 import { describe, it, before, after } from "mocha";
 import * as chaiAsPromised from "chai-as-promised";
@@ -23,7 +22,7 @@ import { SpyEventEmitterFor } from "../../utils/spy-event-emitter-for";
 import * as vscode from "vscode";
 import * as path from "path";
 
-describe("Extension test suite", () => {
+describe("Integration test suite", () => {
   describe("The covert ops extension behavior", () => {
     describe("The instantiation of the extension as a vscode disposable", covShouldBeDisposable);
     describe("The extension has a working vscode window output channel", covShouldHaveAnOutputChannel);

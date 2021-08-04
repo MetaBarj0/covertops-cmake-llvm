@@ -87,21 +87,6 @@
         "${workspaceFolder}/out/tests/suites/integration/**/*.workspace.test.js"
       ],
       "preLaunchTask": "npm: test-compile"
-    },
-    {
-      "name": "Extension Tests",
-      "type": "extensionHost",
-      "request": "launch",
-      "args": [
-        "--disable-extensions",
-        "--extensionDevelopmentPath=${workspaceFolder}",
-        "--extensionTestsPath=${workspaceFolder}/out/tests/suites/extension/index",
-        "${workspaceFolder}/out/workspace"
-      ],
-      "outFiles": [
-        "${workspaceFolder}/out/tests/suites/extension/**/*.js"
-      ],
-      "preLaunchTask": "npm: test-compile"
     }
   ]
 }
