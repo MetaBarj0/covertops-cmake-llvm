@@ -12,7 +12,7 @@ type Context = {
   settings: Types.Modules.SettingsProvider.Settings,
   globSearch: Types.Adapters.Node.GlobSearchCallable,
   progressReporter: Types.Adapters.Vscode.ProgressLike,
-  outputChannel: Types.Adapters.Vscode.OutputChannelLike
+  outputChannel: Types.Adapters.Vscode.OutputChannelLikeWithLines
 };
 
 class CoverageInfoFileResolver implements Types.Modules.CoverageInfoFileResolver.CoverageInfoFileResolver {
@@ -67,5 +67,5 @@ class CoverageInfoFileResolver implements Types.Modules.CoverageInfoFileResolver
   private readonly globSearch: Types.Adapters.Node.GlobSearchCallable;
   private readonly settings: Types.Modules.SettingsProvider.Settings;
   private readonly progressReporter: Types.Adapters.Vscode.ProgressLike;
-  private readonly outputChannel: Types.Adapters.Vscode.OutputChannelLike;
+  private readonly outputChannel: Types.Adapters.Vscode.OutputChannelLikeWithLines;
 }

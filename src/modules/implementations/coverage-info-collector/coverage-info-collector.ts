@@ -35,12 +35,12 @@ class CoverageInfoCollector implements Types.Modules.CoverageInfoCollector.Cover
   private readonly coverageInfoFileResolver: Types.Modules.CoverageInfoFileResolver.CoverageInfoFileResolver;
   private readonly createReadStream: Types.Adapters.Node.CreateReadStreamCallable;
   private readonly progressReporter: Types.Adapters.Vscode.ProgressLike;
-  private readonly outputChannel: Types.Adapters.Vscode.OutputChannelLike;
+  private readonly outputChannel: Types.Adapters.Vscode.OutputChannelLikeWithLines;
 }
 
 type Context = {
   createReadStream: Types.Adapters.Node.CreateReadStreamCallable,
   progressReporter: Types.Adapters.Vscode.ProgressLike,
-  outputChannel: Types.Adapters.Vscode.OutputChannelLike,
+  outputChannel: Types.Adapters.Vscode.OutputChannelLikeWithLines,
   coverageInfoFileResolver: Types.Modules.CoverageInfoFileResolver.CoverageInfoFileResolver;
 };

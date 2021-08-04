@@ -10,7 +10,7 @@ export function make(adapters: Adapters): Types.Modules.SettingsProvider.Setting
 
 type Adapters = {
   workspace: Types.Adapters.Vscode.VscodeWorkspaceLike,
-  outputChannel: Types.Adapters.Vscode.OutputChannelLike
+  outputChannel: Types.Adapters.Vscode.OutputChannelLikeWithLines
 };
 
 class SettingsProvider implements Types.Modules.SettingsProvider.SettingsProvider {
@@ -48,5 +48,5 @@ class SettingsProvider implements Types.Modules.SettingsProvider.SettingsProvide
   }
 
   private readonly workspace: Types.Adapters.Vscode.VscodeWorkspaceLike;
-  private readonly outputChannel: Types.Adapters.Vscode.OutputChannelLike;
+  private readonly outputChannel: Types.Adapters.Vscode.OutputChannelLikeWithLines;
 }

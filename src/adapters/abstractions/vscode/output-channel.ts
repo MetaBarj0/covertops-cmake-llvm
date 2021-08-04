@@ -1,4 +1,3 @@
-// TODO: look if it can be hidden
 export type OutputChannelLike = {
   appendLine(line: string): void;
   dispose(): void;

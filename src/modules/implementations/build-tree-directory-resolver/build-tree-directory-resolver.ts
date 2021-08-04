@@ -13,7 +13,7 @@ type Adapters = {
   stat: Types.Adapters.Node.StatCallable,
   mkdir: Types.Adapters.Node.MkdirCallable,
   progressReporter: Types.Adapters.Vscode.ProgressLike,
-  outputChannel: Types.Adapters.Vscode.OutputChannelLike
+  outputChannel: Types.Adapters.Vscode.OutputChannelLikeWithLines
 };
 
 class BuildTreeDirectoryResolver implements Types.Modules.BuildTreeDirectoryResolver.BuildTreeDirectoryResolver {
@@ -65,5 +65,5 @@ class BuildTreeDirectoryResolver implements Types.Modules.BuildTreeDirectoryReso
   private readonly settings: Types.Modules.SettingsProvider.Settings;
   private readonly mkdir: Types.Adapters.Node.MkdirCallable;
   private readonly progressReporter: Types.Adapters.Vscode.ProgressLike;
-  private readonly outputChannel: Types.Adapters.Vscode.OutputChannelLike;
+  private readonly outputChannel: Types.Adapters.Vscode.OutputChannelLikeWithLines;
 }

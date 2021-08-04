@@ -65,7 +65,7 @@ function covShouldHaveAnOutputChannel() {
       outputChannel: OutputChannel.make(vscode.window.createOutputChannel(Definitions.extensionId))
     });
 
-    const covExposesAVscodeOutputChannel = ((_: Types.Adapters.Vscode.OutputChannelLike): _ is Types.Adapters.Vscode.OutputChannelLike => true)(covertOps.outputChannel);
+    const covExposesAVscodeOutputChannel = ((_: Types.Adapters.Vscode.OutputChannelLikeWithLines): _ is Types.Adapters.Vscode.OutputChannelLikeWithLines => true)(covertOps.outputChannel);
 
     covExposesAVscodeOutputChannel.should.be.equal(true);
   });

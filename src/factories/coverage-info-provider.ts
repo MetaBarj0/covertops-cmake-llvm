@@ -52,5 +52,5 @@ export function make(context: Context): Types.Modules.CoverageInfoProvider.Cover
 
 type Context = {
   progressReporter: Types.Adapters.Vscode.ProgressLike,
-  outputChannel: Types.Adapters.Vscode.OutputChannelLike
+  outputChannel: Types.Adapters.Vscode.OutputChannelLikeWithLines
 };

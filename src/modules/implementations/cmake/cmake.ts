@@ -3,7 +3,7 @@ import * as Types from "../../../types";
 import * as Strings from "../../../strings";
 
 export abstract class BasicCmake implements Types.Modules.Cmake.Cmake {
-  constructor(outputChannel: Types.Adapters.Vscode.OutputChannelLike,
+  constructor(outputChannel: Types.Adapters.Vscode.OutputChannelLikeWithLines,
     progressReporter: Types.Adapters.Vscode.ProgressLike,
     settings: Types.Modules.SettingsProvider.Settings) {
     this.outputChannel = outputChannel;
@@ -58,7 +58,7 @@ export abstract class BasicCmake implements Types.Modules.Cmake.Cmake {
   }
 
   private readonly progressReporter: Types.Adapters.Vscode.ProgressLike;
-  private readonly outputChannel: Types.Adapters.Vscode.OutputChannelLike;
+  private readonly outputChannel: Types.Adapters.Vscode.OutputChannelLikeWithLines;
 }
 
 export function make(context: Context): Types.Modules.Cmake.Cmake {
@@ -125,6 +125,6 @@ class Cmake extends BasicCmake implements Types.Modules.Cmake.Cmake {
 type Context = {
   settings: Types.Modules.SettingsProvider.Settings,
   progressReporter: Types.Adapters.Vscode.ProgressLike,
-  outputChannel: Types.Adapters.Vscode.OutputChannelLike,
+  outputChannel: Types.Adapters.Vscode.OutputChannelLikeWithLines,
   execFile: Types.Adapters.Node.ExecFileCallable,
 };

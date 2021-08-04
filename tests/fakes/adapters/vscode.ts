@@ -19,7 +19,6 @@ import {
   VscodeWorkspaceFolderLike, VscodeWorkspaceLike
 } from "../../../src/adapters/abstractions/vscode/workspace";
 
-import { OutputChannelLike } from "../../../src/adapters/abstractions/vscode/output-channel";
 import { ProgressLike, ProgressStep } from "../../../src/adapters/abstractions/vscode/progress";
 
 import { Spy } from "../../utils/spy";
@@ -89,7 +88,7 @@ export function buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(): Vs
 }
 
 export function buildFakeOutputChannel(): OutputChannelLikeWithLines {
-  return new class implements OutputChannelLike {
+  return new class implements OutputChannelLikeWithLines {
     appendLine(_line: string) { }
 
     dispose() { }

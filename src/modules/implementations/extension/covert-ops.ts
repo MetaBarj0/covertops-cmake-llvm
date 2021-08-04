@@ -14,7 +14,7 @@ export function make(context: Context): Types.Modules.Extension.CovertOps {
 class CovertOps implements Types.Modules.Extension.CovertOps {
   constructor(uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider,
     uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory,
-    outputChannel: Types.Adapters.Vscode.OutputChannelLike) {
+    outputChannel: Types.Adapters.Vscode.OutputChannelLikeWithLines) {
     this.outputChannel_ = outputChannel;
     this.command = vscode.commands.registerCommand(Strings.commandReportUncoveredCodeRegionsInFile, this.run, this);
     this.textDocumentProvider = vscode.workspace.registerTextDocumentContentProvider(Definitions.extensionId, uncoveredCodeRegionsDocumentContentProvider);
@@ -150,7 +150,7 @@ class CovertOps implements Types.Modules.Extension.CovertOps {
     this.uncoveredCodeRegionsVirtualTextEditors.get(uri.fsPath)?.refreshDecorations();
   }
 
-  private readonly outputChannel_: Types.Adapters.Vscode.OutputChannelLike;
+  private readonly outputChannel_: Types.Adapters.Vscode.OutputChannelLikeWithLines;
   private readonly command: vscode.Disposable;
   private readonly textDocumentProvider: vscode.Disposable;
   private readonly uncoveredCodeRegionsVirtualTextEditors_: Map<string, Types.Modules.Extension.UncoveredCodeRegionsVirtualTextEditor>;
@@ -164,5 +164,5 @@ type UncoveredCodeRegionsVirtualTextEditorFactory = (textEditor: Types.Modules.E
 type Context = {
   uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider,
   uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory,
-  outputChannel: Types.Adapters.Vscode.OutputChannelLike
+  outputChannel: Types.Adapters.Vscode.OutputChannelLikeWithLines
 }

@@ -13,14 +13,14 @@ import { streamArray } from "stream-json/streamers/StreamArray";
 
 export function make(llvmCoverageInfoStreamFactory: StreamFactory,
   sourceFilePath: string,
-  outputChannel: Types.Adapters.Vscode.OutputChannelLike): Types.Modules.CoverageInfoCollector.CoverageInfo {
+  outputChannel: Types.Adapters.Vscode.OutputChannelLikeWithLines): Types.Modules.CoverageInfoCollector.CoverageInfo {
   return new CoverageInfo(llvmCoverageInfoStreamFactory, sourceFilePath, outputChannel);
 }
 
 class CoverageInfo implements Types.Modules.CoverageInfoCollector.CoverageInfo {
   constructor(llvmCoverageInfoStreamFactory: StreamFactory,
     sourceFilePath: string,
-    outputChannel: Types.Adapters.Vscode.OutputChannelLike) {
+    outputChannel: Types.Adapters.Vscode.OutputChannelLikeWithLines) {
     this.llvmCoverageInfoStreamFactory = llvmCoverageInfoStreamFactory;
     this.sourceFilePath = this.fixPathForLlvmCoverageInfoFile(sourceFilePath);
     this.outputChannel = outputChannel;
@@ -122,7 +122,7 @@ class CoverageInfo implements Types.Modules.CoverageInfoCollector.CoverageInfo {
 
   private readonly llvmCoverageInfoStreamFactory: StreamFactory;
   private readonly sourceFilePath: string;
-  private readonly outputChannel: Types.Adapters.Vscode.OutputChannelLike;
+  private readonly outputChannel: Types.Adapters.Vscode.OutputChannelLikeWithLines;
 }
 
 type StreamFactory = () => Readable;
@@ -142,7 +142,7 @@ class RawLLVMCoverageSummary {
 }
 
 class RegionCoverageInfoAsyncIterable {
-  constructor(pipeline: Readable, sourceFilePath: string, outputChannel: Types.Adapters.Vscode.OutputChannelLike) {
+  constructor(pipeline: Readable, sourceFilePath: string, outputChannel: Types.Adapters.Vscode.OutputChannelLikeWithLines) {
     this.iterator = new RegionCoverageInfoAsyncIterator(pipeline, sourceFilePath, outputChannel);
   }
 
@@ -154,7 +154,7 @@ class RegionCoverageInfoAsyncIterable {
 }
 
 class RegionCoverageInfoAsyncIterator {
-  constructor(pipeline: Readable, sourceFilePath: string, outputChannel: Types.Adapters.Vscode.OutputChannelLike) {
+  constructor(pipeline: Readable, sourceFilePath: string, outputChannel: Types.Adapters.Vscode.OutputChannelLikeWithLines) {
     this.pipeline = pipeline;
     this.sourceFilePath = sourceFilePath;
     this.outputChannel = outputChannel;
@@ -198,7 +198,7 @@ class RegionCoverageInfoAsyncIterator {
   private readonly pipeline: Readable;
   private readonly sourceFilePath: string;
   private hasAtLeastOneElement = false;
-  private readonly outputChannel: Types.Adapters.Vscode.OutputChannelLike;
+  private readonly outputChannel: Types.Adapters.Vscode.OutputChannelLikeWithLines;
 }
 
 class RegionCoverageInfoIterator {
