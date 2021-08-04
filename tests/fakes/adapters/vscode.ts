@@ -80,6 +80,12 @@ export function buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(): Vs
 export function buildFakeOutputChannel(): OutputChannelLike {
   return new class implements OutputChannelLike {
     appendLine(_line: string) { }
+
+    dispose() { }
+
+    clear() { }
+
+    show(_preserveFocus: boolean) { }
   };
 }
 
@@ -93,6 +99,12 @@ export function buildSpyOfOutputChannel(outputChannel: OutputChannelLike): Spy<O
       this.wrapped.appendLine(line);
       this.incrementCallCountFor("appendLine");
     }
+
+    dispose() { }
+
+    clear() { }
+
+    show(_preserveFocus: boolean) { }
 
     get object() {
       return this;

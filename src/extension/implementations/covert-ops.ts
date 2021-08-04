@@ -7,13 +7,14 @@ import * as CoverageInfoProvider from "../factories/coverage-info-provider";
 import * as vscode from "vscode";
 
 export function make(context: Context): Types.Extension.CovertOps {
-  return new CovertOps(context.uncoveredCodeRegionsDocumentContentProvider, context.uncoveredCodeRegionsVirtualTextEditorFactory);
+  return new CovertOps(context.uncoveredCodeRegionsDocumentContentProvider, context.uncoveredCodeRegionsVirtualTextEditorFactory, context.outputChannel);
 }
 
 class CovertOps implements Types.Extension.CovertOps {
   constructor(uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider,
-    uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory) {
-    this.outputChannel_ = vscode.window.createOutputChannel(Definitions.extensionId);
+    uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory,
+    outputChannel: Types.Adapters.vscode.OutputChannelLike) {
+    this.outputChannel_ = outputChannel;
     this.command = vscode.commands.registerCommand(Strings.commandReportUncoveredCodeRegionsInFile, this.run, this);
     this.textDocumentProvider = vscode.workspace.registerTextDocumentContentProvider(Definitions.extensionId, uncoveredCodeRegionsDocumentContentProvider);
     this.uncoveredCodeRegionsVirtualTextEditors_ = new Map<string, Types.Extension.UncoveredCodeRegionsVirtualTextEditor>();
@@ -137,7 +138,7 @@ class CovertOps implements Types.Extension.CovertOps {
     this.uncoveredCodeRegionsVirtualTextEditors.get(uri.fsPath)?.refreshDecorations();
   }
 
-  private readonly outputChannel_: vscode.OutputChannel;
+  private readonly outputChannel_: Types.Adapters.vscode.OutputChannelLike;
   private readonly command: vscode.Disposable;
   private readonly textDocumentProvider: vscode.Disposable;
   private readonly uncoveredCodeRegionsVirtualTextEditors_: Map<string, Types.Extension.UncoveredCodeRegionsVirtualTextEditor>;

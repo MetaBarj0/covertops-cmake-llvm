@@ -23,6 +23,9 @@ export type VscodeUriLike = {
 
 export type OutputChannelLike = {
   appendLine(line: string): void;
+  dispose(): void;
+  clear(): void;
+  show(preserveFocus: boolean): void;
 };
 
 export type ProgressLike = {
