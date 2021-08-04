@@ -1,58 +1,38 @@
+import * as Types from "../../../src/types";
+
 import { defaultSetting } from "../../builders/settings";
-
-// TODO: Types for abstractions please
-import { Settings } from "../../../src/modules/abstractions/settings-provider/settings";
-
-import {
-  OutputChannelLikeWithLines
-} from "../../../src/adapters/abstractions/vscode/output-channel";
-
-import {
-  DisposableLike
-} from "../../../src/adapters/abstractions/vscode/disposable";
-
-import { TextDocumentContentProviderLike } from "../../../src/adapters/abstractions/vscode/text-document-content-provider";
-
-import {
-  VscodeUriLike,
-  VscodeWorkspaceConfigurationLike,
-  VscodeWorkspaceFolderLike, VscodeWorkspaceLike
-} from "../../../src/adapters/abstractions/vscode/workspace";
-
-import { ProgressLike, ProgressStep } from "../../../src/adapters/abstractions/vscode/progress";
-
 import { Spy } from "../../utils/spy";
 
 type Overrides = {
-  -readonly [Property in keyof Settings]?: Settings[Property]
+  -readonly [Property in keyof Types.Modules.SettingsProvider.Settings]?: Types.Modules.SettingsProvider.Settings[Property]
 };
 
-export function buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(overrides: Overrides = {}): VscodeWorkspaceLike {
-  return new class implements VscodeWorkspaceLike {
+export function buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(overrides: Overrides = {}): Types.Adapters.Vscode.VscodeWorkspaceLike {
+  return new class implements Types.Adapters.Vscode.VscodeWorkspaceLike {
     constructor(overrides: Overrides) {
       this.overrides = overrides;
     }
 
-    registerTextDocumentContentProvider(_scheme: string, _provider: TextDocumentContentProviderLike): DisposableLike {
+    registerTextDocumentContentProvider(_scheme: string, _provider: Types.Adapters.Vscode.TextDocumentContentProviderLike): Types.Adapters.Vscode.DisposableLike {
       throw new Error("Method not implemented.");
     }
 
     workspaceFolders = [
-      new class implements VscodeWorkspaceFolderLike {
-        uri = new class implements VscodeUriLike {
+      new class implements Types.Adapters.Vscode.VscodeWorkspaceFolderLike {
+        uri = new class implements Types.Adapters.Vscode.VscodeUriLike {
           fsPath = defaultSetting("rootDirectory").toString();
         };
       }];
 
     getConfiguration(_section?: string) {
-      return new class implements VscodeWorkspaceConfigurationLike {
+      return new class implements Types.Adapters.Vscode.VscodeWorkspaceConfigurationLike {
         constructor(overrides: Overrides) {
           this.overrides = overrides;
         }
 
-        get(section: keyof Settings) {
+        get(section: keyof Types.Modules.SettingsProvider.Settings) {
           if (this.overrides[section])
-            return <Settings[typeof section]>this.overrides[section];
+            return <Types.Modules.SettingsProvider.Settings[typeof section]>this.overrides[section];
 
           return defaultSetting(section);
         }
@@ -67,17 +47,17 @@ export function buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettin
   }(overrides);
 }
 
-export function buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(): VscodeWorkspaceLike {
-  return new class implements VscodeWorkspaceLike {
+export function buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(): Types.Adapters.Vscode.VscodeWorkspaceLike {
+  return new class implements Types.Adapters.Vscode.VscodeWorkspaceLike {
 
-    registerTextDocumentContentProvider(_scheme: string, _provider: TextDocumentContentProviderLike): DisposableLike {
+    registerTextDocumentContentProvider(_scheme: string, _provider: Types.Adapters.Vscode.TextDocumentContentProviderLike): Types.Adapters.Vscode.DisposableLike {
       throw new Error("Method not implemented.");
     }
     workspaceFolders = undefined;
 
     getConfiguration(_section?: string) {
-      return new class implements VscodeWorkspaceConfigurationLike {
-        get(section: keyof Settings) {
+      return new class implements Types.Adapters.Vscode.VscodeWorkspaceConfigurationLike {
+        get(section: keyof Types.Modules.SettingsProvider.Settings) {
           return defaultSetting(section);
         }
 
@@ -87,8 +67,8 @@ export function buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(): Vs
   };
 }
 
-export function buildFakeOutputChannel(): OutputChannelLikeWithLines {
-  return new class implements OutputChannelLikeWithLines {
+export function buildFakeOutputChannel(): Types.Adapters.Vscode.OutputChannelLikeWithLines {
+  return new class implements Types.Adapters.Vscode.OutputChannelLikeWithLines {
     appendLine(_line: string) { }
 
     dispose() { }
@@ -103,9 +83,9 @@ export function buildFakeOutputChannel(): OutputChannelLikeWithLines {
   };
 }
 
-export function buildSpyOfOutputChannel(outputChannel: OutputChannelLikeWithLines): Spy<OutputChannelLikeWithLines> {
-  return new class extends Spy<OutputChannelLikeWithLines> implements OutputChannelLikeWithLines {
-    constructor(outputChannel: OutputChannelLikeWithLines) {
+export function buildSpyOfOutputChannel(outputChannel: Types.Adapters.Vscode.OutputChannelLikeWithLines): Spy<Types.Adapters.Vscode.OutputChannelLikeWithLines> {
+  return new class extends Spy<Types.Adapters.Vscode.OutputChannelLikeWithLines> implements Types.Adapters.Vscode.OutputChannelLikeWithLines {
+    constructor(outputChannel: Types.Adapters.Vscode.OutputChannelLikeWithLines) {
       super(outputChannel);
     }
 
@@ -141,20 +121,20 @@ export function buildSpyOfOutputChannel(outputChannel: OutputChannelLikeWithLine
   }(outputChannel);
 }
 
-export function buildFakeProgressReporter(): ProgressLike {
+export function buildFakeProgressReporter(): Types.Adapters.Vscode.ProgressLike {
 
-  return new class implements ProgressLike {
-    report(_value: ProgressStep) { }
+  return new class implements Types.Adapters.Vscode.ProgressLike {
+    report(_value: Types.Adapters.Vscode.ProgressStep) { }
   };
 }
 
-export function buildSpyOfProgressReporter(progressReporter: ProgressLike): Spy<ProgressLike> {
-  return new class extends Spy<ProgressLike> implements ProgressLike {
-    constructor(progressReporter: ProgressLike) {
+export function buildSpyOfProgressReporter(progressReporter: Types.Adapters.Vscode.ProgressLike): Spy<Types.Adapters.Vscode.ProgressLike> {
+  return new class extends Spy<Types.Adapters.Vscode.ProgressLike> implements Types.Adapters.Vscode.ProgressLike {
+    constructor(progressReporter: Types.Adapters.Vscode.ProgressLike) {
       super(progressReporter);
     }
 
-    report(value: ProgressStep) {
+    report(value: Types.Adapters.Vscode.ProgressStep) {
       this.wrapped.report(value);
       super.incrementCallCountFor("report");
     }

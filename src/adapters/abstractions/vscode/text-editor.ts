@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 
-// TODO: this type may be hidden
 export type TextEditorLike = {
   setDecorations(decorationType: vscode.TextEditorDecorationType,
     rangesOrOptions: readonly vscode.Range[] | readonly vscode.DecorationOptions[]): void;
