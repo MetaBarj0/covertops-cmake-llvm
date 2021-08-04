@@ -30,6 +30,7 @@ describe("Extension test suite", () => {
     describe("Uncovered code regions virtual text editor existence when source file is open but command is not executed", uncoveredCodeRegionsVirtualTextEditorOnSourceFileShouldNotExist);
     describe("Uncovered code regions virtual text editor showing decorations after the command execution", virtualDocumentShouldHaveSomeDecorationsAfterCommandExecutionOnAPartiallyCoveredFile);
     describe("Showing an uncovered code regions virtual text editor should automatically trigger a decorations refresh", shouldRefreshUncoveredCodeRegionInVirtualTextEditor);
+    describe.skip("Running the command to get coverage info shows summary info in the output window", shouldShowSummaryCoverageInfoForFile);
   });
 });
 
@@ -37,7 +38,10 @@ function covShouldBeDisposable() {
   let covertOps: Types.Extension.CovertOps;
 
   it("should succeed when instantiating the extension as a vscode disposable", async () => {
-    covertOps = CovertOps.make(UncoveredCodeRegionsDocumentContentProvider.make(), UncoveredCodeRegionsVirtualTextEditorFactory.make());
+    covertOps = CovertOps.make({
+      uncoveredCodeRegionsDocumentContentProvider: UncoveredCodeRegionsDocumentContentProvider.make(),
+      uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory.make()
+    });
 
     const covIsADisposableResource = ((_: vscode.Disposable): _ is vscode.Disposable => true)(covertOps.asDisposable);
 
@@ -51,7 +55,10 @@ function covShouldHaveAnOutputChannel() {
   let covertOps: Types.Extension.CovertOps;
 
   it("should expose a vscode output channel", async () => {
-    covertOps = CovertOps.make(UncoveredCodeRegionsDocumentContentProvider.make(), UncoveredCodeRegionsVirtualTextEditorFactory.make());
+    covertOps = CovertOps.make({
+      uncoveredCodeRegionsDocumentContentProvider: UncoveredCodeRegionsDocumentContentProvider.make(),
+      uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory.make()
+    });
 
     const covExposesAVscodeOutputChannel = ((_: Types.Adapters.vscode.OutputChannelLike): _ is Types.Adapters.vscode.OutputChannelLike => true)(covertOps.outputChannel);
 
@@ -65,7 +72,10 @@ function covCanExecuteCommand() {
   let covertOps: Types.Extension.CovertOps;
 
   it("should run the command successfully", async () => {
-    covertOps = CovertOps.make(UncoveredCodeRegionsDocumentContentProvider.make(), UncoveredCodeRegionsVirtualTextEditorFactory.make());
+    covertOps = CovertOps.make({
+      uncoveredCodeRegionsDocumentContentProvider: UncoveredCodeRegionsDocumentContentProvider.make(),
+      uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory.make()
+    });
 
     await showSourceFileEditor();
 
@@ -79,9 +89,13 @@ function covShouldOpenOnlyOneVirtualDocumentEditorPerSourceFile() {
   let covertOps: Types.Extension.CovertOps;
 
   it("should have one uncovered code regions editor in the collection that is a virtual read only text editor", async () => {
-    covertOps = CovertOps.make(UncoveredCodeRegionsDocumentContentProvider.make(), UncoveredCodeRegionsVirtualTextEditorFactory.make());
+    covertOps = CovertOps.make({
+      uncoveredCodeRegionsDocumentContentProvider: UncoveredCodeRegionsDocumentContentProvider.make(),
+      uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory.make()
+    });
     const { cppFilePath, currentEditor } = await showSourceFileEditor();
 
+    // TODO: more explicit man!
     for (const _ of Array<never>(3))
       await executeCommand();
 
@@ -99,7 +113,10 @@ function virtualDocumentShouldContainSameSourceCode() {
   let covertOps: Types.Extension.CovertOps;
 
   it("should show a virtual document having the same source code that the file on which request for uncovered regions has been done", async () => {
-    covertOps = CovertOps.make(UncoveredCodeRegionsDocumentContentProvider.make(), UncoveredCodeRegionsVirtualTextEditorFactory.make());
+    covertOps = CovertOps.make({
+      uncoveredCodeRegionsDocumentContentProvider: UncoveredCodeRegionsDocumentContentProvider.make(),
+      uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory.make()
+    });
     const { currentEditor } = await showSourceFileEditor();
 
     await executeCommand();
@@ -116,7 +133,10 @@ function uncoveredCodeRegionsVirtualTextEditorOnSourceFileShouldNotExist() {
   let covertOps: Types.Extension.CovertOps;
 
   it("should not exist any uncovered code regions virtual editor", async () => {
-    covertOps = CovertOps.make(UncoveredCodeRegionsDocumentContentProvider.make(), UncoveredCodeRegionsVirtualTextEditorFactory.make());
+    covertOps = CovertOps.make({
+      uncoveredCodeRegionsDocumentContentProvider: UncoveredCodeRegionsDocumentContentProvider.make(),
+      uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory.make()
+    });
 
     await showSourceFileEditor();
 
@@ -131,7 +151,10 @@ function virtualDocumentShouldHaveSomeDecorationsAfterCommandExecutionOnAPartial
   let covertOps: Types.Extension.CovertOps;
 
   it("is possible to query decorations for a virtual document editor that have some", async () => {
-    covertOps = CovertOps.make(UncoveredCodeRegionsDocumentContentProvider.make(), UncoveredCodeRegionsVirtualTextEditorFactory.make());
+    covertOps = CovertOps.make({
+      uncoveredCodeRegionsDocumentContentProvider: UncoveredCodeRegionsDocumentContentProvider.make(),
+      uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory.make()
+    });
     const expectedRange = new vscode.Range(5, 52, 5, 70);
     const expectedRangeOrOptions = [
       {
@@ -160,11 +183,29 @@ function shouldRefreshUncoveredCodeRegionInVirtualTextEditor() {
     const event = buildEventForUncoveredCodeRegionsVirtualTextEditorSpy();
     let callCount = 0;
     event.onIncrementedCallCount(count => { callCount = count; });
-    covertOps = CovertOps.make(UncoveredCodeRegionsDocumentContentProvider.make(), makeEventBasedSpyOfUncoveredCodeRegionsVirtualTextEditor(event));
+    covertOps = CovertOps.make({
+      uncoveredCodeRegionsDocumentContentProvider: UncoveredCodeRegionsDocumentContentProvider.make(),
+      uncoveredCodeRegionsVirtualTextEditorFactory: makeEventBasedSpyOfUncoveredCodeRegionsVirtualTextEditor(event)
+    });
 
     await executeCommandThenSwitchBetweenSourceFileAndUncoveredCodeRegionsVirtualTextEditor(covertOps);
 
     callCount.should.be.equal(1);
+  });
+
+  after("Disposing of covert ops instance", () => covertOps.dispose());
+}
+
+function shouldShowSummaryCoverageInfoForFile() {
+  let covertOps: Types.Extension.CovertOps;
+
+  it("should show the right summary info in the output window", () => {
+    covertOps = CovertOps.make({
+      uncoveredCodeRegionsDocumentContentProvider: UncoveredCodeRegionsDocumentContentProvider.make(),
+      uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory.make()
+    });
+
+    chai.assert(false, "This test is not implemented yet.");
   });
 
   after("Disposing of covert ops instance", () => covertOps.dispose());

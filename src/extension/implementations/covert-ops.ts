@@ -6,9 +6,8 @@ import * as CoverageInfoProvider from "../factories/coverage-info-provider";
 
 import * as vscode from "vscode";
 
-export function make(uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider,
-  uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory): Types.Extension.CovertOps {
-  return new CovertOps(uncoveredCodeRegionsDocumentContentProvider, uncoveredCodeRegionsVirtualTextEditorFactory);
+export function make(context: Context): Types.Extension.CovertOps {
+  return new CovertOps(context.uncoveredCodeRegionsDocumentContentProvider, context.uncoveredCodeRegionsVirtualTextEditorFactory);
 }
 
 class CovertOps implements Types.Extension.CovertOps {
@@ -148,3 +147,8 @@ class CovertOps implements Types.Extension.CovertOps {
 }
 
 type UncoveredCodeRegionsVirtualTextEditorFactory = (textEditor: Types.Extension.TextEditorLike) => Types.Extension.UncoveredCodeRegionsVirtualTextEditor;
+
+type Context = {
+  uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider,
+  uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory
+}
