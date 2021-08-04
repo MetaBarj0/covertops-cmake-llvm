@@ -10,7 +10,7 @@ import * as Types from "./types";
 import * as CovertOps from "../../../src/extension/implementations/covert-ops";
 import * as Definitions from "../../../src/extension/implementations/definitions";
 import * as UncoveredCodeRegionsDocumentContentProvider from "../../../src/extension/implementations/uncovered-code-regions-document-content-provider";
-import * as UncoveredCodeRegionsVirtualTextEditorFactory from "../../../src/extension/factories/uncovered-code-regions-virtual-text-editor";
+import * as UncoveredCodeRegionsVirtualTextEditorFactory from "../../../src/factories/uncovered-code-regions-virtual-text-editor";
 import { UncoveredCodeRegionsVirtualTextEditor } from "../../../src/extension/implementations/uncovered-code-regions-virtual-text-editor";
 import * as OutputChannel from "../../../src/extension/implementations/output-channel";
 import * as Strings from "../../../src/strings";
