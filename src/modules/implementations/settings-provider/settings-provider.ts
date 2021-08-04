@@ -9,7 +9,7 @@ export function make(adapters: Adapters): Types.Modules.SettingsProvider.Setting
 }
 
 type Adapters = {
-  workspace: Types.Adapters.Vscode.VscodeWorkspaceLike,
+  workspace: Types.Adapters.Vscode.WorkspaceLike,
   outputChannel: Types.Adapters.Vscode.OutputChannelLikeWithLines
 };
 
@@ -23,7 +23,7 @@ class SettingsProvider implements Types.Modules.SettingsProvider.SettingsProvide
     this.ensureWorkspaceIsLoaded();
 
     const workspaceSettings = this.workspace.getConfiguration(Definitions.extensionId);
-    const workspaceFolders = this.workspace.workspaceFolders as Array<Types.Adapters.Vscode.VscodeWorkspaceFolderLike>;
+    const workspaceFolders = this.workspace.workspaceFolders as Array<Types.Adapters.Vscode.WorkspaceFolderLike>;
     const rootDirectory = workspaceFolders[0].uri.fsPath;
 
     return Settings.make(
@@ -47,6 +47,6 @@ class SettingsProvider implements Types.Modules.SettingsProvider.SettingsProvide
     throw new Error(errorMessage);
   }
 
-  private readonly workspace: Types.Adapters.Vscode.VscodeWorkspaceLike;
+  private readonly workspace: Types.Adapters.Vscode.WorkspaceLike;
   private readonly outputChannel: Types.Adapters.Vscode.OutputChannelLikeWithLines;
 }

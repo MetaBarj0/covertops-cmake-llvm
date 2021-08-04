@@ -71,7 +71,6 @@ export namespace Adapters {
   }
 
   export namespace Vscode {
-    // TODO: remove vscode prefix
     export type DisposableLike = DisposableModule.DisposableLike;
     export type OutputChannelLike = OutputChannelModule.OutputChannelLike;
     export type OutputChannelLikeWithLines = OutputChannelModule.OutputChannelLikeWithLines;
@@ -79,9 +78,9 @@ export namespace Adapters {
     export type ProgressStep = ProgressModule.ProgressStep;
     export type TextDocumentContentProviderLike = TextDocumentContentProviderModule.TextDocumentContentProviderLike;
     export type UncoveredCodeRegionsVirtualTextEditor = TextEditorModule.UncoveredCodeRegionsVirtualTextEditor;
-    export type VscodeUriLike = WorkspaceModule.VscodeUriLike;
-    export type VscodeWorkspaceConfigurationLike = WorkspaceModule.VscodeWorkspaceConfigurationLike;
-    export type VscodeWorkspaceFolderLike = WorkspaceModule.VscodeWorkspaceFolderLike;
-    export type VscodeWorkspaceLike = WorkspaceModule.VscodeWorkspaceLike;
+    export type UriLike = WorkspaceModule.UriLike;
+    export type WorkspaceConfigurationLike = WorkspaceModule.WorkspaceConfigurationLike;
+    export type WorkspaceFolderLike = WorkspaceModule.WorkspaceFolderLike;
+    export type WorkspaceLike = WorkspaceModule.WorkspaceLike;
   }
 }

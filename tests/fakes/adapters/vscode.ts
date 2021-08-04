@@ -7,8 +7,8 @@ type Overrides = {
   -readonly [Property in keyof Types.Modules.SettingsProvider.Settings]?: Types.Modules.SettingsProvider.Settings[Property]
 };
 
-export function buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(overrides: Overrides = {}): Types.Adapters.Vscode.VscodeWorkspaceLike {
-  return new class implements Types.Adapters.Vscode.VscodeWorkspaceLike {
+export function buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettings(overrides: Overrides = {}): Types.Adapters.Vscode.WorkspaceLike {
+  return new class implements Types.Adapters.Vscode.WorkspaceLike {
     constructor(overrides: Overrides) {
       this.overrides = overrides;
     }
@@ -18,14 +18,14 @@ export function buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettin
     }
 
     workspaceFolders = [
-      new class implements Types.Adapters.Vscode.VscodeWorkspaceFolderLike {
-        uri = new class implements Types.Adapters.Vscode.VscodeUriLike {
+      new class implements Types.Adapters.Vscode.WorkspaceFolderLike {
+        uri = new class implements Types.Adapters.Vscode.UriLike {
           fsPath = defaultSetting("rootDirectory").toString();
         };
       }];
 
     getConfiguration(_section?: string) {
-      return new class implements Types.Adapters.Vscode.VscodeWorkspaceConfigurationLike {
+      return new class implements Types.Adapters.Vscode.WorkspaceConfigurationLike {
         constructor(overrides: Overrides) {
           this.overrides = overrides;
         }
@@ -47,8 +47,8 @@ export function buildFakeWorkspaceWithWorkspaceFolderAndOverridableDefaultSettin
   }(overrides);
 }
 
-export function buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(): Types.Adapters.Vscode.VscodeWorkspaceLike {
-  return new class implements Types.Adapters.Vscode.VscodeWorkspaceLike {
+export function buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(): Types.Adapters.Vscode.WorkspaceLike {
+  return new class implements Types.Adapters.Vscode.WorkspaceLike {
 
     registerTextDocumentContentProvider(_scheme: string, _provider: Types.Adapters.Vscode.TextDocumentContentProviderLike): Types.Adapters.Vscode.DisposableLike {
       throw new Error("Method not implemented.");
@@ -56,7 +56,7 @@ export function buildFakeWorkspaceWithoutWorkspaceFolderAndWithoutSettings(): Ty
     workspaceFolders = undefined;
 
     getConfiguration(_section?: string) {
-      return new class implements Types.Adapters.Vscode.VscodeWorkspaceConfigurationLike {
+      return new class implements Types.Adapters.Vscode.WorkspaceConfigurationLike {
         get(section: keyof Types.Modules.SettingsProvider.Settings) {
           return defaultSetting(section);
         }
