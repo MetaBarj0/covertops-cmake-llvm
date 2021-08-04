@@ -101,9 +101,7 @@ function covShouldOpenOnlyOneVirtualDocumentEditorPerSourceFile() {
     });
     const { cppFilePath, currentEditor } = await showSourceFileEditor();
 
-    // TODO: more explicit man!
-    for (const _ of Array<never>(3))
-      await executeCommand();
+    await executeCommandThreeTimes();
 
     covertOps.uncoveredCodeRegionsVirtualTextEditors.size.should.be.equal(1);
     chai.assert.notStrictEqual(covertOps.uncoveredCodeRegionsVirtualTextEditors.get(cppFilePath), undefined);
@@ -268,4 +266,9 @@ async function showSourceFileEditor() {
 
 async function executeCommand() {
   await vscode.commands.executeCommand(Strings.commandReportUncoveredCodeRegionsInFile);
+}
+
+async function executeCommandThreeTimes() {
+  for (const _ of Array<never>(3))
+    await executeCommand();
 }
