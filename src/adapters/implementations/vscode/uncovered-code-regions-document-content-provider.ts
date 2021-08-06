@@ -1,3 +1,4 @@
+// TODO: move to extension module
 import * as vscode from "vscode";
 import * as fs from "fs/promises";
 

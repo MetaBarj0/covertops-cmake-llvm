@@ -93,12 +93,17 @@ hierarchy. This file must exist and be unique.
 system generator (cmake), for instance, variable definitions indicating which
 compiler / generator to use, preprocessor defines, etc.
 
-## Default color
+## Default colors
 
 One can customize the background color for the decoration associated to an
 uncovered region of code. Check the `covCmakeLlvm.uncoveredCodeRegionBackground`
 color when editing `workbench: colorCustomization` in your settings.json file.
-The default value is `#FF0055` for all dark, light or high contrast themes.
+The default values are `#ff7a7a7f`, `#ff00007f` and `#ff0000` for dark, light
+or high contrast themes, respectively.
+When it turns out that coverage information decorations are outdated, the color
+specified by `covCmakeLlvm.outdatedUncoveredCodeRegionBackground`. Default
+values for outdated uncovered code regions colors are `#7f7f7fff`, `#7f7f7fff`
+and `#0000ff` for dark, light or high contrast themes, respectively.
 
 ## Designing a simple code coverage target with cmake
 

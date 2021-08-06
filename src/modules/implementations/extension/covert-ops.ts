@@ -24,8 +24,16 @@ class CovertOps implements Types.Modules.Extension.CovertOps {
         id: Definitions.uncoveredCodeRegionDecorationBackgroundColorId
       }
     });
+    this.outdatedDecorationType = vscode.window.createTextEditorDecorationType({
+      borderColor: {
+        id: Definitions.outdatedUncoveredCodeRegionDecorationBackgroundColorId
+      },
+      // TODO: in strings
+      border: "1mm solid;"
+    });
     this.uncoveredCodeRegionsVirtualTextEditorFactory = uncoveredCodeRegionsVirtualTextEditorFactory;
     this.onDidChangeActiveTextEditorListenerDisposer = vscode.window.onDidChangeActiveTextEditor(this.onDidChangeActiveTextEditor, this);
+    this.onDidChangeConfigurationListenerDisposer = vscode.workspace.onDidChangeConfiguration(this.onDidChangeConfiguration, this);
   }
 
   get asDisposable() {
@@ -41,7 +49,8 @@ class CovertOps implements Types.Modules.Extension.CovertOps {
       vscode.Disposable.from(this.outputChannel_),
       this.command,
       this.textDocumentProvider,
-      this.onDidChangeActiveTextEditorListenerDisposer
+      this.onDidChangeActiveTextEditorListenerDisposer,
+      this.onDidChangeConfigurationListenerDisposer
     ].forEach(disposable => disposable.dispose());
   }
 
@@ -100,7 +109,7 @@ class CovertOps implements Types.Modules.Extension.CovertOps {
       try {
         return await coverageInfoProvider.getCoverageInfoForFile(uri.fsPath);
       } catch (error) {
-        this.outputChannel_.appendLine(error.message);
+        this.outputChannel_.appendLine((error as Error).message);
         throw error;
       }
     });
@@ -112,8 +121,7 @@ class CovertOps implements Types.Modules.Extension.CovertOps {
     const virtualDocument = await vscode.workspace.openTextDocument(uri);
     const virtualTextEditor = await vscode.window.showTextDocument(virtualDocument, { preserveFocus: false });
     const uncoveredCodeRegionsVirtualTextEditor = this.uncoveredCodeRegionsVirtualTextEditorFactory(virtualTextEditor);
-
-    this.addUncoveredCodeRegionsVirtualEditorIfNotExist(uri, uncoveredCodeRegionsVirtualTextEditor);
+    this.uncoveredCodeRegionsVirtualTextEditors_.set(uri.fsPath, uncoveredCodeRegionsVirtualTextEditor);
 
     return uncoveredCodeRegionsVirtualTextEditor;
   }
@@ -131,11 +139,6 @@ class CovertOps implements Types.Modules.Extension.CovertOps {
     });
   }
 
-  private addUncoveredCodeRegionsVirtualEditorIfNotExist(uri: vscode.Uri, doc: Types.Modules.Extension.UncoveredCodeRegionsVirtualTextEditor) {
-    if (!this.uncoveredCodeRegionsVirtualTextEditors_.has(uri.fsPath))
-      this.uncoveredCodeRegionsVirtualTextEditors_.set(uri.fsPath, doc);
-  }
-
   private onDidChangeActiveTextEditor(_textEditor?: Types.Modules.Extension.TextEditorLike) {
     const activeEditor = vscode.window.activeTextEditor;
 
@@ -150,13 +153,20 @@ class CovertOps implements Types.Modules.Extension.CovertOps {
     this.uncoveredCodeRegionsVirtualTextEditors.get(uri.fsPath)?.refreshDecorations();
   }
 
+  private onDidChangeConfiguration(_e: vscode.ConfigurationChangeEvent) {
+    for (const editor of this.uncoveredCodeRegionsVirtualTextEditors.values())
+      editor.outdateDecorationsWith(this.outdatedDecorationType);
+  }
+
   private readonly outputChannel_: Types.Adapters.Vscode.OutputChannelLikeWithLines;
   private readonly command: vscode.Disposable;
   private readonly textDocumentProvider: vscode.Disposable;
   private readonly uncoveredCodeRegionsVirtualTextEditors_: Map<string, Types.Modules.Extension.UncoveredCodeRegionsVirtualTextEditor>;
   private readonly decorationType: vscode.TextEditorDecorationType;
+  private readonly outdatedDecorationType: vscode.TextEditorDecorationType;
   private readonly uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory;
   private readonly onDidChangeActiveTextEditorListenerDisposer: vscode.Disposable;
+  private readonly onDidChangeConfigurationListenerDisposer: vscode.Disposable;
 }
 
 type UncoveredCodeRegionsVirtualTextEditorFactory = (textEditor: Types.Modules.Extension.TextEditorLike) => Types.Modules.Extension.UncoveredCodeRegionsVirtualTextEditor;

@@ -34,6 +34,12 @@ export function buildEventBasedSpyForUncoveredCodeRegionsVirtualTextEditor(optio
       return this.wrapped.decorations;
     }
 
+    outdateDecorationsWith(decorationType: vscode.TextEditorDecorationType) {
+      this.wrapped.outdateDecorationsWith(decorationType);
+
+      this.incrementCallCountFor("outdateDecorationsWith");
+    }
+
     document: vscode.TextDocument;
   }(options.uncoveredCodeRegionsVirtualTextEditor, options.eventForSpy);
 }
