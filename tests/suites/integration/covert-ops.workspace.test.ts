@@ -33,6 +33,7 @@ describe("Integration test suite", () => {
     describe("Uncovered code regions virtual text editor showing decorations after the command execution", virtualDocumentShouldHaveSomeDecorationsAfterCommandExecutionOnAPartiallyCoveredFile);
     describe("Showing an uncovered code regions virtual text editor should automatically trigger a decorations refresh", shouldRefreshUncoveredCodeRegionInVirtualTextEditor);
     describe("Running the command to get coverage info shows summary info in the output window", shouldShowSummaryCoverageInfoForFile);
+    describe.skip("Changing the configuration of the extension should mark existing decorations in all virtual text editor as outdated", configurationChangeShouldMarkDecorationsAsOutdated);
   });
 });
 
@@ -221,6 +222,20 @@ function shouldShowSummaryCoverageInfoForFile() {
 
     outputChannelSpy.countFor("appendLine").should.be.equal(2);
     outputChannelSpy.object.lines[1].should.be.equal(expectedSummary);
+  });
+
+  after("Disposing of covert ops instance", () => covertOps.dispose());
+}
+
+function configurationChangeShouldMarkDecorationsAsOutdated() {
+  let covertOps: Types.Modules.Extension.CovertOps;
+
+  it("should mark all decorations in all virtual text editor as outdated", () => {
+    // open at least 2 different documents first
+
+    // change the configuration in any way
+
+    // ensure all opened virtual text editors' decorations are marked as outdated
   });
 
   after("Disposing of covert ops instance", () => covertOps.dispose());
