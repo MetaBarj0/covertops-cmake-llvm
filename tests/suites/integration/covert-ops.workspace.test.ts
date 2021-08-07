@@ -259,6 +259,7 @@ function buildEventBasedSpyWaiterForTwoIncrementalCallCountCalls(event: SpyEvent
     let callCount = 0;
     event.onIncrementedCallCount(count => {
       callCount += count;
+      console.debug(`>>>debug: ${callCount} calls processed.`);
 
       if (callCount === 2)
         resolve();
