@@ -1,4 +1,4 @@
-// TODO: complicated! move fakes
+// TODO(wip): refacto the suite of test, particularly faked stuff
 import * as chai from "chai";
 import { describe, it, before, after } from "mocha";
 import * as chaiAsPromised from "chai-as-promised";
@@ -67,7 +67,7 @@ function covShouldHaveAnOutputChannel() {
       outputChannel: OutputChannel.make(vscode.window.createOutputChannel(Definitions.extensionId))
     });
 
-    const covExposesAVscodeOutputChannel = ((_: Types.Adapters.Vscode.OutputChannelLikeWithLines): _ is Types.Adapters.Vscode.OutputChannelLikeWithLines => true)(covertOps.outputChannel);
+    const covExposesAVscodeOutputChannel = doesCovertOpsHaveAnOutputChannel(covertOps);
 
     covExposesAVscodeOutputChannel.should.be.equal(true);
   });
@@ -106,11 +106,7 @@ function covShouldOpenOnlyOneVirtualDocumentEditorPerSourceFile() {
 
     await executeCommandThreeTimes();
 
-    covertOps.uncoveredCodeRegionsVirtualTextEditors.size.should.be.equal(1);
-    chai.assert.notStrictEqual(covertOps.uncoveredCodeRegionsVirtualTextEditors.get(cppFilePath), undefined);
-    covertOps.uncoveredCodeRegionsVirtualTextEditors.get(cppFilePath)?.document.uri.scheme.should.be.equal(Definitions.extensionId);
-    covertOps.uncoveredCodeRegionsVirtualTextEditors.get(cppFilePath)?.document.uri.fsPath.should.be.equal(currentEditor.document.uri.fsPath);
-    vscode.window.activeTextEditor?.document.uri.scheme.should.be.equal(Definitions.extensionId);
+    ensureCovertOpsCorrectStateRegardingContext(covertOps, cppFilePath, currentEditor);
   });
 
   after("Disposing of covert ops instance", () => covertOps.dispose());
@@ -129,9 +125,7 @@ function virtualDocumentShouldContainSameSourceCode() {
 
     await executeCommand();
 
-    chai.assert.notStrictEqual(vscode.window.activeTextEditor, undefined);
-    const virtualEditor = <vscode.TextEditor>vscode.window.activeTextEditor;
-    virtualEditor.document.getText().should.be.equal(currentEditor.document.getText());
+    ensureVirtualEditorHasTheSameContentAsTheSourceFileEditor(currentEditor);
   });
 
   after("Disposing of covert ops instance", () => covertOps.dispose());
@@ -234,29 +228,41 @@ function configurationChangeShouldMarkDecorationsAsOutdated() {
 
   it("should mark all decorations in all virtual text editor as outdated", async () => {
     const event = buildOutdateDecorationsEventForUncoveredCodeRegionsVirtualTextEditorSpy();
-    let callCount = 0;
-    event.onIncrementedCallCount(count => { callCount += count; });
+    const waitForTwoIncrementedCallCountCalls = buildEventBasedSpyWaiterForTwoIncrementalCallCountCalls(event);
     covertOps = CovertOps.make({
       uncoveredCodeRegionsDocumentContentProvider: UncoveredCodeRegionsDocumentContentProvider.make(),
       uncoveredCodeRegionsVirtualTextEditorFactory: makeEventBasedSpyOfUncoveredCodeRegionsVirtualTextEditor(event),
       outputChannel: OutputChannel.make(vscode.window.createOutputChannel(Definitions.extensionId))
     });
-    // open at least 2 different documents first and executing command for them
-    await showPartiallyCoveredSourceFileEditor("partiallyCoveredLib.cpp");
-    await executeCommand();
-    await showPartiallyCoveredSourceFileEditor("partiallyCoveredLib.hpp");
-    await executeCommand();
+    await OpenTwoSourceFilesAndExecuteCommandForEachOfThem();
 
-    // change the configuration in any way
     await vscode.workspace.getConfiguration(Definitions.extensionId).update("cmakeCommand", "cmakez");
 
-    // ensure all opened virtual text editors' decorations are marked as outdated
-    callCount.should.be.equal(2);
+    return waitForTwoIncrementedCallCountCalls.should.eventually.be.fulfilled;
   });
 
   after("Disposing of covert ops instance and reset default setting", async () => {
     covertOps.dispose();
     await vscode.workspace.getConfiguration(Definitions.extensionId).update("cmakeCommand", defaultSetting("cmakeCommand"));
+  });
+}
+
+async function OpenTwoSourceFilesAndExecuteCommandForEachOfThem() {
+  await showPartiallyCoveredSourceFileEditor("partiallyCoveredLib.cpp");
+  await executeCommand();
+  await showPartiallyCoveredSourceFileEditor("partiallyCoveredLib.hpp");
+  await executeCommand();
+}
+
+function buildEventBasedSpyWaiterForTwoIncrementalCallCountCalls(event: SpyEventEmitterFor<import("c:/Users/troct/work/watch/covertops-cmake-llvm/src/adapters/abstractions/vscode/text-editor").UncoveredCodeRegionsVirtualTextEditor>) {
+  return new Promise<void>(resolve => {
+    let callCount = 0;
+    event.onIncrementedCallCount(count => {
+      callCount += count;
+
+      if (callCount === 2)
+        resolve();
+    });
   });
 }
 
@@ -312,4 +318,22 @@ async function executeCommand() {
 async function executeCommandThreeTimes() {
   for (const _ of Array<never>(3))
     await executeCommand();
+}
+
+function doesCovertOpsHaveAnOutputChannel(covertOps: Types.Modules.Extension.CovertOps) {
+  return ((_: Types.Adapters.Vscode.OutputChannelLikeWithLines): _ is Types.Adapters.Vscode.OutputChannelLikeWithLines => true)(covertOps.outputChannel);
+}
+
+function ensureCovertOpsCorrectStateRegardingContext(covertOps: Types.Modules.Extension.CovertOps, cppFilePath: string, currentEditor: vscode.TextEditor) {
+  covertOps.uncoveredCodeRegionsVirtualTextEditors.size.should.be.equal(1);
+  chai.assert.notStrictEqual(covertOps.uncoveredCodeRegionsVirtualTextEditors.get(cppFilePath), undefined);
+  covertOps.uncoveredCodeRegionsVirtualTextEditors.get(cppFilePath)?.document.uri.scheme.should.be.equal(Definitions.extensionId);
+  covertOps.uncoveredCodeRegionsVirtualTextEditors.get(cppFilePath)?.document.uri.fsPath.should.be.equal(currentEditor.document.uri.fsPath);
+  vscode.window.activeTextEditor?.document.uri.scheme.should.be.equal(Definitions.extensionId);
+}
+
+function ensureVirtualEditorHasTheSameContentAsTheSourceFileEditor(currentEditor: vscode.TextEditor) {
+  chai.assert.notStrictEqual(vscode.window.activeTextEditor, undefined);
+  const virtualEditor = <vscode.TextEditor>vscode.window.activeTextEditor;
+  virtualEditor.document.getText().should.be.equal(currentEditor.document.getText());
 }
