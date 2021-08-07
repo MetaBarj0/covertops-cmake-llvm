@@ -254,7 +254,7 @@ async function OpenTwoSourceFilesAndExecuteCommandForEachOfThem() {
   await executeCommand();
 }
 
-function buildEventBasedSpyWaiterForTwoIncrementalCallCountCalls(event: SpyEventEmitterFor<import("c:/Users/troct/work/watch/covertops-cmake-llvm/src/adapters/abstractions/vscode/text-editor").UncoveredCodeRegionsVirtualTextEditor>) {
+function buildEventBasedSpyWaiterForTwoIncrementalCallCountCalls(event: SpyEventEmitterFor<Types.Modules.Extension.UncoveredCodeRegionsVirtualTextEditor>) {
   return new Promise<void>(resolve => {
     let callCount = 0;
     event.onIncrementedCallCount(count => {
