@@ -11,6 +11,7 @@ export function make(context: Context): Types.Modules.Extension.CovertOps {
   return new CovertOps(context.uncoveredCodeRegionsDocumentContentProvider, context.uncoveredCodeRegionsVirtualTextEditorFactory, context.outputChannel);
 }
 
+// TODO: refacto because of possible low cohesion
 class CovertOps implements Types.Modules.Extension.CovertOps {
   constructor(uncoveredCodeRegionsDocumentContentProvider: vscode.TextDocumentContentProvider,
     uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory,

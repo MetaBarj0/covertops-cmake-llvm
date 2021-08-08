@@ -52,6 +52,7 @@ export namespace Modules {
     export type CovertOps = CovertOpsModule.CovertOps;
     export type Decorations = TextEditorModule.Decorations;
     export type TextEditorLike = TextEditorModule.TextEditorLike;
+    // TODO: duplicated in Adapters.Vscode too
     export type UncoveredCodeRegionsVirtualTextEditor = TextEditorModule.UncoveredCodeRegionsVirtualTextEditor;
   }
 
