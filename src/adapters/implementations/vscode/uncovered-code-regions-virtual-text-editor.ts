@@ -24,9 +24,6 @@ class UncoveredCodeRegionsVirtualTextEditor implements Types.Modules.Extension.U
     if (!vscode.window.activeTextEditor)
       return;
 
-    if (this.decorations_)
-      vscode.window.activeTextEditor.setDecorations(this.decorations_.decorationType, []);
-
     vscode.window.activeTextEditor.setDecorations(decorationType, rangesOrOptions);
 
     this.decorations_ = {
@@ -46,16 +43,22 @@ class UncoveredCodeRegionsVirtualTextEditor implements Types.Modules.Extension.U
     if (!this.decorations_)
       return;
 
-    const oldDecorationsRangesOrOptions = this.decorations_.rangesOrOptions;
+    const outdatedOptions = (<ReadonlyArray<vscode.DecorationOptions>>this.decorations_.rangesOrOptions).map(option => {
+      return {
+        range: option.range,
+        // TODO: Strings
+        hoverMessage: "The coverage information of this code region may be outdated because of a recent change in your project's files."
+      };
+    });
 
     this.textEditor.setDecorations(this.decorations_.decorationType, []);
 
     this.decorations_ = {
       decorationType,
-      rangesOrOptions: oldDecorationsRangesOrOptions
+      rangesOrOptions: outdatedOptions
     };
 
-    this.textEditor.setDecorations(decorationType, oldDecorationsRangesOrOptions);
+    this.textEditor.setDecorations(decorationType, outdatedOptions);
   }
 
   private decorations_?: Types.Modules.Extension.Decorations;
