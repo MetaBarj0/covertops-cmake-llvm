@@ -228,17 +228,19 @@ function configurationChangeShouldMarkDecorationsAsOutdated() {
 
   it("should mark all decorations in all virtual text editor as outdated", async () => {
     const event = buildOutdateDecorationsEventForUncoveredCodeRegionsVirtualTextEditorSpy();
-    const waitForTwoIncrementedCallCountCalls = buildEventBasedSpyWaiterForTwoIncrementalCallCountCalls(event);
+    let callCount = 0;
+    event.onIncrementedCallCount(count => { callCount = count; });
+
     covertOps = CovertOps.make({
       uncoveredCodeRegionsDocumentContentProvider: UncoveredCodeRegionsDocumentContentProvider.make(),
       uncoveredCodeRegionsVirtualTextEditorFactory: makeEventBasedSpyOfUncoveredCodeRegionsVirtualTextEditor(event),
       outputChannel: OutputChannel.make(vscode.window.createOutputChannel(Definitions.extensionId))
     });
-    await OpenTwoSourceFilesAndExecuteCommandForEachOfThem();
+    await OpenOneSourceFileAndExecuteCommand();
 
     await vscode.workspace.getConfiguration(Definitions.extensionId).update("cmakeCommand", "cmakez");
 
-    return waitForTwoIncrementedCallCountCalls.should.eventually.be.fulfilled;
+    callCount.should.be.equal(1);
   });
 
   after("Disposing of covert ops instance and reset default setting", async () => {
@@ -247,23 +249,9 @@ function configurationChangeShouldMarkDecorationsAsOutdated() {
   });
 }
 
-async function OpenTwoSourceFilesAndExecuteCommandForEachOfThem() {
+async function OpenOneSourceFileAndExecuteCommand() {
   await showPartiallyCoveredSourceFileEditor("partiallyCoveredLib.cpp");
   await executeCommand();
-  await showPartiallyCoveredSourceFileEditor("partiallyCoveredLib.hpp");
-  await executeCommand();
-}
-
-function buildEventBasedSpyWaiterForTwoIncrementalCallCountCalls(event: SpyEventEmitterFor<Types.Modules.Extension.UncoveredCodeRegionsVirtualTextEditor>) {
-  return new Promise<void>(resolve => {
-    let callCount = 0;
-    event.onIncrementedCallCount(count => {
-      callCount += count;
-
-      if (callCount === 2)
-        resolve();
-    });
-  });
 }
 
 async function executeCommandThenSwitchBetweenSourceFileAndUncoveredCodeRegionsVirtualTextEditor(covertOps: Types.Modules.Extension.CovertOps) {
