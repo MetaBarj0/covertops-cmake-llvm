@@ -7,5 +7,5 @@ export type CovertOps = {
   dispose(): void;
   get asDisposable(): vscode.Disposable;
   get outputChannel(): Types.Adapters.Vscode.OutputChannelLikeWithLines
-  get uncoveredCodeRegionsVirtualTextEditors(): ReadonlyMap<string, Types.Adapters.Vscode.UncoveredCodeRegionsVirtualTextEditor>;
+  get uncoveredCodeRegionsVirtualTextEditors(): ReadonlyMap<string, Types.Modules.Extension.UncoveredCodeRegionsVirtualTextEditor>;
 }

@@ -1,5 +1,6 @@
-// TODO: move to extension module
 import * as Types from "../../../types";
+
+import * as Strings from "../../../strings";
 
 import * as vscode from "vscode";
 
@@ -46,8 +47,7 @@ class UncoveredCodeRegionsVirtualTextEditor implements Types.Modules.Extension.U
     const outdatedOptions = (<ReadonlyArray<vscode.DecorationOptions>>this.decorations_.rangesOrOptions).map(option => {
       return {
         range: option.range,
-        // TODO: Strings
-        hoverMessage: "The coverage information of this code region may be outdated because of a recent change in your project's files."
+        hoverMessage: Strings.decorationOutdatedCodeRegionHoverMessage
       };
     });
 

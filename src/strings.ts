@@ -2,6 +2,8 @@ import * as Definitions from "./definitions";
 
 export const commandReportUncoveredCodeRegionsInFile = `${Definitions.extensionId}.reportUncoveredCodeRegionsInFile`;
 export const decorationUncoveredCodeRegionHoverMessage = "This code region is not covered by a test known by cmake." as const;
+export const decorationOutdatedCodeRegionHoverMessage = "The coverage information of this code region may be outdated because of a recent change in your project's files.";
+export const decorationOutdatedBorderThickness = "1mm solid;";
 export const errorBadAbsolutePathForBuildTreeDirectoryWithArg = `Incorrect absolute path specified in '${Definitions.extensionNameInSettings}: ` +
     "Build Tree Directory'. It must be a relative path.";
 export const errorCannotStatCreateBuildTreeDirectory = "Cannot find or create the build tree directory. Ensure the " +

@@ -52,7 +52,6 @@ export namespace Modules {
     export type CovertOps = CovertOpsModule.CovertOps;
     export type Decorations = TextEditorModule.Decorations;
     export type TextEditorLike = TextEditorModule.TextEditorLike;
-    // TODO: duplicated in Adapters.Vscode too
     export type UncoveredCodeRegionsVirtualTextEditor = TextEditorModule.UncoveredCodeRegionsVirtualTextEditor;
   }
 
@@ -78,7 +77,6 @@ export namespace Adapters {
     export type ProgressLike = ProgressModule.ProgressLike;
     export type ProgressStep = ProgressModule.ProgressStep;
     export type TextDocumentContentProviderLike = TextDocumentContentProviderModule.TextDocumentContentProviderLike;
-    export type UncoveredCodeRegionsVirtualTextEditor = TextEditorModule.UncoveredCodeRegionsVirtualTextEditor;
     export type UriLike = WorkspaceModule.UriLike;
     export type WorkspaceConfigurationLike = WorkspaceModule.WorkspaceConfigurationLike;
     export type WorkspaceFolderLike = WorkspaceModule.WorkspaceFolderLike;

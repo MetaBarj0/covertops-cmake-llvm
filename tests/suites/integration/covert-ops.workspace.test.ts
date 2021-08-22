@@ -1,4 +1,3 @@
-// TODO(wip): refacto the suite of test, particularly faked stuff
 import * as chai from "chai";
 import { describe, it, before, after } from "mocha";
 import * as chaiAsPromised from "chai-as-promised";
@@ -12,7 +11,7 @@ import * as CovertOps from "../../../src/modules/implementations/extension/cover
 import * as Definitions from "../../../src/definitions";
 import * as UncoveredCodeRegionsDocumentContentProvider from "../../../src/adapters/implementations/vscode/uncovered-code-regions-document-content-provider";
 import * as UncoveredCodeRegionsVirtualTextEditorFactory from "../../../src/factories/uncovered-code-regions-virtual-text-editor";
-import * as UncoveredCodeRegionsVirtualTextEditor from "../../../src/adapters/implementations/vscode/uncovered-code-regions-virtual-text-editor";
+import * as UncoveredCodeRegionsVirtualTextEditor from "../../../src/modules/implementations/extension/uncovered-code-regions-virtual-text-editor";
 import * as OutputChannel from "../../../src/adapters/implementations/vscode/output-channel";
 import * as Strings from "../../../src/strings";
 
@@ -36,6 +35,7 @@ describe("Integration test suite", () => {
     describe("Showing an uncovered code regions virtual text editor should automatically trigger a decorations refresh", shouldRefreshUncoveredCodeRegionInVirtualTextEditor);
     describe("Running the command to get coverage info shows summary info in the output window", shouldShowSummaryCoverageInfoForFile);
     describe("Changing the configuration of the extension should mark existing decorations in all virtual text editor as outdated", configurationChangeShouldMarkDecorationsAsOutdated);
+    describe("Changing any file in the workspace should mark existing decorations in all virtual text editor as outdated", workspaceFileSaveShouldMarkDecorationsAsOutdated);
   });
 });
 
@@ -184,12 +184,12 @@ function shouldRefreshUncoveredCodeRegionInVirtualTextEditor() {
   before("showing a source file editor beforehand", () => { showPartiallyCoveredSourceFileEditor("partiallyCoveredLib.cpp"); });
 
   it("should auto refresh decorations in existing virtual text editor", async () => {
-    const event = buildRefreshDecorationsEventForUncoveredCodeRegionsVirtualTextEditorSpy();
+    const event = buildEventBasedSpyRefreshDecorationsEventForUncoveredCodeRegionsVirtualTextEditor();
     let callCount = 0;
     event.onIncrementedCallCount(count => { callCount = count; });
     covertOps = CovertOps.make({
       uncoveredCodeRegionsDocumentContentProvider: UncoveredCodeRegionsDocumentContentProvider.make(),
-      uncoveredCodeRegionsVirtualTextEditorFactory: makeEventBasedSpyOfUncoveredCodeRegionsVirtualTextEditor(event),
+      uncoveredCodeRegionsVirtualTextEditorFactory: buildEventBasedSpyOfUncoveredCodeRegionsVirtualTextEditorFactory(event),
       outputChannel: OutputChannel.make(vscode.window.createOutputChannel(Definitions.extensionId))
     });
 
@@ -227,20 +227,19 @@ function configurationChangeShouldMarkDecorationsAsOutdated() {
   let covertOps: Types.Modules.Extension.CovertOps;
 
   it("should mark all decorations in all virtual text editor as outdated", async () => {
-    const event = buildOutdateDecorationsEventForUncoveredCodeRegionsVirtualTextEditorSpy();
+    const event = buildEventBasedSpyOutdateDecorationsEventForUncoveredCodeRegionsVirtualTextEditor();
     let callCount = 0;
     event.onIncrementedCallCount(count => { callCount = count; });
-
     covertOps = CovertOps.make({
       uncoveredCodeRegionsDocumentContentProvider: UncoveredCodeRegionsDocumentContentProvider.make(),
-      uncoveredCodeRegionsVirtualTextEditorFactory: makeEventBasedSpyOfUncoveredCodeRegionsVirtualTextEditor(event),
+      uncoveredCodeRegionsVirtualTextEditorFactory: buildEventBasedSpyOfUncoveredCodeRegionsVirtualTextEditorFactory(event),
       outputChannel: OutputChannel.make(vscode.window.createOutputChannel(Definitions.extensionId))
     });
-    await OpenOneSourceFileAndExecuteCommand();
+    await openOneSourceFileAndExecuteCommand();
 
     await vscode.workspace.getConfiguration(Definitions.extensionId).update("cmakeCommand", "cmakez");
 
-    callCount.should.be.equal(1);
+    callCount.should.be.greaterThanOrEqual(1);
   });
 
   after("Disposing of covert ops instance and reset default setting", async () => {
@@ -249,7 +248,51 @@ function configurationChangeShouldMarkDecorationsAsOutdated() {
   });
 }
 
-async function OpenOneSourceFileAndExecuteCommand() {
+function workspaceFileSaveShouldMarkDecorationsAsOutdated() {
+  let covertOps: Types.Modules.Extension.CovertOps;
+
+  it("should mark all decorations in all virtual text editor as outdated", async () => {
+    const event = buildEventBasedSpyOutdateDecorationsEventForUncoveredCodeRegionsVirtualTextEditor();
+    let callCount = 0;
+    event.onIncrementedCallCount(count => { callCount = count; });
+    covertOps = CovertOps.make({
+      uncoveredCodeRegionsDocumentContentProvider: UncoveredCodeRegionsDocumentContentProvider.make(),
+      uncoveredCodeRegionsVirtualTextEditorFactory: buildEventBasedSpyOfUncoveredCodeRegionsVirtualTextEditorFactory(event),
+      outputChannel: OutputChannel.make(vscode.window.createOutputChannel(Definitions.extensionId))
+    });
+    await openOneSourceFileAndExecuteCommand();
+    await showPartiallyCoveredSourceFileEditor("partiallyCoveredLib.cpp");
+
+    await modifySourceFile();
+
+    callCount.should.be.greaterThanOrEqual(1);
+  });
+
+  after("Disposing of covert ops instance", async () => {
+    covertOps.dispose();
+    await restoreSourceFile();
+  });
+}
+
+async function restoreSourceFile() {
+  const editOk = await vscode.window.activeTextEditor?.edit(editBuilder => {
+    editBuilder.delete(new vscode.Range(0, 0, 1, 0));
+  });
+
+  if (editOk)
+    await vscode.commands.executeCommand("workbench.action.files.save");
+}
+
+async function modifySourceFile() {
+  const editOk = await vscode.window.activeTextEditor?.edit(editBuilder => {
+    editBuilder.insert(new vscode.Position(0, 0), "\n");
+  });
+
+  if (editOk)
+    await vscode.commands.executeCommand("workbench.action.files.save");
+}
+
+async function openOneSourceFileAndExecuteCommand() {
   await showPartiallyCoveredSourceFileEditor("partiallyCoveredLib.cpp");
   await executeCommand();
 }
@@ -261,21 +304,21 @@ async function executeCommandThenSwitchBetweenSourceFileAndUncoveredCodeRegionsV
   await vscode.window.showTextDocument(uncoveredCodeRegionsVirtualTextEditor.document);
 }
 
-function buildRefreshDecorationsEventForUncoveredCodeRegionsVirtualTextEditorSpy() {
+function buildEventBasedSpyRefreshDecorationsEventForUncoveredCodeRegionsVirtualTextEditor() {
   return new SpyEventEmitterFor<Types.Modules.Extension.UncoveredCodeRegionsVirtualTextEditor>({
     eventType: "incrementedCallCount",
     member: "refreshDecorations"
   });
 }
 
-function buildOutdateDecorationsEventForUncoveredCodeRegionsVirtualTextEditorSpy() {
+function buildEventBasedSpyOutdateDecorationsEventForUncoveredCodeRegionsVirtualTextEditor() {
   return new SpyEventEmitterFor<Types.Modules.Extension.UncoveredCodeRegionsVirtualTextEditor>({
     eventType: "incrementedCallCount",
     member: "outdateDecorationsWith"
   });
 }
 
-function makeEventBasedSpyOfUncoveredCodeRegionsVirtualTextEditor(eventForSpy: SpyEventEmitterFor<Types.Modules.Extension.UncoveredCodeRegionsVirtualTextEditor>) {
+function buildEventBasedSpyOfUncoveredCodeRegionsVirtualTextEditorFactory(eventForSpy: SpyEventEmitterFor<Types.Modules.Extension.UncoveredCodeRegionsVirtualTextEditor>) {
   return (textEditor: Types.Modules.Extension.TextEditorLike) => {
     const uncoveredCodeRegionsVirtualTextEditor = UncoveredCodeRegionsVirtualTextEditor.make(textEditor);
 

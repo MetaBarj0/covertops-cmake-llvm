@@ -5,7 +5,6 @@ import * as Strings from "../../../strings";
 import * as CoverageInfoProvider from "../../../factories/coverage-info-provider";
 
 import * as vscode from "vscode";
-import { CoverageInfo } from "../../abstractions/coverage-info-collector/coverage-info";
 
 export function make(context: Context): Types.Modules.Extension.CovertOps {
   return new CovertOps(context.uncoveredCodeRegionsDocumentContentProvider, context.uncoveredCodeRegionsVirtualTextEditorFactory, context.outputChannel);
@@ -29,12 +28,12 @@ class CovertOps implements Types.Modules.Extension.CovertOps {
       borderColor: {
         id: Definitions.outdatedUncoveredCodeRegionDecorationBackgroundColorId
       },
-      // TODO: in strings
-      border: "1mm solid;"
+      border: Strings.decorationOutdatedBorderThickness
     });
     this.uncoveredCodeRegionsVirtualTextEditorFactory = uncoveredCodeRegionsVirtualTextEditorFactory;
     this.onDidChangeActiveTextEditorListenerDisposer = vscode.window.onDidChangeActiveTextEditor(this.onDidChangeActiveTextEditor, this);
     this.onDidChangeConfigurationListenerDisposer = vscode.workspace.onDidChangeConfiguration(this.onDidChangeConfiguration, this);
+    this.onDidSaveTextDocumentListenerDisposer = vscode.workspace.onDidSaveTextDocument(this.onDidSaveTextDocument, this);
   }
 
   get asDisposable() {
@@ -51,7 +50,8 @@ class CovertOps implements Types.Modules.Extension.CovertOps {
       this.command,
       this.textDocumentProvider,
       this.onDidChangeActiveTextEditorListenerDisposer,
-      this.onDidChangeConfigurationListenerDisposer
+      this.onDidChangeConfigurationListenerDisposer,
+      this.onDidSaveTextDocumentListenerDisposer
     ].forEach(disposable => disposable.dispose());
   }
 
@@ -68,14 +68,14 @@ class CovertOps implements Types.Modules.Extension.CovertOps {
     return this.uncoveredCodeRegionsVirtualTextEditors_;
   }
 
-  private async displayUncoveredCodeRegions(uri: vscode.Uri, uncoveredCodeInfo: CoverageInfo) {
+  private async displayUncoveredCodeRegions(uri: vscode.Uri, uncoveredCodeInfo: Types.Modules.CoverageInfoCollector.CoverageInfo) {
     const uncoveredCodeRegionsVirtualTextEditor = await this.buildUncoveredCodeRegionsVirtualTextEditor(uri);
     const options: Array<vscode.DecorationOptions> = await this.buildDecorationOptions(uncoveredCodeInfo);
 
     uncoveredCodeRegionsVirtualTextEditor.setDecorations(this.decorationType, options);
   }
 
-  private async displaySummaryCoverageInfo(uri: vscode.Uri, uncoveredCodeInfo: CoverageInfo) {
+  private async displaySummaryCoverageInfo(uri: vscode.Uri, uncoveredCodeInfo: Types.Modules.CoverageInfoCollector.CoverageInfo) {
     const summary = await uncoveredCodeInfo.summary;
 
     this.outputChannel.appendLine(`Coverage summary for ${uri.fsPath}: ${summary.count} regions, ${summary.covered} are covered and ${summary.notCovered} are not covered. This file is ${summary.percent}% covered.`);
@@ -155,8 +155,21 @@ class CovertOps implements Types.Modules.Extension.CovertOps {
   }
 
   private onDidChangeConfiguration(_e: vscode.ConfigurationChangeEvent) {
+    this.outdateDecorationsForAllOpenedVirtualTextEditors();
+  }
+
+  private outdateDecorationsForAllOpenedVirtualTextEditors() {
     for (const editor of this.uncoveredCodeRegionsVirtualTextEditors.values())
       editor.outdateDecorationsWith(this.outdatedDecorationType);
+  }
+
+  private onDidSaveTextDocument(e: vscode.TextDocument) {
+    const workspaceFolder = vscode.workspace.getWorkspaceFolder(e.uri);
+
+    if (!workspaceFolder)
+      return;
+
+    this.outdateDecorationsForAllOpenedVirtualTextEditors();
   }
 
   private readonly outputChannel_: Types.Adapters.Vscode.OutputChannelLikeWithLines;
@@ -168,6 +181,7 @@ class CovertOps implements Types.Modules.Extension.CovertOps {
   private readonly uncoveredCodeRegionsVirtualTextEditorFactory: UncoveredCodeRegionsVirtualTextEditorFactory;
   private readonly onDidChangeActiveTextEditorListenerDisposer: vscode.Disposable;
   private readonly onDidChangeConfigurationListenerDisposer: vscode.Disposable;
+  private readonly onDidSaveTextDocumentListenerDisposer: vscode.Disposable;
 }
 
 type UncoveredCodeRegionsVirtualTextEditorFactory = (textEditor: Types.Modules.Extension.TextEditorLike) => Types.Modules.Extension.UncoveredCodeRegionsVirtualTextEditor;
