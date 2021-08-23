@@ -2,7 +2,7 @@
   "name": "covertops-cmake-llvm",
   "displayName": "CovertOps (with cmake and llvm flavour).",
   "description": "Get a precise report of uncovered regions of your code handled by cmake and the llvm as easy as hello world!",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "icon": "images/drop128.png",
   "engines": {
     "vscode": "^1.59.0"
