@@ -20,20 +20,20 @@ reporting any region of the code that is not covered by a test.
 It's designed to be run very frequently (each tests run), to get quick and
 precise feedback on code coverage.
 
-`Insert gif here`
+<img src="https://github.com/MetaBarj0/covertops-cmake-llvm/raw/master/images/full-demo.gif" alt="full demo gif">
 
 ## Features
 
 Easily accessible from the editor title menu : get coverage info with one
 click!
 
-`insert image here`
+<img src="https://github.com/MetaBarj0/covertops-cmake-llvm/raw/master/images/one-menu.png" alt="one menu png">
 
 Shows both summary information with coverage percentage for the currently edited
 file (in the output window) and precise uncovered regions of code reporting for
 the current source code file in a read-only editor window.
 
-`insert image here`
+<img src="https://github.com/MetaBarj0/covertops-cmake-llvm/raw/master/images/settings.png" alt="settings png">
 
 Great flexibility in its configuration, allowing you to override any setting to
 be perfectly suitable to your development environment.
