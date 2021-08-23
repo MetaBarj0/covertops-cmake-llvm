@@ -1,14 +1,13 @@
 name: ci/cd
 
 env:
-  NODE_VERSION: 16.6.1
+  NODE_VERSION: 16.7.0
   ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
 on:
   push:
     branches:
       - master
-      - feat/*
     tags:
       - releases/v*.*.*
 
