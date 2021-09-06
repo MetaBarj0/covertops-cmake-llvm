@@ -19,7 +19,7 @@ export abstract class BasicCmake implements Types.Modules.Cmake.Cmake {
         message: Strings.progressFoundCMake
       });
     } catch (error) {
-      return this.handleErrorWithMessage(error, Strings.errorUnreachableCmake);
+      return this.handleErrorWithMessage(<Error>error, Strings.errorUnreachableCmake);
     }
 
     try {
@@ -29,7 +29,7 @@ export abstract class BasicCmake implements Types.Modules.Cmake.Cmake {
         message: Strings.progressGeneratedCmakeProject
       });
     } catch (error) {
-      return this.handleErrorWithMessage(error, Strings.errorWhenGeneratingCmakeProjectLocatedIn(this.settings.rootDirectory));
+      return this.handleErrorWithMessage(<Error>error, Strings.errorWhenGeneratingCmakeProjectLocatedIn(this.settings.rootDirectory));
     }
 
     try {
@@ -39,7 +39,7 @@ export abstract class BasicCmake implements Types.Modules.Cmake.Cmake {
         message: Strings.progressTargetBuilt
       });
     } catch (error) {
-      return this.handleErrorWithMessage(error, Strings.errorWhenBuildingTargetNamed(this.settings.cmakeTarget));
+      return this.handleErrorWithMessage(<Error>error, Strings.errorWhenBuildingTargetNamed(this.settings.cmakeTarget));
     }
   }
 
