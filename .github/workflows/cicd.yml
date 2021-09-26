@@ -15,9 +15,7 @@ jobs:
   build:
     strategy:
       matrix:
-        # disabled macos-latest (2021-07-30) extension test failing but succeeding on local macos and windows
-        # os: [macos-latest, ubuntu-latest, windows-latest]
-        os: [ubuntu-latest ]
+        os: [macos-latest, ubuntu-latest, windows-latest]
 
     runs-on: ${{ matrix.os }}
 
