@@ -10,6 +10,9 @@ import { chain } from "stream-chain";
 import { parser } from "stream-json";
 import { pick } from "stream-json/filters/Pick";
 import { streamArray } from "stream-json/streamers/StreamArray";
+import { RawLLVMFileCoverageInfo } from "../../abstractions/coverage-info-collector/region-coverage-info";
+
+import { platform } from 'os';
 
 export function make(llvmCoverageInfoStreamFactory: StreamFactory,
   sourceFilePath: string,
@@ -106,8 +109,17 @@ class CoverageInfo implements Types.Modules.CoverageInfoCollector.CoverageInfo {
 
       const files = dataItem.value.files;
 
-      return files.find((file: Types.Modules.CoverageInfoCollector.RawLLVMFileCoverageInfo) => file.filename === this.sourceFilePath);
+      return files.find((file: Types.Modules.CoverageInfoCollector.RawLLVMFileCoverageInfo) => this.isSummaryFilePathEquivalentToSourceFilePath(file));
     });
+  }
+
+  private isSummaryFilePathEquivalentToSourceFilePath(file: RawLLVMFileCoverageInfo) {
+    if (platform() !== "win32")
+      return file.filename === this.sourceFilePath;
+
+    const fixedPath = file.filename.replace("/", "\\");
+
+    return fixedPath === this.sourceFilePath;
   }
 
   private extendBasicPipelineWith<T>(fn: (dataItem: Types.Modules.CoverageInfoCollector.RawLLVMStreamedDataItemCoverageInfo) => T) {
