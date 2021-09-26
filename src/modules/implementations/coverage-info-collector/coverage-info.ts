@@ -113,23 +113,21 @@ class CoverageInfo implements Types.Modules.CoverageInfoCollector.CoverageInfo {
     });
   }
 
-  private isSummaryFilePathEquivalentToSourceFilePath(file: RawLLVMFileCoverageInfo) {
+  private isFilePathEquivalentToSourceFilePath(filePath: string) {
     if (platform() !== "win32")
-      return file.filename === this.sourceFilePath;
+      return filePath === this.sourceFilePath;
 
-    const fixedPath = file.filename.replace("/", "\\");
+    const fixedPath = filePath.replace("/", "\\");
 
     return fixedPath === this.sourceFilePath;
   }
 
+  private isSummaryFilePathEquivalentToSourceFilePath(file: RawLLVMFileCoverageInfo) {
+    return this.isFilePathEquivalentToSourceFilePath(file.filename);
+  }
+
   private isUncoveredRegionFilePathEquivalentToSourceFilePath(f: { filenames: ReadonlyArray<string>; }) {
-
-    if (platform() !== "win32")
-      return f.filenames[0] === this.sourceFilePath;
-
-    const fixedPath = f.filenames[0].replace("/", "\\");
-
-    return fixedPath === this.sourceFilePath;
+    return this.isFilePathEquivalentToSourceFilePath(f.filenames[0]);
   }
 
   private extendBasicPipelineWith<T>(fn: (dataItem: Types.Modules.CoverageInfoCollector.RawLLVMStreamedDataItemCoverageInfo) => T) {
