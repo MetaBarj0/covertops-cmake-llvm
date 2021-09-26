@@ -142,7 +142,7 @@ function shouldSucceedToCollectCoverageInfoSummary() {
     const collector = collectorAndSpies.coverageInfoCollector;
     const progressReporterSpy = collectorAndSpies.progressReporterSpy;
 
-    const coverageInfo = await collector.collectFor("/a/source/file.cpp");
+    const coverageInfo = await collector.collectFor(" a source file.cpp");
 
     const summary = await coverageInfo.summary;
 
@@ -162,7 +162,7 @@ function shouldSucceedToCollectUncoveredRegions() {
     const collector = collectorAndSpies.coverageInfoCollector;
     const progressReporterSpy = collectorAndSpies.progressReporterSpy;
 
-    const coverageInfo = await collector.collectFor("/a/source/file.cpp");
+    const coverageInfo = await collector.collectFor(" a source file.cpp");
     const regions = coverageInfo.uncoveredRegions;
 
     const uncoveredRegions: Array<Types.Modules.CoverageInfoCollector.RegionCoverageInfo> = [];

@@ -127,7 +127,7 @@ function succeedWithCorrectSettingsAndFakeAdapters() {
 
     const provider = CoverageInfoProvider.make({ ...buildContextFromAdapters(adapters) });
 
-    const coverageInfo = await provider.getCoverageInfoForFile("/a/source/file.cpp");
+    const coverageInfo = await provider.getCoverageInfoForFile(" a source file.cpp");
 
     const uncoveredRegions: Array<Types.Modules.CoverageInfoCollector.RegionCoverageInfo> = [];
     for await (const region of coverageInfo.uncoveredRegions)

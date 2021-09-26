@@ -45,7 +45,7 @@ export function buildValidLlvmCoverageJsonObjectStream(): Readable {
       {
         "files": [
           {
-            "filename": "/a/source/file.cpp",
+            "filename": " a source file.cpp",
             "summary": {
               "regions": {
                 "count": 2,
@@ -59,7 +59,7 @@ export function buildValidLlvmCoverageJsonObjectStream(): Readable {
         "functions": [
           {
             "filenames": [
-              "/a/source/file.cpp"
+              " a source file.cpp"
             ],
             "regions": [
               [

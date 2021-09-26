@@ -12,7 +12,7 @@ import { pick } from "stream-json/filters/Pick";
 import { streamArray } from "stream-json/streamers/StreamArray";
 import { RawLLVMFileCoverageInfo } from "../../abstractions/coverage-info-collector/region-coverage-info";
 
-import { platform } from 'os';
+import { platform } from "os";
 
 export function make(llvmCoverageInfoStreamFactory: StreamFactory,
   sourceFilePath: string,
@@ -89,7 +89,7 @@ class CoverageInfo implements Types.Modules.CoverageInfoCollector.CoverageInfo {
 
       const functions = dataItem.value.functions;
 
-      const functionsForSourceFilePath = functions.filter((f: { filenames: ReadonlyArray<string> }) => f.filenames[0] === self.sourceFilePath);
+      const functionsForSourceFilePath = functions.filter((f: { filenames: ReadonlyArray<string> }) => self.isUncoveredRegionFilePathEquivalentToSourceFilePath(f));
 
       const regionsForSourceFilePath =
         functionsForSourceFilePath.map((fn: Types.Modules.CoverageInfoCollector.RawLLVMFunctionCoverageInfo) =>
@@ -118,6 +118,16 @@ class CoverageInfo implements Types.Modules.CoverageInfoCollector.CoverageInfo {
       return file.filename === this.sourceFilePath;
 
     const fixedPath = file.filename.replace("/", "\\");
+
+    return fixedPath === this.sourceFilePath;
+  }
+
+  private isUncoveredRegionFilePathEquivalentToSourceFilePath(f: { filenames: ReadonlyArray<string>; }) {
+
+    if (platform() !== "win32")
+      return f.filenames[0] === this.sourceFilePath;
+
+    const fixedPath = f.filenames[0].replace("/", "\\");
 
     return fixedPath === this.sourceFilePath;
   }
