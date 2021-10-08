@@ -45,7 +45,7 @@ capabilities. You will need :
 
 - A recent version of cmake installed on your system
 - A recent version of the Ninja build system
-- The Llvm toolchain version greater or equal to 11
+- The Llvm toolchain version greater or equal to 11, 12 is fully supported too
 
 *Note*: Moreover, this first release need an existing target that creates coverage
 information in a json file. You'll find below a detailled how-to to help you in
@@ -55,11 +55,13 @@ Future iterations may provide a wizard to help you configure the coverage target
 creation in a fluent manner. Multi root workspace support has also been thinking
 about (planned for a future iteration)
 
-### Note for Visual Studio 2019 users on Windows
+### Note for Visual Studio users on Windows
 
 You can install a recent version of the Llvm toolchain with the visual studio
 installer. As well, you can install a recent version of CMake directly from
 the Visual Studio 2019 installer program.
+You can also safely use the Visual Studio 2022 Preview version, actually, the
+extension is developped and tested with this version.
 
 ## Recommended extensions
 
@@ -268,8 +270,9 @@ report.
 
 ## Known Issues
 
-This extension has just been released. Issues are expected, please report
-them in its repository.
+There is an unexpected behavior regarding the display of outdated decorations
+when you re-compute coverage info: fresh and outdated decorations stack until
+you close the editor and ask again for coverage info for the file.
 
 ## Contribution guideline and design information
 
@@ -282,9 +285,8 @@ summarized as :
 - help you to keep track on the way of TDD
 
 Contributing would be awesome. The code base has been developing using the ATDD
-methodology and adheres as much as possible to Domain Driven Design approach. It
-makes it easy to test at all layers (from unit to integration passing through
-acceptance tests), to read, understand and maintain.
+methodology. It makes it easy to test at all layers (from unit to integration
+passing through acceptance tests), to read, understand and maintain.
 
 ## Release Notes
 

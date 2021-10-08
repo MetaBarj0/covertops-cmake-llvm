@@ -27,3 +27,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - fixed the way file path are interpreted from LLVM coverage info file on Windows platforms
+- updated for node v16.10
+
+## [1.0.3] - 2021-10-08
+
+### Changed
+
+- support for vscode 1.61
+- updated extension npm dependencies
+- update stuff in README.md file
