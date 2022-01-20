@@ -44,3 +44,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - support for vscode 1.62
 - using node 17.1.0
 - updated extension npm dependencies
+
+## [1.0.5] - 2022-01-20
+
+### Changed
+
+- support for vscode 1.63
+- using node 17.4.0
+- updated extension npm dependencies
