@@ -59,9 +59,7 @@ about (planned for a future iteration)
 
 You can install a recent version of the Llvm toolchain with the visual studio
 installer. As well, you can install a recent version of CMake directly from
-the Visual Studio 2019 installer program.
-You can also safely use the Visual Studio 2022 Preview version, actually, the
-extension is developped and tested with this version.
+the Visual Studio 2022 installer program.
 
 ## Recommended extensions
 

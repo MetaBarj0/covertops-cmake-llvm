@@ -1,7 +1,7 @@
 name: ci/cd
 
 env:
-  NODE_VERSION: 17.4.0
+  NODE_VERSION: 17.5.0
   ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
 on:
@@ -25,6 +25,7 @@ jobs:
       - name: Install llvm
         uses: KyleMayes/install-llvm-action@v1
         with:
+          # TODO: update to 12
           version: 11
           directory: ${{ runner.temp }}/llvm
 
