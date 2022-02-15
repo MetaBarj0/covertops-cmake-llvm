@@ -25,8 +25,7 @@ jobs:
       - name: Install llvm
         uses: KyleMayes/install-llvm-action@v1
         with:
-          # TODO: update to 12
-          version: 11
+          version: 12
           directory: ${{ runner.temp }}/llvm
 
       - name: Install CMake
