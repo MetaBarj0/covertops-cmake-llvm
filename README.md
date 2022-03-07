@@ -45,7 +45,7 @@ capabilities. You will need :
 
 - A recent version of cmake installed on your system
 - A recent version of the Ninja build system
-- The Llvm toolchain version greater or equal to 11, 12 is fully supported too
+- The Llvm toolchain version greater or equal to 11, greater versions are fully supported too.
 
 *Note*: Moreover, this first release need an existing target that creates coverage
 information in a json file. You'll find below a detailled how-to to help you in

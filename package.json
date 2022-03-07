@@ -2,10 +2,10 @@
   "name": "covertops-cmake-llvm",
   "displayName": "CovertOps (with cmake and llvm flavour).",
   "description": "Get a precise report of uncovered regions of your code handled by cmake and the llvm as easy as hello world!",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "icon": "images/drop128.png",
   "engines": {
-    "vscode": "^1.64.0"
+    "vscode": "^1.65.0"
   },
   "categories": [
     "Programming Languages",
@@ -165,26 +165,26 @@
     "@types/fs-extra": "^9.0.13",
     "@types/glob": "^7.2.0",
     "@types/mocha": "^9.1.0",
-    "@types/node": "^17.0.18",
-    "@types/vscode": "^1.64.0",
-    "@typescript-eslint/eslint-plugin": "^5.12.0",
-    "@typescript-eslint/parser": "^5.12.0",
+    "@types/node": "^17.0.21",
+    "@types/vscode": "^1.65.0",
+    "@typescript-eslint/eslint-plugin": "^5.13.0",
+    "@typescript-eslint/parser": "^5.13.0",
     "chai": "^4.3.6",
     "chai-as-promised": "^7.1.1",
-    "eslint": "^8.9.0",
-    "fs-extra": "^10.0.0",
+    "eslint": "^8.10.0",
+    "fs-extra": "^10.0.1",
     "glob": "^7.2.0",
-    "mocha": "^9.2.0",
-    "ts-loader": "^9.2.6",
-    "typescript": "^4.5.5",
+    "mocha": "^9.2.1",
+    "ts-loader": "^9.2.7",
+    "typescript": "^4.6.2",
     "vsce": "^2.6.7",
     "vscode-test": "^1.6.1",
-    "webpack": "^5.68.0",
+    "webpack": "^5.70.0",
     "webpack-cli": "^4.9.2"
   },
   "dependencies": {
     "@types/stream-json": "^1.7.2",
     "globby": ">= 11.0.4 < 12.0.0",
-    "stream-json": "^1.7.3"
+    "stream-json": "^1.7.4"
   }
 }
