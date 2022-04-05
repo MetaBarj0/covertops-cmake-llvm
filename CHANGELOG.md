@@ -69,3 +69,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - using node 17.6.0
 - updated extension npm dependencies
 - support of llvm version 13
+
+## [1.0.8] - 2022-04-05
+
+### Changed
+
+- support for vscode 1.66
+- using node 17.8.0
+- updated extension npm dependencies
