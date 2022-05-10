@@ -1,190 +1,196 @@
 {
-  "name": "covertops-cmake-llvm",
-  "displayName": "CovertOps (with cmake and llvm flavour).",
-  "description": "Get a precise report of uncovered regions of your code handled by cmake and the llvm as easy as hello world!",
-  "version": "1.0.8",
-  "icon": "images/drop128.png",
-  "engines": {
-    "vscode": "^1.66.0"
-  },
-  "categories": [
-    "Programming Languages",
-    "Linters",
-    "Testing",
-    "Visualization"
-  ],
-  "publisher": "SbastienLevy",
-  "homepage": "https://github.com/MetaBarj0/covertops-cmake-llvm",
-  "repository": {
-    "url": "https://github.com/MetaBarj0/covertops-cmake-llvm"
-  },
-  "bugs": {
-    "url": "https://github.com/MetaBarj0/covertops-cmake-llvm/issues"
-  },
-  "keywords": [
-    "cmake",
-    "tdd",
-    "unit",
-    "test",
-    "coverage",
-    "llvm",
-    "cpp",
-    "c++",
-    "lint"
-  ],
-  "activationEvents": [
-    "onCommand:covertops-cmake-llvm.reportUncoveredCodeRegionsInFile"
-  ],
-  "main": "./dist/main.js",
-  "contributes": {
-    "configuration": [
-      {
-        "title": "CovertOps-Cmake-Llvm",
-        "properties": {
-          "covertops-cmake-llvm.cmakeCommand": {
-            "type": "string",
-            "default": "cmake",
-            "minLength": 1,
-            "scope": "window",
-            "description": "The command to invoke cmake. May be an absolute path on the file system or just `cmake` if this latter is in your `$PATH` environment variable."
-          },
-          "covertops-cmake-llvm.buildTreeDirectory": {
-            "type": "string",
-            "default": "build",
-            "minLength": 1,
-            "scope": "window",
-            "description": "The build tree root directory of your project, relative to your workspace directory. Designed to be the target of the output of cmake."
-          },
-          "covertops-cmake-llvm.cmakeTarget": {
-            "type": "string",
-            "default": "coverage",
-            "minLength": 1,
-            "scope": "window",
-            "description": "The target that generates coverage information in a json format file. This file may be generated in the build directory specified in the `Build Tree Directory` setting. The specified target must exist."
-          },
-          "covertops-cmake-llvm.coverageInfoFileName": {
-            "type": "string",
-            "default": "coverage.json",
-            "minLength": 1,
-            "scope": "window",
-            "description": "The name of the json file containing coverage information. This file will be searched within the `buildTreeDirectory` hierarchy. This file must exist and be unique."
-          },
-          "covertops-cmake-llvm.additionalCmakeOptions": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "minLength": 1
-            },
-            "default": [],
-            "scope": "window",
-            "description": "Additional options to pass to cmake, for instance, variable definitions indicating which compiler / generator to use, preprocessor defines, etc."
-          }
-        }
-      }
-    ],
-    "menus": {
-      "editor/title": [
-        {
-          "when": "resourceLangId == cpp",
-          "group": "navigation",
-          "command": "covertops-cmake-llvm.reportUncoveredCodeRegionsInFile"
-        }
-      ],
-      "commandPalette": [
-        {
-          "when": "resourceLangId == cpp",
-          "command": "covertops-cmake-llvm.reportUncoveredCodeRegionsInFile"
-        }
-      ]
-    },
-    "commands": [
-      {
-        "command": "covertops-cmake-llvm.reportUncoveredCodeRegionsInFile",
-        "title": "Display uncovered code regions",
-        "enablement": "resourceLangId == cpp"
-      }
-    ],
-    "colors": [
-      {
-        "id": "covCmakeLlvm.uncoveredCodeRegionColor",
-        "description": "Color for a decoration for an uncovered code region",
-        "defaults": {
-          "dark": "#ff7a7a7f",
-          "light": "#ff00007f",
-          "highContrast": "#ff0000"
-        }
-      },
-      {
-        "id": "covCmakeLlvm.outdatedUncoveredCodeRegionColor",
-        "description": "Color for a decoration for an uncovered code region",
-        "defaults": {
-          "dark": "#7f7f7fff",
-          "light": "#7f7f7fff",
-          "highContrast": "#0000ff"
-        }
-      }
-    ],
-    "languages": [
-      {
-        "id": "cpp",
-        "aliases": [
-          "c++",
-          "C++",
-          "cpp",
-          "CPP"
-        ],
-        "extensions": [
-          ".cpp",
-          ".hpp",
-          ".cxx",
-          ".hxx",
-          ".c++",
-          ".h++",
-          ".h"
-        ]
-      }
-    ]
-  },
-  "scripts": {
-    "package": "npm run compile && vsce package",
-    "precompile": "node ./npm-scripts/package.json.ts.mjs",
-    "compile": "npm run precompile && tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "pretest": "npm run compile && npm run lint",
-    "lint": "eslint . --ext ts",
-    "test": "node ./out/tests/run-test.js",
-    "deploy": "npm run package && vsce publish -p",
-    "vscode:prepublish": "webpack --mode production",
-    "webpack": "webpack --mode development",
-    "webpack-dev": "webpack --mode development --watch",
-    "test-compile": "npm run compile"
-  },
-  "devDependencies": {
-    "@types/chai": "^4.3.0",
-    "@types/chai-as-promised": "^7.1.5",
-    "@types/fs-extra": "^9.0.13",
-    "@types/glob": "^7.2.0",
-    "@types/mocha": "^9.1.0",
-    "@types/node": "^17.0.23",
-    "@types/vscode": "^1.66.0",
-    "@typescript-eslint/eslint-plugin": "^5.18.0",
-    "@typescript-eslint/parser": "^5.18.0",
-    "chai": "^4.3.6",
-    "chai-as-promised": "^7.1.1",
-    "eslint": "^8.12.0",
-    "fs-extra": "^10.0.1",
-    "glob": "^7.2.0",
-    "mocha": "^9.2.2",
-    "ts-loader": "^9.2.8",
-    "typescript": "^4.6.3",
-    "vsce": "^2.7.0",
-    "vscode-test": "^1.6.1",
-    "webpack": "^5.71.0",
-    "webpack-cli": "^4.9.2"
-  },
-  "dependencies": {
-    "@types/stream-json": "^1.7.2",
-    "globby": ">= 11.0.4 < 12.0.0",
-    "stream-json": "^1.7.4"
-  }
+	"name": "covertops-cmake-llvm",
+	"displayName": "CovertOps (with cmake and llvm flavour).",
+	"description": "Get a precise report of uncovered regions of your code handled by cmake and the llvm as easy as hello world!",
+	"version": "1.0.9",
+	"icon": "images/drop128.png",
+	"engines": {
+		"vscode": "^1.67.0"
+	},
+	"categories": [
+		"Programming Languages",
+		"Linters",
+		"Testing",
+		"Visualization"
+	],
+	"publisher": "SbastienLevy",
+	"homepage": "https://github.com/MetaBarj0/covertops-cmake-llvm",
+	"repository": {
+		"url": "https://github.com/MetaBarj0/covertops-cmake-llvm"
+	},
+	"bugs": {
+		"url": "https://github.com/MetaBarj0/covertops-cmake-llvm/issues"
+	},
+	"keywords": [
+		"cmake",
+		"tdd",
+		"unit",
+		"test",
+		"coverage",
+		"llvm",
+		"cpp",
+		"c++",
+		"lint"
+	],
+	"activationEvents": [
+		"onCommand:covertops-cmake-llvm.reportUncoveredCodeRegionsInFile"
+	],
+	"main": "./dist/main.js",
+	"contributes": {
+		"configuration": [
+			{
+				"title": "CovertOps-Cmake-Llvm",
+				"properties": {
+					"covertops-cmake-llvm.cmakeCommand": {
+						"type": "string",
+						"default": "cmake",
+						"minLength": 1,
+						"scope": "window",
+						"description": "The command to invoke cmake. May be an absolute path on the file system or just `cmake` if this latter is in your `$PATH` environment variable."
+					},
+					"covertops-cmake-llvm.buildTreeDirectory": {
+						"type": "string",
+						"default": "build",
+						"minLength": 1,
+						"scope": "window",
+						"description": "The build tree root directory of your project, relative to your workspace directory. Designed to be the target of the output of cmake."
+					},
+					"covertops-cmake-llvm.cmakeTarget": {
+						"type": "string",
+						"default": "coverage",
+						"minLength": 1,
+						"scope": "window",
+						"description": "The target that generates coverage information in a json format file. This file may be generated in the build directory specified in the `Build Tree Directory` setting. The specified target must exist."
+					},
+					"covertops-cmake-llvm.coverageInfoFileName": {
+						"type": "string",
+						"default": "coverage.json",
+						"minLength": 1,
+						"scope": "window",
+						"description": "The name of the json file containing coverage information. This file will be searched within the `buildTreeDirectory` hierarchy. This file must exist and be unique."
+					},
+					"covertops-cmake-llvm.additionalCmakeOptions": {
+						"type": "array",
+						"items": {
+							"type": "string",
+							"minLength": 1
+						},
+						"default": [],
+						"scope": "window",
+						"description": "Additional options to pass to cmake, for instance, variable definitions indicating which compiler / generator to use, preprocessor defines, etc."
+					}
+				}
+			}
+		],
+		"menus": {
+			"editor/title": [
+				{
+					"when": "resourceLangId == cpp",
+					"group": "navigation",
+					"command": "covertops-cmake-llvm.reportUncoveredCodeRegionsInFile"
+				}
+			],
+			"commandPalette": [
+				{
+					"when": "resourceLangId == cpp",
+					"command": "covertops-cmake-llvm.reportUncoveredCodeRegionsInFile"
+				}
+			]
+		},
+		"commands": [
+			{
+				"command": "covertops-cmake-llvm.reportUncoveredCodeRegionsInFile",
+				"title": "Display uncovered code regions",
+				"enablement": "resourceLangId == cpp"
+			}
+		],
+		"colors": [
+			{
+				"id": "covCmakeLlvm.uncoveredCodeRegionColor",
+				"description": "Color for a decoration for an uncovered code region",
+				"defaults": {
+					"dark": "#ff7a7a7f",
+					"light": "#ff00007f",
+					"highContrast": "#ff0000"
+				}
+			},
+			{
+				"id": "covCmakeLlvm.outdatedUncoveredCodeRegionColor",
+				"description": "Color for a decoration for an uncovered code region",
+				"defaults": {
+					"dark": "#7f7f7fff",
+					"light": "#7f7f7fff",
+					"highContrast": "#0000ff"
+				}
+			}
+		],
+		"languages": [
+			{
+				"id": "cpp",
+				"aliases": [
+					"c++",
+					"C++",
+					"cpp",
+					"CPP"
+				],
+				"extensions": [
+					".cpp",
+					".hpp",
+					".cxx",
+					".hxx",
+					".c++",
+					".h++",
+					".h"
+				]
+			}
+		]
+	},
+	"scripts": {
+		"package": "npm run compile && vsce package",
+		"precompile": "node ./npm-scripts/package.json.ts.mjs",
+		"compile": "npm run precompile && tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"pretest": "npm run compile && npm run lint",
+		"lint": "eslint . --ext ts",
+		"test": "node ./out/tests/run-test.js",
+		"deploy": "npm run package && vsce publish -p",
+		"vscode:prepublish": "webpack --mode production",
+		"webpack": "webpack --mode development",
+		"webpack-dev": "webpack --mode development --watch",
+		"test-compile": "npm run compile"
+	},
+	"devDependencies": {
+		"@types/chai": "^4.3.1",
+		"@types/chai-as-promised": "^7.1.5",
+		"@types/fs-extra": "^9.0.13",
+		"@types/glob": "^7.2.0",
+		"@types/mocha": "^9.1.1",
+		"@types/node": "^17.0.31",
+		"@types/vscode": "^1.67.0",
+		"@typescript-eslint/eslint-plugin": "^5.23.0",
+		"@typescript-eslint/parser": "^5.23.0",
+		"chai": "^4.3.6",
+		"chai-as-promised": "^7.1.1",
+		"eslint": "^8.15.0",
+		"fs-extra": "^10.1.0",
+		"glob": "^8.0.1",
+		"mocha": "^10.0.0",
+		"ts-loader": "^9.3.0",
+		"typescript": "^4.6.4",
+		"vsce": "^2.7.0",
+		"vscode-test": "^1.6.1",
+		"webpack": "^5.72.0",
+		"webpack-cli": "^4.9.2"
+	},
+	"dependencies": {
+		"@types/stream-json": "^1.7.2",
+		"globby": ">= 11.0.4 && < 12.0.0",
+		"stream-json": "^1.7.4"
+	},
+	"__metadata": {
+		"id": "9918da9f-2ac9-486f-94f2-2ac9f41f6fa6",
+		"publisherDisplayName": "Sébastien Levy",
+		"publisherId": "25d5558a-6375-4168-8ed3-7fc2e63fd8fa",
+		"isPreReleaseVersion": false
+	}
 }
